@@ -32,8 +32,8 @@ public:
 #endif
 
 private:
-	list<class CGameObject*> m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::END)] = {};
-	_bool					m_bisWeight;
+	list<class CGameObject*> m_GlowObjects = {};
+	_bool					m_bisBloom;
 public:
 	static CGlow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

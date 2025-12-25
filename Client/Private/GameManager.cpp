@@ -5,9 +5,13 @@
 #include "DataManager.h"
 #include "QuestManager.h"
 #include "LockonManager.h"
+#include "ShaderManager.h"
+#include "PoolingManager.h"
+#include "Cinematic_Manager.h"
 #include "Interaction_Manager.h"
 
 #include "Player.h"
+#include "ReserveDeferred.h"
 
 IMPLEMENT_SINGLETON(CGameManager);
 
@@ -28,7 +32,28 @@ HRESULT CGameManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     if (nullptr == m_pQuestManager)
         return E_FAIL;
 
+    m_pShaderManager = CShaderManager::Create();
+    if (nullptr == m_pShaderManager)
+        return E_FAIL;
+
+    m_pPoolingManager = CPoolingManager::Create(pDevice, pContext);
+    if (nullptr == m_pPoolingManager)
+        return E_FAIL;
+
+    m_pCinematicManager = CCinematicManager::Create();
+    if (nullptr == m_pCinematicManager)
+        return E_FAIL;
+
     return S_OK;
+}
+
+void CGameManager::Update(_float fTimeDelta)
+{
+    if(nullptr != m_pShaderManager)
+        m_pShaderManager->Update(fTimeDelta);
+
+    if(nullptr != m_pCinematicManager)
+        m_pCinematicManager->Update(fTimeDelta);
 }
 
 void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
@@ -62,6 +87,10 @@ _bool CGameManager::Is_NearCharacter(_vector vPos, _float vRange)
 }
 
 #pragma region DataManager
+const NPC_DATA_DESC* CGameManager::Find_NpcData(_uint iSkillID)
+{
+    return m_pDataManager->Find_NpcData(iSkillID);
+}
 const CHARACTER_SKILL_DESC* CGameManager::Find_SkillData(_uint iSkillID)
 {
     return m_pDataManager->Find_SkillData(iSkillID);
@@ -87,6 +116,51 @@ const vector<ANIM_NOTIFY>* CGameManager::Find_AnimationNotifyData(const _wstring
     return m_pDataManager->Find_AnimationNotifyData(szAnimationTag);
 }
 
+const INTERACTION_DATA* CGameManager::Find_InteractionData(_uint iID)
+{
+    return m_pDataManager->Get_InteractionData(iID);
+}
+
+const CAMERA_ANIMATION_DATA* CGameManager::Find_CameraAnimationData(_uint iCameraAnimationData)
+{
+    return m_pDataManager->Find_CameraAnimationData(iCameraAnimationData);
+}
+
+const SCRIPT_DESC* CGameManager::Get_ScriptData(const _wstring& szScriptTag)
+{
+    return m_pDataManager->Get_ScriptData(szScriptTag);
+}
+
+const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
+{
+    return m_pDataManager->Find_CinematicData(iCinematicIndex);
+}
+
+map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
+{
+    return m_pDataManager->Get_CameraAnimationMap();
+}
+
+
+map<_uint, CINEMATIC_DESC>* CGameManager::Get_CinematicDataMap()
+{
+    return m_pDataManager->Get_CinematicDataMap();
+}
+
+#ifdef _DEBUG
+
+void CGameManager::Save_CameraAnimationData()
+{
+    m_pDataManager->Save_CameraAnimationData();
+}
+
+void CGameManager::Save_CinematicData()
+{
+    m_pDataManager->Save_CinematicData();
+}
+
+#endif
+
 #pragma endregion
 
 #pragma region Quest Manager
@@ -108,6 +182,36 @@ _bool CGameManager::Accept_Quest(_uint iQuestID)
 void CGameManager::CompletedQuest(_uint iQuestID)
 {
     m_pQuestManager->CompletedQuest(iQuestID);
+}
+
+HRESULT CGameManager::Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, CShader* pShader)
+{
+    return m_pShaderManager->Add_Shader(eLevelID, strShaderTag, pShader);
+}
+
+CShader* CGameManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag)
+{
+    return m_pShaderManager->Get_Shader(eLevelID, strShaderTag);
+}
+
+HRESULT CGameManager::Bind_CamInfo(LEVEL eLevelID)
+{
+    return m_pShaderManager->Bind_CamInfo(eLevelID);
+}
+
+HRESULT CGameManager::Add_ReserveDeferred(const _wstring& strReserveDeferredTag, CReserveDeferred* pReserveDeferred)
+{
+    return m_pShaderManager->Add_ReserveDeferred(strReserveDeferredTag, pReserveDeferred);
+}
+
+void CGameManager::Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag)
+{
+    m_pShaderManager->Set_Active_ReserveDeferred(strReserveDeferredTag, bFlag);
+}
+
+void CGameManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg)
+{
+    m_pShaderManager->Set_Desc_ReserveDeferred(strReserveDeferredTag, pArg);
 }
 
 #pragma region LOCKON
@@ -132,10 +236,34 @@ _bool CGameManager::Get_Lockon()
 {
     return m_pLockonManager->Get_Lockon();
 }
+
 #pragma endregion
 
+#pragma region Pool Manager
+HRESULT CGameManager::Setting_PoolManager(_uint iLevelID)
+{
+    return m_pPoolingManager->Setting_PoolManager(iLevelID);
+}
+
+HRESULT CGameManager::ADD_PoolManager(_uint iLevelID, _uint iProtoTypeLevel, const WCHAR* ProtoTypeName, void* pArg, const WCHAR* szPoolTag, _uint iCount)
+{
+    return m_pPoolingManager->ADD_PoolManager(iLevelID, iProtoTypeLevel, ProtoTypeName, pArg, szPoolTag, iCount);
+}
+
+CGameObject* CGameManager::SetActivePoolObject(_uint iLevel, _uint iProtoTypeLevel, const WCHAR* pLayerName, const WCHAR* szPoolTag)
+{
+    return m_pPoolingManager->SetActivePoolObject(iLevel, iProtoTypeLevel, pLayerName, szPoolTag);
+}
+
+void CGameManager::UnActivePoolObject(_uint iLevelID, const WCHAR* szPoolTag, CGameObject* pObject)
+{
+    m_pPoolingManager->UnActivePoolObject(iLevelID, szPoolTag, pObject);
+}
+#pragma endregion
+
+
 #pragma region Damage Logic
-void CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
+_bool CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iDamage, _float fPercent)
 {
     long long AttackDamage = iDamage * (1.f - fPercent);
     long long GuardDamage = iDamage * fPercent;
@@ -152,8 +280,28 @@ void CGameManager::ComputeDamageLogic(Default_Status* pInfo, const long long& iD
     pInfo->iCurrentHealth -= AttackDamage;
     if (0 >= pInfo->iCurrentHealth)
         pInfo->iCurrentHealth = 0.f;
+
+    return true;
+}
+HRESULT CGameManager::Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc)
+{
+    return m_pCinematicManager->Play_Cinematic(iCinematicID, FinishedFunc);
+}
+HRESULT CGameManager::Load_Level_CinematicObjectData(const _char* szFilePath)
+{
+    return m_pCinematicManager->Load_Level_CinematicObjectData(szFilePath);
+}
+_bool CGameManager::Is_CinematicPlaying()
+{
+    return m_pCinematicManager->Is_CinematicPlaying();
 }
 #pragma endregion
+
+void CGameManager::Release_GameMgr()
+{
+    Safe_Release(m_pPoolingManager);
+    Safe_Release(m_pCinematicManager);
+}
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -176,7 +324,10 @@ void CGameManager::Free()
     Safe_Release(m_pDataManager);
     Safe_Release(m_pQuestManager);
     Safe_Release(m_pLockonManager);
-
+    Safe_Release(m_pShaderManager);
+    //Safe_Release(m_pPoolingManager);
+    //Safe_Release(m_pCinematicManager);
+    
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);

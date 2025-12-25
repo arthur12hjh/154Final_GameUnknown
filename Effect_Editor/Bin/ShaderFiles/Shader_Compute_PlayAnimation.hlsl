@@ -112,7 +112,7 @@ struct KeyFrameInfo
     float fTrackPosition;
 };
 
-struct BoneTransformMatrixOut
+struct BoneTransformMatrixCombined
 {
     row_major float4x4 BoneLocalTransformMatrix;
     row_major float4x4 BoneCombinedTransformMatrix;
@@ -138,12 +138,10 @@ cbuffer AnimationGlobalBuffer : register(b0)
 StructuredBuffer<BoneInfo> InputBone : register(t0);
 StructuredBuffer<ChannelInfo> InputChannel : register(t1);
 StructuredBuffer<KeyFrameInfo> InputKeyFrame : register(t2);
-StructuredBuffer<BoneTransformMatrixOut> InputLocalMatrix : register(t3);
-// 애니메이션 보간용. << 여기서 문제가 터진다.
-StructuredBuffer<BoneTransformMatrixOut> PrevLocalMatrix : register(t4);
+StructuredBuffer<BoneTransformMatrixCombined> InputLocalMatrix : register(t3);
+StructuredBuffer<BoneTransformMatrixCombined> PrevLocalMatrix : register(t4);
 
-RWStructuredBuffer<BoneTransformMatrixOut> g_CombinedOut : register(u0);
-RWStructuredBuffer<BoneTransformMatrixOut> g_RootOut : register(u1);
+RWStructuredBuffer<BoneTransformMatrixCombined> g_CombinedOut : register(u0);
 
 // 키프레임 오프셋을 기반으로 현재 본에 갱신할 키프레임 위치를 계산한다.
 uint ComputeKeyFrameIndex(uint iBoneIndex, float fTime)
@@ -224,7 +222,7 @@ float3 ScaleLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcScale, vDstScale, fRatio);
 }
-float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
+float4 RotationQuaternionLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
     matSrc[0].xyz = normalize(matSrc[0].xyz);
     matSrc[1].xyz = normalize(matSrc[1].xyz);
@@ -263,6 +261,19 @@ float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     return QuaternionSlerp(vSrcRotation, vDstRotation, fRatio);
 }
 
+float4x4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
+{
+    matSrc[0].xyz = normalize(matSrc[0].xyz);
+    matSrc[1].xyz = normalize(matSrc[1].xyz);
+    matSrc[2].xyz = normalize(matSrc[2].xyz);
+    
+    matDst[0].xyz = normalize(matDst[0].xyz);
+    matDst[1].xyz = normalize(matDst[1].xyz);
+    matDst[2].xyz = normalize(matDst[2].xyz);
+    
+    return lerp(matSrc, matDst, fRatio);
+}
+
 float3 TranslationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
     float3 vSrcTranslation, vDstTranslation;
@@ -274,15 +285,17 @@ float3 TranslationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 }
 
 [numthreads(128, 1, 1)]
-void CombinedMatrices(uint3 gid : SV_GroupID,
+void LocalMatrices(uint3 gid : SV_GroupID,
                       uint3 dtid : SV_DispatchThreadID,
                       uint3 gtid : SV_GroupThreadID,
                       uint gi : SV_GroupIndex)
 {
+    // 현재 본 인덱스를 찾아준다.
     uint iBoneIndex = dtid.x;
     if (iBoneIndex >= g_iNumBones)
         return;
 
+    // 현재 트랙 포지션을 받아와서, 현재 키프레임 인덱스를 찾아준다.
     float fCurrentTime = g_fCurrentTrackPosition;
     if (g_bIsLoop != 0 && g_fDuration > 0.f)
     {
@@ -291,9 +304,11 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
             fCurrentTime += g_fDuration;
     }
     
+    // 오리지널(순수 애니메이션) 로컬 매트릭스를 계산하고, 애니메이션 보간을 위한 매트릭스도 만들어준다.
     float4x4 matLocalOriginal = ComputeLocalMatrix(iBoneIndex, fCurrentTime);
     float4x4 matLocalSkin = matLocalOriginal;
 
+    // 루트모션을 위해 위치를 원점에 박아둔다.
     if (iBoneIndex == g_iRootIndex)
     {
         matLocalSkin._41 = 0.f;
@@ -302,12 +317,13 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
     }
     
     
+    // 이전 애니메이션의 마지막 프레임 로컬 매트릭스를 받아와 애니메이션 보간을 해준다.
     if (g_fBlendRatio > 0.f)
     {
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
 
         float3 vScaleLocal = ScaleLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
-        float4 vRotationLocal = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
+        float4 vRotationLocal = RotationQuaternionLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
         float3 vTranslationLocal = TranslationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
 
         float4x4 S = MakeScaleMatrix(float4(vScaleLocal, 1.f));
@@ -317,56 +333,6 @@ void CombinedMatrices(uint3 gid : SV_GroupID,
         matLocalSkin = mul(mul(S, R), T);
     }
     
-    float4x4 matCombinedOriginal = matLocalOriginal;
-    float4x4 matCombinedSkin = matLocalSkin;
-
-    int iParentIndex = InputBone[iBoneIndex].iParentIndex;
-    
-    // 요주의 인물. GPU는 CPU와 다르게 선형 연산이 보장되지 않기에 부모 본의 안전 여부를 알 수 없다.
-    // 별 수 있나? 가지뻗듯이 계산을 해줘야한다.
-    // 투패스로 바꿀경우 이 연산이 필요없어지기에, 최적화 1순위. 나중에 보간까지 수정해야해서 살짝 대공사 예정
-    while (iParentIndex >= 0)
-    {
-        float4x4 matParentLocalOriginal = ComputeLocalMatrix(iParentIndex, fCurrentTime);
-        float4x4 matParentLocalSkin = matParentLocalOriginal;
-
-        if (iParentIndex == g_iRootIndex)
-        {
-            matParentLocalSkin._41 = 0.f;
-            matParentLocalSkin._42 = 0.f;
-            matParentLocalSkin._43 = 0.f;
-        }
-
-        if (g_fBlendRatio > 0.f)
-        {
-            float4x4 matPrevParentLocal = PrevLocalMatrix[iParentIndex].BoneLocalTransformMatrix;
-
-            float3 vScaleParent = ScaleLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
-            float4 vRotationParent = RotationLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
-            float3 vTranslationParent = TranslationLerp(matPrevParentLocal, matParentLocalSkin, g_fBlendRatio);
-
-            float4x4 S = MakeScaleMatrix(float4(vScaleParent, 1.f));
-            float4x4 R = MakeRotationMatrix(vRotationParent);
-            float4x4 T = MakeTranslationMatrix(float4(vTranslationParent, 1.f));
-
-            matParentLocalSkin = mul(mul(S, R), T);
-        }
-        
-        matCombinedOriginal = mul(matCombinedOriginal, matParentLocalOriginal);
-        matCombinedSkin = mul(matCombinedSkin, matParentLocalSkin);
-        
-        iParentIndex = InputBone[iParentIndex].iParentIndex;
-    }
-    
-    matCombinedOriginal = mul(matCombinedOriginal, g_PreTransformMatrix);
-    matCombinedSkin = mul(matCombinedSkin, g_PreTransformMatrix);
-    
-    g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = matLocalSkin;
-    g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = matCombinedSkin;
-
-    if (iBoneIndex == g_iRootIndex)
-    {
-        g_RootOut[0].BoneLocalTransformMatrix = matLocalOriginal;
-        g_RootOut[0].BoneCombinedTransformMatrix = matCombinedOriginal;
-    }
+    g_CombinedOut[iBoneIndex].BoneLocalTransformMatrix = matLocalOriginal;
+    g_CombinedOut[iBoneIndex].BoneCombinedTransformMatrix = matLocalSkin;
 }

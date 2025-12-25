@@ -39,7 +39,6 @@ HRESULT CUIBeta::Initialize(void* pArg)
 		m_iMaxCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxBetaEnergy);
 		m_iCurrentCount = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentBetaEnergy);
 	}
-
 #ifdef _DEBUG
 	else
 	{
@@ -68,13 +67,13 @@ void CUIBeta::Update(_float fTimeDelta)
 
 #ifdef _DEBUG
 	// 테스트 용
-	/*if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
 			*m_iCurrentCount -= 1;
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
 			*m_iCurrentCount += 1;
-	}*/
+	}
 #endif
 
 	m_fTargetFill = static_cast<_float>(*m_iCurrentCount) / static_cast<_float>(*m_iMaxCount);
@@ -92,32 +91,16 @@ void CUIBeta::Update(_float fTimeDelta)
 
 	// 셰이더로 갈 때는 float(0~1)로 환산
 	m_fCurrentFill = (_float)filledTiles / *m_iMaxCount;
+
+	_int filledGroups = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
+
+	// 현재 묶음 인덱스
+	m_iCurrentvGroupFilled = filledGroups / m_iPerCount;  // 0~5 범위
 }
 
 void CUIBeta::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
-
-	_int filledTiles = static_cast<_int>(m_fCurrentFill * *m_iMaxCount);
-
-	// 현재 묶음 인덱스
-	_int currentGroup = filledTiles / m_iPerCount;  // 0~5 범위
-
-	// 묶음이 새로 완성된 순간 감지
-	if (currentGroup != m_iPrevGroupFilled)
-	{
-		// ★ 묶음이 새로 채워짐
-		// currentGroup가 증가 방향일 때만 체크하는게 더 깔끔함
-		if (currentGroup > m_iPrevGroupFilled)
-		{
-			// ---- 여기에서 이펙트 출력 ----
-			// 예: TriggerEffect(currentGroup);
-
-			int a = 0;
-		}
-
-		m_iPrevGroupFilled = currentGroup;
-	}
 }
 
 HRESULT CUIBeta::Render()
@@ -130,10 +113,10 @@ HRESULT CUIBeta::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::BETA))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -147,12 +130,12 @@ HRESULT CUIBeta::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBaseBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBuffer))))
+	/* Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
-	/* Com_Texture_HP */
+	/* Com_Texture_Beta */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
 		TEXT("Com_Texture_Beta"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
@@ -209,11 +192,6 @@ HRESULT CUIBeta::Execute(const UI_EVENT_DESC& EventDesc)
 	return S_OK;
 }
 
-//HRESULT CUIBeta::Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg)
-//{
-//	return S_OK;
-//}
-
 void CUIBeta::CallbackEvent(void* pArg)
 {
 }
@@ -253,6 +231,6 @@ void CUIBeta::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pVIGlowBufferCom);
 	Safe_Release(m_pFXTexture);
-	Safe_Release(m_pVIBaseBuffer);
 }

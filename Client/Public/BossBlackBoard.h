@@ -14,10 +14,17 @@ struct Naytiba_Desc;
 class CBossBlackBoard abstract : public CBlackBoard
 {
 public:
+	enum class BOSS_PAHSE { FIRST, SECOND, THIRD, END };
 	enum class BOSS_STATE
 	{
-		IDLE, ATTACK, HIT, MOVE, GROOGY, DEAD, END
+		IDLE, ATTACK, INTERACTION_ATTACK, HIT, MOVE, GROGGY, THESHOLD, CUTSCENE, DEAD, END
 	};
+
+	typedef struct PhaseChangeDesc
+	{
+		_bool				bIsCutScene;
+		_bool				bIsLastAttack;
+	}PHASE_CHANGE_DESC;
 
 	typedef struct BossBlackBoardDesc
 	{
@@ -43,17 +50,52 @@ public:
 	_float								GetTargetDistance() { return m_fTargetDistance; }
 
 	void								SetCurState(BOSS_STATE eState);
+
+	void								Set_BossPhase(BOSS_PAHSE ePhase);
+	void								Set_PlayCutScene();
+
+	_bool								Is_PlayPhaseChangeCutScene();
+	_uint								Get_NumBossPhases();
+	_float								Get_CurrentPhaseLitmitPercent();
+
+	const BOSS_PAHSE&					Get_BossPhase() { return m_eBossPhase; }
+	_bool								IsLastPhase();
+
 	const BOSS_STATE&					GetCurState() { return m_eCurState; }
 	const BOSS_STATE&					GetPreState() const { return m_ePreState; }
 
 	void								SetHitData(const Default_Damage_Desc* pSkill);
 	const Default_Damage_Desc*			GetHitData();
 
+	void								AccAttackDelay(_float fTimeDelta);
+	void								ClearAttackTimer();
+
 	void								SetAttackDelay(_float fDelay);
-	_float								GetAttackDelay() { return m_fAttackDelay; }
+	_float								GetAttackDelay() { return m_fAttackDelay.y; }
+
+	void								AccGroggyTime(_float fTimeDelta);
+	void								EnterGroggy();
+	
+	_bool								ExitGroggy();
+
+	void								SetPhaseLastAttack(_bool bIsFlag);
+	_bool								IsCurrentPhaseLastAttackAction();
+	_bool								IsPhaseLastAttack() { return m_bIsPhaseLastAttack; }
+
+	void								EnterExcution(NAYITBA_EXECUTION_TYPE eExcution);
+	_bool								bIsExcution();
+	// 이걸로 공격 가능체크하고
+	// 가능하면 True를 반환.
+	_bool								IsAttackEnable();
 
 	void								SetAttackData(const Character_Skill_Desc* pAttack_Data);
 	const Character_Skill_Desc*			GetAttackData();
+
+	void								SetParryAttack();
+	void								ResetParryAttack();
+	_bool								IsParryAttack() { return m_bIsParryAttack; }
+
+	void								Reset_State();
 
 protected :
 	CGameObject*						m_pTarget = { nullptr };
@@ -63,11 +105,20 @@ protected :
 	
 	// 스킬 구조체
 	const Character_Skill_Desc*			m_pAttack_Skill = { nullptr };
+
 	//데미지구조체
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
+	_bool								m_bIsPhaseLastAttack = { false };
+	NAYITBA_EXECUTION_TYPE						m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
+	_bool								m_bIsParryAttack = { false };
+
 	_float								m_fTargetDistance = {};
-	_float								m_fAttackDelay = {};
+	_float2								m_fAttackDelay = {};
+	_float2								m_vGroggyTime = { 0.f, 4.0f };
+
+	BOSS_PAHSE									m_eBossPhase = { BOSS_PAHSE::FIRST };
+	vector<pair<_float, PHASE_CHANGE_DESC>>		m_ChangePhaseRatio;
 
 	BOSS_STATE							m_ePreState = { BOSS_STATE::END };
 	BOSS_STATE							m_eCurState = { BOSS_STATE::END };

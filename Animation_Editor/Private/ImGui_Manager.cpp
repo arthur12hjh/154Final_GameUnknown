@@ -92,7 +92,7 @@ void CImGui_Manager::Update(_float fTimeDelta)
 
 	if (nullptr != m_pSelectedObject)
 	{
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate,
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
 	}
 
@@ -146,10 +146,11 @@ void CImGui_Manager::Create_Character(const _wstring& szCharacterTag)
 		m_pSelectedObject->Set_Dead(TRUE);
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
-		m_iBeforeEventIndex = 0;
+		m_iBeforeEventIndex = -1;
 		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
+		
 		
 	}
 
@@ -174,7 +175,7 @@ void CImGui_Manager::Create_Extra(const _wstring& szModelTag)
 		m_pSelectedObject->Set_Dead(TRUE);
 		m_iSelectedAnimationIndex = 0;
 		m_iSelectedEventIndex = 0;
-		m_iBeforeEventIndex = 0;
+		m_iBeforeEventIndex = -1;
 		m_iSelectedMaterial = 0;
 		m_pAnimationList = nullptr;
 		m_pSelectedObject = nullptr;
@@ -287,6 +288,10 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("StatueA")) { iCurrentIndex = 4; }
 		if (ImGui::Selectable("StatueB")) { iCurrentIndex = 5; }
 		if (ImGui::Selectable("Banacle")) { iCurrentIndex = 6; }
+		if (ImGui::Selectable("SunFlower")) { iCurrentIndex = 7; }
+		if (ImGui::Selectable("Minion11")) { iCurrentIndex = 8; }
+		if (ImGui::Selectable("Scarlet")) { iCurrentIndex = 9; }
+		if (ImGui::Selectable("Cinematic_Gorilla")) { iCurrentIndex = 10; }
 		ImGui::EndPopup();
 	}
 
@@ -318,6 +323,18 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		case 6:
 			Create_Extra(TEXT("Prototype_Component_Model_Banacle"));
 			break;
+		case 7:
+			Create_Extra(TEXT("Prototype_Component_Model_SunFlower"));
+			break;
+		case 8:
+			Create_Extra(TEXT("Prototype_Component_Model_Minion11"));
+			break;
+		case 9:
+			Create_Character(TEXT("Prototype_GameObject_Scarlet"));
+			break;
+		case 10:
+			Create_Extra(TEXT("Prototype_Component_Model_Cinematic_Gorilla"));
+			break;
 		}
 
 		iBeforeIndex = iCurrentIndex;
@@ -340,8 +357,6 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 	static _bool bIsDebugPhysicsIndex = FALSE;
 	static _bool bIsGridActive = FALSE;
 
-	static _float fTimeMultiply = 1.f;
-
 	if (ImGui::BeginPopup("EditorPreferences"))
 	{
 		ImGui::Text("RenderTargets");
@@ -357,9 +372,9 @@ void CImGui_Manager::Update_ToolBar_Editor_Preferences()
 			m_pGameInstance->Set_DebugColliderVisible(bIsDebugPhysicsIndex);
 		}
 		ImGui::Text("Timer");
-		if (ImGui::DragFloat("DeltaTime", &fTimeMultiply, 0.01f, 0.f, 3.f, "%.2f"))
+		if (ImGui::DragFloat("DeltaTime", &m_fTimeMultiply, 0.01f, 0.f, 3.f, "%.2f"))
 		{
-			m_pGameInstance->SetGameSpeed(fTimeMultiply);
+			m_pGameInstance->SetGameSpeed(m_fTimeMultiply);
 		}
 		if (ImGui::DragFloat("RootMotion", &m_fRootMagnification, 0.01f, 0.f, 3.f, "%.2f"))
 		{
@@ -416,9 +431,15 @@ void CImGui_Manager::Update_AnimationList()
 		ImGui::SameLine();
 		ImGui::Text("%d   ", m_iSelectedAnimationIndex);
 
-		ImGui::TextColored(vFontColor, "Selected Name:");
-		ImGui::SameLine();
-		ImGui::Text("%s", (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
+		char szAnimName[256];
+		strcpy_s(szAnimName, (*m_pAnimationList)[m_iSelectedAnimationIndex]->Get_Name());
+
+		ImGui::InputText(
+			"##SelectedAnimName",
+			szAnimName,
+			IM_ARRAYSIZE(szAnimName),
+			ImGuiInputTextFlags_ReadOnly
+		);
 
 		ImGui::TextColored(vFontColor, "Selected KeyFrame Length:");
 		ImGui::SameLine();
@@ -444,7 +465,7 @@ void CImGui_Manager::Update_AnimationList()
 		{
 			m_iSelectedAnimationIndex = i;
 			m_iSelectedEventIndex = 0;
-			m_iBeforeEventIndex = 0;
+			m_iBeforeEventIndex = -1;
 			Update_AnimNotifyList(pAnimation);	// 애니메이션 이름을 기반으로한 map에서 받아오면 될듯. 일단 미루자
 		}
 	}
@@ -452,7 +473,8 @@ void CImGui_Manager::Update_AnimationList()
 	if (m_iSelectedAnimationIndex != m_iBeforeAnimationIndex)
 	{
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex);
+		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex, true, 0.f);
+		Update_AnimNotifyList((*m_pAnimationList)[m_iSelectedAnimationIndex]);
 	}
 
 	ImGui::EndChild();
@@ -499,7 +521,7 @@ void CImGui_Manager::Update_KeyFrameTool()
 	ImGui::Begin(u8"KeyFrame", NULL, ImGuiWindowFlags_MenuBar);
 
 	Update_TimeLine();
-	Update_TextureMap();
+	//Update_TextureMap();
 	Update_EventMaker();
 
 	ImGui::End();
@@ -523,7 +545,7 @@ void CImGui_Manager::Update_TimeLine()
 
 	//ImGui::BeginChild(u8"ChildTimeLine", ImVec2(0, 500), true);
 	
-	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 360.f);
+	ImVec2 vCanvasSize = ImVec2(ImGui::GetContentRegionAvail().x, 720.f);
 
 	ImGui::InvisibleButton("Canvas_Timeline", vCanvasSize, ImGuiButtonFlags_MouseButtonLeft);	// 이걸로 타임라인 캔버스 전체를 클릭 가능한 영역으로 만듬
 	

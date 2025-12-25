@@ -2,6 +2,8 @@
 
 #include <process.h>
 #include "../Default/framework.h"
+#include "Clinet_ColorPallet.h"
+#include "ClientStruct.h"
 #include "GameStruct.h"
 
 namespace Client
@@ -9,7 +11,15 @@ namespace Client
 	const unsigned int			g_iWinSizeX = 1600;
 	const unsigned int			g_iWinSizeY = 900;
 
-	enum class LEVEL { STATIC, LOADING, LOGO, GAMEPLAY, SCARLET, END };
+	enum class LEVEL 
+	{ 
+		STATIC,
+		LOADING,
+		LOGO,
+		GAMEPLAY,
+		SCARLET,
+		LEVEL_PROB,
+		END };
 }
 
 using namespace Client;

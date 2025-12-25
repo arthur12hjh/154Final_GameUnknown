@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Prob_Interaction.h"
 
+#include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
-#include "UIBase.h"
+#include "InteractionUIBinder.h"
+
 
 CProb_Interaction::CProb_Interaction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CActor(pDevice, pContext),
@@ -29,6 +30,10 @@ HRESULT CProb_Interaction::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+   /* PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+    m_InteractionDesc = m_pGameManager->Find_InteractionData(pDesc->iInteractionID);
+    m_pInteractionCom->Set_InterDesc(m_InteractionDesc);*/
+
     return S_OK;
 }
 
@@ -49,6 +54,25 @@ HRESULT CProb_Interaction::Render()
     return S_OK;
 }
 
+HRESULT CProb_Interaction::Begin_OverlapCallBack()
+{
+    if(m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
+        m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+
+    return S_OK;
+}
+
+HRESULT CProb_Interaction::End_OverlapCallBack()
+{
+    m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+
+    return S_OK;
+}
+
+void CProb_Interaction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
+{
+}
+
 CGameObject* CProb_Interaction::Clone(void* pArg)
 {
     return nullptr;
@@ -60,5 +84,4 @@ void CProb_Interaction::Free()
 
     Safe_Release(m_pGameManager);
     Safe_Release(m_pInteractionCom);
-    Safe_Release(m_pInteractionUI);
 }

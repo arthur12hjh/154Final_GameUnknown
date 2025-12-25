@@ -8,6 +8,7 @@ NS_END
 
 NS_BEGIN(Client)
 struct Naytiba_Desc;
+struct Naytiba_NetWork_Desc;
 
 class CMonsterMoveState final : public CState
 {
@@ -34,6 +35,7 @@ public:
 	virtual		void							End() override;
 
 private:
+	const Naytiba_NetWork_Desc*					m_pInitOwnerInfo = { nullptr };
 	const Naytiba_Desc*							m_pOwnerInfo = { nullptr };
 	CGameObject*								m_pTarget = { nullptr };
 
@@ -43,7 +45,9 @@ private:
 
 	_bool										m_bIsCaution = { false };
 	_float3										m_vMovePoint = {};
+
 	_float										m_fMoveSpeed = { 2.f };
+
 
 	// 목표 지점에 들어갔을떄
 	function<void(_float)>						m_OnMoveCompleted;

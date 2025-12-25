@@ -2,17 +2,21 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D g_Texture;
-texture2D g_Texture0;
-texture2D g_Texture1;
-texture2D g_Texture2;
-texture2D g_Texture3;
-texture2D g_Texture4;
-texture2D g_DepthTexture;
+Texture2D g_Texture;
+Texture2D g_Texture0;
+Texture2D g_Texture1;
+Texture2D g_Texture2;
+Texture2D g_Texture3;
+Texture2D g_Texture4;
+Texture2D g_Texture5;
+Texture2D g_Texture6;
+Texture2D g_Texture7;
+Texture2D g_DepthTexture;
 
 vector g_Color = 1.f;
 
 float2 g_UIPosition;
+float2 g_UIOffset;
 float2 g_UISize;
 vector g_UIDebugLineColor;
 
@@ -51,6 +55,21 @@ bool g_UseCover = false;
 
 bool g_bRushActiveOn = false;
 
+bool g_bUseScale = false;
+float g_fScale = { 1.f };
+
+bool g_isFinisher = false;
+float g_fRotation = 0.f;
+
+bool g_isActive = false;
+
+float2 g_vTransOffset = { 0.f, 0.f };
+
+float2 g_AtlasCount = { 0.f, 0.f };
+float2 g_AtlasIndex = { 0.f, 0.f };
+
+float2 g_vWindowSize = { 1600.f, 900.f };
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -74,33 +93,78 @@ struct VS_IN
 {
     float3 vPosition : POSITION;
     float2 vTexcoord : TEXCOORD0;
+    
+    float4 vUVAtlasSize : TEXCOORD1;
+    float4 vUVAtlasOffset : TEXCOORD2;
+    float4 vAtlasIndex : TEXCOORD3;
 };
 
 struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
+    float4 vAtlasIndex : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
-    
+  
     /* In.vPosition * 월드 * 뷰 * 투영 */    
     //float4x4 == matrix
     matrix matWV, matWVP;
-    
+  
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
-    
+  
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    
-    /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
-    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */     
+  
     Out.vTexcoord = In.vTexcoord;
-    
+      
     return Out;
 }
+
+VS_OUT VS_INSTANCE_MAIN(VS_IN In)
+{
+    VS_OUT Out;
+
+    float3 pos = In.vPosition.xyz;
+  
+    if (In.vUVAtlasSize.z != 0.f && In.vUVAtlasSize.w != 0)
+        pos.xy *= In.vUVAtlasSize.zw;
+  
+    pos.xy += In.vUVAtlasOffset.zw;
+  
+    // Position    
+    float4 worldPos = mul(float4(pos, 1.f), g_WorldMatrix);
+    float4 viewPos = mul(worldPos, g_ViewMatrix);
+    Out.vPosition = mul(viewPos, g_ProjMatrix);
+
+    // Local UV
+    float2 uvScale = In.vUVAtlasSize.xy;
+    float2 uvOffset = In.vUVAtlasOffset.xy;
+
+    if (uvScale.x == 0.f && uvScale.y == 0.f)
+    {
+        uvScale = float2(1.f, 1.f);
+        uvOffset = float2(0.f, 0.f);
+    }
+
+    float2 localUV = In.vTexcoord * uvScale + uvOffset;
+
+    // Atlas UV
+    float2 atlasCount = max(g_AtlasCount.xy, float2(1.f, 1.f));
+    float2 tileSize = 1.f / atlasCount;
+    float2 tileMin = In.vAtlasIndex.xy * tileSize;
+  
+    float2 final = tileMin + localUV * tileSize;
+  
+    Out.vTexcoord = final;
+    Out.vAtlasIndex = In.vAtlasIndex;
+
+    return Out;
+}
+
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
@@ -110,6 +174,7 @@ struct PS_IN
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
+    float4 vAtlasIndex : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -338,6 +403,9 @@ PS_OUT PS_UI_GLOW_FX(PS_IN In)
     
     Out.vColor = baseColor;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     //Out.vColor.a *= g_Alpha;
     //
     //if(Out.vColor.a <= 0.05f)
@@ -376,11 +444,11 @@ PS_OUT PS_HP_GAUGE(PS_IN In)
     // ----------------------------
     //  TintColor
     // ----------------------------
-    //if (g_bUseTintColor)
-    //{
-    //    gaugeColor.rgb *= g_vTintColor.rgb;
-    //    gaugeColor.a *= g_vTintColor.a;
-    //}
+    if (g_bUseTintColor)
+    {
+        GaugeColor.rgb *= g_vTintColor.rgb;
+        GaugeColor.a *= g_vTintColor.a;
+    }
   
     float4 CombinedColor = BgColor;
     CombinedColor = lerp(CombinedColor, GaugeColor, GaugeColor.a);
@@ -391,6 +459,9 @@ PS_OUT PS_HP_GAUGE(PS_IN In)
     Out.vColor = CombinedColor;
     //Out.vColor.a *= g_Alpha;
 
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -430,6 +501,9 @@ PS_OUT PS_POTION(PS_IN In)
     // ----------------------------
     Out.vColor = GaugeColor *= TintColor;
     //Out.vColor.a *= g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
 
     return Out;
 }
@@ -505,81 +579,11 @@ PS_OUT PS_SHIELD(PS_IN In)
 
     Out.vColor = lerp(bg, fg, fg.a);
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
-
-//PS_OUT PS_SHIELD(PS_IN In)
-//{    
-//    PS_OUT Out;
-//    Out.vColor = float4(0, 0, 0, 0);
-
-//    float2 uv = In.vTexcoord;
-
-//    float rightFill = saturate((g_fFillAmount - 0.5) * g_GroupCount);
-//    float leftFill = saturate(g_fFillAmount * g_GroupCount);
-    
-//    float leftEnd = 0.5 - g_UVGap * 0.5;
-//    float rightStart = 0.5 + g_UVGap * 0.5;
-
-//    // GAP → 완전 투명
-//    if (uv.x > leftEnd && uv.x < rightStart)
-//        return Out;
-
-//    //-----------------------------------------------
-//    // LEFT BLOCK (배경 FULL + 전경만 Clip)
-//    //-----------------------------------------------
-//    if (uv.x < leftEnd)
-//    {
-//        float localX = uv.x / leftEnd;
-
-//        // ---- 타일 반복 UV ----
-//        float2 tileUV;
-//        tileUV.x = frac(localX * g_UVScale.x);
-//        tileUV.y = frac(uv.y * g_UVScale.y);
-
-//        // 1) 배경은 항상 FULL
-//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-//        // 2) 전경은 FillAmount 기준으로 잘라냄
-//        float4 fgColor = float4(0, 0, 0, 0);
-
-//        if (localX <= leftFill)        // 조건 만족할 때만 FG를 그린다
-//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-//        fgColor *= g_vTintColor;
-        
-//        // 최종 색 = BG + FG
-//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
-//        return Out;
-//    }
-
-
-//    //-----------------------------------------------
-//    // RIGHT BLOCK (배경 FULL + 전경만 Clip)
-//    //-----------------------------------------------
-//    if (uv.x > rightStart)
-//    {
-//        float localX = (uv.x - rightStart) / (1.0 - rightStart);
-
-//        float2 tileUV;
-//        tileUV.x = frac(localX * g_UVScale.x);
-//        tileUV.y = frac(uv.y * g_UVScale.y);
-
-//        float4 bgColor = g_Texture0.Sample(DefaultSampler, tileUV);
-
-//        float4 fgColor = float4(0, 0, 0, 0);
-
-//        if (localX <= rightFill)
-//            fgColor = g_Texture1.Sample(DefaultSampler, tileUV);
-
-//        fgColor *= g_vTintColor;
-        
-//        Out.vColor = lerp(bgColor, fgColor, fgColor.a);
-//        return Out;
-//    }
-
-//    return Out;
-//}
 
 /*------------------[E_SHIELD]----------------*/
 
@@ -651,30 +655,111 @@ PS_OUT PS_BETA(PS_IN In)
     fg *= g_vTintColor;
 
     Out.vColor = lerp(bg, fg, fg.a);
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
 /*------------------[E_BETA]----------------*/
+
+/*------------------[S_BETA_FX]----------------*/
+
+PS_OUT PS_BETA_FX(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 result = 0.f;
+    
+    if(g_isActive)
+    {
+        float2 Scale2UV = In.vTexcoord;
+        Scale2UV -= float2(0.5f, 0.5f);
+        Scale2UV /= 2.25f;
+        Scale2UV += float2(0.5f, 0.5f);
+   
+        float4 glow1 = g_Texture1.Sample(ClampSampler, Scale2UV);
+        result.rgb = glow1.rgb * float3(0.988f, 1.000f, 1.000f) * g_GlowIntensity;
+        //result.rgb = glow1.rgb * float3(0.f, 0.6f, 0.6f) * g_GlowIntensity;
+    }
+    else
+    {
+        float2 Center = float2(0.5f, 0.5f);
+        float s = sin(g_fRotation);
+        float c = cos(g_fRotation);
+
+        float2 rotatedUV;
+        float2 d = uv - Center;
+        rotatedUV.x = d.x * c - d.y * s;
+        rotatedUV.y = d.x * s + d.y * c;
+    
+        rotatedUV /= g_fScale;
+    
+        rotatedUV += Center;
+        
+        float4 glow0 = g_Texture0.Sample(ClampSampler, rotatedUV);
+        
+        result.rgb = glow0.rgb * float3(0.988f, 1.000f, 1.000f);
+        //result.rgb = glow0.rgb * float3(0.f, 0.6f, 0.6f);
+    }
+    
+    Out.vColor.rgb = result.rgb * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_BETA_FX]----------------*/
 
 /*------------------[S_SKILL_SLOT]----------------*/
 PS_OUT PS_SKILL_SLOT(PS_IN In)
 {
     PS_OUT Out;
     
+    float2 uv = In.vTexcoord;
     float4 TintColor = 1.f;
     
-    float4 shadow = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
-    float4 frame = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+    float4 shadow = g_Texture0.Sample(DefaultSampler, uv);
+    float4 frame = g_Texture1.Sample(DefaultSampler, uv);
     float4 icon = 0.f;
     float4 cover = 0.f;
+    float4 cost = 0.f;
+    float4 costDeco = 0.f;
     
     if(g_bUseTintColor)
         TintColor = g_vTintColor;
     
     if(g_isUseable)
     {   
-        icon = g_Texture2.Sample(DefaultSampler, In.vTexcoord);
+        icon = g_Texture2.Sample(DefaultSampler, uv);
         icon *= TintColor;
+        
+        float2 vCostScale = uv;
+        vCostScale -= float2(0.7f, 0.8f);
+        vCostScale /= 0.2f;
+        vCostScale += float2(0.7f, 0.8f);
+        
+        cost = g_Texture4.Sample(ClampSampler, vCostScale);
+        float4 costTint = float4(
+            0.443136990070343,
+            0.49803900718688965,
+            0.521569013595581,
+            1.0
+        );
+        
+        cost.rgb *= costTint.rgb;
+        cost.a *= costTint.a;
+        
+        float2 vCostDecoScale = uv;
+        vCostDecoScale -= float2(0.8f, 0.8f);
+        vCostDecoScale /= 0.1f;
+        vCostDecoScale += float2(0.8f, 0.8f);
+        
+        costDeco = g_Texture5.Sample(ClampSampler, vCostDecoScale);
+        costDeco.rgb *= costTint.rgb;
+        costDeco.a *= costTint.a;
     }
     
     if (g_UseCover)
@@ -686,8 +771,12 @@ PS_OUT PS_SKILL_SLOT(PS_IN In)
     result = lerp(result, frame, frame.a);
     result = lerp(result, icon, icon.a);
     result = lerp(result, cover, cover.a);
+    result = lerp(result, cost, cost.a);
+    result = lerp(result, costDeco, costDeco.a);
     
     Out.vColor = result;
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -717,6 +806,8 @@ PS_OUT PS_SKILL_SLOT_GLOW(PS_IN In)
     result = lerp(result, glow1, glow1.a);
     
     Out.vColor = result;
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -775,6 +866,9 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
     
     Out.vColor = result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -783,27 +877,7 @@ PS_OUT PS_RUSH_SLOT(PS_IN In)
 /*------------------[S_RUSH_SLOT_GLOW]----------------*/
 
 PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
-{
-    //PS_OUT Out;
-  
-    //float2 uv = In.vTexcoord;
-
-    ////float4 CoolTimeColor = float4(0.6235294118, 0.6823529412, 0.7882352941, 1.0);
-    
-    //float4 glow0 = g_Texture0.Sample(DefaultSampler, uv);
-    
-    //if(g_bUseGlow)
-    //{
-    //    glow0.rgb += glow0.rgb * g_GlowIntensity;
-    //    glow0.rgb *= glow0.a * 0.5;
-    //}
-    
-    //float4 result = glow0;
-    
-    //Out.vColor = result;
-    
-    //return Out;
-    
+{    
     PS_OUT Out;
   
     float2 uv = In.vTexcoord;
@@ -835,6 +909,9 @@ PS_OUT PS_RUSH_SLOT_GLOW(PS_IN In)
     
     Out.vColor = result;
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
@@ -859,6 +936,9 @@ PS_OUT PS_SKILL_WRAPPER_ON_LINE(PS_IN In)
     float4 result = saturate(glow0 + glow1);
     
     Out.vColor = result * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -885,6 +965,9 @@ PS_OUT PS_SKILL_WRAPPER_ON_FX(PS_IN In)
     glow0.a = alpha;
     
     Out.vColor = glow0 * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
     
     return Out;
 }
@@ -942,16 +1025,459 @@ PS_OUT PS_LOADING_BLUR(PS_IN In)
         Out.vColor.rgb += sum.rgb * g_GlowIntensity;
     }
     
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
     return Out;
 }
 
 /*------------------[E_LOADING_BLUR]----------------*/
 
+/*------------------[S_SIMPLE_KEY]----------------*/
+
+PS_OUT PS_SIMPLE_KEY(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    float2 KeyUv = In.vTexcoord;
+    float baseScale = 0.25f;
+    float4 cooltime = 0.f;
+    float4 locked = 0.f;
+    
+    //float4 Color = float4(1.f, 1.f, 1.f, 1.f);
+    
+    //uv -= float2(0.5f, 0.5f);
+    //uv /= baseScale;
+    //uv += float2(0.5f, 0.5f);
+    
+    //float base = g_Texture0.Sample(ClampSampler, uv).r;
+    
+    //base *= 1.f - g_fScale;
+    //Color.a *= base;
+    
+    if(g_bUseScale)
+    {
+        KeyUv -= float2(0.5f, 0.5f);
+        KeyUv /= g_fScale;
+        KeyUv += float2(0.5f, 0.5f);
+    }
+    
+    float4 key = g_Texture0.Sample(ClampSampler, KeyUv);
+    
+    key.a *= g_Alpha;
+    
+    if (g_bUseCoolTime)
+    {
+        cooltime = g_Texture1.Sample(DefaultSampler, In.vTexcoord);
+        
+        float mask = CoolMask(In.vTexcoord, g_fCoolAmount);
+        cooltime *= mask;
+        //cooltime.a *= 1.25f;
+        //cooltime.a = g_Alpha;
+    }
+    
+    float4 result = key;
+    result = lerp(result, cooltime, cooltime.a);
+    result.a *= g_Alpha;
+    
+    Out.vColor = result;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_SIMPLE_KEY]----------------*/
+
+/*------------------[S_INTERACTION_FX]----------------*/
+
+PS_OUT PS_INTERACTION_FX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float4 base = g_Texture0.Sample(ClampSampler, uv);
+    base.a *= g_Alpha * 0.5f;
+    
+    Out.vColor = base;
+    
+    return Out;
+}
+
+/*------------------[E_INTERACTION_FX]----------------*/
+
+/*------------------[S_INTERACTION_FX_GLOW]----------------*/
+
+PS_OUT PS_INTERACTION_FX_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+    float2 uv = In.vTexcoord;
+    float2 ScaleUV = In.vTexcoord;
+
+    ScaleUV -= float2(0.5f, 0.5f);
+    ScaleUV /= g_fScale;
+    ScaleUV += float2(0.5f, 0.5f);
+    
+    // GlowMask
+    float4 glow = g_Texture0.Sample(ClampSampler, ScaleUV);
+    // LightFX
+    float4 flare = g_Texture1.Sample(DefaultSampler, uv);
+
+    // --- Additive 합성 ---
+    // Additive = rgb끼리 더하고 alpha는 필요 없음
+    float3 result = float3(0, 0, 0);
+
+    // GlowMask의 "빛나는 부분"만 add
+    glow.a *= g_Alpha * 0.5f;
+    result += glow.rgb * glow.a * (g_GlowIntensity * 0.5f);
+    
+    // LightFX의 "빛나는 부분" 추가
+    flare.a *= g_Alpha;
+    result += flare.rgb * flare.a * g_GlowIntensity;
+    
+    Out.vColor = float4(result, 1.f); // additive는 보통 알파 1로 출력
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_INTERACTION_FX_GLOW]----------------*/
+
+/*------------------[S_STAMINA]----------------*/
+
+PS_OUT PS_STAMINA(PS_IN In)
+{
+    PS_OUT Out;
+    Out.vColor = float4(0, 0, 0, 0);
+
+    float2 uv = In.vTexcoord;
+
+    int tileCount = g_GroupCount;
+
+// 타일 폭 (GAP 반영)
+    float tileWidth = (1.0 - g_UVGap * (tileCount - 1)) / tileCount;
+
+// 현재 픽셀의 타일 찾기
+    int tileIndex = -1;
+    float start = 0;
+    float end = tileWidth;
+
+    for (int i = 0; i < tileCount; i++)
+    {
+        if (uv.x >= start && uv.x < end)
+        {
+            tileIndex = i;
+            break;
+        }
+
+        start = end + g_UVGap;
+        end = start + tileWidth;
+    }
+
+    if (tileIndex < 0)
+    {
+        Out.vColor = float4(0, 0, 0, 0);
+        return Out;
+    }
+
+//-----------------------------------------------
+// tileUV (GAP 고려된 로컬 UV)
+//-----------------------------------------------
+    float2 tileUV;
+    tileUV.x = (uv.x - start) / tileWidth;
+    tileUV.y = uv.y;
+
+//-----------------------------------------------
+// BG Only Scale 0.5
+//-----------------------------------------------
+    float2 bgUV = tileUV;
+
+    bgUV -= float2(0.5f, 0.5f);
+    bgUV /= 0.75f;
+    bgUV += float2(0.5f, 0.5f);
+
+    float4 bg = g_Texture0.Sample(ClampSampler, bgUV);
+
+//-----------------------------------------------
+// FG normal
+//-----------------------------------------------
+    float filledTiles = g_fFillAmount * tileCount;
+
+    int fullTiles = (int) filledTiles;
+    float partial = filledTiles - fullTiles;
+
+    float4 fg = float4(0, 0, 0, 0);
+
+    bool isFull = (tileIndex < fullTiles);
+    bool isPart = (tileIndex == fullTiles);
+
+    if (isFull)
+    {
+        float4 mask = g_Texture1.Sample(DefaultSampler, tileUV);
+        float4 tint = g_Texture2.Sample(DefaultSampler, float2(0.5f, 0.5f));
+        fg = mask * tint;
+    }
+    else if (isPart)
+    {
+        if (tileUV.x < partial)
+        {
+            float4 mask = g_Texture1.Sample(DefaultSampler, tileUV);
+            float4 tint = g_Texture2.Sample(DefaultSampler, float2(0.5f, 0.5f));
+            fg = mask * tint;
+        }
+    }
+
+    Out.vColor = lerp(bg, fg, fg.a);
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_STAMINA]----------------*/
+
+/*------------------[S_STAMINA_FX]----------------*/
+
+PS_OUT PS_STAMINA_FX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+
+    float2 ScaleUV = In.vTexcoord;
+    ScaleUV -= float2(0.5f, 0.5f);
+    ScaleUV /= g_fScale;
+    ScaleUV += float2(0.5f, 0.5f);
+
+    float2 GlowUV = In.vTexcoord;
+    GlowUV -= float2(0.5f, 0.5f);
+    GlowUV *= 2.f;
+    GlowUV += float2(0.5f, 0.5f);
+
+// 텍스쳐 샘플링
+    float4 Glow = g_Texture0.Sample(ClampSampler, ScaleUV);
+    //float4 OutLine = g_Texture1.Sample(ClampSampler, ScaleUV);
+
+    Glow.rgb += Glow.rgb * (g_GlowIntensity * 2.f);
+    Glow.rgb *= Glow.a;
+
+    //OutLine.rgb += OutLine.rgb * g_GlowIntensity;
+    //OutLine.rgb *= OutLine.a;
+
+    //float4 result = lerp(Glow, OutLine, OutLine.a);
+
+    //Glow.rgb += OutLine.rgb;
+    //Glow.a *= OutLine.a;
+    
+    Out.vColor.rgb = Glow.rgb * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_STAMINA_FX]----------------*/
+
+/*------------------[S_LOCKON]----------------*/
+
+PS_OUT PS_LOCKON(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float4 LockOn = 0.f;
+    float4 Shadow = 0.f;
+    float4 Key = 0.f;
+    float4 Ring = 0.f;
+    
+    float4 Result = 0.f;
+    
+    float2 DotUV = In.vTexcoord;
+    DotUV -= float2(0.5f, 0.5f);
+    DotUV /= 0.16f;
+    DotUV += float2(0.5f, 0.5f);
+        
+    LockOn = g_Texture0.Sample(ClampSampler, DotUV);
+        
+    Result = LockOn;
+    
+    if (g_isFinisher)
+    {
+        float2 Center = float2(0.5f, 0.5f);
+        float s = sin(g_fRotation);
+        float c = cos(g_fRotation);
+
+        float2 rotatedUV;
+        float2 d = uv - Center;
+        rotatedUV.x = d.x * c - d.y * s;
+        rotatedUV.y = d.x * s + d.y * c;
+        rotatedUV += Center;
+        
+        float2 ScaleUV = In.vTexcoord;
+        ScaleUV -= float2(0.5f, 0.5f);
+        ScaleUV /= g_fScale * 0.75f;
+        ScaleUV += float2(0.5f, 0.5f);
+        
+        float2 ShadowScaleUV = In.vTexcoord;
+        ShadowScaleUV -= float2(0.5f, 0.5f);
+        ShadowScaleUV /= 1.2f;
+        ShadowScaleUV += float2(0.5f, 0.5f);
+        
+        Shadow = g_Texture1.Sample(ClampSampler, ShadowScaleUV);
+        Key = g_Texture2.Sample(ClampSampler, ScaleUV);
+        Ring = g_Texture3.Sample(ClampSampler, rotatedUV);
+        
+        Result = Shadow;
+        Result = lerp(Result, Key, Key.a);
+        Result = lerp(Result, Ring, Ring.a);
+    }
+    
+    Out.vColor = Result;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_LOCKON]----------------*/
+
+/*------------------[S_OWNGOLD]----------------*/
+
+PS_OUT PS_OWNGOLD(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float2 ScaleUV = In.vTexcoord;
+    ScaleUV -= float2(0.f, (0.5f + g_vTransOffset.y));
+    ScaleUV.x /= g_fScale;
+    ScaleUV += float2(0.f, (0.5f + g_vTransOffset.y));
+        
+    float4 Icon = g_Texture0.Sample(ClampSampler, ScaleUV);
+    float4 Shadow = g_Texture1.Sample(DefaultSampler, uv);
+        
+    float4 Color = Shadow * g_Alpha;
+    Color = lerp(Color, Icon, Icon.a);
+    
+    Out.vColor = Color * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_OWNGOLD]----------------*/
+
+/*------------------[S_POPUP]----------------*/
+
+PS_OUT PS_POPUP(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 uv = In.vTexcoord;
+    
+    float4 Dim = 0.f;
+    float4 Color = 0.f;
+    
+    //float2 CombineShadowSize = (g_UISize * 1.1f);
+    //
+    //float2 PopupScaleUV = In.vTexcoord;
+    //PopupScaleUV -= float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+    //PopupScaleUV /= CombineShadowSize / g_vWindowSize;
+    //PopupScaleUV += float2(((g_UISize.x) + g_UIPosition.x) / g_vWindowSize.x, ((g_UISize.y * 0.5f) + g_UIPosition.y) / g_vWindowSize.y);
+      
+    //PopupScaleUV -= float2(0.5f, 0.5f);
+    //PopupScaleUV /= CombineShadowSize;
+    //PopupScaleUV += float2(0.5f, 0.5f);
+    
+    float4 Popup = g_Texture1.Sample(DefaultSampler, uv);
+    
+    //if(g_isActive)
+    //{
+    //    Dim = g_Texture0.Sample(DefaultSampler, uv);
+    //    Color = lerp(Color, Dim, Dim.a * 0.25f);
+    //}
+    
+    Color = lerp(Color, Popup, Popup.a * 2.f);
+    
+    Out.vColor = Color * g_Alpha;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_POPUP]----------------*/
+
+/*------------------[S_COSTUME_ANSWER]----------------*/
+
+PS_OUT PS_COSTUME_ANSWER(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Icons = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vColor = Icons;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_COSTUME_ANSWER]----------------*/
+
+/*------------------[S_COSTUME_BUTTONS]----------------*/
+
+PS_OUT PS_COSTUME_BUTTONS(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Icons = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    Icons *= g_vTintColor;
+    
+    if (In.vAtlasIndex.w == 1)
+        Icons.rgb = float3(1.f, 1.f, 1.f);
+        
+    Out.vColor = Icons;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_COSTUME_BUTTONS]----------------*/
+
+/*------------------[S_UNLOCK_FX]----------------*/
+
+PS_OUT PS_UNLOCK_FX(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Unlock = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vColor = Unlock * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_UNLOCK_FX]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
     {
-        SetRasterizerState(RS_Cull_None);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -1044,11 +1570,11 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
     
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
     
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_BETA();
+        PixelShader = compile ps_5_0 PS_BETA_FX();
     }
 
     pass SKILL_SLOT // 9
@@ -1119,5 +1645,115 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LOADING_BLUR();
+    }
+
+    pass SIMPLE_KEY // 16
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SIMPLE_KEY();
+    }
+
+    pass INTERACTION_FX // 17
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_INTERACTION_FX();
+    }
+
+    pass INTERACTION_FX_GLOW // 18
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_INTERACTION_FX_GLOW();
+    }
+
+    pass STAMINA // 19
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_STAMINA();
+    }
+
+    pass STAMINA_FX // 20
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_STAMINA_FX();
+    }
+
+    pass LOCKON // 21
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LOCKON();
+    }
+
+    pass OWNGOLD // 22
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OWNGOLD();
+    }
+
+    pass POPUP // 23
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_POPUP();
+    }
+
+    pass COSTUME_ANSWER // 24
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COSTUME_ANSWER();
+    }
+
+    pass COSTUME_BUTTONS // 25
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COSTUME_BUTTONS();
+    }
+
+    pass UNLOCK_FX // 26
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_UNLOCK_FX();
     }
 }

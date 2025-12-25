@@ -28,12 +28,15 @@ public:
 public:
 	HRESULT					Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight);
 	CLight*					Find_Light(_uint iIndex);
+	
+	void					Clear_Light();
 	void					Clear_DeadLight();
 
 	HRESULT					Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	HRESULT					Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	const	list<CLight*>*	GetAllLight() { return &m_Lights; }
 
+	LIGHT_DESC*				Get_Directional_Desc();
 private:
 #ifdef _DEBUG
 	ID3D11Device*					m_pDevice = nullptr;
@@ -46,6 +49,7 @@ private:
 #endif
 	list<CLight*>					m_Lights;
 
+	CLight*							m_pDirectional = { nullptr };
 public:
 #ifdef _DEBUG
 	static CLight_Manager*			Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

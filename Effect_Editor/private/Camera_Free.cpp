@@ -79,7 +79,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 		ShowCursor(m_bIsCursor = true);
 	}
 
-	__super::Bind_Matrices();
+	__super::Bind_Matrices(fTimeDelta);
 }
 
 void CCamera_Free::Update(_float fTimeDelta)

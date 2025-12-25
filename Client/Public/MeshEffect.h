@@ -63,6 +63,7 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
 	_float		m_fTime = {};
+	_uint			m_iRenderCount = {};
 	MESH_EFFECT_DATA	m_tData;
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };

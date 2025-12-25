@@ -64,6 +64,14 @@ HRESULT CCharacter::Render()
 	return S_OK;
 }
 
+void CCharacter::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
+{
+}
+
+void CCharacter::Attack_Interaction(void* pArg)
+{
+}
+
 HRESULT CCharacter::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 {
 

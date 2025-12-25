@@ -25,9 +25,23 @@ HRESULT CTask_Dead::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_Dead::Update(_float fTimeDelta)
 {
-    // 애니메이션을 받아서 재생한다. 
-    m_pOwner->Set_Animation("M_Finish_DeadLink");
-    m_pOwner->Play_Animation(fTimeDelta);
+    const NAYTIBA_DESC* CharacterInfo = m_pBlackBoard->GetBossInfo();
+    const NAYTIBA_NETWORK_DESC* CharacterInitInfo = m_pBlackBoard->GetBossDefaultInfo();
+    _float fPercent = (_float)CharacterInfo->iCurrentHealth / (_float)CharacterInitInfo->iMaxHealth;
+
+    if (0.f >= fPercent)
+    {
+        // 애니메이션을 받아서 재생한다. 
+        m_pOwner->Set_Animation("M_Finish_DeadLink");
+        m_pOwner->Play_Animation(fTimeDelta);
+
+        m_fDeadEndTime += fTimeDelta;
+        if (!m_bIsDeadEffect && 0.5f <= m_fDeadEndTime)
+        {
+            m_pOwner->PlayDeadEffect();
+            m_bIsDeadEffect = true;
+        }
+    }
 
     return NODE_STATE::COMPLETE;
 }

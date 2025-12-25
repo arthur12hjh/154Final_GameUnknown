@@ -13,6 +13,7 @@ NS_BEGIN(Client)
 
 class CUIBase;
 class CUIAnimManager;
+class CGameManager;
 
 class CUIHUD final : public CGameHUD
 {
@@ -39,7 +40,7 @@ public:
 
 	void Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag, _float fDelay = 0.f);
 	void Anim_Stop(_wstring szLayerTag, _wstring szUITag);
-	_bool Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag);
+	_bool Check_AnimFinish(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag); // 해당하는 애니메이션이 끝나면 true반환
 
 	// World UI
 	HRESULT Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUITag,
@@ -48,13 +49,25 @@ public:
 
 	CUIBase* Rent_WorldUI(const _wstring& szPoolTag,
 							CGameObject* pParent,
-							const _float3& vTargetPos = { 0,0,0 },
+							const _float3* vTargetPos = nullptr,
 							_bool bBillboard = true);
 
 	void Return_WorldUI(CUIBase*& pUI);
 
+	// Interaction UI
+	/*HRESULT Add_InteractionUI(_int iIdx);
+	void Remove_InteractionUI(CUIBase* pUI);*/
+
 	void Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc);
 	CUIBase* Get_UIObject(_wstring szLayerTag, _wstring szUITag);
+
+	void Open_Popup(const _wstring& szPopupTag);
+	void Close_Popup(const _wstring& szPopupTag);
+	_bool Check_isOpenPopup(const _wstring& szPopupTag);
+
+	// 한글 때문에 만듦
+	string WStringToUTF8(const _wstring& wstr);
+	_wstring UTF8ToWString(const string& str);
 
 private:
 	void Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot);
@@ -63,17 +76,18 @@ private:
 	void Reset_WorldUI_State(CUIBase* pUI);
 
 private:
-	// 한글 때문에 만듦
-	string WStringToUTF8(const _wstring& wstr);
-	_wstring UTF8ToWString(const string& str);
-
 	_bool m_bShowDebugRect{ true };
 
 	CUIAnimManager* m_pUIAnimMgr{ nullptr };
 
-	unordered_map<_wstring, vector<CUIBase*>> m_WorldUIs;
+	unordered_map<_wstring, vector<CUIBase*>> m_WorldUIs{};
+	unordered_map<_wstring, vector<CUIBase*>> m_RentWorldUIs{};
+	vector<CUIBase*> m_InteractionUIs{};
 
 	CGameInstance* m_pGameInstance{ nullptr };
+	CGameManager* m_pGameManager{ nullptr };
+
+	const NAYTIBA_DESC* m_pNaytibaDesc{ nullptr };
 
 public:
 	static CUIHUD* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

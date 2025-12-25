@@ -4,6 +4,59 @@
             {
                 "Children": [
                     {
+                        "Children": [
+                            {
+                                "Shader": {
+                                    "bUseGlow": true,
+                                    "bUseScale": true,
+                                    "fGlowIntensity": 0.0,
+                                    "fGlowSpread": 0.0,
+                                    "fScale": 0.0
+                                },
+                                "fAlpha": 0.0,
+                                "fOffsetX": 0.0,
+                                "fOffsetY": 0.0,
+                                "fRotation": 0.0,
+                                "fSizeX": 60.0,
+                                "fSizeY": 60.0,
+                                "fX": 514.0,
+                                "fY": 115.0,
+                                "iDepth": 3,
+                                "iDrawType": 1,
+                                "iLevel": 3,
+                                "iRenderGroup": 9,
+                                "iVisibility": 1,
+                                "szAnimTags": [
+                                    {
+                                        "szAnimTag": "Boss_Stamina_FX",
+                                        "szPrefabTag": "Stamina_FX"
+                                    }
+                                ],
+                                "szLayerTag": "Layer_Boss",
+                                "szProtoTag": "Prototype_GameObject_UI_BossStaminaFX",
+                                "szUIID": "Boss_Stamina_BossStaminaFX_3-1",
+                                "szUITag": "Boss_StaminaFX"
+                            }
+                        ],
+                        "fAlpha": 1.0,
+                        "fOffsetX": -286.0,
+                        "fOffsetY": 40.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 132.0,
+                        "fSizeY": 12.0,
+                        "fX": 800.0,
+                        "fY": 75.0,
+                        "iDepth": 2,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szLayerTag": "Layer_Boss",
+                        "szProtoTag": "Prototype_GameObject_UI_BossStamina",
+                        "szUIID": "Vital_Wrapper_Stamina_2-4",
+                        "szUITag": "Boss_Stamina"
+                    },
+                    {
                         "Shader": {
                             "bUseTintColor": true,
                             "vTintColor": [
@@ -15,7 +68,7 @@
                         },
                         "fAlpha": 1.0,
                         "fOffsetX": 0.0,
-                        "fOffsetY": 27.0,
+                        "fOffsetY": 23.0,
                         "fRotation": 0.0,
                         "fSizeX": 704.0,
                         "fSizeY": 16.0,
@@ -37,7 +90,7 @@
                                 "Shader": {
                                     "bUseGlow": true,
                                     "bUseTintColor": true,
-                                    "fGlowIntensity": 2.1388261318206787,
+                                    "fGlowIntensity": 1.5498169660568237,
                                     "fGlowSpread": 0.0,
                                     "vTintColor": [
                                         0.4415094256401062,
@@ -123,7 +176,7 @@
                         "fSizeY": 120.0,
                         "fX": 800.0,
                         "fY": 75.0,
-                        "iDepth": 2,
+                        "iDepth": 0,
                         "iDrawType": 1,
                         "iLevel": 3,
                         "iRenderGroup": 9,
@@ -165,7 +218,7 @@
         "iDrawType": 1,
         "iLevel": 3,
         "iRenderGroup": 9,
-        "iVisibility": 0,
+        "iVisibility": 1,
         "szLayerTag": "Layer_Boss",
         "szProtoTag": "Prototype_GameObject_UI_Panel",
         "szUIID": "UI_Layer_Boss_Panel_0",

@@ -83,38 +83,67 @@ _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool i
 			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
 				iKeyFrameIndex = 0;
 
-			return ANIMATIONFLAG_RESET;
+			return iFLAG_ANIMATION_RESET;
 		}
 		else
-			return ANIMATIONFLAG_FINISH;
+			return iFLAG_ANIMATION_FINISH;
 	}
 
-	return ANIMATIONFLAG_PLAY;
+	return iFLAG_ANIMATION_PLAY;
 }
 
 _bool CAnimation::Update_CurrentKeyFrameIndices()
 {
-	float t = m_fCurrentTrackPosition;
-
-	for (size_t c = 0; c < m_Channels.size(); c++)
+	// 채널을 돌며, 각 채널별 키프레임 인덱스를 갱신해준다.
+	for (size_t i = 0; i < m_Channels.size(); i++)
 	{
-		CChannel* pChannel = m_Channels[c];
-		_uint& k = m_CurrentKeyFrameIndices[c]; 
+		CChannel* pChannel = m_Channels[i];
+		_uint& iKeyFrameIndex = m_CurrentKeyFrameIndices[i];
 
 		auto& Frames = pChannel->Get_KeyFrames();
 		if (Frames.size() <= 1)
 			continue;
 
-		// 현재 구간 찾기
-		while (k + 1 < Frames.size() &&
-			Frames[k + 1].fTrackPosition <= t)
+		//// 현재 구간 찾기
+		//while (iKeyFrameIndex + 1 < Frames.size() &&
+		//	Frames[iKeyFrameIndex + 1].fTrackPosition <= m_fCurrentTrackPosition)
+		//{
+		//	iKeyFrameIndex++;
+		//}
+		//
+		//// 애니메이션 끝 처리
+		//if (iKeyFrameIndex >= (int)Frames.size() - 1)
+		//	iKeyFrameIndex = (int)Frames.size() - 1;
+
+		// 이분탐색
+		_int iLow = iKeyFrameIndex;
+		_int iHigh = Frames.size() - 1;
+
+		/// v       v         v      
+		/// □□□□■□□★□□
+		/// 
+		///           v   v   v
+		/// □□□□□□□★□□
+		while (iLow < iHigh)
 		{
-			k++;
+			_int iMid = (iLow + iHigh) / 2;
+			if (Frames[iMid].fTrackPosition <= m_fCurrentTrackPosition)
+			{
+				iLow = iMid + 1;
+			}
+			else
+				iHigh = iMid;
 		}
 
+		if (iLow == 0)
+			iKeyFrameIndex = 0;
+		else
+			iKeyFrameIndex = iLow - 1;
+
 		// 애니메이션 끝 처리
-		if (k >= (int)Frames.size() - 1)
-			k = (int)Frames.size() - 1;
+		if (iKeyFrameIndex >= (int)Frames.size() - 1)
+			iKeyFrameIndex = (int)Frames.size() - 1;
+
 	}
 
 	return false;

@@ -19,9 +19,6 @@
     <Filter Include="02.GameObjects\BackGround">
       <UniqueIdentifier>{045c1a1c-a8ed-4e5b-bc33-e5328ed48bf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles">
-      <UniqueIdentifier>{1af5be23-53fb-447f-a0ef-0a7b40e2652d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera">
       <UniqueIdentifier>{b544119c-56b8-4206-be74-8dc3959154b3}</UniqueIdentifier>
     </Filter>
@@ -30,24 +27,6 @@
     </Filter>
     <Filter Include="100.ETC">
       <UniqueIdentifier>{6dd9368b-6d45-4ca3-8e46-1fdbc8d438c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui">
-      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt">
-      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt\Header">
-      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ImGuiDefualt\Code">
-      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Profiler">
-      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Manager">
-      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
     </Filter>
     <Filter Include="10.GameManager">
       <UniqueIdentifier>{b6aef18f-1b7e-4a2a-ad79-9041e705e206}</UniqueIdentifier>
@@ -61,24 +40,6 @@
     <Filter Include="99.Defines\GameStruct">
       <UniqueIdentifier>{6ab8c8b9-5402-4939-896e-b82f458230bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="30.ImGui\DebugCheat">
-      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\Hierarchy">
-      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader">
-      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
-      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Point">
-      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
-      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects">
       <UniqueIdentifier>{ce60062b-bb86-4f43-9bbc-c1a57894613e}</UniqueIdentifier>
     </Filter>
@@ -91,20 +52,8 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIButton">
       <UniqueIdentifier>{0f5f935b-2e05-4c3d-849e-b72d999ebbfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\Instancing">
-      <UniqueIdentifier>{f8b20de2-8cd5-433e-a016-94086d9c516f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Instancing\Mesh">
-      <UniqueIdentifier>{09d5c7ba-d714-46b3-9a99-f26cf208c227}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Instancing\Point">
-      <UniqueIdentifier>{6b8d34e8-e1fe-4ba5-84ea-2b06f3953435}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\MousePointer">
       <UniqueIdentifier>{c4792628-69ea-4deb-b7fa-2c2c9c49c61d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\Mouse">
-      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPanel">
       <UniqueIdentifier>{45be3ed5-b966-4eab-b64c-9f21bfa23ee2}</UniqueIdentifier>
@@ -114,9 +63,6 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIText">
       <UniqueIdentifier>{a6dcf38e-8add-4893-98c9-ee75f5d8e45b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\UI">
-      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects">
       <UniqueIdentifier>{b743be59-a31e-4cb5-87c1-381ef6b00699}</UniqueIdentifier>
@@ -154,50 +100,20 @@
     <Filter Include="02.GameObjects\Map\Terrain">
       <UniqueIdentifier>{efe302ec-f3ed-4deb-8411-e6749a4cb37e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\Vending">
-      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\InstanceModel">
       <UniqueIdentifier>{459986a0-678d-44ff-b63e-64b11dab1fea}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\ProbActor">
       <UniqueIdentifier>{e2fc6e3d-c95e-480a-82f6-a6097b896672}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Box">
-      <UniqueIdentifier>{47001a0e-95f6-4bd5-a250-4690844c4288}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager\CharacterDataManager">
       <UniqueIdentifier>{89ad8312-889b-4f1a-9faa-22ba45d50286}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
-      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\Interaction\ItemBox">
-      <UniqueIdentifier>{d93081bb-a7b5-41b6-ba4c-21a53dcea114}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\TestProp">
       <UniqueIdentifier>{0c4300ba-a204-406f-a605-b89b61bffd8c}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects\MeshEffect">
       <UniqueIdentifier>{6a20e5b2-90b9-436f-8a46-170e59b3d406}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Effects\PointParticle">
-      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Effects\SpriteUVEffect">
-      <UniqueIdentifier>{ef126300-d632-471f-883b-8783d7c82c1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImGui\ShaderDebugger">
-      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Vehicle">
-      <UniqueIdentifier>{1b8ff2da-fd61-4c35-a2d1-574e112582fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Building">
-      <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Actor\ProbActor\Construction">
-      <UniqueIdentifier>{fe6b4f7e-6183-4e3f-a56a-477fd6dc08f2}</UniqueIdentifier>
     </Filter>
     <Filter Include="04.Quest">
       <UniqueIdentifier>{8701fb60-c0b1-4677-9c54-45144db0eeed}</UniqueIdentifier>
@@ -331,9 +247,6 @@
     <Filter Include="02.GameObjects\AttackHitBox">
       <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character">
       <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
@@ -346,86 +259,11 @@
     <Filter Include="02.GameObjects\Character\Player\01. FSM">
       <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\01. FSM\Base">
-      <UniqueIdentifier>{4642f57f-bd5b-40b0-8187-b409ac58061f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba">
-      <UniqueIdentifier>{ff0e426b-3116-4f02-a27b-acc4715b278c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster">
-      <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM">
-      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State">
-      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead">
-      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit">
-      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle">
-      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack">
-      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Move">
-      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation">
-      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior">
-      <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
-      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
-      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
-      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
-      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\PartBody">
-      <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller">
-      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Boss">
-      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster">
-      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis">
-      <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Controller\Monster\Patrol">
-      <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\CCTHitReporter">
       <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
       <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="97.ShaderFiles\00. Util">
-      <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction">
-      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
@@ -471,9 +309,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Evade">
       <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Interaction">
-      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon">
       <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
@@ -522,45 +357,6 @@
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
       <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss">
-      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard">
-      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Service">
-      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task">
-      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead">
-      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle">
-      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move">
-      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait">
-      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
-      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
-      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
-      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Lockon">
       <UniqueIdentifier>{6f1a2b1f-7aec-47a6-89ec-1c3a7dc44792}</UniqueIdentifier>
@@ -613,20 +409,8 @@
     <Filter Include="02.GameObjects\Map\Desert\Instance">
       <UniqueIdentifier>{feb07ccf-2b93-4640-8e0d-0b5098c71ff1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift">
-      <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Iron_Floor">
       <UniqueIdentifier>{e0b6f843-a98c-4464-8bee-422c2ad226f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Body">
-      <UniqueIdentifier>{db40156a-341f-48f3-9c2a-148808dd66a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Platform">
-      <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Building\Lift\Lift_Controller">
-      <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI">
       <UniqueIdentifier>{d20edc83-b322-478f-9486-c23a95911687}</UniqueIdentifier>
@@ -652,9 +436,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX">
       <UniqueIdentifier>{37c3e0f8-291d-458e-9fa8-a175d8da52b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
-      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
       <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
     </Filter>
@@ -672,6 +453,489 @@
     </Filter>
     <Filter Include="01.Levels\GamePlay">
       <UniqueIdentifier>{490444ba-eab1-44cf-9259-6b16f02e8e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction">
+      <UniqueIdentifier>{9f3b1d4f-cabc-4503-a50e-a491952ed13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey">
+      <UniqueIdentifier>{0d498df9-81b7-4e01-b3ec-855731bc09a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX">
+      <UniqueIdentifier>{711f2d7d-b11b-4829-bb26-9e4ada82edcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry">
+      <UniqueIdentifier>{c6aeef3f-f870-4109-af74-6cd14f729c9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End">
+      <UniqueIdentifier>{9267c26b-1679-4e76-9703-790ea17fd768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success">
+      <UniqueIdentifier>{c4d0df81-c37f-4e2c-8c85-cf9b3183ab79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard">
+      <UniqueIdentifier>{132802e6-6b05-484a-8b47-291aa6dea9e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift">
+      <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Body">
+      <UniqueIdentifier>{db40156a-341f-48f3-9c2a-148808dd66a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Controller">
+      <UniqueIdentifier>{9105a85e-0b2e-4921-a87a-ec7e3c437c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Lift\Lift_Platform">
+      <UniqueIdentifier>{f2891ad4-290f-415d-8910-fffe122c6d9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\DestoryProb">
+      <UniqueIdentifier>{1368fba2-a5fa-4ea8-8b05-d446457d47fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\ProbActor\Static_Prob">
+      <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\04. CameraBone">
+      <UniqueIdentifier>{20f1c4c4-22e5-4aa5-832a-aa9113d3ec3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina">
+      <UniqueIdentifier>{32d93346-c349-4dc6-8f7d-8569d0befeab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina">
+      <UniqueIdentifier>{e78ca290-01bb-400a-bd3b-1c2b3578b431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina\UIBossStaminaFX">
+      <UniqueIdentifier>{199293ca-2b76-40b6-b23a-6e0c17a34ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina\UIMonsterStaminaFX">
+      <UniqueIdentifier>{c745f0cb-afd3-4458-8cb6-64b86fbfd7af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Door">
+      <UniqueIdentifier>{701e8900-8bbd-42db-818b-8490ef4a46f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\RepairConsole">
+      <UniqueIdentifier>{3f6dc9ba-9a6f-43a2-af3b-dec84398ffcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Top_Roof">
+      <UniqueIdentifier>{1cff9895-596c-4bb9-95b9-3cb5d10910fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet">
+      <UniqueIdentifier>{ec9b7d15-17db-4e16-b960-8063e0c4b96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Rock">
+      <UniqueIdentifier>{9b88c08a-d17f-4b8d-ac77-d57362bc0f63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\DropComponent">
+      <UniqueIdentifier>{85f00755-18e2-45fe-a218-36649cb98e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIGetterQueue">
+      <UniqueIdentifier>{0a500016-3cec-4400-bfb6-015a19d66535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\CCTQueryFilterCallback">
+      <UniqueIdentifier>{651a9412-91f3-4020-bec4-104c498b478b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Building\Architecture">
+      <UniqueIdentifier>{412b9843-e2f2-466f-b075-6996a915c366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
+      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Sprint">
+      <UniqueIdentifier>{c46e3d19-c724-4dd6-9339-73406899f2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Evade">
+      <UniqueIdentifier>{7073a845-5c53-4d35-8390-f0ad90682728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Walk">
+      <UniqueIdentifier>{bcd7b35f-3fbd-4b8f-8ca6-2c4f06bdf5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Sprint">
+      <UniqueIdentifier>{f2e289de-1474-4577-a9b3-e9297c4991c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
+      <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn">
+      <UniqueIdentifier>{67890273-70b8-4770-bff7-c4c9ad815e04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree">
+      <UniqueIdentifier>{48bc51ae-ebc7-407d-be82-6701678b8e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Grass">
+      <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
+      <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\Item">
+      <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack">
+      <UniqueIdentifier>{160b9f71-8abf-4e4d-8575-379de2c01811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST">
+      <UniqueIdentifier>{99dd7ca2-e18c-465b-b30e-89a7bc85e2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester">
+      <UniqueIdentifier>{5d12c9c1-3029-4b2f-b2bb-e20c0ac9c2c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part">
+      <UniqueIdentifier>{e32eac82-bd3d-4361-84c2-e3cc641ea9a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_CutScene">
+      <UniqueIdentifier>{b500611a-8115-4467-983f-469d5e540a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Action">
+      <UniqueIdentifier>{559b4dcb-c12d-4871-912d-69f322112f25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\RimLight">
+      <UniqueIdentifier>{b03d4615-3346-4cfd-b791-ceab1eab1e72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\ShaderManager">
+      <UniqueIdentifier>{f7ea2137-afca-4706-930f-374bc4a3fa4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner">
+      <UniqueIdentifier>{8d2807a6-6a2b-4285-9ddb-1d0de7492f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\PoolingManager">
+      <UniqueIdentifier>{89074d3c-6ab8-4ef0-9f50-5868e3322fc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX">
+      <UniqueIdentifier>{632fb142-8635-4cd8-b1c0-1eecc5f61f7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIOwnGold">
+      <UniqueIdentifier>{2398c82f-654f-42be-9953-8459ef90941b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui">
+      <UniqueIdentifier>{83982917-cf88-4a1f-9421-11784b9c1ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt">
+      <UniqueIdentifier>{63a6d40a-e024-4ca7-9847-5b4b91208b27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Header">
+      <UniqueIdentifier>{54c9f597-288a-46d8-8070-fdcf90479d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ImGuiDefualt\Code">
+      <UniqueIdentifier>{afb01a46-4284-4020-aacb-d4ca06bb4e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Profiler">
+      <UniqueIdentifier>{6a931b6f-252a-4fc5-ac03-4b07e3e24902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Manager">
+      <UniqueIdentifier>{f3888e1c-1e4e-42f0-993c-cd47d9274e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\DebugCheat">
+      <UniqueIdentifier>{c00b0cd2-3d4f-427d-b170-d5bb0ccc3dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\Hierarchy">
+      <UniqueIdentifier>{81554ffe-558d-4747-bd52-63b57718866f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\ShaderDebugger">
+      <UniqueIdentifier>{efe5a74a-4dcc-4d25-908d-90a6cc37eb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\CameraInserter">
+      <UniqueIdentifier>{f982a0fc-5ea3-474d-bec1-60601ff64a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Scarlet_Sky">
+      <UniqueIdentifier>{47e24dc7-8d2c-4dd4-b697-640438879649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TriggerBox">
+      <UniqueIdentifier>{60149dfb-06ea-4e33-be8a-8aa1ae9c936a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameManager\CinematicManager">
+      <UniqueIdentifier>{2bde5c46-d7ab-4cff-bfca-8022152cffac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel">
+      <UniqueIdentifier>{819eb382-d44c-4623-9075-a8fef9392a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicModel_Eve">
+      <UniqueIdentifier>{d3a93877-d33e-4592-915d-04ef7cc709e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicModel_Gorilla">
+      <UniqueIdentifier>{9ce3de83-265e-4001-b58a-0984fdb9cb05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicModel_Scarlet">
+      <UniqueIdentifier>{e5650ba9-cf5b-44c4-aeb7-0029b0020048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{1af5be23-53fb-447f-a0ef-0a7b40e2652d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader">
+      <UniqueIdentifier>{57fb5c93-9be7-447b-856c-202b76b070ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Rect">
+      <UniqueIdentifier>{bf361d9c-a5ef-498c-91d8-831cb881f3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Point">
+      <UniqueIdentifier>{aa9c54b7-c166-45d1-b951-a787900eb637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Spread">
+      <UniqueIdentifier>{d7a570fb-fab3-4121-a2bc-b9c5838b99ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\ComputeShader\Cull">
+      <UniqueIdentifier>{160f569c-766c-418f-96e3-1a17bd083c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing">
+      <UniqueIdentifier>{f8b20de2-8cd5-433e-a016-94086d9c516f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Mesh">
+      <UniqueIdentifier>{09d5c7ba-d714-46b3-9a99-f26cf208c227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Point">
+      <UniqueIdentifier>{6b8d34e8-e1fe-4ba5-84ea-2b06f3953435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Mouse">
+      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\UI">
+      <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\00. Util">
+      <UniqueIdentifier>{b89c2105-407b-4d12-8835-073e41b6e19d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIScript">
+      <UniqueIdentifier>{b108b214-7fa6-4ae7-b521-b92b3d3aa1ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImGui\CinematicMaker">
+      <UniqueIdentifier>{c6d3e68e-ab06-43b7-b4d3-821fe58c35f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Instancing\Point\Mouse">
+      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPopup">
+      <UniqueIdentifier>{3075a1a2-b433-493f-bbd9-0e29da8a0b84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIInstanceBuffer">
+      <UniqueIdentifier>{bdabd5dd-8ac9-488a-a0c1-d56af5f8c771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle">
+      <UniqueIdentifier>{0df933ee-7371-40fc-918a-e776650dd2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle">
+      <UniqueIdentifier>{4c51194a-b4e2-4a82-8400-0649f15b05fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer">
+      <UniqueIdentifier>{a689b038-39d2-49bc-bc1e-6d598b379168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons">
+      <UniqueIdentifier>{3153c664-d690-41f0-aa9c-a6f78d3a255a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint">
+      <UniqueIdentifier>{6efd9ad8-2dcf-464e-b458-2c7c578bda03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Scarlet">
+      <UniqueIdentifier>{f69194f1-2a39-4d1c-b86f-c442b3540ed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade">
+      <UniqueIdentifier>{b5b809f0-5cf3-4d11-bf1f-db3620849047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse">
+      <UniqueIdentifier>{df882f56-a60d-4305-b7ff-cc86f5d1ea57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Blink">
+      <UniqueIdentifier>{6f395894-96de-487b-a755-8f2c6c7c4d57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI">
+      <UniqueIdentifier>{a8428a58-d008-477d-a91c-ad624bbfcf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba">
+      <UniqueIdentifier>{ff0e426b-3116-4f02-a27b-acc4715b278c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster">
+      <UniqueIdentifier>{df406448-3c2a-4a2d-ac34-0a0f91373354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior">
+      <UniqueIdentifier>{b14f7a6f-80e9-4c34-b199-509fc61e66e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree">
+      <UniqueIdentifier>{b53392e9-cbda-4437-a8ce-908debca9dc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task">
+      <UniqueIdentifier>{5433ae57-b148-4be8-9086-52220a1fa079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack">
+      <UniqueIdentifier>{fe200fbe-f048-4be7-a7fb-b1cb70c0be70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard">
+      <UniqueIdentifier>{f86aa68a-ea27-4bc0-8dc8-678fa92e635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss">
+      <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
+      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
+      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\BlackBoard">
+      <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Service">
+      <UniqueIdentifier>{304baffd-72ea-4a00-b87b-f015be903191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task">
+      <UniqueIdentifier>{ff9efc14-5ffe-4b1c-b128-6a126b42f141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Idle">
+      <UniqueIdentifier>{20e66618-6079-49f4-8cfc-63e704143598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Move">
+      <UniqueIdentifier>{21841a4a-97dd-4ae8-be15-f120f5f86d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Wait">
+      <UniqueIdentifier>{2a3c479d-7e74-4422-8d4c-702a84ed2d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Groggy">
+      <UniqueIdentifier>{bf0f5972-7a20-443a-a23d-a9d5e7419158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Theshold">
+      <UniqueIdentifier>{2cd95cd2-1b66-452f-beb3-9d039f4dcc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Dead">
+      <UniqueIdentifier>{bbdd4585-dbfa-4936-91d8-bf60a2d46f2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\CutScene">
+      <UniqueIdentifier>{e217fbfe-57a0-4b0a-aff5-68e728ea900c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree">
+      <UniqueIdentifier>{f98f9ecb-e5ca-4dc0-9e32-baacae6590ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard">
+      <UniqueIdentifier>{02264c9b-6177-40a7-8e81-7802c18e54ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task">
+      <UniqueIdentifier>{0eff78c1-97b2-46d3-8395-09667d9ac9b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move">
+      <UniqueIdentifier>{cd8f848a-7fd3-4691-ae71-452f0420c5e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead">
+      <UniqueIdentifier>{e9bff9fd-8602-423e-8d80-7dac1e40887d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack">
+      <UniqueIdentifier>{8f680505-4586-43b4-8b12-7e144a98837f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody">
+      <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Weapon">
+      <UniqueIdentifier>{f0a04bef-67c4-4396-a34b-80b0e8a2cdb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Left">
+      <UniqueIdentifier>{7dd434c6-44f2-4690-b439-48d7bf14eff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Right">
+      <UniqueIdentifier>{d7e8c404-b1b6-483f-a653-a780c3b13e15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM">
+      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State">
+      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead">
+      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit">
+      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle">
+      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move">
+      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation">
+      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction">
+      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy">
+      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc">
+      <UniqueIdentifier>{98dc5280-3b7f-4af0-ac9d-ea077927f2a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\Body">
+      <UniqueIdentifier>{49fe7eb9-1c56-4479-8ee0-f0629256ff65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\Face">
+      <UniqueIdentifier>{f218a047-53e1-4f3d-b8d8-a7166606d731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\FSM">
+      <UniqueIdentifier>{6f27a19b-e598-450a-9d12-2f5ad03f77d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\FSM\State">
+      <UniqueIdentifier>{1f79a552-445e-4ea8-95fd-46f1687a1a6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\FSM\State\Patrol">
+      <UniqueIdentifier>{2d277f8a-9cae-4393-9f03-5ef54d90b726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\FSM\State\Talk">
+      <UniqueIdentifier>{9e27860e-f40d-4c7e-b629-611cae80d52c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\FSM\State\Idle">
+      <UniqueIdentifier>{c2dfbce8-4f49-4f90-958d-f35de2db9d60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller">
+      <UniqueIdentifier>{b190c69c-9dec-4a5f-9b67-013ddd23e76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Boss">
+      <UniqueIdentifier>{b23ebabb-4d5c-4b38-a54b-580bc10f0976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Monster">
+      <UniqueIdentifier>{69310a8a-585f-4a5b-9352-7bb3c097247e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Monster\Mimesis">
+      <UniqueIdentifier>{626e3cdd-9915-4450-80ef-03e9ed0819ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Monster\Patrol">
+      <UniqueIdentifier>{52e31480-dadc-489b-996b-1ee76c6924de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Npc">
+      <UniqueIdentifier>{a98dcd8e-928d-46de-b802-6a6d1dfa25a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Controller\Npc\Default">
+      <UniqueIdentifier>{d6a77df2-57e7-4a72-979a-b3f7581517d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\Particle\MeshParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred">
+      <UniqueIdentifier>{82b0837e-9118-478f-878d-65733b5e58d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred\ShaderFiles">
+      <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack">
+      <UniqueIdentifier>{8093c9e1-07f8-4c0b-9854-5288c2311060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
+      <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
+      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\InteractionUIBinder">
+      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -829,34 +1093,34 @@
       <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Wait.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Move.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Idle.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_Dead.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    <ClInclude Include="..\Public\Task_Theshold.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Hit.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBlackBoard.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Deco_PhaseChange.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
+    <ClInclude Include="..\Public\Deco_BossPhase.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Deco_AttackDelay.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BossBlackBoard.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameStruct.h">
       <Filter>99.Defines\GameStruct</Filter>
@@ -867,17 +1131,11 @@
     <ClInclude Include="..\public\Actor.h">
       <Filter>02.GameObjects\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Prob_Box.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Vending.h">
-      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    <ClInclude Include="..\public\StaticInteraction.h">
+      <Filter>02.GameObjects\Actor\Interaction\StaticInteraction</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Prob_Interaction.h">
       <Filter>02.GameObjects\Actor\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ItemBox.h">
-      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CanBox.h">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
@@ -888,11 +1146,8 @@
     <ClInclude Include="..\Public\MeshEffect.h">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PointParticle.h">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SpriteUVEffect.h">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClInclude Include="..\Public\MeshParticle.h">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Notify.h">
       <Filter>06.Event\Notify</Filter>
@@ -1077,9 +1332,6 @@
     <ClInclude Include="..\Public\TestEveHead.h">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\StaticMap.h">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIPlayAnimEvent.h">
       <Filter>02.GameObjects\UIObjects\UIEvent\UIPlayAnimEvent</Filter>
     </ClInclude>
@@ -1090,37 +1342,34 @@
       <Filter>01.Levels\ChangeLevelEvent</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterAttackState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterDeadState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterHitState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterMoveState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterIdleState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterFSM.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Nayitba.h">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\NayitbaPartBody.h">
-      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TargetComponent.h">
       <Filter>05.Component\TargetComponent</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Prob_Building.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Prob_Vehicle.h">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    <ClInclude Include="..\Public\Prob_Static.h">
+      <Filter>02.GameObjects\Actor\ProbActor\Static_Prob</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
       <Filter>02.GameObjects\Character</Filter>
@@ -1136,9 +1385,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_Parts.h">
       <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PlayerState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Player.h">
       <Filter>02.GameObjects\Camera\Camera_Player</Filter>
@@ -1162,19 +1408,19 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterStateMimesis.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterMimesisController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Monster\Mimesis</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Monster\Patrol</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterTranslationState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BossController.h">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Boss</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_BattleEvadeState.h">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
@@ -1186,10 +1432,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_VendingInteractionState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PlayerFSM.h">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
       <Filter>02.GameObjects\AttackHitBox</Filter>
@@ -1197,20 +1440,11 @@
     <ClInclude Include="..\public\Moon.h">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\InstanceModel.h">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player_LockonIdleState.h">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_LockonWalkState.h">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHPBar.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
@@ -1252,7 +1486,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Deco_CheckAlive.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Lockon.h">
       <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
@@ -1322,13 +1556,13 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX\UISkillWrapperOnFX</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Deco_FindTarget.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TrailData.h">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GorillaBehaviorTree.h">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_SheatheHairpin.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin</Filter>
@@ -1355,16 +1589,295 @@
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Body.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Controller.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lift_Platform.h">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UILoadingBlur.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UISimpleKey.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIInteractionFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParrySuccessState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ParryGuardState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Prob_Destory.h">
+      <Filter>02.GameObjects\Actor\ProbActor\DestoryProb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraBone_Player.h">
+      <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossStamina.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterStamina.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBossStaminaFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina\UIBossStaminaFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIMonsterStaminaFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina\UIMonsterStaminaFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MonsterGroggyState.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Groggy.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RepairConsole.h">
+      <Filter>02.GameObjects\Actor\Interaction\RepairConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SciFi_Door.h">
+      <Filter>02.GameObjects\Actor\Interaction\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Top_Roof.h">
+      <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bullet_Rock.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Item.h">
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bullet.h">
+      <Filter>02.GameObjects\Actor\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DropComponent.h">
+      <Filter>05.Component\DropComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIGetterQueue.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIGetterQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h">
+      <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Desert_Architecture.h">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonWalkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BattleSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UILockOn.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Grass.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Desert_Tree.h">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RimLight.h">
+      <Filter>05.Component\RimLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShaderManager.h">
+      <Filter>10.GameManager\ShaderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_TestState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Action.h">
+      <Filter>02.GameObjects\Camera\Camera_Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Spawner.h">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PoolingManager.h">
+      <Filter>10.GameManager\PoolingManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_GigasLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Dead.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectSRV.h">
+      <Filter>03.Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIBetaFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIOwnGold.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ScarletBehaviorTree.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ScarletBlackBoard.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky_Scarlet.h">
+      <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TriggerBox.h">
+      <Filter>02.GameObjects\TriggerBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cinematic_Manager.h">
+      <Filter>10.GameManager\CinematicManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicModel_Eve.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Eve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicModel_Scarlet.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicModel_Gorilla.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Gorilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletMove.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletDead.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIScript.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicMaker.h">
+      <Filter>30.ImGui\CinematicMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicObject.h">
+      <Filter>02.GameObjects\CinematicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CameraActionInserter.h">
+      <Filter>30.ImGui\CameraInserter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaRightWeaponPart.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Right</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaLeftWeaponPart.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPopup.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIInstanceBuffer.h">
+      <Filter>02.GameObjects\UIObjects\UIInstanceBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleAnswer.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleButtons.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_CutScene.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\CutScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bullet_Scarlet.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerFSM.h">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonSprintEndState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerState.h">
+      <Filter>02.GameObjects\Character\Player\00. State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_LockonJustEvadeState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_RepulseState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BlinkState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_BlinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_CorpseInteractionState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Clinet_ColorPallet.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Npc.h">
+      <Filter>02.GameObjects\Character\AI\Npc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcBody.h">
+      <Filter>02.GameObjects\Character\AI\Npc\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcFace.h">
+      <Filter>02.GameObjects\Character\AI\Npc\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcFSM.h">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcInteractionState.h">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Talk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcPatrolState.h">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Patrol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcIdleState.h">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NpcInteractionController.h">
+      <Filter>02.GameObjects\Character\AI\Controller\Npc\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InstanceModel.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticMap.h">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UICostumePuzzleHint.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ColorChange.h">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIUnlockFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InteractionUIBinder.h">
+      <Filter>05.Component\InteractionUIBinder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1506,37 +2019,37 @@
       <Filter>02.GameObjects\Character\Player\02. Parts\PonyTail</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Wait.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Wait</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Move.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Idle.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Task_Dead.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    <ClCompile Include="..\Private\Task_Theshold.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Hit.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBlackBoard.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GorillaBehaviorTree.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Deco_PhaseChange.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
+    <ClCompile Include="..\Private\Deco_BossPhase.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco_AttackDelay.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BossBlackBoard.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DataManager.cpp">
       <Filter>10.GameManager\CharacterDataManager</Filter>
@@ -1544,17 +2057,11 @@
     <ClCompile Include="..\private\Actor.cpp">
       <Filter>02.GameObjects\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Prob_Box.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Box</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Vending.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\Vending</Filter>
+    <ClCompile Include="..\private\StaticInteraction.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\StaticInteraction</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Prob_Interaction.cpp">
       <Filter>02.GameObjects\Actor\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\ItemBox.cpp">
-      <Filter>02.GameObjects\Actor\Interaction\ItemBox</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CanBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\CanBox</Filter>
@@ -1565,11 +2072,8 @@
     <ClCompile Include="..\Private\MeshEffect.cpp">
       <Filter>03.Effects\MeshEffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PointParticle.cpp">
-      <Filter>03.Effects\PointParticle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SpriteUVEffect.cpp">
-      <Filter>03.Effects\SpriteUVEffect</Filter>
+    <ClCompile Include="..\Private\MeshParticle.cpp">
+      <Filter>03.Effects\Particle\MeshParticle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Notify.cpp">
       <Filter>06.Event\Notify</Filter>
@@ -1760,41 +2264,32 @@
     <ClCompile Include="..\Private\TestEveHead.cpp">
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\StaticMap.cpp">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\MonsterAttackState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterDeadState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Dead</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterHitState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterMoveState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterIdleState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Idle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Nayitba.cpp">
-      <Filter>02.GameObjects\Character\Naytiba</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\NayitbaPartBody.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\PartBody</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TargetComponent.cpp">
       <Filter>05.Component\TargetComponent</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Prob_Building.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Building</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Prob_Vehicle.cpp">
-      <Filter>02.GameObjects\Actor\ProbActor\Vehicle</Filter>
+    <ClCompile Include="..\Private\Prob_Static.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\Static_Prob</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BossController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Boss</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Boss</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TrailEffect.cpp">
       <Filter>03.Effects\TrailEffect</Filter>
@@ -1807,9 +2302,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_Parts.cpp">
       <Filter>02.GameObjects\Character\Player\02. Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Character\Player</Filter>
@@ -1836,19 +2328,19 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterMimesisController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Monster\Mimesis</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterController.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Controller\Monster\Patrol</Filter>
+      <Filter>02.GameObjects\Character\AI\Controller\Monster\Patrol</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterFSM.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterTranslationState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\Translation</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
@@ -1860,10 +2352,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PlayerFSM.cpp">
-      <Filter>02.GameObjects\Character\Player\01. FSM\Base</Filter>
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
       <Filter>02.GameObjects\AttackHitBox</Filter>
@@ -1871,20 +2360,11 @@
     <ClCompile Include="..\private\Moon.cpp">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\InstanceModel.cpp">
-      <Filter>02.GameObjects\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Player_LockonIdleState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
-      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\FSM\State\SuccessAction</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Character</Filter>
@@ -1929,7 +2409,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Lockon.cpp">
       <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
@@ -1988,7 +2468,7 @@
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Deco_FindTarget.cpp">
-      <Filter>02.GameObjects\Character\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TrailData.cpp">
       <Filter>03.Effects\TrailEffect\TrailData</Filter>
@@ -2012,16 +2492,13 @@
       <Filter>02.GameObjects\Map\Desert\Instance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Body.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Body</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Iron_Floor.cpp">
       <Filter>02.GameObjects\Map\Desert\Building\Iron_Floor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lift_Controller.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Lift_Platform.cpp">
-      <Filter>02.GameObjects\Map\Desert\Building\Lift\Lift_Platform</Filter>
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Controller</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Deco.cpp">
       <Filter>02.GameObjects\Map\Desert\Deco</Filter>
@@ -2029,11 +2506,290 @@
     <ClCompile Include="..\Private\UILoadingBlur.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlur</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UISimpleKey.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UISimpleKey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIInteractionFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParrySuccessState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ParryGuardState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Nayitba.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Prob_Destory.cpp">
+      <Filter>02.GameObjects\Actor\ProbActor\DestoryProb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraBone_Player.cpp">
+      <Filter>02.GameObjects\Character\Player\04. CameraBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossStamina.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterStamina.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBossStaminaFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina\UIBossStaminaFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina\UIMonsterStaminaFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MonsterGroggyState.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Groggy.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SciFi_Door.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Top_Roof.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Top_Roof</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RepairConsole.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\RepairConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bullet_Rock.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Rock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Item.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bullet.cpp">
+      <Filter>02.GameObjects\Actor\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DropComponent.cpp">
+      <Filter>05.Component\DropComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIGetterQueue.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIGetterQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp">
+      <Filter>02.GameObjects\Character\CCTQueryFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Desert_Architecture.cpp">
+      <Filter>02.GameObjects\Map\Desert\Building\Architecture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonWalkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BattleSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UILockOn.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lift_Platform.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Grass.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Desert_Tree.cpp">
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RimLight.cpp">
+      <Filter>05.Component\RimLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShaderManager.cpp">
+      <Filter>10.GameManager\ShaderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_TestState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Action.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Spawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PoolingManager.cpp">
+      <Filter>10.GameManager\PoolingManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_GigasLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Dead.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectSRV.cpp">
+      <Filter>03.Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIBetaFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeta\UIBetaFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIOwnGold.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIOwnGold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScarletBehaviorTree.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ScarletBlackBoard.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky_Scarlet.cpp">
+      <Filter>02.GameObjects\Actor\Scarlet_Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TriggerBox.cpp">
+      <Filter>02.GameObjects\TriggerBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cinematic_Manager.cpp">
+      <Filter>10.GameManager\CinematicManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicModel_Eve.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Eve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicModel_Gorilla.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Gorilla</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicModel_Scarlet.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletMove.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletDead.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIScript.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPopup.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicMaker.cpp">
+      <Filter>30.ImGui\CinematicMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicObject.cpp">
+      <Filter>02.GameObjects\CinematicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraActionInserter.cpp">
+      <Filter>30.ImGui\CameraInserter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIInstanceBuffer.cpp">
+      <Filter>02.GameObjects\UIObjects\UIInstanceBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleAnswer.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Answer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleButtons.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_CutScene.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\CutScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bullet_Scarlet.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerFSM.cpp">
+      <Filter>02.GameObjects\Character\Player\01. FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonSprintEndState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\Sprint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_LockonJustEvadeState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_RepulseState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BlinkState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_BlinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Blink</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcBody.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcFace.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\Face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcFSM.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcInteractionState.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Talk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcPatrolState.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Patrol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcIdleState.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NpcInteractionController.cpp">
+      <Filter>02.GameObjects\Character\AI\Controller\Npc\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InstanceModel.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticMap.cpp">
+      <Filter>02.GameObjects\Map\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UICostumePuzzleHint.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ColorChange.cpp">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIUnlockFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp">
+      <Filter>05.Component\InteractionUIBinder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -2044,9 +2800,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl">
@@ -2065,20 +2818,37 @@
       <Filter>97.ShaderFiles\Instancing\Point</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
-      <Filter>97.ShaderFiles\Mouse</Filter>
+      <Filter>97.ShaderFiles\Instancing\Point\Mouse</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
       <Filter>97.ShaderFiles\UI</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteEffect.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl">
+      <Filter>97.ShaderFiles\ComputeShader\Cull</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxSpriteParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxTrailEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMeshEffect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl">
+      <Filter>07. ReserveDeferred\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

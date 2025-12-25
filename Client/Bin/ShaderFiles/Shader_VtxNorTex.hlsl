@@ -3,9 +3,14 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DiffuseTexture[1];
+texture2D g_DiffuseTexture_Base;
+texture2D g_DiffuseTexture_Red;
+texture2D g_DiffuseTexture_Green;
+
 texture2D g_ORMTexture;
 texture2D g_MaskTexture;
-
+//지우지마세요
+texture2D g_NormalTexture;
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -71,26 +76,51 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vSourDiffuse = g_DiffuseTexture[0].Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 10.f);
+    vector vSourDiffuse = g_DiffuseTexture[0].Sample(DefaultSampler, In.vTexcoord * 50.f);
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float2 vMaskUV;
-    const float fTexelSize = 512.f;
-    vMaskUV.x = In.vWorldPos.x / fTexelSize;
-    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
-    float fMaskValue = g_MaskTexture.SampleLevel(AnisoTropy_BLUR_Sampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
-    
-    if (fMaskValue > 0.01f)
-        Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
-    else
-        Out.vDiffuse = vSourDiffuse;
-    
-    //Out.vDiffuse = vSourDiffuse;
-    /* -1 ~ 1 -> 0 ~ 1 */
+    Out.vDiffuse = vSourDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    Out.vORM = g_ORMTexture.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    return Out;
+}
+
+PS_OUT PS_DESERT_TERRAIN(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    
+    float2 vMaskUV;
+    const float fTexelSize = 2048.f;
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    
+    vector vMask = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0);
+    
+    vector vResult = lerp(vDiffuse, vDiffuse_Red, vMask.r);
+    
+    vResult = lerp(vResult, vDiffuse_Green, vMask.g);
+    
+    Out.vDiffuse = vResult;
+    
+    //if (fMaxMaskValue > 0.01f)
+    //{
+    //    Out.vDiffuse = float4(vMask.r, vMask.g, 0.0f, 1.0f);
+    //}
+    //else
+    //{
+    //    Out.vDiffuse = vDiffuse;
+    //}
+    
+    Out.vNormal = Calc_TerrainNormal(g_NormalTexture, In.vTexcoord * 50.f, In.vNormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vORM = float4(1.f, 0.8f, 0.f, 0.f);
     
     return Out;
 }
@@ -107,7 +137,13 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-    
-
- 
+    pass Terrain_Desert
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DESERT_TERRAIN();
+    }
 }

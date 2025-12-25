@@ -49,14 +49,19 @@ public:
 	void					BindEndOverlapEvent(function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> EndEvent);
 
 	void					ADD_HitObject(CGameObject* pObject);
-	void					ADD_IgnoreObject(HIT_TYPE eHitType);
-	void					ADD_OnlyHitObject(HIT_TYPE eHitType);
 
+	void					ADD_HitObjectType(HIT_TYPE eHitType);
+	void					ADD_IgnoreObjectType(HIT_TYPE eHitType);
+	void					ADD_OnlyHitObjectType(HIT_TYPE eHitType);
+
+	void					Clear_HitObjectTypeList();
 	void					CallFunction();
 	void					ResetCollision();
 
 	const COLLIDER&			GetCollierType() const { return m_eType; }
 	const HIT_TYPE&			GetCollierHitType() const { return m_eHitType; }
+
+	const _float4x4*		Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 
 protected:
 	COLLIDER					m_eType = {};
@@ -71,12 +76,15 @@ protected:
 	set<HIT_TYPE>				m_IgnoreObject;
 	_bool						m_bIsHit = false;
 
+	_float4x4					m_WorldMatrix = { };
+
 	function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> m_BeginHitFunc = nullptr;
 	function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> m_OverlapHitFunc = nullptr;
 	function<void(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)> m_EndHitFunc = nullptr;
+	
+	PrimitiveBatch<DirectX::VertexPositionColor>* m_pBatch = { nullptr };
 
 #ifdef _DEBUG
-	PrimitiveBatch<DirectX::VertexPositionColor>*		m_pBatch = { nullptr };
 	BasicEffect*										m_pEffect = { nullptr };
 	ID3D11InputLayout*									m_pInputLayout = { nullptr };
 #endif // _DEBUG

@@ -98,10 +98,10 @@ HRESULT CUIHPBar::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::HP_GAUGE))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -115,9 +115,9 @@ HRESULT CUIHPBar::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBaseBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBuffer))))
+	/* Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_Texture_HP */
@@ -153,6 +153,26 @@ HRESULT CUIHPBar::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFillAmount", &fFillAmount, sizeof(_float))))
 		return E_FAIL;
+
+	_bool bUseTint = false;
+	_float4 vTintColor = { 0.f, 0.f, 0.f, 0.f };
+
+	if (m_fCurrentFill <= 0.5f)
+	{
+		bUseTint = true;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTint, sizeof(_bool))))
+			return E_FAIL;
+
+		vTintColor = _float4{ 0.996f, 0.980f, 0.831f, 1.f };
+		
+		if (m_fCurrentFill <= 0.3f)
+			vTintColor = _float4{ 0.988f, 0.675f, 0.702f, 1.f };
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_vTintColor", &vTintColor, sizeof(_float4))))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }
@@ -200,6 +220,4 @@ CGameObject* CUIHPBar::Clone(void* pArg)
 void CUIHPBar::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pVIBaseBuffer);
 }

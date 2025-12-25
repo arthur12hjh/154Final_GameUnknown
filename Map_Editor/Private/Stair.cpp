@@ -40,10 +40,10 @@ void CStair::Update(_float fTimeDelta)
 
 void CStair::Late_Update(_float fTimeDelta)
 {
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	/*if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+	}*/
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);

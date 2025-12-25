@@ -26,7 +26,6 @@ public:
 public:
 	virtual void Drop(_float fTimeDelta) override;
 
-
 private:
 	VTX_INSTANCE_VERTEX_PARTICLE* m_pInstanceVertices = { nullptr };
 	_bool						m_bFlag = { true };

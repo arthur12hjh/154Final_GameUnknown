@@ -41,10 +41,10 @@ void CInscription_L::Update(_float fTimeDelta)
 void CInscription_L::Late_Update(_float fTimeDelta)
 {
 
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	/*if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
+	}*/
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
 
 }
 

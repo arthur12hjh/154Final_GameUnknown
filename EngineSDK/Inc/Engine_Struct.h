@@ -63,11 +63,16 @@ namespace Engine
 		float				fPhi;				/* 스포트 광원의 바깥쪽 원뿔의 각도 */
 	}LIGHT_DESC;
 
-	typedef struct tagShadowLight
+	typedef struct tagStaticShadowLight
 	{
-		XMFLOAT4		vEye, vAt;
-		float			fNear, fFar, fFovy, fAspect;
-	}SHADOW_LIGHT_DESC;
+		XMFLOAT4		vAt;
+		float			fNear, fFar;
+	} STATIC_SHADOW_DESC;
+
+	typedef struct tagCascadeShadowLight
+	{
+		XMFLOAT4		vDir;
+	} CASCADE_SHADOW_DESC;
 
 	typedef struct tagVertexPosition
 	{
@@ -205,6 +210,24 @@ namespace Engine
 		};
 	}VTX_NONEANIM_INSTANCE_DESC;
 
+	typedef struct tagVertexModelInstanceParticleDesc
+	{
+		static constexpr unsigned int					iNumElements = { 10 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+			{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		};
+	}VTX_NONEANIM_INSTANCE_PARTICLE_DESC;
+
 	typedef struct tagVertexInstance_Particle
 	{
 		XMFLOAT4			vRight;
@@ -263,6 +286,7 @@ namespace Engine
 	{
 		const wchar_t* pPrototypeTag = nullptr;   // 컴포넌트 태그
 		unsigned int iNumInstance = 0;
+		unsigned int iObjectID = 0;
 		vector<VTX_INSTANCE_MODEL>* pInstancingData;
 	}MODEL_INSTANCE_LOAD_DESC;
 
@@ -443,6 +467,7 @@ namespace Engine
 		float*    fFogEnd;
 		float*    fFogPowerMin;
 		float*	  fFogPowerMax;
+		float*	  fSkyboxFogPower;
 	} FOG_DESC;
 
 	typedef struct tagDoFInfo {
@@ -465,6 +490,7 @@ namespace Engine
 	} SSAO_DESC;
 
 	typedef struct tagMotionBlurInfo {
+		float*			fObjectBlurScale;
 		float*			fCamBlurScale;
 		float*			fBias;
 		unsigned int*   iSampleCount;
@@ -475,6 +501,39 @@ namespace Engine
 		float* fStepSize;
 		float* fVolumetricG;
 	} VOLUMETRIC_DESC;
+
+	typedef struct tagHDRInfo {
+		float* fHDRExposure;
+		bool* isHDR;
+	} HDR_DESC;
+
+	typedef struct tagJointChainDesc {
+		float fAngularDampimg;
+		float fLinearDamping;
+		float fMaxAngularVelocity;
+		float fMaxDepenetrationVelocity;
+	} JOINT_CHAIN_DESC;
+
+	// 이 객체는 WVP 행렬, 렌더타겟 이름까지만 바인딩해줘.
+	// 나머진 클라에서 알아서 바인딩하거나 처리해야 돼.
+	// Reserve 객체 추가할떄 바인딩해놓으면 되긴 하는데 
+	// 렌더링 이후 초기화 타이밍은 알아서 잘 잡아봐.
+	typedef struct tagClientScreenShaderReserve {
+		//클라쪽에서 사용할 셰이더 파일
+		class CShader* pShaderCom = { nullptr };
+		//셰이더 패스 번호. 기본적으로 0번 세팅
+		unsigned int iShaderPassIdx = { 0 };
+		//클라쪽에서 받아낼 텍스쳐 전역변수 이름
+		const char* pRTNameTag = { nullptr };
+		//클라쪽에서 받아낼 월드행렬 전역변수 이름
+		const char* pWorldMatrixTag = { nullptr };
+		//클라쪽에서 받아낼 뷰행렬 전역변수 이름
+		const char* pViewMatrixTag = { nullptr };
+		//클라쪽에서 받아낼 투영행렬 전역변수 이름
+		const char* pProjMatrixTag = { nullptr };
+	} CLIENT_SHADER_RESERVE;
+
+
 #pragma endregion
 }
 

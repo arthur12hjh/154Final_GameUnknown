@@ -21,22 +21,52 @@ void CInteraction_Manager::Update()
     if (nullptr == m_pBaseObject)
         return;
 
-    _vector vObjectPos = m_pBaseObject->GetTransform()->Get_State(STATE::POSITION);
-    sort(m_pInteractionList.begin(), m_pInteractionList.end(), [&](CInteraction_Component* pSrc, CInteraction_Component* pDest)
+    _matrix vCamMatrix = XMLoadFloat4x4(m_pGameInstance->GetMainCameraWorldMatrixPtr());
+    _vector vBaseObjectPos = m_pBaseObject->GetTransform()->Get_State(STATE::POSITION);
+
+    sort(m_pInteractionList.begin(), m_pInteractionList.end(), [&](auto& pSrc, auto& pDest)
         {
             _vector vSrcPos = pSrc->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
             _vector vDestPos = pDest->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
 
-            _float fSrcDist = XMVectorGetX(XMVector3Length(vObjectPos - vSrcPos));
-            _float fDestDist = XMVectorGetX(XMVector3Length(vObjectPos - vDestPos));
+            _float fSrcDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vSrcPos));
+            _float fDestDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vDestPos));
 
             return fSrcDist < fDestDist;
         });
 
-    if (!m_pInteractionList.empty())
-        m_pNearInteraction = m_pInteractionList.front();
-    else
+    if (m_pInteractionList.empty())
         m_pNearInteraction = nullptr;
+    else
+        m_pNearInteraction = m_pInteractionList.front();
+
+
+
+  /*  m_pCandidates.clear();
+    for (auto& iter : m_pInteractionList)
+    {
+        CCollider::DEFAULT_HIT_DESC Desc = {};
+        if (iter->Is_RayHit(vCamMatrix.r[3], vCamMatrix.r[2], &Desc))
+            m_pCandidates.push_back(iter);
+    }
+
+    if (!m_pCandidates.empty())
+    {
+        m_pCandidates.sort([&](CInteraction_Component* pSrc, CInteraction_Component* pDest)
+            {
+                _vector vSrcPos = pSrc->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+                _vector vDestPos = pDest->GetOwner()->GetTransform()->Get_State(STATE::POSITION);
+
+                _float fSrcDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vSrcPos));
+                _float fDestDist = XMVectorGetX(XMVector3Length(vBaseObjectPos - vDestPos));
+
+                return fSrcDist < fDestDist;
+            });
+
+        m_pNearInteraction = m_pCandidates.front();
+    }
+    else
+        m_pNearInteraction = nullptr;*/
 
 }
 

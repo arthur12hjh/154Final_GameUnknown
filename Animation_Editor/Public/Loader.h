@@ -45,6 +45,7 @@ private:
 	HRESULT Loading_For_Editor();
 
 	HRESULT Loading_For_Player(void* pArg);
+	HRESULT Loading_For_Scarlet(void* pArg);
 
 
 public:

@@ -6,11 +6,19 @@ class CInteraction_Component;
 NS_END
 
 NS_BEGIN(Client)
+struct Interaction_Data;
 class CGameManager;
 class CUIBase;
+class CInteractionUIBinder;
 
 class CProb_Interaction abstract : public CActor
 {
+public :
+	typedef struct Prob_Interaction_Desc : public ACTOR_DESC
+	{
+		_uint					iInteractionID;
+	}PROB_INTERACTION_DESC;
+
 protected:
 	CProb_Interaction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CProb_Interaction(const CProb_Interaction& Prototype);
@@ -25,20 +33,29 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
+	//void							Finished_Interaction();
+	//void							Reset_Interaction();
+
+	//INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
+	//const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
+	//const CInteractionUIBinder*		Get_InterCom() { return m_pInteractionCom; }
+
+	//_float							Get_Ratio() { return m_fInteractionDuration / m_InteractionDesc->fInteractionTime; }
 
 protected:
-	CGameManager*					m_pGameManager = { nullptr };
+	CGameManager*					m_pGameManager = { nullptr }; 
+	CInteractionUIBinder*			m_pInteractionCom = { nullptr };
 
-	CInteraction_Component*			m_pInteractionCom = { nullptr };
-	_bool							m_bIsInteractionAble = { false };
+	//const INTERACTION_DATA*			m_InteractionDesc = {};
+	//INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
 
-	// UI Ç¥½Ã 
-	CUIBase*						m_pInteractionUI = { nullptr };
+	//_float							m_fInteractionDuration = {};
+	//_uint							m_iInteractionID{};
 
 protected :
-	virtual HRESULT					Begin_OverlapCallBack() = 0;
-	virtual HRESULT					End_OverlapCallBack() = 0;
-	virtual void					Excute_CallBack(CGameObject* pActionObject) = 0;
+	virtual HRESULT					Begin_OverlapCallBack();
+	virtual HRESULT					End_OverlapCallBack();
+	virtual void					Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject);
 
 public:
 	virtual		CGameObject*		Clone(void* pArg) override;

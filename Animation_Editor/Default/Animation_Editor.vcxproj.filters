@@ -113,6 +113,21 @@
     <Filter Include="02.GameObjects\Entity\Gigas\Body_Gigas">
       <UniqueIdentifier>{5917bbec-4e89-4c88-bf2d-71a508aba4d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet">
+      <UniqueIdentifier>{82f107ba-fe58-4eaa-9c3c-1fca329b46a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet\Body_Scarlet">
+      <UniqueIdentifier>{7450aabe-622a-4ac4-bc7b-8067519ecf1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet\Face_Scarlet">
+      <UniqueIdentifier>{f0bb8019-c94a-4adc-88bb-0f1640e4332d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet\Weapon_Scarlet">
+      <UniqueIdentifier>{9a53078a-89a1-4d86-832e-ab4d598a4fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Entity\Scarlet\Scabbard_Scarlet">
+      <UniqueIdentifier>{f0d95be5-66b9-4903-a8ff-efcf9e40aae0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -232,6 +247,21 @@
     <ClInclude Include="..\Public\Grid.h">
       <Filter>02.GameObjects\BackGround\Grid</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet\Body_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Face_Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet\Face_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon_Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet\Weapon_Scarlet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Scabbard_Scarlet.h">
+      <Filter>02.GameObjects\Entity\Scarlet\Scabbard_Scarlet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -335,6 +365,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\Grid.cpp">
       <Filter>02.GameObjects\BackGround\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet\Body_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Face_Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet\Face_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon_Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet\Weapon_Scarlet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Scabbard_Scarlet.cpp">
+      <Filter>02.GameObjects\Entity\Scarlet\Scabbard_Scarlet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

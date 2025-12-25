@@ -83,7 +83,6 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-
 CComponent* CGameObject::Find_Component(const _wstring& strComponentTag)
 {
 	auto	iter = m_Components.find(strComponentTag);
@@ -119,6 +118,22 @@ _float CGameObject::Get_Depth()
 	_vector vPos = m_pTransformCom->Get_State(STATE::POSITION);
 
 	return XMVectorGetX(XMVector3Length(vCamPos - vPos));
+}
+
+void CGameObject::Set_Occlusion_Culling_Result(_bool isVisible)
+{
+	/*if (m_eVisibility == VISIBILITY::VISIBLE)
+	{
+		if (!isVisible)
+			m_eVisibility = VISIBILITY::HIDDEN;
+	}
+	else if (m_eVisibility == VISIBILITY::HIDDEN)
+	{
+		if (isVisible)
+			m_eVisibility = VISIBILITY::VISIBLE;
+	}*/
+
+	m_eVisibility = isVisible ? VISIBILITY::VISIBLE : VISIBILITY::HIDDEN;
 }
 
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)

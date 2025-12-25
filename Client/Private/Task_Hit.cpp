@@ -30,6 +30,10 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 	// 이거 비헤비어 밖에서 데미지 처리가 이루어지는데 
 	// 비헤비어 안에서 애니메이션을 재생해야하네?
 	// 아니지 이거 BlackBoard 접근해서 처리하자
+	auto pTarget = m_pBlackBoard->GetTarget();
+	if (nullptr == pTarget)
+		return NODE_STATE::FAIL;
+
 	auto pHit_Data = m_pBlackBoard->GetHitData();
 	if (pHit_Data)
 	{
@@ -37,48 +41,112 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 		Refresh_HitMotion();
 	}
 
-	if(nullptr == m_pHit_Data)
+	if (false == m_pBlackBoard->bIsExcution())
 	{
-		// 여기서 피격 데이터가 Nullptr 이거나 공격중에 특정 무시속성이 달려있는지
-		// 확인하고 EFail;
-		return NODE_STATE::FAIL;
+		if (m_pBlackBoard->IsPhaseLastAttack() || m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
+		{
+			m_pHit_Data = nullptr;
+			if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
+				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+			return NODE_STATE::FAIL;
+		}
 	}
-	
+
+	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
 	if (m_pOwner->Play_Animation(fTimeDelta))
 	{
 		m_pHit_Data = nullptr;
+		if (m_bIsHitRepulse)
+		{
+			m_bIsHitRepulse = false;
+			m_pOwner->Set_Animation("Result_State_Groggy_E", false, 1.f, 0.12f);
+			return NODE_STATE::RUNNING;
+		}
+		else
+		{
+			if (m_pBlackBoard->bIsExcution())
+			{
+				m_pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
+				m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::END);
+			}
+		}
+
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		return NODE_STATE::COMPLETE;
 	}
-		
+	else if (false == m_pBlackBoard->bIsExcution())
+	{
+		if (0.5f >= fAnimationRatio)
+			m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
 
+	}
+	
 	return NODE_STATE::RUNNING;
 }
 
 void CTask_Hit::Refresh_HitMotion()
 {
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_vector vAttackerPos = m_pBlackBoard->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
+
+	vAttackerPos.m128_f32[1] = vOwnerPos.m128_f32[1] = 0.f;
+	_vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
+
 	auto pSkill_Data = static_cast<const CHARACTER_SKILL_DESC *>(m_pHit_Data->pSkillData);
-	if (!strcmp(pSkill_Data->szHitAnimationName, "None"))
+	Damaged_Attack(pSkill_Data, vDir);
+
+	m_pBlackBoard->SetAttackData(nullptr);
+	m_pBlackBoard->SetHitData(nullptr);
+}
+
+void CTask_Hit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector vDir)
+{
+	if (!strcmp(pData->szHitAnimationName, "None"))
 	{
-		switch (pSkill_Data->eATK_Direction)
+		_float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
+		if (0 <= fScalar)
 		{
-		case ATTACK_DIRECTION::ATK_LEFT :
-			m_szAnimationName = "Result_Hit_Stand_Light_Fw_Lw";
-			break;
-		case ATTACK_DIRECTION::ATK_RIGHT:
-			m_szAnimationName = "Result_Hit_Stand_Light_Fw_Rw";
-			break;
-		default:
-			m_szAnimationName = "Result_Hit_Stand_Light_Fw";
-			break;
+			switch (pData->eATK_Direction)
+			{
+			case ATTACK_DIRECTION::ATK_LEFT:
+				m_szAnimationName = "Result_Hit_Stand_Light_Fw_Lw";
+				break;
+			case ATTACK_DIRECTION::ATK_RIGHT:
+				m_szAnimationName = "Result_Hit_Stand_Light_Fw_Rw";
+				break;
+			default:
+				m_szAnimationName = "Result_Hit_Stand_Light_Fw";
+				break;
+			}
 		}
+		else
+			m_szAnimationName = "Result_Hit_Stand_Light_Bw";
+
+		XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+		m_fImpactForce = 3.f;
 	}
 	else
 	{
-		m_szAnimationName = pSkill_Data->szHitAnimationName;
+		if (SKILL_TYPE::REPULSE_SKILL != pData->eSkillType)
+		{
+			XMStoreFloat3(&m_vImpactDir, XMVectorZero());
+			m_fImpactForce = 0.f;
+			m_szAnimationName = pData->szHitAnimationName;
+		}
+		else
+		{
+			m_bIsHitRepulse = true;
+
+			XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+			m_fImpactForce = 10.f;
+			m_szAnimationName = "Result_State_Groggy_S";
+		}
 	}
 
-	m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
-	m_pBlackBoard->SetHitData(nullptr);
+	if (m_pBlackBoard->bIsExcution())
+		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
+	else
+		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
 }
 
 CTask_Hit* CTask_Hit::Create(CBehaviorTree* pOwnerTree)

@@ -153,6 +153,13 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight
     }
 
     m_Lights.push_back(pLight);
+
+    if (LightDesc.eType == LIGHT_TYPE::DIRECTIONAL)
+    {
+        m_pDirectional = pLight;
+        Safe_AddRef(m_pDirectional);
+    }
+
     return S_OK;
 }
 
@@ -165,6 +172,15 @@ CLight* CLight_Manager::Find_Light(_uint iIndex)
     advance(iter, iIndex);
 
     return *iter;
+}
+
+void CLight_Manager::Clear_Light()
+{
+    for (auto& pLight : m_Lights)
+        Safe_Release(pLight);
+
+    Safe_Release(m_pDirectional);
+    m_Lights.clear();
 }
 
 void CLight_Manager::Clear_DeadLight()
@@ -199,6 +215,13 @@ HRESULT CLight_Manager::Render_VolumetricLights(CShader* pShader, CVIBuffer* pVI
     }
 
     return S_OK;
+}
+
+LIGHT_DESC* CLight_Manager::Get_Directional_Desc()
+{
+    if (m_pDirectional)
+        return m_pDirectional->Get_EditableLightDesc();
+    return nullptr;
 }
 
 #ifdef _DEBUG
@@ -240,5 +263,6 @@ void CLight_Manager::Free()
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);
 #endif // _DEBUG
+    Safe_Release(m_pDirectional);
 
 }

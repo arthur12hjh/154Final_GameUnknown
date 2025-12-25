@@ -4,7 +4,10 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "BoxOpenEvent.h"
-#include "Interaction_Component.h"
+
+#include "InteractionUIBinder.h"
+#include "DropComponent.h"
+
 #include "UIBase.h"
 #include "UIHUD.h"
 
@@ -25,15 +28,19 @@ HRESULT CCanBox::Initialize_Prototype()
 
 HRESULT CCanBox::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
-		return E_FAIL;
+    PROB_INTERACTION_DESC* pDesc = static_cast<PROB_INTERACTION_DESC*>(pArg);
+    pDesc->iInteractionID = 5;
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
-	ACTOR_DESC* pDesc = static_cast<ACTOR_DESC*>(pArg);
-	if (FAILED(ADD_Components(*pDesc)))
-		return E_FAIL;
+    if (FAILED(ADD_Components(*pDesc)))
+        return E_FAIL;
 
-    m_eState = BOX_STATE::UNLCOK;
+    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
     m_pModelCom->Set_AnimationIndex(1, false);
+
+    m_pInteractionCom->Set_Duration(0.f);
+    m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
     return S_OK;
 }
@@ -44,14 +51,35 @@ void CCanBox::Priority_Update(_float fTimeDelta)
 
 void CCanBox::Update(_float fTimeDelta)
 {
-    switch (m_eState)
+    if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
     {
-    case BOX_STATE::OPEN:
-        m_pModelCom->Play_Animation(fTimeDelta);
-        break;
-    default :
-        m_pModelCom->Play_Animation(0.f);
-        break;
+        if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
+        {
+            if (m_pModelCom->Play_Animation(fTimeDelta))
+            {
+                m_pDropCom->ItemDrop(3);
+                m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
+            }
+        }
+        else
+        {
+            auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
+            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+            {
+                if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
+                {
+                    // 나중에 여기서 조건 체크하세요
+                    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+                }
+            }
+            else
+            {
+                if (INTERACTION_STATE::LOCK != m_pInteractionCom->Get_InterState())
+                    m_pInteractionCom->Set_InterState(INTERACTION_STATE::LOCK);
+            }
+                
+            m_pModelCom->Play_Animation(0.f);
+        }
     }
 }
 
@@ -59,13 +87,11 @@ void CCanBox::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-        if(BOX_STATE::OPEN != m_eState)
-		    m_pInteractionCom->Update_Com();
+        if(INTERACTION_STATE::ACTIVE > m_pInteractionCom->Get_InterState())
+		    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
-
-		m_pGameInstance->Add_PhysxGeometry(m_pRigidBody->Get_PxRigidBody(), m_pRigidBody->Get_PxShape());
 #endif
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -81,20 +107,20 @@ HRESULT CCanBox::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-            return E_FAIL;
+       if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+           return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-            return E_FAIL;
+       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+           return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-            return E_FAIL;
+       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+           return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-            return E_FAIL;
+       //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+       //    return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-            return E_FAIL;
+       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+           return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -105,7 +131,7 @@ HRESULT CCanBox::Render()
 	return S_OK;
 }
 
-HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
+HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 {
     _float3 Com_Size = m_pTransformCom->Get_Scale();
 
@@ -114,18 +140,34 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 
+    /* Drop Component */
+    CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
+    DropComDesc.fDropRange = 7.f;
+    DropComDesc.fForce = 20.f;
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
+        TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
+        return E_FAIL;
+
+#pragma region DropItem Setting
+    m_pDropCom->ADD_DropItem(make_pair(1, 30.f), 1);
+    m_pDropCom->ADD_DropItem(make_pair(2, 30.f), 1);
+    m_pDropCom->ADD_DropItem(make_pair(3, 10.f), 1);
+
+#pragma endregion
     /* Com_Interaction */
-    CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+    CInteractionUIBinder::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&](CGameObject * pActionObject) { this->Excute_CallBack(pActionObject); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject * pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
+
+    m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(Desc.iInteractionID));
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-    m_pInteractionCom->ADD_InteractionOnlyHitObject(HIT_TYPE::PLAYER);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -165,7 +207,7 @@ HRESULT CCanBox::ADD_Components(const ACTOR_DESC& Desc)
         return E_FAIL;
 
     m_pGameInstance->Add_Event(TEXT("Box_Open"), m_pEventHandle);
-
+    static_cast<COBBCollider*>(m_pCullingCollider)->SetCollision({}, {}, Com_Size);
     return S_OK;
 }
 
@@ -183,35 +225,29 @@ HRESULT CCanBox::Bind_ShaderResources()
     return S_OK;
 }
 
-HRESULT CCanBox::Begin_OverlapCallBack()
+void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
-    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-    m_bIsInteractionAble = true;
+    // 여기서 플레이어 상태 처리 및 Lock 상태 관리
+    if (!m_pInteractionCom->IsInteractionEnable())
+        m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
-    return S_OK;
-}
-
-void CCanBox::Excute_CallBack(CGameObject* pActionObject)
-{
-    if (BOX_STATE::UNLCOK == m_eState)
+    if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
     {
-        m_pModelCom->Set_AnimationIndex(1, false);
+        if (m_pInteractionCom->IsInteractionEnable())
+        {
+            m_pModelCom->Set_AnimationIndex(1, false);
 
-        if (m_pEventHandle)
-            m_pEventHandle->Notify(nullptr);
-        m_eState = BOX_STATE::OPEN;
+            /* if (m_pEventHandle)
+                m_pEventHandle->Notify(nullptr);*/
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+        }
+    }
+    else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+    {
+        m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+        m_pInteractionCom->Set_Duration(0.f);
         m_pGameInstance->Remove_Interaction(m_pInteractionCom);
     }
-}
-
-HRESULT CCanBox::End_OverlapCallBack()
-{
-    if (m_pInteractionUI)
-        m_pInteractionUI->SetVisibility(VISIBILITY::HIDDEN);
-
-    m_bIsInteractionAble = false;
-
-    return S_OK;
 }
 
 CCanBox* CCanBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -241,5 +277,6 @@ void CCanBox::Free()
     __super::Free();
 
     Safe_Release(m_pEventHandle);
+    Safe_Release(m_pDropCom);
     Safe_Release(m_pModelCom);
 }

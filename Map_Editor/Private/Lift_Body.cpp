@@ -20,13 +20,9 @@ HRESULT CLift_Body::Initialize_Prototype()
 HRESULT CLift_Body::Initialize(void* pArg)
 {
 
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
+	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)
@@ -46,12 +42,20 @@ void CLift_Body::Priority_Update(_float fTimeDelta)
 
 void CLift_Body::Update(_float fTimeDelta)
 {
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	pCullingCollider->SetCollision({ 0.f, 20.f, 0.f }, {}, { 6.f, 30.f, 6.f });
+
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
 void CLift_Body::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CLift_Body::Render()

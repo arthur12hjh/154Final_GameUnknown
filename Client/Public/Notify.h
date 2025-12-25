@@ -12,12 +12,17 @@ NS_BEGIN(Client)
 class CNotify final : public CComponent
 {
 public:
-    enum NOTIFY_TYPE { PLAY_SFX, ACTIVE_SFX, PLAY_SOUND, ACTIVE_COLLISION, SET_TRANSFORM, SET_DYNAMICTRANSFORM, SET_DELTATIMESPEED, ADJUST_LIGHT, PLAY_SCREENSFX, ACTIVE_PARTOBJECT_COLLISION, UNDEFINED, END };
+    enum NOTIFY_TYPE { PLAY_SFX, ACTIVE_SFX,
+                       PLAY_SOUND, ACTIVE_COLLISION, ACTIVE_PHYSX_COLLISION,
+                       ATTACK_INTERACTION, SET_TRANSFORM, ACTIVE_PARTOBJECT_COLLISION,
+                       HIT_REACTION, SPAWN_OBJECT, SET_RATIO, CHANGE_COLOR, SET_VISIBLITY,
+                       SHOOT_PROJECTILE, PLAY_CINEMATIC, CAMERA_SHAKE, END };
 
     typedef struct tagNotifyDesc
     {
         class CCharacter* pCharacter = { nullptr };
     }NOTIFY_DESC;
+
 private:
 	CNotify(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CNotify(const CNotify& Prototype);
@@ -43,20 +48,22 @@ private:
     HRESULT CallNotify(ANIM_NOTIFY AnimNotify);
     CNotify::NOTIFY_TYPE ClassificationNotify(const string& szNotifyTag);
 
-    HRESULT Notify_Play_SFX(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Active_SFX(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Play_Sound(ANIM_NOTIFY AnimNotify);
-    //±âÁ¸ CollisionÀ» È°¼ºÈ­ÇÏ´Â Notify.
-    HRESULT Notify_Active_Collision(ANIM_NOTIFY AnimNotify);
-    //ÆÄÆ®¿ÀºêÁ§Æ®ÀÇ ÄÝ¶óÀÌ´õ¸¦ È°¼ºÈ­ ÇÏ±â À§ÇÑ Notify
-    HRESULT Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Set_Transform(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Set_DynamicTransform(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Set_DeltaTimeSpeed(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Adjust_Light(ANIM_NOTIFY AnimNotify);
-    HRESULT Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify);
+    HRESULT Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify);
 
-    HRESULT Notify_Undefined(ANIM_NOTIFY AnimNotify);               // ÀÌ¸§ÀÌ ÁöÁ¤µÇ¾îÀÖÁö ¾ÊÀº °æ¿ì, ³ëÆ¼ÆÄÀÌ ¸Å´ÏÀú·Î ÆÐ½º
+    //ï¿½ï¿½ï¿½ï¿½ Collisionï¿½ï¿½ È°ï¿½ï¿½È­ï¿½Ï´ï¿½ Notify.
+    HRESULT Notify_Active_Collision(const ANIM_NOTIFY& AnimNotify);
+    //ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ Notify
+    HRESULT Notify_Active_PartObject_Collision(const ANIM_NOTIFY& AnimNotify);
+
+    HRESULT Notify_Set_Transform(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Hit_Reaction(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Spawn_Object(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Shoot_Projectile(const ANIM_NOTIFY& AnimNotify);
+    HRESULT Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify);
+
+    HRESULT Notify_Camera_Shake(const ANIM_NOTIFY& AnimNotify);
     
 public:
 	static CNotify* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -67,35 +74,35 @@ public:
 NS_END
 
 /*
-    ¾Ö´Ï¸ÞÀÌ¼Ç ³ëÆ¼ÆÄÀÌ Args
-    **Play_SFX (ÀÌÆåÆ®)**
-    - szNotifyArg01   : ÇÁ·ÎÅäÅ¸ÀÔ ÅÂ±× (ex : "Prototype_Component_Effect_Slash")
-    - szNotifyArg08   : ÆÄÆ® ¸ðµ¨¸í (¾øÀ» ½Ã Body¿¡ ÀÚµ¿ ºÎÂø)
-    - szSocketTag     : ÀÌÆåÆ® ºÎÂø ½Ã, ºÎÂø½ÃÅ³ ¼ÒÄÏ¸ÅÆ®¸¯½º ÅÂ±× None : ¾ÈºÙÀÌ°í, ¾Èµû¶ó°¨. Transform : ¾ÈºÙÀÌ°í, µû¶ó°¨. ³ª¸ÓÁö : ºÙÀÌ°í, µû¶ó°¨
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡ ( y += 0.1 ÇØÁà¾ßÇÔ )
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
-    - vNotifyScale    : º¸Á¤µÈ Ãß°¡ Å©±â°ª
+    ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ Args
+    **Play_SFX (ï¿½ï¿½ï¿½ï¿½Æ®)**
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Â±ï¿½ (ex : "Prototype_Component_Effect_Slash")
+    - szNotifyArg08   : ï¿½ï¿½Æ® ï¿½ðµ¨¸ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Bodyï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½)
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å³ ï¿½ï¿½ï¿½Ï¸ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ None : ï¿½Èºï¿½ï¿½Ì°ï¿½, ï¿½Èµï¿½ï¿½ï¿½. Transform : ï¿½Èºï¿½ï¿½Ì°ï¿½, ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½Ì°ï¿½, ï¿½ï¿½ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ( y += 0.1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ )
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
+    - vNotifyScale    : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ Å©ï¿½â°ª
 
-    **Active_SFX (ÀÌÆåÆ®)** :: ¸ðµ¨¿¡ CloneµÇ¾îÀÖ´Â °´Ã¼ È°¼ºÈ­ÇÏ´Â ÇÔ¼ö. 
-    - szNotifyArg01   : ¸ÅÇÎµÇ¾îÀÖ´Â ¹®ÀÚ¿­ ÅÂ±×. (¹«Á¶°Ç ±× °´Ã¼¿¡¼­µµ ¸ÅÇÎÇØÁà¾ßÇÏ°í, ¿À¹ö¶óÀÌµùÇØÁà¾ßÇÑ´Ù.)
-    - szNotifyArg08   : ÆÄÆ® ¸ðµ¨¸í (¾øÀ» ½Ã Body¿¡¼­ Å½»ö)
-    - fNumData01      : È°¼º Áö¼Ó½Ã°£
-    - szSocketTag     : ÀÌÆåÆ® ºÎÂø ½Ã, ºÎÂø½ÃÅ³ ¼ÒÄÏ¸ÅÆ®¸¯½º ÅÂ±× None : ¾ÈºÙÀÌ°í, ¾Èµû¶ó°¨. Transform : ¾ÈºÙÀÌ°í, µû¶ó°¨. ³ª¸ÓÁö : ºÙÀÌ°í, µû¶ó°¨
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
-    - vNotifyScale    : º¸Á¤µÈ Ãß°¡ Å©±â°ª
+    **Active_SFX (ï¿½ï¿½ï¿½ï¿½Æ®)** :: ï¿½ðµ¨¿ï¿½ Cloneï¿½Ç¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼ È°ï¿½ï¿½È­ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½. 
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ÎµÇ¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½Â±ï¿½. (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.)
+    - szNotifyArg08   : ï¿½ï¿½Æ® ï¿½ðµ¨¸ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Bodyï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½)
+    - fNumData01      : È°ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½Ã°ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å³ ï¿½ï¿½ï¿½Ï¸ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ None : ï¿½Èºï¿½ï¿½Ì°ï¿½, ï¿½Èµï¿½ï¿½ï¿½. Transform : ï¿½Èºï¿½ï¿½Ì°ï¿½, ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½Ì°ï¿½, ï¿½ï¿½ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
+    - vNotifyScale    : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ Å©ï¿½â°ª
 
     **Play_Sound**
-    - szNotifyArg01   : »ç¿îµå ÅÂ±×
-    - szNotifyArg08   : ÆÄÆ® ¸ðµ¨¸í (¾øÀ» ½Ã Body¿¡¼­ Å½»ö)
-    - fNumData01      : º¼·ý
-    - iNumData01      : Ã¤³Î (0 : EFFECT, 1 : BGM) << ³ªÁß¿¡ ¹Ù²ð¼öµµ
-    - szSocketTag     : ¹æÇâ¼º »ç¿îµå ±¸Çö ½Ã Àç»ýÇÒ À§Ä¡
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½
+    - szNotifyArg08   : ï¿½ï¿½Æ® ï¿½ðµ¨¸ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Bodyï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½)
+    - fNumData01      : ï¿½ï¿½ï¿½ï¿½
+    - iNumData01      : Ã¤ï¿½ï¿½ (0 : EFFECT, 1 : BGM) << ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½â¼º ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 
-    **Active_Collision ( ÀüÅõ ·ÎÁ÷¿ë )**
-    // ÄÝ¸®ÀüÀ» »ý¼º Or ÄÝ¸®Àü On
+    **Active_Collision ( ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ )**
+    // ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Or ï¿½Ý¸ï¿½ï¿½ï¿½ On
 	// ANIM_NOTIFY
 	// szNotifyTag		=> Notify Event Type
 	
@@ -114,8 +121,8 @@ NS_END
 	// vNotifyPosition	=> Hit Box Relative Position
 	// vNotifyRotation	=> Hit Box Rotation
 
-    **Active_Collision ( ÀüÅõ ·ÎÁ÷¿ë )**
-    // ÄÝ¸®ÀüÀ» »ý¼º Or ÄÝ¸®Àü On
+    **Active_Collision ( ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ )**
+    // ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Or ï¿½Ý¸ï¿½ï¿½ï¿½ On
 	// ANIM_NOTIFY
 	- szNotifyTag		=> Notify Event Type
 	
@@ -138,52 +145,52 @@ NS_END
     3
 
     **Set_Transform**
-    - szNotifyArg01   : ¾øÀ½
-    - szNotifyArg02   : ¾øÀ½
-    - szSocketTag     : ¾øÀ½
-    - bIsLocalPos     : ¾øÀ½
-    - vNotifyPosition : °´Ã¼ Look ±âÁØÀ¸·Î ÀÌµ¿ ÇÒ À§Ä¡
-    - vNotifyRotation : °´Ã¼ Look ±âÁØÀ¸·Î È¸Àü ÇÒ À§Ä¡
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½
+    - bIsLocalPos     : ï¿½ï¿½ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½Ã¼ Look ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½Ã¼ Look ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡
 
     **Set_DynamicTransform**
-    - szNotifyArg01   : Áö¼Ó ½Ã°£
-    - szNotifyArg02   : º¸°£ ¿©ºÎ
-    - szSocketTag     : ºÎÂø ½Ã ÇØ´ç ºÎÂø ¸ÅÆ®¸¯½º. _getÀÏ ½Ã CCharacter¿¡¼­ ¹Þ¾Æ¿Ã °Í
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotationÀ» ·ÎÄÃ »óÀ¸·Î Á¶Á¤ÇØÁÙÁö, ¿ùµå »óÀ¸·Î Á¶Á¤ÇØÁÙ Áö
-    - vNotifyPosition : ½Ã°£(szNotifyArg01)±îÁö ÀÌµ¿ ÇÒ À§Ä¡
-    - vNotifyRotation : ½Ã°£(szNotifyArg01)±îÁö È¸Àü ÇÒ À§Ä¡
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½. _getï¿½ï¿½ ï¿½ï¿½ CCharacterï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½ï¿½
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotationï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    - vNotifyPosition : ï¿½Ã°ï¿½(szNotifyArg01)ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½Ã°ï¿½(szNotifyArg01)ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡
 
-    **Set_DeltaTimeSpeed - ÇÑ ¾Ö´Ï¸ÞÀÌ¼Ç ³»¿¡¼­µµ µ¨Å¸Å¸ÀÓ ¹èÀ² Á¶Á¤ °¡´É. ´ÙÀ½ ¾Ö´Ï¸ÞÀÌ¼Ç Ãâ·Â ½Ã ÃÊ±âÈ­ **
-    - szNotifyArg01   : º¸Á¤ ½Ã°£
-    - szNotifyArg02   : ¾øÀ½
-    - szSocketTag     : ¾øÀ½
-    - bIsLocalPos     : ¾øÀ½
-    - vNotifyPosition : ¾øÀ½
-    - vNotifyRotation : ¾øÀ½
+    **Set_DeltaTimeSpeed - ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê±ï¿½È­ **
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½
+    - bIsLocalPos     : ï¿½ï¿½ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½
 
-    **Adjust_Light - ±â´É ¹Ì±¸Çö. **
-    - szNotifyArg01   : ¾øÀ½
-    - szNotifyArg02   : ¾øÀ½
-    - szSocketTag     : ¾øÀ½
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotationÀ» ·ÎÄÃ »óÀ¸·Î Á¶Á¤ÇØÁÙÁö, ¿ùµå »óÀ¸·Î Á¶Á¤ÇØÁÙ Áö
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
+    **Adjust_Light - ï¿½ï¿½ï¿½ ï¿½Ì±ï¿½ï¿½ï¿½. **
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotationï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 
-    **Play_ScreenSFX - ±â´É ¹Ì±¸Çö**
-    - szNotifyArg01   : ¾øÀ½
-    - szNotifyArg02   : ¾øÀ½
-    - szSocketTag     : ¾øÀ½
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotationÀ» ·ÎÄÃ »óÀ¸·Î Á¶Á¤ÇØÁÙÁö, ¿ùµå »óÀ¸·Î Á¶Á¤ÇØÁÙ Áö
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
+    **Play_ScreenSFX - ï¿½ï¿½ï¿½ ï¿½Ì±ï¿½ï¿½ï¿½**
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotationï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 
-    **Undefined - ±â´É ¹Ì±¸Çö. Á¤ÀÇµÇÁö ¾ÊÀº ³ëÆ¼ÆÄÀÌµéÀ» ÀÇ»ç¿¡ µû¶ó ½ÇÇà**
-    - szNotifyArg01   : ¾øÀ½
-    - szNotifyArg02   : ¾øÀ½
-    - szSocketTag     : ¾øÀ½
-    - bIsLocalPos     : vNotifyPosition, vNotifyRotationÀ» ·ÎÄÃ »óÀ¸·Î Á¶Á¤ÇØÁÙÁö, ¿ùµå »óÀ¸·Î Á¶Á¤ÇØÁÙ Áö
-    - vNotifyPosition : º¸Á¤µÈ »ý¼º À§Ä¡
-    - vNotifyRotation : º¸Á¤µÈ Ãß°¡ È¸Àü°ª
+    **Undefined - ï¿½ï¿½ï¿½ ï¿½Ì±ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ ï¿½Ç»ç¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½**
+    - szNotifyArg01   : ï¿½ï¿½ï¿½ï¿½
+    - szNotifyArg02   : ï¿½ï¿½ï¿½ï¿½
+    - szSocketTag     : ï¿½ï¿½ï¿½ï¿½
+    - bIsLocalPos     : vNotifyPosition, vNotifyRotationï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    - vNotifyPosition : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    - vNotifyRotation : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 
 
 */

@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CBlendObject{ pDevice, pContext }
 {
 }
 
 CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
-	: CGameObject{ Prototype }
+	: CBlendObject{ Prototype }
 {
 }
 
@@ -22,6 +22,11 @@ HRESULT CSpriteParticle::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
+
+	m_pContext->OMGetRenderTargets(1, nullptr, &m_pOriginalDSV);
+	m_pOriginalDSV->GetResource(&m_resourse);
+
 	return S_OK;
 }
 
@@ -70,6 +75,9 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
+	if (RENDER::BLACKBLEND == m_eRender)
+		Compute_Depth();
 }
 
 HRESULT CSpriteParticle::Render()
@@ -77,7 +85,8 @@ HRESULT CSpriteParticle::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(m_tData.iBegin);
+	m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount);
+	m_iRenderCount++;
 
 	m_pVIBufferCom->Bind_Resources();
 
@@ -104,6 +113,7 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	Desc.isLoop = tData.bisLoop;
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
+	
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
 	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
 	//m_pComputeShader = pComputeShader;
@@ -124,35 +134,24 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	}
 
@@ -193,39 +192,29 @@ void CSpriteParticle::Update(SPRITE_PARTICLE_DATA tData)
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
 
+
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	}
 
@@ -275,6 +264,12 @@ HRESULT CSpriteParticle::Ready_Components()
 
 HRESULT CSpriteParticle::Bind_ShaderResources()
 {
+	//카메라의 여러 정보들을 받아올 수 있어 여기서 fFar 받아올 수 있음.
+	//카메라 Far 값을 받아오는 변수는 "g_fFar" 로 세팅해줘. 
+	//클라에선 g_fFar 알아서 세팅해주니까 걱정안해도 돼.
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+	CamInfo.fFar;
+
 	if (m_tData.bisSpectrum) {
 		_float4x4 world = m_CombinedWorldMatrix;
 		world._41 = 0;
@@ -333,14 +328,58 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
+		return E_FAIL;
+	_int iBillboard = 0;
+	iBillboard += m_tData.bisBillboard ? 1 : 0;
+	iBillboard += m_tData.bisAngleBillboard ? 2 : 0;
+	iBillboard += m_tData.bisStart ? 4 : 0;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iBillboard", &iBillboard, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisAnimation", &m_tData.bisAnimation, sizeof(_bool))))
+		return E_FAIL;
+
+	
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
 
+	//if (RENDER::BLUR == m_eRender) {
+		ID3D11Texture2D* pDepthTexture = nullptr;
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		texDesc.Width = 1600;
+		texDesc.Height = 900;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = 0;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, nullptr, &pDepthTexture)))
+			return E_FAIL;
+
+		m_pContext->CopyResource(pDepthTexture, m_resourse);
+
+		Safe_Release(m_pRSV);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		if (FAILED(m_pDevice->CreateShaderResourceView(pDepthTexture, &srvDesc, &m_pRSV)))
+			return E_FAIL;
+		Safe_Release(pDepthTexture);
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pRSV);
+	//}
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
@@ -513,4 +552,8 @@ void CSpriteParticle::Free()
 
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
+
+	Safe_Release(m_pOriginalDSV);
+	Safe_Release(m_pReadSource);
+	Safe_Release(m_pRSV);
 }

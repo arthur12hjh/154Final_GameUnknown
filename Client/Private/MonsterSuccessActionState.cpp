@@ -8,6 +8,7 @@
 CMonsterSuccessActionState::CMonsterSuccessActionState() :
 	CState()
 {
+	m_iStateID = 1;
 }
 
 HRESULT CMonsterSuccessActionState::Initialize(void* pArg)

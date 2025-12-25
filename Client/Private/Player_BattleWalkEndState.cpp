@@ -9,7 +9,7 @@ CPlayer_BattleWalkEndState::CPlayer_BattleWalkEndState()
 {
 }
 
-void CPlayer_BattleWalkEndState::Start(void* pArg)
+void CPlayer_BattleWalkEndState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::WALK_END;
 
@@ -21,39 +21,48 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkEndState::Update(_float fTimeDelta)
     _bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-    {
-        m_tNextState.eNextState = PLAYER_STATE::WALK;
-    }
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)) &&
-        fAnimationRatio >= 0.1f)
+    _float fDirX{}, fDirY{};
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+        fDirY += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+        fDirY -= 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        fDirX += 1.f;
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+        fDirX -= 1.f;
+
+    //walking false Ã³¸®
+    if (!(0.f == fDirX && 0.f == fDirY))
+        m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1) &&
-        fAnimationRatio >= 0.1f)
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
         m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2) &&
-        fAnimationRatio >= 0.1f)
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+        m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
     else if (true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
-    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 3.f), 0.f), nullptr);
+    m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * max((1 - fAnimationRatio * 6.f), 0.f), nullptr);
 
     return m_tNextState;
 }
 
-void CPlayer_BattleWalkEndState::End()
+_float CPlayer_BattleWalkEndState::End()
 {
+    return m_fNextBlendRatio;
 }
 
 CPlayer_BattleWalkEndState* CPlayer_BattleWalkEndState::Create(void* pArg)

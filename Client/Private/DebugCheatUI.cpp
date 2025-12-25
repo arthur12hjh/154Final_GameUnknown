@@ -7,8 +7,10 @@
 #include "ImGuiManager.h"
 #include "DebugHierarchy.h"
 
+#include "Nayitba.h"
 #include "Player.h"
 #include "Camera_Free.h"
+#include "Camera_Player.h"
 
 #include "StringHelper.h"
 #include "GameManager.h"
@@ -38,6 +40,11 @@ void CDebugCheatUI::Update(_float fTimeDeleta)
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
     ImGui::Begin("Cheat List", &bIsOpen);
 
+    if (m_pSelectCamera)
+    {
+        if (m_pSelectCamera->isDead())
+            m_pSelectCamera = nullptr;
+    }
     DrawObjectDebug();
     ImGui::Separator();
     DrawCameraDebug();
@@ -72,11 +79,14 @@ HRESULT CDebugCheatUI::Render()
 void CDebugCheatUI::SetLevelMainCamera()
 {
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     m_pSelectCamera = m_pGameInstance->GetMainCamera();
-
-    if (m_pSelectCamera)
+    if (nullptr == m_pSelectCamera || m_pSelectCamera->isDead())
     {
+        strcpy_s(m_szSelectCamera, "Not Find Main Camera");
+    }
+    else
+    {
+        Safe_Release(m_pSelectCamera);
         auto pCameras = m_pGameInstance->GetAllCamera();
         for (auto& iter : *pCameras)
         {
@@ -88,10 +98,15 @@ void CDebugCheatUI::SetLevelMainCamera()
             pFree_Camera->GetCameraLock(m_bIsCameraLock);
         }
     }
-    else
-    {
-        strcpy_s(m_szSelectCamera, "Not Find Main Camera");
-    }
+
+    
+#endif // _DEBUG
+}
+
+void CDebugCheatUI::ResetLevelCamera()
+{
+#ifdef _DEBUG
+    m_pSelectCamera = nullptr;
 #endif // _DEBUG
 }
 
@@ -111,10 +126,65 @@ void CDebugCheatUI::DrawObjectDebug()
     if (ImGui::Button("Player Teleport Button"))
     {
         auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
         pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(m_vTeleportPoint[0], m_vTeleportPoint[1], m_vTeleportPoint[2], 1.f));
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
         Safe_Release(pPlayer);
     }
+
+    ImGui::Dummy(ImVec2(0.f, 10.f));
+    // 12.09 서민석 - 텔포 포인트 하나 임의로 추가해뒀음
+    // 얘는 치우지 말아다오
+    if (ImGui::Button("Teleport Player To Elevator"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(479.678f, 24.858f, 328.388f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
+    if (ImGui::Button("Teleport Player To Gigas"))
+    {
+
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(686.786f, 14.520f, 558.247f, 1.f));
+        static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
+        Safe_Release(pPlayer);
+    }
+
+    //12.10 서민석 - 테스트용 몬스터 소환로직
+    //이건 나중에 치워도 될듯
+    if (ImGui::Button("Spawn Monster Front"))
+    {
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        _vector vPos = pPlayer->GetTransform()->Get_State(STATE::POSITION) + pPlayer->GetTransform()->Get_State(STATE::LOOK) * 5.f;
+
+        Safe_Release(pPlayer);
+
+        CNayitba::NAYITBA_DESC Desc = {};
+        Desc.bIsApplyTransform = true;
+        Desc.vScale = { 1.f, 1.f, 1.f };
+        Desc.iMonsterID = 4;
+        Desc.bIsSuperMonster = false;
+
+        Desc.vPosition = { XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos) };
+        if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+            ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
+            return;
+    }
+
 #endif // _DEBUG
 }
 
@@ -122,6 +192,23 @@ void CDebugCheatUI::DrawCameraDebug()
 {
 #ifdef _DEBUG
     ImGui::Text("Camera Debug");
+
+
+    // 12.09 서민석 - 트랜스폼 보는거 없길래 추가해둠 
+    // 문제생기면 말 ㄱㄱ
+    if (nullptr != m_pSelectCamera)
+    {
+        _float3 vCamPosition = {};
+        XMStoreFloat3(&vCamPosition, m_pSelectCamera->GetTransform()->Get_State(STATE::POSITION));
+
+        ImGui::Dummy(ImVec2(0.f, 5.f));
+        ImGui::Text("Camera Position : %.3f , %.3f , %.3f", vCamPosition.x, vCamPosition.y, vCamPosition.z);
+        ImGui::Dummy(ImVec2(0.f, 5.f));
+    }
+
+    if (ImGui::InputFloat("Camera Transform", &m_fFreeCamSpeed))
+        static_cast<CCamera_Free*>(m_pSelectCamera)->SetCameraSpeed(m_fFreeCamSpeed);
+
     ImGui::Checkbox("Camera Lerp Tirrger", &m_bIsCamLerp);
 
     if (ImGui::BeginCombo("Camera Change", m_szSelectCamera))
@@ -137,9 +224,9 @@ void CDebugCheatUI::DrawCameraDebug()
                 _float4x4 PrePosMatrix = {};
                 if (m_pSelectCamera != iter.second)
                 {
-                    Safe_Release(m_pSelectCamera);
                     m_pGameInstance->SetMainCamera(iter.first.c_str(), &PrePosMatrix);
                     m_pSelectCamera = m_pGameInstance->GetMainCamera();
+                    Safe_Release(m_pSelectCamera);
                 }
 
                 auto pFree_Camera = dynamic_cast<CCamera_Free*>(m_pSelectCamera);
@@ -161,6 +248,11 @@ void CDebugCheatUI::DrawCameraDebug()
     {
         if (ImGui::InputFloat("FreeCam Speed", &m_fFreeCamSpeed))
             static_cast<CCamera_Free*>(m_pSelectCamera)->SetCameraSpeed(m_fFreeCamSpeed);
+    }
+    else
+    {
+        if (ImGui::DragFloat("PlayerCam Distance", &m_fCamDistance, 0.01f, 2.f, 50.f))
+            static_cast<CCamera_Player*>(m_pSelectCamera)->Set_Distance(m_fCamDistance);
     }
 
     if (ImGui::Checkbox("KeyBoard Lock", &m_bIsCameraLock[0]))
@@ -311,7 +403,6 @@ void CDebugCheatUI::Free()
     __super::Free();
 
 #ifdef _DEBUG
-    Safe_Release(m_pSelectCamera);
     Safe_Release(m_pGameManager);
 #endif // _DEBUG
 }

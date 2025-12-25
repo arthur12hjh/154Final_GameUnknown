@@ -8,8 +8,10 @@ CRadialBlur::CRadialBlur(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 }
 
-void CRadialBlur::Set_Active(_float fLifeTime)
+void CRadialBlur::Set_Active(_uint iSampleCount, _float fSamplePower, _float fLifeTime)
 {
+    m_iSampleCount = iSampleCount;
+    m_fSamplePower = fSamplePower;
     m_fLifeTime = fLifeTime;
     m_fTimeAcc = 0.f;
     m_isActive = true;
@@ -67,12 +69,17 @@ HRESULT CRadialBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTag,
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strRTTag, m_pShader, "g_SceneTexture")))
         return E_FAIL;
 
+    CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+    m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
     m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
     m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
     m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
     m_pShader->Bind_RawValue("g_fLifeTime", &m_fLifeTime, sizeof(_float));
     m_pShader->Bind_RawValue("g_fTimeAcc", &m_fTimeAcc, sizeof(_float));
+    m_pShader->Bind_RawValue("g_iSampleCount", &m_iSampleCount, sizeof(_float));
+    m_pShader->Bind_RawValue("g_fSamplePower", &m_fSamplePower, sizeof(_float));
+
 
     m_pShader->Begin(0);
     pVIBuffer->Bind_Resources();

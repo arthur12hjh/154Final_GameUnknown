@@ -1,0 +1,23 @@
+[
+    {
+        "fBaseFOV": 45.0,
+        "iCameraAnimationFlag": 66050,
+        "iCameraAnimationID": 1111,
+        "szCameraAnimationName": "",
+        "vBaseBonePosition": [
+            735.7230224609375,
+            6.138000011444092,
+            607.8989868164063
+        ],
+        "vBaseBoneRotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "vBaseCameraPivot": [
+            738.6599731445313,
+            2.0220000743865967,
+            608.5689697265625
+        ]
+    }
+]

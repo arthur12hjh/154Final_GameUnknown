@@ -2,6 +2,11 @@
 #include "SpriteParticle.h"
 
 #include "GameInstance.h"
+#include "MainApp.h"
+
+#include "EffectSRV.h"
+
+
 
 CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -18,55 +23,44 @@ CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
 	m_pComputeShader = dynamic_cast<CComputeShader*>(Prototype.m_pComputeShader->Clone(nullptr));
 }
 
-HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pPointParticleData)
+HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pSpriteParticleData)
 {
-	m_tData = *pPointParticleData;
+	m_tData = *pSpriteParticleData;
 	switch (m_tData.iSelectRender)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-	Desc.iNumInstance = pPointParticleData->iNumInstance;
-	Desc.vCenter = pPointParticleData->fCenter;
-	Desc.vPivot = pPointParticleData->fPivot;
-	Desc.vRange = pPointParticleData->fRange;
-	Desc.vSize = pPointParticleData->fSize;
-	Desc.vLifeTime = pPointParticleData->fLifeTime;
-	Desc.vSpeed = pPointParticleData->fSpeed;
-	Desc.isLoop = pPointParticleData->bisLoop;
+	Desc.iNumInstance = pSpriteParticleData->iNumInstance;
+	Desc.vCenter = pSpriteParticleData->fCenter;
+	Desc.vPivot = pSpriteParticleData->fPivot;
+	Desc.vRange = pSpriteParticleData->fRange;
+	Desc.vSize = pSpriteParticleData->fSize;
+	Desc.vLifeTime = pSpriteParticleData->fLifeTime;
+	Desc.vSpeed = pSpriteParticleData->fSpeed;
+	Desc.isLoop = pSpriteParticleData->bisLoop;
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pPointParticleData->szCS.c_str(), Desc.iNumInstance);
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), pSpriteParticleData->szCS.c_str(), Desc.iNumInstance);
 	return S_OK;
 }
 
@@ -110,6 +104,7 @@ HRESULT CSpriteParticle::Initialize(void* pArg)
 
 	if (FAILED(Ready_ComputeShader()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 	return S_OK;
 }
 
@@ -122,8 +117,7 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	else if (0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime) {
 		m_tData.bisLoop = false;
-	}
-	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
+	}if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
 		m_isDead = true;
 		return;
 	}
@@ -133,15 +127,17 @@ void CSpriteParticle::Update(_float fTimeDelta)
 
 	if (m_tData.bisSpectrum) {
 		if (0 < XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0]))))) {
-			m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
 			m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
 			if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
 				m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
 			}
-			else if (1 < m_fLength) {
-				_int iLength = (_int)m_fLength;
-				m_fLength -= iLength;
-				m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+			else {
+				m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
+				if (1 < m_fLength) {
+					_int iLength = (_int)m_fLength;
+					m_fLength -= iLength;
+					m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
+				}
 			}
 		}
 	}
@@ -155,6 +151,8 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 		return;
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
+
 }
 
 HRESULT CSpriteParticle::Render()
@@ -162,8 +160,8 @@ HRESULT CSpriteParticle::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(m_tData.iBegin);
-
+	m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount);
+	m_iRenderCount++;
 	m_pVIBufferCom->Bind_Resources();
 
 	m_pVIBufferCom->Render();
@@ -172,18 +170,18 @@ HRESULT CSpriteParticle::Render()
 }
 
 void CSpriteParticle::Stop() {
-	m_bisStop = true;
-	if (!m_tData.bisSpectrum) {
+	if (!m_bisStop && !m_tData.bisSpectrum) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 	}
+	m_bisStop = true;
 }
 
 void CSpriteParticle::Play()
 {
-	m_bisStop = false;
-	if (m_tData.bisSpectrum) {
+	if (m_bisStop && m_tData.bisSpectrum) {
 		m_CBData.iLoopAndCount.x = 2;
 	}
+	m_bisStop = false;
 }
 
 void CSpriteParticle::End()
@@ -281,15 +279,28 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisBillboard", &m_tData.bisBillboard, sizeof(_bool))))
+	_int iBillboard = 0;
+	iBillboard += m_tData.bisBillboard ? 1 : 0;
+	iBillboard += m_tData.bisAngleBillboard ? 2 : 0;
+	iBillboard += m_tData.bisStart ? 4 : 0;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_iBillboard", &iBillboard, sizeof(_int))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisSpectrum", &m_tData.bisSpectrum, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bisAnimation", &m_tData.bisAnimation, sizeof(_bool))))
 		return E_FAIL;
 	int iSizeCount = m_tData.fSizeDiagrams.size();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+
+
+
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
+
 	return S_OK;
 }
 
@@ -322,7 +333,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.fTimeDelta.w = 0;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
-	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;
+	BufferDesc.ByteWidth = (sizeof(SpriteConstBufferData) + 15) / 16 * 16;
 	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
@@ -422,11 +433,11 @@ void CSpriteParticle::Spread(_float fTimeDelta)
 	m_pVIBufferCom->PasteResource(m_pReadSource);
 }
 
-CSpriteParticle* CSpriteParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pPointParticleData)
+CSpriteParticle* CSpriteParticle::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const SPRITE_PARTICLE_DATA* pSpriteParticleData)
 {
 	CSpriteParticle* pInstance = new CSpriteParticle(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pPointParticleData)))
+	if (FAILED(pInstance->Initialize_Prototype(pSpriteParticleData)))
 	{
 		MSG_BOX("Failed to Created : pGraphic_Device");
 		Safe_Release(pInstance);
@@ -459,4 +470,7 @@ void CSpriteParticle::Free()
 
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
+	//Safe_Release(m_pOriginalDSV);
+	//Safe_Release(m_pReadSource);
+	//Safe_Release(m_pRSV);
 }

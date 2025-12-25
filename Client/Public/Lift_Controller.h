@@ -1,4 +1,4 @@
-#include "Client_Defines.h"
+﻿#include "Client_Defines.h"
 #include "ClientStruct.h"
 
 #include "Prob_Interaction.h"
@@ -15,7 +15,19 @@ class CLift_Controller final : public CProb_Interaction
 {
 public:
     enum class LIFT_ANIM_STATE { LIFT_ANIM_PULL, LIFT_ANIM_PUSH, LIFT_ANIM_END };
-    enum class LIFT_CONTROLL_STATE { LIFT_UP, LIFT_DOWN, LIFT_END };
+    enum class LIFT_CONTROLL_STATE 
+    { 
+        LIFT_UP,        // 리프트 플렛폼을 올리는 용도
+        LIFT_DOWN,      // 리프트 플렛폼을 내리는 용도
+        LIFT_END        // 아무상태 아님
+    };
+
+    typedef struct Lift_Controller_Desc : public Prob_Interaction_Desc
+    {
+        _bool bIsControllerType = false;
+        _uint iPlatformID = 0;
+		_uint iPosition = 0;    // 0: Up, 1 : Down
+    }LIFT_CONTROLLER_DESC;
 
 private:
     CLift_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,21 +45,31 @@ public:
     virtual HRESULT                     Render() override;
     void                                SetControllPlatform(CLift_Platform* pControllPlatform);
 
+    const _float4x4*                    Get_CombinedMatrix() { return m_bIsControllLift ? &m_CombinedMatrix : nullptr; }
+    const _vector*                      Get_LiftPlatformPosition() { return m_bIsControllLift ? &m_vLiftPlatformPos : nullptr; }
+
 private:
     LIFT_ANIM_STATE                     m_eCurState = { LIFT_ANIM_STATE::LIFT_ANIM_END };
     LIFT_CONTROLL_STATE                 m_eControllState = { LIFT_CONTROLL_STATE::LIFT_END };
 
+    // 이거 _bool 값으로 리프트 가운데 설치하는 컨트롤러는 이거 켜줘야합니다.
     _bool                               m_bIsControllLift = { false };
+	_uint   					        m_iPlatformID = { 0 };     
+	_uint   				            m_iPosition = { 0 };    // Top(0), Bottom(1)
+
+    // 컨트롤러가 이동시킬 리프트의 바닥 이라고 보시면 됩니다.
+    // 진성햄이 Platform 이라고해둬서 제가 Platform으로 했어요
+    _float4x4                           m_CombinedMatrix = {};
     CLift_Platform*                     m_pLiftPlatform = { nullptr };
+    _vector                             m_vLiftPlatformPos = {};
+
     CModel*                             m_pModelCom = { nullptr };
 
 private:
     HRESULT                             Ready_Components(const _tchar* pComponentTag);
     HRESULT                             Bind_ShaderResources();
 
-    virtual HRESULT					    Begin_OverlapCallBack() override;
-    virtual HRESULT					    End_OverlapCallBack() override;
-    virtual void					    Excute_CallBack(CGameObject* pActionObject) override;
+    virtual void					    Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
     void                                ResetAction(_bool bIsForce = false);
 

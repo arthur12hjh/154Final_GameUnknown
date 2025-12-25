@@ -11,7 +11,7 @@ private:
 	virtual ~CRadialBlur() = default;
 
 public:
-	void Set_Active(_float fLifeTime);
+	void Set_Active(_uint iSampleCount, _float fSamplePower, _float fLifeTime);
 	void Update(_float fTimeDelta);
 public:
 	virtual HRESULT Initialize() override;
@@ -26,6 +26,8 @@ public:
 #endif
 
 private:
+	_float m_fSamplePower = { 0.5f }; 
+	_uint m_iSampleCount = { 0 };
 	_float m_fTimeAcc = { 0.f };
 	_float m_fLifeTime = { 1.f };
 	_bool  m_isActive = { false };

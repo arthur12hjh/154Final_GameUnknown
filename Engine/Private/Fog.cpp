@@ -14,6 +14,7 @@ void* CFog::Get_Desc()
 	m_Desc.fFogPowerMax = &m_fFogPowerMax;
 	m_Desc.fFogStart = &m_fFogStart;
 	m_Desc.fFogEnd = &m_fFogEnd;
+	m_Desc.fSkyboxFogPower = &m_fSkyBoxFogPower;
 
 	return &m_Desc;
 }
@@ -51,6 +52,9 @@ HRESULT CFog::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
 		return E_FAIL;
 
+	CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+	m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogStart", &m_fFogStart, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogEnd", &m_fFogEnd, sizeof(_float))))
@@ -58,6 +62,8 @@ HRESULT CFog::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogPowerMin", &m_fFogPowerMin, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogPowerMax", &m_fFogPowerMax, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fSkyBoxFogPower", &m_fSkyBoxFogPower, sizeof(_float))))
 		return E_FAIL;
 
 	m_pShader->Begin(0);

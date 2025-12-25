@@ -49,9 +49,9 @@ void CUIBossHPBar::Update(_float fTimeDelta)
 		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
 
 		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentHealth) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxHealth);
-
-		m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 	}
+	
+	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }
 
 void CUIBossHPBar::Late_Update(_float fTimeDelta)
@@ -69,10 +69,10 @@ HRESULT CUIBossHPBar::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::HP_GAUGE))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBuffer->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -86,9 +86,9 @@ HRESULT CUIBossHPBar::Ready_Components()
 {
 	__super::Ready_Components();
 
-	/* Com_VIBaseBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBuffer))))
+	/* Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_Texture_HP */
@@ -112,10 +112,16 @@ HRESULT CUIBossHPBar::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
 		return E_FAIL;
+	
+	_bool bUseTintColor = false;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
+		return E_FAIL;
 
 	_float2 vUV{};
 	vUV.x = 88.f;
 	vUV.y = 3.f;
+
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
 		return E_FAIL;
@@ -171,6 +177,4 @@ CGameObject* CUIBossHPBar::Clone(void* pArg)
 void CUIBossHPBar::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pVIBaseBuffer);
 }

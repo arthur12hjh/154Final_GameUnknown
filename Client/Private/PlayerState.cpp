@@ -27,7 +27,7 @@ _bool CPlayerState::isTransferAble(PLAYER_MODE ePlayerMode, PLAYER_STATE ePlayer
 	return true;
 }
 
-void CPlayerState::Start(void* pArg)
+void CPlayerState::Start(void* pArg, _float fBlendRatio)
 {
 }
 
@@ -36,8 +36,22 @@ PLAYER_TRANSITION_DESC CPlayerState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayerState::End()
+_float CPlayerState::End()
 {
+	return m_fNextBlendRatio;
+}
+
+_vector CPlayerState::Calc_PlayerDirection(_vector vDir)
+{
+	_vector vPlayerLook = m_Desc->pPlayerTransform->Get_State(STATE::LOOK);
+	_vector vPlayerRight = m_Desc->pPlayerTransform->Get_State(STATE::RIGHT);
+
+	vPlayerLook = XMVectorSetY(vPlayerLook, 0.f);
+	vPlayerRight = XMVectorSetY(vPlayerRight, 0.f);
+
+	_vector vPlayerDir = (vPlayerLook + vPlayerRight) * XMVector2Normalize(vDir);
+
+	return vPlayerDir;
 }
 
 void CPlayerState::Free()

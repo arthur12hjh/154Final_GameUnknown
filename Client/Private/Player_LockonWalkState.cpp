@@ -10,7 +10,7 @@ CPlayer_LockonWalkState::CPlayer_LockonWalkState(_bool isRunning)
 {
 }
 
-void CPlayer_LockonWalkState::Start(void* pArg)
+void CPlayer_LockonWalkState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::WALK;
 
@@ -33,23 +33,22 @@ void CPlayer_LockonWalkState::Start(void* pArg)
 		m_isRunStart = false;
 
 		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), false, 1.f, 0.35f);
 		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), false, 1.f, 0.15f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), false, 1.f, 0.35f);
 	}
 }
 
 PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 {
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward"), true, 1.f, 0.12f, FALSE, -1.f, 2.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Forward_Start"), false, 1.f, 0.12f);
 
@@ -61,7 +60,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward"), true, 1.f, 0.12f, FALSE, -1.f, 13.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Backward_Start"), false, 1.f, 0.12f);
 
@@ -73,7 +72,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f, 0.12f);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left"), true, 1.f, 0.12f, FALSE, -1.f, 2.5f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Left_Start"), false, 1.f, 0.12f);
 
@@ -85,7 +84,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
 		if (false == m_isRunStart)
-			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f, FALSE, -1.f, 14.f, TRUE);
+			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right"), true, 1.f, 0.12f, FALSE, -1.f, 13.f, TRUE);
 		else
 			m_pPlayer->Set_Animation(TEXT("Proto_Lockon_Run_Right_Start"), false, 1.f, 0.12f);
 
@@ -94,13 +93,16 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
-	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+	else
+		m_tNextState.eNextState = PLAYER_STATE::IDLE;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
 		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
-
-	else
-		m_tNextState.eNextState = PLAYER_STATE::IDLE;
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
 
 	_bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
@@ -112,8 +114,10 @@ PLAYER_TRANSITION_DESC CPlayer_LockonWalkState::Update(_float fTimeDelta)
 	return m_tNextState;
 }
 
-void CPlayer_LockonWalkState::End()
+_float CPlayer_LockonWalkState::End()
 {
+	m_Desc->isLookFixed = false;
+	return m_fNextBlendRatio;
 }
 
 CPlayer_LockonWalkState* CPlayer_LockonWalkState::Create(void* pArg)

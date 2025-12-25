@@ -1,10 +1,11 @@
 #pragma once
 
-/* °´Ã¼¸¦ »ı¼º½Ã¿¡ ±×·ÁÁ®¾ßÇÒ °´Ã¼¶ó¸é ¿ÀºêÁ§Æ® ¸Å´ÏÁ®¿¡µµ Ãß°¡ÇÏ°í, ·»´õ·¯¿¡µµ Ãß°¡ÇÑ´Ù.(x)*/
-/* ¸Å ÇÁ·¹ÀÓ´ç °´Ã¼¾È¿¡¼­ ±×·ÁÁ®¾ßÇÏ´Â°¡¸¦ ÆÇ´ÜÇÏ°í ±×·ÁÁ®¾ßÇÑ´Ù¶ó¸é ·»´õ·¯¿¡ µî·ÏÇÏ´Â ÀÛ¾÷À» ¼öÇàÇÑ´Ù. */
+/* ê°ì²´ë¥¼ ìƒì„±ì‹œì— ê·¸ë ¤ì ¸ì•¼í•  ê°ì²´ë¼ë©´ ì˜¤ë¸Œì íŠ¸ ë§¤ë‹ˆì ¸ì—ë„ ì¶”ê°€í•˜ê³ , ë Œë”ëŸ¬ì—ë„ ì¶”ê°€í•œë‹¤.(x)*/
+/* ë§¤ í”„ë ˆì„ë‹¹ ê°ì²´ì•ˆì—ì„œ ê·¸ë ¤ì ¸ì•¼í•˜ëŠ”ê°€ë¥¼ íŒë‹¨í•˜ê³  ê·¸ë ¤ì ¸ì•¼í•œë‹¤ë¼ë©´ ë Œë”ëŸ¬ì— ë“±ë¡í•˜ëŠ” ì‘ì—…ì„ ìˆ˜í–‰í•œë‹¤. */
 
-/* È­¸é¿¡ ±×·ÁÁ®¾ßÇÒ °´Ã¼µéÀ» ±×¸®´Â ¼ø¼­´ë·Î ºĞ·ùÇÏ¿© º¸°üÇÑ´Ù. */
-/* º¸°üÇÏ°í ÀÕ´Â °´Ã¼µéÀ» º¸°üÇÑ ¼ø¼­´ë·Î ·»´õÇÔ¼ö¸¦ È£ÃâÇØ ÁØ´Ù. ÄÁÅ×ÀÌ³Ê¸¦ Å¬¸®¾îÇØ¹ö¸°´Ù. */
+/* í™”ë©´ì— ê·¸ë ¤ì ¸ì•¼í•  ê°ì²´ë“¤ì„ ê·¸ë¦¬ëŠ” ìˆœì„œëŒ€ë¡œ ë¶„ë¥˜í•˜ì—¬ ë³´ê´€í•œë‹¤. */
+/* ë³´ê´€í•˜ê³  ì‡ëŠ” ê°ì²´ë“¤ì„ ë³´ê´€í•œ ìˆœì„œëŒ€ë¡œ ë Œë”í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•´ ì¤€ë‹¤. ì»¨í…Œì´ë„ˆë¥¼ í´ë¦¬ì–´í•´ë²„ë¦°ë‹¤. */
+
 #include "Base.h"
 
 NS_BEGIN(Engine)
@@ -24,20 +25,49 @@ public:
 	void*   Get_SSAO_Desc();
 	void*	Get_MotionBlur_Desc();
 	void*   Get_Volumetric_Desc();
+	void*	Get_HDR_Desc();
+	void*	Get_Cascade_Desc();
+
 public:
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
-	HRESULT Initialize();
-	void	Update(_float fTimeDelta);
-	void	Render();
+	HRESULT	Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
+	HRESULT	Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
+	HRESULT	Bind_Shadow_Resource_Static(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT	Bind_Shadow_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT	Bind_CascadeEnds(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+	_float* Get_CascadeEnds();
+	//ì •ì ìœ¼ë¡œ ê·¸ë¦¼ìë¥¼ êµ¬ì›Œë‚¼ ë…€ì„ë“¤í•œí…Œ ì¶”ê°€í•´ì•¼ ê·¸ë¦¼ìë¥¼ êµ¬ì›Œì¤ë‹ˆë‹¤.. ì§„ë¯¸.
+	HRESULT Add_StaticShadowObject(class CGameObject* pGameObject);
+	// ì´ ë…€ì„ì€ ë ˆë²¨ ë§¤ë‹ˆì € ì•ˆì—ì„œ ìë™ìœ¼ë¡œ ì‹¤í–‰ë˜ê²Œ í• ê±°ì—ìš”. 
+	// ë”´ë°ì„œ ì‹¤í–‰í•˜ë©´ ë ˆê³ ì‚¼í‚´
+	HRESULT Bake_StaticShadow();
+public:
+	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	void Active_DoF(_bool bFlag, _float fLerpTime);
+	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
+	void Set_DoFInfo(_float fFocusDistance);
 
 #ifdef _DEBUG
-	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
-	void	Render_Debug();
+	//RenderDoc ì „ìš© ë¡œê¹… ì½”ë“œ
+	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);
+	//RenderDoc ì „ìš© ë¡œê¹… ì½”ë“œ
+	void		EndMarker(ID3D11DeviceContext* pContext);
+#endif
+public:
+	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	HRESULT				Initialize();
+	void				Update(_float fTimeDelta);
+	void				Update_Shadow(_float fTimeDelta); 
+	void				Render();
 
-	void	Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
-	void   Set_DebugColliderVisible(_bool isVisible);
+#ifdef _DEBUG
+	HRESULT				Add_DebugComponent(class CComponent* pDebugCom);
+	HRESULT				Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
+	void				Render_Debug();
+	
+	void				Set_DebugVisible(_bool isVisible) { m_isDebugVisible = isVisible; }
+	void				Set_DebugColliderVisible(_bool isVisible);
 #endif
 	
 private:
@@ -46,11 +76,12 @@ private:
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
 
-	ID3D11DepthStencilView*				m_pShadowDSV = { nullptr };
-	ID3D11DepthStencilView*				m_pVolumetricDSV = { nullptr };
 private:
 	class CShader*						m_pShader = { nullptr };
 	class CVIBuffer_Rect*				m_pVIBuffer = { nullptr };
+
+	class CShader*						m_pOcclusionShader = { nullptr };
+	class CVIBuffer_Cube*				m_pOcclusionVIBuffer = { nullptr };
 
 private:
 	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
@@ -61,15 +92,27 @@ private:
 	_bool								m_isVolumetric = { false };
 
 	_uint2								m_vScreenSize = {};
-	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 È¤Àº 16384, 9216
+	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 í˜¹ì€ 16384, 9216
+	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
 	
-	_bool								m_isBloom = { false };
-	_bool								m_isFog = { false };
+	_bool								m_isBloom = { true };
+	_bool								m_isFog = { true };
+	HDR_DESC							m_HDRDesc = {};
 	_bool								m_isHDR = { true };
+	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
+
+	ID3D11RasterizerState*				m_pRS_OcclusionQuery = { nullptr };
+
 private:
+	vector<class CReserveDeferred*>		m_ClientShaderReserves = {};
+
+	class CCascadeShadow*				m_pCascadeShadow = { nullptr };
+	class CStaticShadow*				m_pStaticShadow = { nullptr };
 	class CBlur*						m_pBlur = { nullptr };
 	class CGlow*						m_pGlow = { nullptr };
+	class CMetaball*					m_pMetaball = { nullptr };
+	class CBlackBlend*					m_pBlackBlend = { nullptr };
 	class CDistortion*					m_pDistortion = { nullptr };
 	class CBloom*						m_pBloom = { nullptr };
 	class CFog*							m_pFog = { nullptr };
@@ -78,6 +121,7 @@ private:
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
 	class CEmissive*					m_pEmissive = { nullptr };
+
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };
 	_bool								m_isDebugVisible = { false };
@@ -87,25 +131,23 @@ private:
 	void		Render_Priority();
 	void		Render_Shadow();
 	void		Render_MotionBlur();
+	void		Render_Occlusion();
 	void		Render_NonBlend();
 	void		Render_LightAcc();
-	/* ±â		·ÏÀº Combined ÀÌÀü¿¡. */
 	void		Render_Combined();
 	void		Render_NonLight();
 	void		Render_Blend();
 	void		Render_Deferred();
 	void		Render_ScreenDeferred();
-
-
 	void		ToneMapping();
 	void		Render_BackBuffer();
 	void		Render_UI();
+	void		Update_Occlusion_Visibility();
 
 private:
 	HRESULT		Ready_RenderTargets();
 	HRESULT		Ready_MRTs();
-	HRESULT		Ready_DepthStencilView(_uint iSizeX, _uint iSizeY);
-	HRESULT		Bind_WVP_Matrices();
+	HRESULT		Bind_PreValues();
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

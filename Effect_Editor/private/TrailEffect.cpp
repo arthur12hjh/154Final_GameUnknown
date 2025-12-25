@@ -43,7 +43,7 @@ void CTrailEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
 	m_pTransformCom->Go_Straight(fTimeDelta * m_fSpeed);
-	m_pTransformCom->Turn(XMVectorSet(0, 1, 0, 0), fTimeDelta * m_fSpeed);
+	m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta * m_fSpeed);
 
 	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
 }
@@ -68,19 +68,27 @@ void CTrailEffect::Refresh()
 	Safe_Release(m_pShaderCom);
 	m_fTime = 0;
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0, 0, 0, 1));
+	m_pTransformCom->Rotation(XMVectorSet(1, 0, 0, 0), XMConvertToRadians(45.f));
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
 }
 
 HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
 {
+	//카메라의 여러 정보들을 받아올 수 있어 여기서 fFar 받아올 수 있음.
+	//카메라 Far 값을 받아오는 변수는 "g_fFar" 로 세팅해줘. 
+	//클라에선 g_fFar 알아서 세팅해주니까 걱정안해도 돼.
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
+		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &tData.fColor, sizeof(_float4))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
 		return E_FAIL;
 
 
@@ -101,6 +109,9 @@ HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &tData.fDissolveUVSpeed, sizeof(_float2))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &tData.fDissolveUVSize, sizeof(_float2))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &tData.fColor, sizeof(_float4))))
 		return E_FAIL;
 	return S_OK;
 }

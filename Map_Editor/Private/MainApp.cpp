@@ -59,7 +59,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::DESERT)))
+	if (FAILED(Start_Level(LEVEL::VILLAGE)))
 		return E_FAIL;
 
 	return S_OK;
@@ -236,7 +236,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_LoadingBG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Texture/Loading/001_C_TD.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Texture/Loading/Loading_BG%d.png"), 6))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_LoadingBG"),

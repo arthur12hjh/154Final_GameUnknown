@@ -1,7 +1,6 @@
-#pragma once
+Ôªø#pragma once
 #include "Engine_Defines.h"
 #include "UIObject.h"
-#include <vector>
 
 namespace Client
 {
@@ -9,14 +8,17 @@ namespace Client
 		UI, DEBUG, GLOW, GLOWFX, HP_GAUGE,
 		POTION, SHIELD, BETA, BETA_FX, SKILL_SLOT,
 		SKILL_SLOT_GLOW, RUSH_SLOT, RUSH_SLOT_GLOW, SKILL_WRAPPER_ON_LINE, SKILL_WRAPPER_ON_FX,
-		LOADING_BLUR
+		LOADING_BLUR, SIMPLE_KEY, INTERACTION_FX, INTERACTION_FX_GLOW, STAMINA,
+		STAMINA_FX, LOCKON, OWNGOLD, POPUP, COSTUME_ANSWER,
+		COSTUME_BUTTONS, UNLOCK_FX
 	};
 
 	typedef struct tagSkillInfoDesc
 	{
-		_int		iSkillIndex{ -1 };
-		_uint		iPrevSkillState{ 0 };
-		_uint		iSkillState{ 0 };
+		int					iSkillIndex{ -1 };
+		unsigned int		iSkillID{ 0 };
+		unsigned int		iPrevSkillState{ 0 };
+		unsigned int		iSkillState{ 0 };
 	}UI_SKILL_INFO_DESC;
 
 	typedef struct tagUIEventArg {
@@ -25,6 +27,7 @@ namespace Client
 			BTN_STATE,
 			SKILL_STATE,
 			SKILL_INFO,
+			INTERACTION_STATE,
 			INT,
 			FLOAT,
 			WSTRING,
@@ -34,6 +37,14 @@ namespace Client
 		_wstring szActionTag{};
 		void* pData = nullptr;
 	}UI_EVENT_ARG_DESC;
+
+	typedef struct tagUIPopupDesc {
+		float fSizeX{ 0.f };
+		float fSizeY{ 0.f };
+		float fPosX{ 0.f };
+		float fPosY{ 0.f };
+		bool isDimed{ true };
+	}UI_POPUP_DESC;
 
 	typedef struct tagUIShader {
 		bool bUseUV{ false };
@@ -47,6 +58,9 @@ namespace Client
 		XMFLOAT4 vTintColor{ 1.f, 1.f, 1.f, 1.f };
 
 		bool bDiscardBlack{ false };
+
+		bool bUseScale{ false };
+		float fScale{ 1.f };
 
 		bool bUseGlow{ false };
 		bool bUsePulseEffect{ false };
@@ -63,12 +77,12 @@ namespace Client
 	typedef struct tagUIEventDesc
 	{
 		wstring szActionTag{};
-		vector<wstring> szSubscribeEventTags{}; // ±∏µ∂ «“ ¿Ã∫•∆ÆµÈ
+		vector<wstring> szSubscribeEventTags{}; // Íµ¨ÎèÖ Ìï† Ïù¥Î≤§Ìä∏Îì§
 		wstring szTypeTag{};
-		wstring szArg{}; // æ÷¥œ∏ﬁ¿Ãº« ¿Ã∏ß, æ◊º« ¿Ã∏ß, ªÁøÓµÂ ¿Ã∏ß, ¿Ã∆Â∆Æ ¿Ã∏ß ...
+		wstring szArg{}; // Ïï†ÎãàÎ©îÏù¥ÏÖò Ïù¥Î¶Ñ, Ïï°ÏÖò Ïù¥Î¶Ñ, ÏÇ¨Ïö¥Îìú Ïù¥Î¶Ñ, Ïù¥ÌéôÌä∏ Ïù¥Î¶Ñ ...
 	}UI_EVENT_DESC;
 
-	// UI Animation ±∏¡∂√º
+	// UI Animation Íµ¨Ï°∞Ï≤¥
 	typedef struct tagUIAnimTrackDesc
 	{
 		wstring szTrackTag{};
@@ -118,6 +132,7 @@ namespace Client
 
 	typedef struct tagUITextDesc
 	{
+		wstring szFont{};
 		wstring szText{};
 		float	fScale{ 1.f };
 		XMFLOAT4 vColor{ 1.f, 1.f, 1.f, 1.f };
@@ -157,11 +172,13 @@ namespace Client
 		bool m_isHasShaderDesc{ false };
 		UI_SHADER_DESC m_tUIShaderDesc{};
 
-		map<wstring, wstring> m_AnimTags{}; // æ÷¥œ∏ﬁ¿Ãº« ≈¬±◊, «¡∏Æ∆’ ¿Ã∏ß
-		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // ¿Ã∫•∆Æ ≈¬±◊, ¿Ã∫•∆Æ ±∏¡∂√º
+		map<wstring, wstring> m_AnimTags{}; // Ïï†ÎãàÎ©îÏù¥ÏÖò ÌÉúÍ∑∏, ÌîÑÎ¶¨Ìåπ Ïù¥Î¶Ñ
+		map<wstring, vector<UI_EVENT_DESC>> m_Events{}; // Ïù¥Î≤§Ìä∏ ÌÉúÍ∑∏, Ïù¥Î≤§Ìä∏ Íµ¨Ï°∞Ï≤¥
 
+		bool m_isHasPopupDesc{ false };
+		UI_POPUP_DESC m_tUIPopupDesc{};
 	public:
-		// ≈ÿΩ∫∆Æ
+		// ÌÖçÏä§Ìä∏
 		void Set_UI_Text_Desc(const UI_TEXT_DESC& Desc) {
 			m_isHasTextDesc = true;
 			m_tUITextDesc = Desc;
@@ -171,7 +188,7 @@ namespace Client
 			return m_isHasTextDesc ? &m_tUITextDesc : nullptr;
 		}
 
-		// ≈ÿΩ∫√ƒ
+		// ÌÖçÏä§Ï≥ê
 		void Set_UI_Texture_Desc(const UI_TEXTURE_DESC& Desc) {
 			m_isHasTextureDesc = true;
 			m_tUITextureDesc = Desc;
@@ -181,7 +198,17 @@ namespace Client
 			return m_isHasTextureDesc ? &m_tUITextureDesc : nullptr;
 		}
 
-		// ¿Ã∫•∆Æ
+		// ÌåùÏóÖ
+		void Set_UI_Popup_Desc(const UI_POPUP_DESC& Desc) {
+			m_isHasPopupDesc = true;
+			m_tUIPopupDesc = Desc;
+		}
+
+		UI_POPUP_DESC* Get_UI_Popup_Desc() {
+			return m_isHasPopupDesc ? &m_tUIPopupDesc : nullptr;
+		}
+
+		// Ïù¥Î≤§Ìä∏
 		map<wstring, vector<UI_EVENT_DESC>>* Get_Events() {
 			return &m_Events;
 		}
@@ -196,7 +223,7 @@ namespace Client
 			m_Events.erase(szEventTag);
 		}
 
-		// ≈¯ø°º≠ æ≤¥¬∞≈
+		// Ìà¥ÏóêÏÑú Ïì∞ÎäîÍ±∞
 		void Add_UI_Anim(wstring szAnimTag, wstring szAnimFileName) {
 			auto Anim = m_AnimTags.find(szAnimTag);
 
@@ -222,10 +249,30 @@ namespace Client
 
 		map<wstring, wstring> Get_UI_Anim_Tags() { return m_AnimTags; }
 
-		// Ω¶¿Ã¥ı
+		// ÏâêÏù¥Îçî
 		UI_SHADER_DESC* Get_ShaderDesc() {
 			return m_isHasShaderDesc ? &m_tUIShaderDesc : nullptr;
 		}
 
 	}UIBASE_DESC;
+
+	typedef struct tagVertexUIInstance
+	{
+		XMFLOAT4			vUVAtlasSize;
+		XMFLOAT4			vUVAtlasOffset;
+		XMFLOAT4			vAtlasIndex;
+	}VTX_INSTANCE_DESC;
+
+	typedef struct tagVertexPosTexInstanceParticleDesc
+	{
+		static constexpr unsigned int					iNumElements = { 5 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		};
+	}VTX_POSTEX_UI_INSTANCE;
 }

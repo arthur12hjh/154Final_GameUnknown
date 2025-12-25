@@ -6,6 +6,7 @@
 #include "Level_Loading.h"
 #include "Camera_Free.h"
 #include "Camera_Player.h"
+#include "Camera_Action.h"
 
 #include "GameManager.h"
 #include "JsonParser.h"
@@ -16,16 +17,22 @@
 
 #endif
 #include "Model.h"
-#include "RigidBody.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
+#include "EffectSRV.h"
 
 #include "Notify.h"
+#include "TriggerBox.h"
+
+#include "UIInstanceBuffer.h"
+
+#include "ColorChange.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
+	, m_pGameManager { CGameManager::GetInstance() },
+	m_pEffectSRV{ CEffectSRV::GetInstance() }
 {
-
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -42,6 +49,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
+	if (FAILED(m_pEffectSRV->Initialize(m_pDevice, m_pContext)))
+		return E_FAIL;
+
 	if (FAILED(Ready_Default_Setting()))
 		return E_FAIL;
 
@@ -54,13 +64,20 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::LOGO)))
+	if (FAILED(Ready_ClientDeferred()))
+		return E_FAIL;
+
+	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;		
 
+
 #ifdef _DEBUG
+	ShowCursor(TRUE);
 	m_pImGuiDebug = CImGuiMain::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pImGuiDebug)
 		return E_FAIL;
+#else
+	ShowCursor(FALSE);
 #endif
 
 	return S_OK;
@@ -68,16 +85,29 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
-		m_bIsMouseLock = !m_bIsMouseLock;
+#ifdef _DEBUG
+	// 윈도우 메시지 처리 등...
+	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplDX11_NewFrame();
+	ImGui::NewFrame();
+#endif
 
-	if (m_bIsMouseLock)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
+		g_bIsMouseLock = !g_bIsMouseLock;
+
+	if (g_bIsMouseLock)
 		MouseLock();
+	m_pEffectSRV->Reset();
 
 	m_pGameInstance->Update_Engine(fTimeDelta);
+	m_pGameManager->Update(fTimeDelta);
 
 #ifdef _DEBUG
 	m_pImGuiDebug->Update(fTimeDelta);
+#endif
+
+#ifdef _DEBUG
+	ImGui::EndFrame();
 #endif
 }
 
@@ -102,6 +132,8 @@ HRESULT CMainApp::Ready_Default_Setting()
 {
 	/*MakeSpriteFont "넥슨Lv1고딕 Bold" /FontSize:20 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 155ex.spritefont */
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Iceberg"), TEXT("../../Client/Bin/Resources/Fonts/Iceberg.spritefont"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -145,12 +177,25 @@ HRESULT CMainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
 	InstanceDesc.iNumInstance = 1;
 
 	/* For.Prototype_Component_VIBuffer_Rect_Instance */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
 		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &InstanceDesc))))
+		return E_FAIL;
+
+	CUIInstanceBuffer::UI_INSTANCE_DESC UIInstanceDesc{};
+	UIInstanceDesc.iNumInstance = 1;
+
+	/* For.Prototype_Component_UI_Instance_Buffer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
+		CUIInstanceBuffer::Create(m_pDevice, m_pContext, &UIInstanceDesc))))
 		return E_FAIL;
 
 #pragma region Shader
@@ -161,7 +206,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Shader_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTX_POSTEX_UI_INSTANCE::Elements, VTX_POSTEX_UI_INSTANCE::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_Point */
@@ -176,6 +221,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		return E_FAIL;
 	
 
+	/* For.Prototype_GameObject_TriggerBox */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		CTriggerBox::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Free"),
 		CCamera_Free::Create(m_pDevice, m_pContext))))
@@ -186,10 +236,21 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCamera_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Camera_Action */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"),
+		CCamera_Action::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_JointChain */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_JointChain"),
+		CJointChain::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For.Prototype_Component_CharacterController */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
@@ -224,6 +285,28 @@ HRESULT CMainApp::Ready_Mouse()
 	UIDesc.fSizeY = 32.f;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Mouse"),
 		ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"), &UIDesc)))
+		return E_FAIL;
+
+	// 이브 대가리 SSSAO & SpecDetail 적용 테스트 코드. 혹시 지우고 싶으면 말씀좀
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SSSAO"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_SSSAO.dds"), 1))))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_S.dds"), 1))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_ClientDeferred()
+{
+	/* 테스트용으로 ColorChange 추가. */
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange_2"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
 		return E_FAIL;
 
 	return S_OK;
@@ -262,7 +345,8 @@ void CMainApp::Free()
 {
 	__super::Free();
 
-	CGameManager::DestroyInstance();
+	
+	m_pEffectSRV->DestroyInstance();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
@@ -270,8 +354,11 @@ void CMainApp::Free()
 #ifdef _DEBUG
 	Safe_Release(m_pImGuiDebug);
 #endif
+	
+	m_pGameManager->Release_GameMgr();
+	CGameManager::DestroyInstance();
 
 	m_pGameInstance->Release_Engine();
-
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
+	
 }

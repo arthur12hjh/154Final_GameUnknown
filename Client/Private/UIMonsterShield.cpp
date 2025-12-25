@@ -4,9 +4,8 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#ifdef _DEBUG
-#include "../../UI_Editor/Public/UI_Camera.h"
-#endif // DEBUG
+#include "Nayitba.h"
+
 
 CUIMonsterShield::CUIMonsterShield(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -30,27 +29,6 @@ HRESULT CUIMonsterShield::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-//	auto pCharactor{ nullptr };
-//
-//	if (pCharactor)
-//	{
-//		/*m_iMaxShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iMaxShield);
-//		m_iCurrentShield = const_cast<LONGLONG*>(&CGameManager::GetInstance()->Get_PlayerDesc()->iCurrentShield);*/
-//	}
-//#ifdef _DEBUG
-//	else
-//	{
-//		auto pGaraPlayer = dynamic_cast<CUI_Camera*>(m_pGameInstance->GetMainCamera());
-//
-//		m_iMaxShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iMaxShield);
-//		m_iCurrentShield = const_cast<LONGLONG*>(&pGaraPlayer->Get_MonsterDesc()->iCurrentShield);
-//
-//		Safe_Release(pGaraPlayer);
-//	}
-//#endif // DEBUG
-
-	//Safe_Release(pCharactor);
 	
 	return S_OK;
 }
@@ -58,25 +36,29 @@ HRESULT CUIMonsterShield::Initialize(void* pArg)
 void CUIMonsterShield::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (!m_isRent)
+	{
+		m_fCurrentFill = 0.f;
+		m_fTargetFill = 1.f;
+	}
 }
 
 void CUIMonsterShield::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-#ifdef _DEBUG
-	//테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_I))
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	if (pMonster)
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-			m_fTargetFill -= 0.1f;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-			m_fTargetFill += 0.1f;
-	}
-#endif
+		auto StaticDesc = pMonster->GetStaticMonsterData();
+		auto CurDesc = pMonster->GetMonsterData();
 
-	/*if (m_iCurrentShield)
-		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);*/
+		m_fTargetFill = (_float)CurDesc.iCurrentShield / (_float)StaticDesc->iMaxShield;
+	}
+
+	if (m_iCurrentShield)
+		m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }
@@ -141,7 +123,7 @@ HRESULT CUIMonsterShield::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vUV{};
-	vUV.x = 4.f;
+	vUV.x = 12.f;
 	vUV.y = 1.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))

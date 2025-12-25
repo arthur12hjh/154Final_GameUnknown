@@ -21,10 +21,11 @@
 #include "Task_Idle.h"
 #include "Task_Move.h"
 #include "Task_GorillaAttack.h"
+#include "Task_Groggy.h"
 #include "Task_Hit.h"
+#include "Task_Theshold.h"
 #pragma endregion
 
-#include "Task_GorillaAttack.h"
 #pragma endregion
 
 CGorillaBehaviorTree::CGorillaBehaviorTree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -58,6 +59,7 @@ HRESULT CGorillaBehaviorTree::Initialize(void* pArg)
 
 void CGorillaBehaviorTree::Update(_float fTimeDelta)
 {
+
 	__super::Update(fTimeDelta);
 }
 
@@ -85,6 +87,7 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 	if (nullptr == pHitSquence)
 		return E_FAIL;
 
+	pHitSquence->Bind_BehaviorNode(CTask_Theshold::Create(this));
 	pHitSquence->Bind_BehaviorNode(CTask_Hit::Create(this));
 #pragma endregion
 
@@ -104,6 +107,8 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 		return E_FAIL;
 
 	pMoveSelector->Bind_BehaviorNode(CDeco_FindTarget::Create(this));
+
+	pMoveSelector->Bind_BehaviorNode(CTask_Groggy::Create(this));
 	pMoveSelector->Bind_BehaviorNode(pAttackSelector);
 	pMoveSelector->Bind_BehaviorNode(CTask_Move::Create(this));
 #pragma endregion

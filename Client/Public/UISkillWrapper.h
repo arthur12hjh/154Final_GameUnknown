@@ -4,9 +4,6 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect;
-class CTexture;
-class CShader;
 NS_END
 
 NS_BEGIN(Client)
@@ -26,6 +23,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	_uint Get_SkillID(_uint iIdx) const { return *m_iSkillID[iIdx]; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -42,6 +41,8 @@ private:
 
 	SKILL_STATE* m_eSkillState[4];
 	SKILL_STATE m_ePrevSkillState[4];
+	_uint* m_iSkillID[4];
+	LONGLONG* m_iCurrentBeta{ nullptr };
 	/*SKILL_STATE* m_eSkillState[4];
 	SKILL_STATE m_ePrevSkillState[4];*/
 

@@ -13,13 +13,16 @@
 
 #include "RigidBody.h"
 
+#include "UIInstanceBuffer.h"
+
 /********************************
 * 대재훈의 은총 이 얼마나 관대한가 *
 * 대민석의 은총 이 얼마나 찬란한가 *
 ********************************/
 
 CUI_MainApp::CUI_MainApp()	
-	: m_pGameInstance { CGameInstance::GetInstance() }
+	: m_pGameInstance { CGameInstance::GetInstance() },
+	m_pGameManager{ CGameManager::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
@@ -52,7 +55,7 @@ HRESULT CUI_MainApp::Initialize()
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::LOGO)))
+	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;
 
 	return S_OK;
@@ -87,6 +90,8 @@ HRESULT CUI_MainApp::Ready_Default_Setting()
 		return E_FAIL;*/
 
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("KoPub"), TEXT("../../Client/Bin/Resources/Fonts/KoPub.spritefont"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Iceberg"), TEXT("../../Client/Bin/Resources/Fonts/Iceberg.spritefont"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -127,6 +132,11 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VIBuffer_UIDebug */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
+		CVIBuffer_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	CVIBuffer_Rect_Instance::RECT_INSTANCE_DESC InstanceDesc{};
 	InstanceDesc.iNumInstance = 1;
 
@@ -135,14 +145,17 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 		CVIBuffer_Rect_Instance::Create(m_pDevice, m_pContext, &InstanceDesc))))
 		return E_FAIL;
 
-	///* For.Prototype_Component_Shader_VtxPosTex */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-	//	return E_FAIL;
+	CUIInstanceBuffer::UI_INSTANCE_DESC UIInstanceDesc{};
+	UIInstanceDesc.iNumInstance = 1;
+
+	/* For.Prototype_Component_UI_Instance_Buffer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
+		CUIInstanceBuffer::Create(m_pDevice, m_pContext, &UIInstanceDesc))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_UI.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_UI.hlsl"), VTX_POSTEX_UI_INSTANCE::Elements, VTX_POSTEX_UI_INSTANCE::iNumElements))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_RigidBody */
@@ -178,6 +191,7 @@ void CUI_MainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
+	m_pGameManager->Release_GameMgr();
 	CGameManager::DestroyInstance();
 
 	m_pGuiManager->Release_GUI_Manager();

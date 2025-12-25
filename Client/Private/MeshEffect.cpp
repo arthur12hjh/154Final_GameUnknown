@@ -23,35 +23,24 @@ HRESULT CMeshEffect::Initialize_Prototype(const MESH_EFFECT_DATA* pEffectData)
 	{
 	case 0:
 		m_eRender = RENDER::NONBLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 1:
 		m_eRender = RENDER::NONLIGHT;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	case 2:
-		m_eRender = RENDER::BLUR;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::BLACKBLEND;
 		break;
 	case 3:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::NEUTRAL;
+		m_eRender = RENDER::BLUR;
 		break;
 	case 4:
 		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::ENEMY;
 		break;
 	case 5:
-		m_eRender = RENDER::GLOW;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
+		m_eRender = RENDER::METABALL;
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
-		break;
-	case 7:
-		m_eRender = RENDER::BLEND;
-		m_eTeam = OBJECT_TEAM::FRIENDLY;
 		break;
 	}
 	return S_OK;
@@ -120,7 +109,9 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 {
 	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime))
 		return;
-	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	if (0 <= m_fTime)
+		m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
 }
 
 HRESULT CMeshEffect::Render()
@@ -132,12 +123,13 @@ HRESULT CMeshEffect::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+		if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+	m_iRenderCount++;
 	return S_OK;
 }
 

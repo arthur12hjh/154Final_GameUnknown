@@ -1,0 +1,32 @@
+[
+    {
+        "TextDesc": {
+            "szFont": "KoPub",
+            "szText": "테스트 스크립트",
+            "fScale": 0.8,
+            "vColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 500.0,
+        "fSizeY": 50.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 30,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 1,
+        "szLayerTag": "Layer_Script",
+        "szProtoTag": "Prototype_GameObject_UI_Script",
+        "szUIID": "UI_Scripts_1",
+        "szUITag": "UI_Scripts"
+    }
+]

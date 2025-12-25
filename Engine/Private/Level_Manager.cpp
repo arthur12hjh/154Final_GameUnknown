@@ -9,22 +9,17 @@ CLevel_Manager::CLevel_Manager()
 	Safe_AddRef(m_pGameInstance);	
 }
 
-HRESULT CLevel_Manager::Clear_LevelResource()
-{
-	if (nullptr != m_pCurrentLevel)
-	{
-		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID());
-	}
-
-	return S_OK;
-}
-
 HRESULT CLevel_Manager::Change_Level(CLevel* pNewLevel)
 {
 	if (nullptr != m_pCurrentLevel)
+	{
 		Safe_Release(m_pCurrentLevel);
+	}
+	//넘어가기 직전에 그림자 구워줌.
+	m_pGameInstance->Bake_StaticShadow();
 	
 	m_pCurrentLevel = pNewLevel;
+	
 	return S_OK;
 }
 
@@ -52,6 +47,16 @@ _uint CLevel_Manager::GetCurrentLevelID()
 CLevel* CLevel_Manager::GetCurrentLevel()
 {
 	return m_pCurrentLevel;
+}
+
+HRESULT CLevel_Manager::Clear_LevelResource(_bool bIsClearProtoTypes)
+{
+	if (nullptr != m_pCurrentLevel)
+	{
+		m_pGameInstance->Clear_Resources(m_pCurrentLevel->Get_LevelID(), bIsClearProtoTypes);
+	}
+		
+	return S_OK;
 }
 
 CLevel_Manager* CLevel_Manager::Create()

@@ -44,6 +44,8 @@ void COBBCollider::UpdateColiision(_matrix WorldMatrix)
 {
     m_bIsHit = false;
     m_OriginOrientBox->Transform(*m_Bounding, WorldMatrix);
+
+    XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 }
 
 _bool COBBCollider::Intersect(COLLIDER eType, CCollider* pTarget)
@@ -103,7 +105,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<CBoxCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
@@ -114,7 +116,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<CSphereCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
@@ -125,7 +127,7 @@ _bool COBBCollider::RayIntersect(COLLIDER eType, CCollider* pTarget, DEFAULT_HIT
     {
         auto pTargetBoundBox = static_cast<COBBCollider*>(pTarget)->GetBounding();
         TargetPosition = XMLoadFloat3(&pTargetBoundBox.Center);
-        vDireaction = XMVector3Normalize(vCenter - TargetPosition);
+        vDireaction = XMVector3Normalize(TargetPosition - vCenter);
         if (XMVector3Equal(vDireaction, XMVectorZero()))
             bIsHit = true;
         else
@@ -174,6 +176,41 @@ void COBBCollider::SetCollision(_float3 vCenter, _float4 vAngle, _float3 vExtent
     _float4		vQuaternion = {};
     XMStoreFloat4(&vQuaternion, XMQuaternionRotationRollPitchYaw(vAngle.x, vAngle.y, vAngle.z));
     m_OriginOrientBox->Orientation = vQuaternion;
+}
+
+HRESULT COBBCollider::Render_Face(_float4 vColor)
+{
+#ifdef _DEBUG
+    __super::Render(vColor);
+#endif // _DEBUG
+    m_pBatch->Begin();
+    _float3 vCorners[8];
+    m_Bounding->GetCorners(vCorners);
+
+    static const _uint indices[] =
+    {
+        0, 1, 2, 2, 3, 0, // Front
+        4, 5, 6, 6, 7, 4, // Back
+        4, 5, 1, 1, 0, 4, // Left
+        3, 2, 6, 6, 7, 3, // Right
+        1, 5, 6, 6, 2, 1, // Top
+        4, 0, 3, 3, 7, 4  // Bottom
+    };
+
+    _vector vColorVec = XMLoadFloat4(&vColor);
+
+    for (_uint i = 0; i < 36; i += 3)
+    {
+        VertexPositionColor v1(XMLoadFloat3(&vCorners[indices[i]]), vColorVec);
+        VertexPositionColor v2(XMLoadFloat3(&vCorners[indices[i+1]]), vColorVec);
+        VertexPositionColor v3(XMLoadFloat3(&vCorners[indices[i+2]]), vColorVec);
+
+        m_pBatch->DrawTriangle(v1, v2, v3);
+    }
+
+    m_pBatch->End();
+
+    return S_OK;
 }
 
 #ifdef _DEBUG

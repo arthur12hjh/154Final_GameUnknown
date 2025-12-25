@@ -48,7 +48,7 @@ HRESULT CWeapon::Initialize(void* pArg)
 
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
-	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
 	m_pPlayerDesc = m_pGameManager->Get_PlayerDesc();
@@ -65,9 +65,16 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	m_pSpark->Update(fTimeDelta);
-	if(nullptr != m_pCharge)
+	m_pBlood->Update(fTimeDelta);
+	m_pGigasSpark->Update(fTimeDelta);
+	//if (!m_bisBlood)
+	//	m_pBlood->Stop();
+	//m_bisBlood = false;
+	if (nullptr != m_pCharge) {
 		m_pCharge->Update(fTimeDelta);
+		if(m_pCharge->isDead())
+			Safe_Release(m_pCharge);
+	}
 
 
 	//ANIM_NOTIFY GaraNotify;
@@ -126,12 +133,19 @@ void CWeapon::Update(_float fTimeDelta)
 void CWeapon::Late_Update(_float fTimeDelta)
 {
 	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
+	_matrix		ParentMatrix = XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	_matrix		MyMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	
+	for (size_t i = 0; i < 3; i++)
+		MyMatrix.r[i] = XMVector3Normalize(MyMatrix.r[i]);
 	for (size_t i = 0; i < 3; i++)
 		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+	for (size_t i = 0; i < 3; i++)
+		ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
+	//m_pTransformCom->Get_WorldMatrixPtr())
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+			MyMatrix * SocketMatrix * ParentMatrix);
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 	if (m_bIsEnableCollider)
@@ -154,7 +168,6 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		if (m_fTrailTime <= 0.f)
 		{
 			m_bIsTrail = FALSE;
-			m_pSpark->Stop();
 		}
 	}
 
@@ -164,26 +177,28 @@ void CWeapon::Late_Update(_float fTimeDelta)
 		m_fChargeTime -= fTimeDelta;
 		if (m_fChargeTime <= 0.f)
 		{
-			m_pCharge->End();
-			Safe_Release(m_pCharge);
+			m_pCharge->End(false);
 		}
 	}
 
-	m_pTrail->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, m_bIsTrail);
-	m_pSpark->Late_Update(fTimeDelta);
+	m_pTrail[0]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 0 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 0 == m_iTrail);
+	m_pTrail[1]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 1 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 1 == m_iTrail);
+	m_pTrail[2]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 2 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 2 == m_iTrail);
+	m_pTrail[3]->Update_Trail(XMLoadFloat4x4(&m_CombinedWorldMatrix), (m_bIsTrail && 3 == m_iTrail) ? fTimeDelta : fTimeDelta * 2, m_bIsTrail && 3 == m_iTrail);
+	m_pBlood->Late_Update(fTimeDelta);
+	m_pGigasSpark->Late_Update(fTimeDelta);
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
-
-
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
 HRESULT CWeapon::Render()
 {
+	if (false == isVisible())
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -208,25 +223,65 @@ HRESULT CWeapon::Render()
 
 HRESULT CWeapon::Render_Shadow()
 {
+	if (false == isVisible())
+		return S_OK;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pShaderCom->Begin(1)))
+		if (FAILED(m_pShaderCom->Begin(6)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CWeapon::Render_MotionBlur()
+{
+	if (false == isVisible())
+		return S_OK;
+
+	/* 이전 프레임 월드매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreWorldMatrix", &m_PreCombinedWorldMatrix)))
+		return E_FAIL;
+
+	/* 이전 뷰 매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreViewMatrix", m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Begin(4)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -242,10 +297,23 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		m_fTrailTime = NotifyReference.fNumData01;
 		m_bIsTrail = TRUE;
+		m_iTrail = 4 > m_iTrail + 1 ? m_iTrail + 1 : 0;
 	}
-	else if (strObjectTag == TEXT("Spark"))
+	else if (strObjectTag == TEXT("Slash_Blood"))
 	{
-		m_pSpark->Play();
+		m_pBlood->Play();
+	}
+	else if (strObjectTag == TEXT("Slash_Blood_End"))
+	{
+		m_pBlood->Stop();
+	}
+	else if (strObjectTag == TEXT("Gigas_Spark"))
+	{
+		m_pGigasSpark->Play();
+	}
+	else if (strObjectTag == TEXT("Gigas_Spark_End"))
+	{
+		m_pGigasSpark->Stop();
 	}
 	else if (strObjectTag == TEXT("Charge"))
 	{
@@ -264,6 +332,14 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 		}
 		m_fChargeTime = NotifyReference.fNumData01;
 	}
+	else if (strObjectTag == TEXT("Charge_Time"))
+	{
+		m_fChargeTime = NotifyReference.fNumData01;
+		if (m_fChargeTime <= 0.f)
+		{
+			m_pCharge->End(false);
+		}
+	}
 
 }
 
@@ -275,12 +351,23 @@ void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const
 
 	m_bIsEnableCollider = NotifyRef.iNumData01;
 	if (false == m_bIsEnableCollider)
+	{
+	
 		static_cast<CCollider*>(pComponents)->ResetCollision();
+	}
+	//else
+	//	m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+
 }
 
 void CWeapon::EnableCollider(_bool bIsEnable)
 {
 	m_bIsEnableCollider = bIsEnable;
+}
+
+void CWeapon::Set_PlayerDesc(PLAYER_DESC* pPlayerDesc)
+{
+	m_pPlayerDesc = pPlayerDesc;
 }
 
 HRESULT CWeapon::Ready_Components()
@@ -306,28 +393,37 @@ HRESULT CWeapon::Ready_Components()
 		return E_FAIL;
 
 	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::SENCE);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::PLAYER);
-	m_pColliderCom->ADD_IgnoreObject(HIT_TYPE::INTERACTION);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
 
 	CTrail::TRAILHIGHLOW Traildesc{};
 	Traildesc.vHigh = _float4(0.f, 5.f, 0.f, 0.f);
 	Traildesc.vLow = _float4(0.f, 1.f, 0.f, 0.f);
-	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[0] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[1] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[2] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
+	m_pTrail[3] = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Default_Slash"), &Traildesc));
 
 	CEffect::EFFECT_TRANSFORM_DESC desc;
-	desc.fRotationPerSec = 1.f;
-	desc.fSpeedPerSec = 1.f;
-	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 5, 0, 1);
-	desc.fRot = _float3(0, 0, 0);
-	desc.fSize = 1.5f;
 
-	m_pSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Slash_Spark"), &desc));
-	m_pSpark->Play();
-	m_pSpark->Stop();
+	desc.pRootMatrix = &m_CombinedWorldMatrix;
+	desc.vPos = XMVectorSet(0, 3, 0, 1);
+	desc.fRot = _float3(0, 0, 0);
+	desc.fSize = 0.4f;
+
+	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
+	m_pBlood->Play();
+	m_pBlood->Stop();
+
+	desc.vPos = XMVectorSet(0, 2.5f, 0, 1);
+	desc.fSize = 1.f;
+	m_pGigasSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Spark"), &desc));
+	m_pGigasSpark->Play();
+	m_pGigasSpark->Stop();
 
 	return S_OK;
 }
@@ -357,8 +453,36 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.vHitPoint = vHitPoint;
 		pDamageDesc.vHitDir = vHitDir;
 
-		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(static_cast<CPlayer*>(m_pParent)->GetSillDataID());
+		_uint iSkillID = static_cast<CPlayer*>(m_pParent)->GetSkillDataID();
+		if (-1 == iSkillID)
+			return;
+
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
+
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+		EffectDesc.vPos = XMVectorSet(0, 3.f, 0, 1);
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 0.15f;
+		_float3 dir = { m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_31, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_32, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_33};
+		XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
+		EffectDesc.pDir = &dir;
+		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	}
+}
+
+void CWeapon::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	if (pNaytiba)
+	{
+		//m_bisBlood = true;
+		//m_pBlood->Play();
 	}
 }
 
@@ -398,7 +522,11 @@ void CWeapon::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pTrail);
-	Safe_Release(m_pSpark);
+	Safe_Release(m_pTrail[0]);
+	Safe_Release(m_pTrail[1]);
+	Safe_Release(m_pTrail[2]);
+	Safe_Release(m_pTrail[3]);
 	Safe_Release(m_pCharge);
+	Safe_Release(m_pBlood);
+	Safe_Release(m_pGigasSpark);
 }

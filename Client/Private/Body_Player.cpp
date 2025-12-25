@@ -3,6 +3,10 @@
 
 #include "GameInstance.h"
 
+#include "Effect.h"
+#include "GameManager.h"
+#include "Nayitba.h"
+#include "StringHelper.h"
 #include "Player.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -18,6 +22,54 @@ CBody_Player::CBody_Player(const CBody_Player& Prototype)
 _bool CBody_Player::isFinish_Att()
 {
 	return false;
+}
+
+void CBody_Player::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+{
+	if (strObjectTag == TEXT("Play_Effect"))
+	{
+
+	}
+	else if (strObjectTag == TEXT("Hand_Blood"))
+	{
+		//m_pBlood->Play();
+	}
+	else if (strObjectTag == TEXT("Hand_Blood_End"))
+	{
+		//m_pBlood->Stop();
+	}
+}
+
+void CBody_Player::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pComponents = Find_Component(strColliderTag);
+	if (nullptr == pComponents)
+		return;
+
+	m_bIsEnableCollider = NotifyRef.iNumData01;
+	if (false == m_bIsEnableCollider)
+	{
+		static_cast<CCollider*>(pComponents)->ResetCollision();
+	}
+	//else
+	//	m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);
+}
+
+HRESULT CBody_Player::Mapping_Shader_Material(_uint iIdx)
+{
+	if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_Basebody_V02_F1") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(6)))
+			return E_FAIL;
+	}
+
+	else 
+	{
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 HRESULT CBody_Player::Initialize_Prototype()
@@ -50,16 +102,31 @@ void CBody_Player::Update(_float fTimeDelta)
 { 
 	// FSM쪽에서 애니 재생.
 	// m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
-
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	_matrix vResult = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
+		XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Ab-R-Calf-Tw1")) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+
+	m_pColliderCom->UpdateColiision(vResult);
+
+	if (m_bIsEnableCollider)
+	{
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+	}
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
+
+	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+	
+	if(fDist < 100.f)
+		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 }
 
 HRESULT CBody_Player::Render()
@@ -67,32 +134,17 @@ HRESULT CBody_Player::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	////림라이트 테스트. 추후 컴포넌트로 제공 예정
-	//_float fRimLightPower = { 2.f };
-	//_float fRimLightStrength = { 3.f };
-	//_float4 vRimLightColor = { 1.f, 0.f, 0.f, 1.f };
-
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_vRimLightColor", &vRimLightColor, sizeof(_float4))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightPower", &fRimLightPower, sizeof(_float))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightStrength", &fRimLightStrength, sizeof(_float))))
-	//	return E_FAIL;
-
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORSSTexture", aiTextureType_CLEARCOAT, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
@@ -102,7 +154,7 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 
 		//rimlight 버전
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(Mapping_Shader_Material(i)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
@@ -117,10 +169,10 @@ HRESULT CBody_Player::Render_Shadow()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
 		return E_FAIL;	
 	
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
@@ -184,6 +236,22 @@ HRESULT CBody_Player::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+
+	OBBDesc.vSize = _float3(0.1f, 0.3f, 0.1f);
+	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
+	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+		return E_FAIL;
+
+	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
+	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+
 	return S_OK;
 }
 
@@ -200,6 +268,27 @@ HRESULT CBody_Player::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CBody_Player::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	if (pNaytiba)
+	{
+		DEFAULT_DAMAGE_DESC pDamageDesc = {};
+		pDamageDesc.pAttacker = m_pParent;
+		pDamageDesc.vHitPoint = vHitPoint;
+		pDamageDesc.vHitDir = vHitDir;
+
+		_uint iSkillID = static_cast<CPlayer*>(m_pParent)->GetSkillDataID();
+		if (-1 == iSkillID)
+			return;
+
+		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
+		pNaytiba->Damaged(&pDamageDesc);
+	}
+
+
 }
 
 CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -231,4 +320,6 @@ CGameObject* CBody_Player::Clone(void* pArg)
 void CBody_Player::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pColliderCom);
 }

@@ -10,12 +10,12 @@ CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 }
 
-HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount)
 {
     if (nullptr != Find_RenderTarget(strTargetTag))
         return E_FAIL;
 
-    CRenderTarget* pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, vClearColor);
+    CRenderTarget* pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, vClearColor, iTextureCount);
     if (nullptr == pRenderTarget)
         return E_FAIL;
 
@@ -74,6 +74,28 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     return S_OK;
 }
 
+HRESULT CTarget_Manager::Begin_MRT_NoClear(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+{
+    m_pContext->OMGetRenderTargets(1, &m_pBackBufferRTV, &m_pOriginalDSV);
+
+    list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+
+    if (nullptr == pMRTList)
+        return E_FAIL;
+
+    _uint iNumRenderTargets = {};
+    ID3D11RenderTargetView* pRenderTargets[8] = {};
+
+    for (auto& pRenderTarget : *pMRTList)
+    {
+        pRenderTargets[iNumRenderTargets++] = pRenderTarget->Get_RTV();
+    }
+
+    m_pContext->OMSetRenderTargets(iNumRenderTargets, pRenderTargets, nullptr == pDSV ? m_pOriginalDSV : pDSV);
+
+    return S_OK;
+}
+
 HRESULT CTarget_Manager::Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
 {
     m_pContext->OMGetRenderTargets(1, &m_pBackBufferRTV, &m_pOriginalDSV);
@@ -107,6 +129,32 @@ HRESULT CTarget_Manager::End_MRT()
     ID3D11RenderTargetView* pRenderTargets[8] = { m_pBackBufferRTV };
 
     m_pContext->OMSetRenderTargets(8, pRenderTargets, m_pOriginalDSV);
+
+    Safe_Release(m_pBackBufferRTV);
+    Safe_Release(m_pOriginalDSV);
+
+    return S_OK;
+}
+
+HRESULT CTarget_Manager::Change_DSV(ID3D11DepthStencilView* pDSV)
+{
+    if (nullptr == pDSV)
+        return E_FAIL;
+
+    // 기존 OM 상태 백업
+    m_pContext->OMGetRenderTargets(1, &m_pBackBufferRTV, &m_pOriginalDSV);
+    // DSV만 바인딩. 
+    m_pContext->OMSetRenderTargets(0, nullptr, pDSV);
+    // 필요하면 Clear
+    m_pContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+
+    return S_OK;
+}
+
+HRESULT CTarget_Manager::End_DSV()
+{
+    // 백업해둔 OM 상태 복구
+    m_pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, m_pOriginalDSV);
 
     Safe_Release(m_pBackBufferRTV);
     Safe_Release(m_pOriginalDSV);

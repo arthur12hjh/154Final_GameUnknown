@@ -32,17 +32,14 @@ private :
 	_int								m_CurPatternIndex = {};
 
 	_float								m_fMaxDelayTime = {};
+	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
-	_float3								m_fAttackMoveDir = {};
-	
-	_float								m_fLerpSpeed = {};
 
 	_float								m_fDir = {};
-	_float								m_fMoveSpeed = {};
+	_float								m_fLerpSpeed = {};
 
 	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
-	_float2								m_vLerpTime = { 0.f, 0.7f };
 	
 private :
 	_bool								SelectPattern();
@@ -55,7 +52,7 @@ private :
 	void								BackStepPattern();
 	//void								BboyStepPattern();
 
-	void								SelectRandomPattern();
+	void								SelectRandomPattern(_bool bIsBeta = false);
 #pragma endregion
 
 	_bool								AttackMoveAction(_float fTimeDelta);
@@ -65,6 +62,7 @@ private :
 	void								AttackADDMove(_float fTimeDelta);
 
 	void								LookAtPoint(_float fTimeDelta);
+	void								ResetAttackTask(_bool bIsCoolTime = true);
 
 public:
 	static	CTask_GorillaAttack*		Create(CBehaviorTree* pOwnerTree);

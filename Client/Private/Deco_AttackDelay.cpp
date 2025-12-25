@@ -21,33 +21,16 @@ HRESULT CDeco_AttackDelay::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 {
-	m_pBlackBoard->SetTargetDistacne();
-	_float fDistance = m_pBlackBoard->GetTargetDistance();
-	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
-	_float fAttackDelay = m_pBlackBoard->GetAttackDelay();
-
-	auto pState = m_pBlackBoard->GetCurState();
-	if (CBossBlackBoard::BOSS_STATE::ATTACK != pState)
+	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
-		if (m_fAccAttackTime <= fAttackDelay)
+		if (false == m_pBlackBoard->IsAttackEnable() || m_pBlackBoard->bIsExcution())
 		{
-			m_fAccAttackTime += fTimeDelta;
+			if (CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == m_pBlackBoard->GetCurState())
+				int a = 10;
+
 			return NODE_STATE::FAIL;
 		}
-		else if (fDistance > fATKRange * 1.6f)
-		{
-			if (m_fAccAttackTime > fAttackDelay)
-			{
-				if (m_fAccAttackTime > fAttackDelay)
-					m_fAccAttackTime = 0.f;
-
-				return NODE_STATE::COMPLETE;
-			}
-		}
 	}
-	
-	if (m_fAccAttackTime > fAttackDelay)
-		m_fAccAttackTime = 0.f;
 
 	return NODE_STATE::COMPLETE;
 }

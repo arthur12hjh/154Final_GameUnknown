@@ -6,7 +6,9 @@
 #include "Actor.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Instance_Model;
+class CModel;
+class CCollider;
+class CCamera;
 NS_END
 
 NS_BEGIN(Client)
@@ -26,12 +28,19 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private :
-	CVIBuffer_Instance_Model* m_pInstanceModelCom = { nullptr };
+	virtual HRESULT Render_Shadow() override;
 
+private :
+	CModel* m_pModelCom = { nullptr };
+
+	_bool m_bIsOccluder = true;
+	_bool m_bRender = false;
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
+	HRESULT Ready_Col(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
+
+	void	SetCullingCollider(_uint iObjectID);
 
 public:
 	static CCanyon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

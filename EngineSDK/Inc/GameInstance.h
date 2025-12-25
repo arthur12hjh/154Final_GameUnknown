@@ -21,10 +21,14 @@ public:
 	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 	void Update_Engine(_float fTimeDelta);
 	HRESULT Draw();
-	void Clear_Resources(_uint iLevelIndex);
+
+	void	Kill_Objects();
+	void Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype);
 
 	_float Random_Normal();
 	_float Random(_float fMin, _float fMax);
+
+	_matrix Lerp_Matrix(_fmatrix SourMatrix, _fmatrix DestMatrix, _float fRatio);
 
 #pragma region GRAPHIC_DEVICE
 public:
@@ -60,8 +64,9 @@ public:
 
 #pragma region LEVEL_MANAGER
 public:
-	HRESULT				Clear_LevelResource(_bool bIsClearPrototypeData = true);
+	HRESULT				Clear_LevelResource(_bool bIsClearProtoTypes = true);
 	HRESULT				Change_Level(class CLevel* pNewLevel);
+	
 	_uint				GetCurrentLevelID();
 
 	// 이거 레퍼런스 카운트 증가합니다.
@@ -69,31 +74,61 @@ public:
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
-	HRESULT						Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
-	HRESULT						Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
-	class CBase*				Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
-	const map<const _wstring, class CBase*>* Get_Prototypes_InLevel(_uint iLevelIndex);
-	class CBase* Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	HRESULT										Add_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
+	HRESULT										Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix);
+	class CBase*								Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+
+	const map<const _wstring, class CBase*>*	Get_Prototypes_InLevel(_uint iLevelIndex);
+	class CBase*								Get_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
+	_bool										bIsClearLevelResource(_uint iLevelID);
 #pragma endregion
 
 #pragma region OBJECT_MANAGER
 	CComponent*								Get_PartObject_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPartTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	HRESULT									Add_GameObject_ToLayer(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	CGameObject*							Add_Get_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLayerLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
-	
+	void									ADD_ToLayer(_uint iLayerLevelIndex, const _wstring& strLayerTag, CGameObject* pObject);
+
 	// Layer에 있는 모든 오브젝트를 가져옴	
 	list<CGameObject*>*						GetAllObejctToLayer(_uint iLayerIndex, const WCHAR* szLayerTag);
 	map<const _wstring, class CLayer*>*		GetCurrentLevelLayer();
 #pragma endregion
 
 #pragma region RENDERER
-	HRESULT Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
-	const _float4x4* Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
-	HRESULT Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
+	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
+	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
+	//Depth Of Field 효과 켜주기
+	//LerpTime은 DoF가 완전히 적용되는데 걸리는 시간.
+	//바로 적용시키고 싶으면 0으로 세팅.
+	//-> 이거 한번켜면 계속 유지되는건 알겠는데, 포커스되는 거리 뭐로 바꿔요?
+	//-> GameInstance Set_DofInfo 참조.
+	void				Active_DoF(_bool bFlag, _float fLerpTime);
+	// fFocusDistance -> 초점 거리
+	// fMaxRange -> 초점 거리로부터 얼마나 떨어져야 블러효과가 최대가 되나요?
+	// fIntensity -> Dof 상수 계수. 보통 1로 두고, DoF가 너무 약해보이면 올리세요
+	void				Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
+	// 초점 거리만 바꿔주는 오버라이딩 함수.
+	void				Set_DoFInfo(_float fFocusDistance);
+
+	HRESULT				Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
+	HRESULT				Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
+	HRESULT				Bind_Shadow_Resource_Static(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT				Bind_Shadow_Resource_Cascade(class CShader* pShader, const _char* pConstantName, D3DTS eType);
+	HRESULT				Bind_CascadeEnds(class CShader* pShader, const _char* pConstantName, const _char* pConstantName2);
+	_float*				Get_CascadeEnds();
+	//정적으로 그림자를 구워낼 녀석들한테 추가해야 그림자를 구워줍니다.. 진미.
+	HRESULT				Add_StaticShadowObject(class CGameObject* pGameObject);
+	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
+	// 딴데서 실행하면 레고삼킴
+	HRESULT				Bake_StaticShadow();
+	void*				Get_Cascade_Desc();
+	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
-	HRESULT Add_PhysxGeometry(class PxRigidActor* pActor, class PxShape* pShape);
+	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void   Set_DebugVisible(_bool isVisible);
 	void   Set_DebugColliderVisible(_bool isVisible);
 	void*  Get_DoF_Desc();
@@ -102,6 +137,12 @@ public:
 	void*  Get_SSAO_Desc();
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
+	void*  Get_HDR_Desc();
+	
+	//RenderDoc 전용
+	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
+	//RenderDoc 전용
+	void		EndMarker(ID3D11DeviceContext* pContext);
 #endif
 
 #pragma endregion
@@ -127,6 +168,7 @@ public:
 
 	// 항등행렬 포인터 꺼내오기
 	const _float4x4*					GetIdentityMatrixPtr();
+	const CAMERA_INFO&					Get_CurrentCamInfo();
 
 #pragma endregion
 
@@ -136,7 +178,7 @@ public:
 	HRESULT								Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	class CLight*						Find_Light(_uint iIndex);
 	const	list<class CLight*>*		GetAllLight();
-
+	LIGHT_DESC*							Get_Directional_Desc();
 #ifdef _DEBUG
 	void								Select_LightRender(CLight* pSelectLight);
 
@@ -152,14 +194,18 @@ public:
 #pragma endregion
 
 #pragma region TARGET_MANAGER
-	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT						Add_RenderTarget(const _wstring& strTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _uint iTextureCount = 1);
 	HRESULT						Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
 	HRESULT						Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
+	HRESULT						Begin_MRT_NoClear(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						Load_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT						End_MRT();
 	HRESULT						Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture2D);
 	HRESULT						Bind_RenderTarget(const _wstring& strTargetTag, class CShader* pShader, const _char* pConstantName);
 	HRESULT						Clear_MRT(const _wstring& strMRTag);
+	HRESULT						Change_DSV(ID3D11DepthStencilView* pDSV);
+	HRESULT						End_DSV();
+	ID3D11DepthStencilView*		Get_DSV();
 #ifdef _DEBUG
 	HRESULT						Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT						Render_RT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
@@ -173,21 +219,26 @@ public:
 	const POINT&				GetMousePoint();
 #pragma endregion
 
-#pragma region SHADOW
-	HRESULT Ready_Shadow_Light(const SHADOW_LIGHT_DESC& Desc);
-	HRESULT Bind_Shadow_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);	
-#pragma endregion
-
 #pragma region FRUSTUM
 	void				Transform_Frustum_ToLocalSpace(_fmatrix WorldMatrixInverse);
 	_bool				isIn_WorldFrustum(_fvector vWorldPos, _float fRange = 0.f);
 	_bool				isIn_LocalFrustum(_fvector vLocalPos, _float fRange = 0.f);
 	_bool				isIn_WorldFrustum(class CCollider* pCollider);
-
+	_bool				isIn_DistanceFrustum(_vector vPoint, _float fDistance);
+	const _float4*		Get_FrustumWorldPoints() const;
+	const _float4*		Get_FrustumWorldRays() const;
 #ifdef _DEBUG
 	void				FrustomRender();
 #endif
 
+#pragma endregion
+
+
+#pragma region Occlusion
+	HRESULT							Begin_Object_Query(class CGameObject* pObejct);
+	HRESULT							End_Obejct_Query(class CGameObject* pObject);
+	HRESULT							Get_Result(class CGameObject* pObject, _bool* pIsVisible);
+	void							SwapFrame();
 #pragma endregion
 
 #pragma region Sound Manager
@@ -238,6 +289,7 @@ public:
 #pragma endregion
 
 #pragma region Camera Manager
+	void							Shake_Camera(_float fShakeTime, _float fIntensity);
 	HRESULT							Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT							Remove_Camera(const WCHAR* szCameraTag);
 	// Defaut 매개변수 있습니다.
@@ -266,6 +318,7 @@ public:
 #pragma endregion
 
 #pragma region Physx_Manager
+	void		Physx_Clear();
 	/* 피직스 싱글턴 객체 얻어오는 함수. */
 	PxControllerManager* Get_PxCCTManager();
 	PxScene*	Get_PxScene();
@@ -305,7 +358,6 @@ public:
 
 	HRESULT												SaveCinemaSceneData(const WCHAR* szFilePath);
 	HRESULT												LoadCinemaSceneData(const WCHAR* szFilePath);
-
 #pragma endregion
 
 
@@ -317,20 +369,22 @@ public:
 	HRESULT									UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pEvent);
 #pragma endregion
 
-	void							SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
-	_bool							IsGamePasue() { return m_bIsPause; }
+	void									SetGamePause(_bool bFlag) { m_bIsPause = bFlag; }
 
-	_float							GetGameSpeedfRatio();
-	void							ResetGameSpeed();
+	void									GamePauseDurationTime(_uint fStopCnt, _float fTimeRatio, _float fReturnSpeed);
+	_bool									IsGamePasue() { return m_bIsPause; }
+
+	_float									GetGameSpeedfRatio();
+	void									ResetGameSpeed();
 
 	// 델타 타임에 대해 곱셈 연산을 수행해서 느려지게 만들거나 빠르게 만들수있습니다.
-	void							SetGameSpeed(_float fRatio);
+	void									SetGameSpeed(_float fRatio);
 	// 스크린 전체 사이즈
-	const _uint2&					GetScreenSize();
+	const _uint2&							GetScreenSize();
 
 	// 스크린 반절 사이즈
-	const _uint2&					GetHalfScreenSize();
-	const WCHAR*					GetFrameText();
+	const _uint2&							GetHalfScreenSize();
+	const WCHAR*							GetFrameText();
 
 #ifdef _DEBUG
 	_float							GetLoopDurationTime(GAMELOOP_TYPE eType);
@@ -352,8 +406,8 @@ private:
 	class CLight_Manager*			m_pLight_Manager = { nullptr };
 	class CFont_Manager*			m_pFont_Manager = { nullptr };
 	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
-	class CShadow*					m_pShadow = { nullptr };
 	class CFrustum*					m_pFrustum = { nullptr };
+	class COcclusion*				m_pOcculusion = { nullptr };
 	class CEffectResourceManager*	m_pEffect_ResourceManager = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
 	class CThreadPool*				m_pThreadPool = { nullptr };
@@ -364,19 +418,33 @@ private:
 	class CCinematicManager*		m_pCinema_Manager = { nullptr };
 	class CEventManager*			m_pEventManager = { nullptr };
 
+#pragma region Random Device
+	static	mt19937								m_RandomDevice;
+	static	uniform_real_distribution<_float>	m_distribution;
+#pragma endregion
 
+#pragma region Game System
 	_bool							m_bIsPause = false;
+
+	_bool							m_bIsHitStopDurationTime = { false };
+	_float							m_fHitStopReturnSpeed = {};
+	_uint2							m_iHitStopFrame = {};
+	_float2							m_vLerpTime = {0.f, 0.3f};
+
 	_float							m_fTimeRatio = { 1.f };
 	_uint2							m_vScreenSize = {};
 	_uint2							m_vHalfScreenSize = {};
+	_uint							m_iNumLevels = {};
+#pragma endregion
 
+#pragma region FPS
 	_uint							m_iDrawCnt = {};
 	_float							m_fTimeAcc = {};
 	_tchar							m_szFPS[MAX_PATH] = {};
-
 #ifdef _DEBUG
 	_float							m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::END)];
 #endif // _DEBUG
+#pragma endregion
 
 public:
 	void							Release_Engine();

@@ -3,6 +3,7 @@
 #include "MapTool_Defines.h"
 #include "Base.h"
 #include "VIBuffer_Instance_Model.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
 //class CVIBuffer_Instance_Model;
@@ -13,20 +14,46 @@ class CNavigation;
 class CCell;
 class CModel;
 class CLight;
+class CComponent;
 NS_END
 
 NS_BEGIN(Tool_Map)
 
 class CMapTool_Desert final : public CBase
 {
-#pragma pack(push, 1)
+public:
 	typedef struct SavedObjectInfo
 	{
 		_float4x4	    worldMatrix;
 		_tchar			szComponentTag[256];
+		_uint			iObjectID = 0;	
 	}SAVEDOBJECTINFO;
 
-#pragma pack(pop)
+	typedef struct SavedInteractionObjectInfo:SAVEDOBJECTINFO
+	{
+		_uint			iInteractionID = 999;
+	}SAVEDINTERACTIONOBJECTINFO;
+
+	typedef struct SavedLiftControllerInfo:SAVEDINTERACTIONOBJECTINFO
+	{
+		_bool			bIsControllerType = false;
+		_uint			iPlatformID = 0;
+		_uint 			iPosition = 0;
+	}SAVED_LIFT_CONTROLLER_INFO;
+
+	typedef struct SavedLiftPlatformInfo:SavedObjectInfo
+	{
+		_uint			iPlatformID = 0;
+		_float			fMoveDistance = 0.f;
+	}SAVED_LIFT_PLATFORM_INFO;
+
+
+
+	typedef struct SavedMonsterInfo
+	{
+		_float4x4	    worldMatrix;
+		_uint			iMonsterId = 0;
+	}SAVEDMONSTERINFO;
 
 	typedef struct tagModelInstanceLoadDesc
 	{
@@ -35,6 +62,11 @@ class CMapTool_Desert final : public CBase
 		CVIBuffer_Instance_Model::MODEL_INSTANCE_DESC InstanceDesc;
 
 	}MODEL_INSTANCE_LOAD_DESC;
+
+	typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
+	{
+		_uint						iMonsterID = {};
+	}NAYITBA_DESC;
 
 public:
 	CMapTool_Desert();
@@ -49,15 +81,39 @@ public:
 
 	void Update_Rotation();
 	HRESULT Save_Map_Objects(const _char* szFilePath);
+	HRESULT Save_Monster_Objects(const _char* szFilePath);
+
 	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Interaction_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Lift_Controller_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Lift_Platform_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
+	HRESULT Load_Monster_Objects(const _char* szFilePath);
+
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
-	//HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Lift_Controller_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
+	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 
 	HRESULT Save_Terrain_HeightMap(const _char* szHeightMapFilePath);
+
+	HRESULT Save_MaskMap(const _char* szFilePath);
+
+	HRESULT Set_LoadMaskMap(const _char* szFilePath);
+	HRESULT Set_NewMaskMap();
+	void Change_MaskMap_Black(_float3 vPickedPoint);
+	void Change_MaskMap_Red(_float3 vPickedPoint);
+	void Change_MaskMap_Green(_float3 vPickedPoint);
+
+	void Set_Terrain(class CTerrain_Desert* pTerrain) {
+		m_pTerrain = pTerrain;
+	}
 
 	void Set_NaviEditMode(_bool bMode); // 네비게이션 편집 모드 On/Off
 	void Add_NaviPoint(_fvector vPickedPoint); // 클릭된 지점을 네비게이션 포인트로 등록
@@ -69,6 +125,7 @@ public:
 	CGameObject* Find_Object_To_Pick(_uint iLevelIndex, const _wstring& strLayerTag, _float3* pPickedPoint);
 	void Compute_Picking_Ray(_float3* pRayOrigin, _float3* pRayDir);
 	_bool Intersect_Ray_Sphere(_fvector vRayOrigin, _fvector vRayDir, _fvector vSphereCenter, _float fRadius, _float* pDistance);
+	CComponent* m_pSelectComponent = { nullptr };
 
 public:
 	ID3D11ShaderResourceView* Get_MaskSRV() { return m_pMaskSRV; }
@@ -106,7 +163,7 @@ private:
 	_float m_fScaleZ = { 0.f };
 
 	_float m_fHeight = { 0.f };
-	_float m_fRadius = { 0.f };
+	_float m_fRadius = { 2.f };
 	_float m_fMaxHeight = { 0.f };
 	_float m_fSmoothFactor = { 0.f };
 	_float m_fMoveSpeed = { 3.f };
@@ -117,6 +174,16 @@ private:
 	const _tchar* m_ComponentTag = {};
 	list<CGameObject*>* m_pObjects = { nullptr };
 	CGameObject* m_pObject = { nullptr };
+
+
+	// 리프트 변수용 
+	_float m_fPlatformMoveDistance = { 0.f };
+	_int m_iPlatformID = { 0 };
+	_int m_iPosition = { 0 };
+	_bool m_bIsLiftControllerType = { false };
+
+	_bool m_bShowLiftControllerWindow = { false };
+	_bool m_bShowLiftPlatformWindow = { false };
 
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 	DESERT_THEME		m_eCurrentMap = { DESERT_THEME::END };
@@ -139,6 +206,7 @@ private:
 	_bool				m_bIsMapMode = { false };
 	_bool				m_bIsDragging = { false };
 
+	ID3D11Texture2D* m_pMaskRenderTexture = { nullptr };
 
 	vector<vector<VTX_INSTANCE_MODEL>*> m_vecInstancingData;
 

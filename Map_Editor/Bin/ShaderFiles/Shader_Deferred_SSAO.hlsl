@@ -3,6 +3,7 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 matrix g_OrthoWorldMatrix, g_OrthoViewMatrix, g_OrthoProjMatrix;
 
@@ -97,7 +98,7 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     
     vector vDepth = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fDepth = vDepth.r;
-    float fViewDepth = vDepth.g * 500.0f;
+    float fViewDepth = vDepth.g * g_fFar;
     
     // 0 ~ 0.5f
     float fRadius = lerp(g_fRadiusMin, g_fRadiusMax, saturate(vDepth.g));
@@ -153,14 +154,15 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
         float3 vGeoPos = Calc_ViewSpace(fSampleDepthNDC, vOffsetUV);
         float fGeoZ = vGeoPos.z; //실제 geometry view-space Z
 
-        // range check
-        float fDeltaZ = abs(vViewPos.z - fGeoZ);
-        fDeltaZ = max(fDeltaZ, 0.001f);
-        float fRangeCheck = smoothstep(0.f, 1.f, fRadius / fDeltaZ);
+        float fDeltaZ = abs(vViewPos.z - fGeoZ) + 0.001f;
 
-        // bias
-        float fBias = lerp(g_fBiasMin, g_fBiasMax, vDepth.g);
+        // Range Check 수정
+        float fRangeCheck = 1.0f - saturate(fDeltaZ / fRadius);
 
+        // bias는 고정값 권장
+        float fBias = g_fBiasMin; // 또는 0.01f;
+
+        // occlusion 조건
         if (fGeoZ <= vSamplePos.z - fBias)
             fOcclusion += fRangeCheck;
     }

@@ -8,6 +8,8 @@ class CModel;
 class CShader;
 class CCollider;
 class CBone;
+class CTexture;
+class CRigidBody;
 NS_END
 
 NS_BEGIN(Client)
@@ -46,10 +48,14 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
+	virtual HRESULT Render_MotionBlur() override;
 
 private:
 	CModel* m_pBodyModelCom = { nullptr };
-
+	// 아래 둘은 테스트용 텍스쳐입니다 혹시 치우고 싶으시면 말씀좀
+	CTexture* m_pSpecDetailTextureCom = { nullptr };
+	CTexture* m_pSSSAOCom = { nullptr };
+	CRigidBody* m_pRigidBody = { nullptr };
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

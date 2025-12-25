@@ -45,6 +45,15 @@ private:
 	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
 	CNavigation* m_pNavigationCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	CTexture* m_pTextureCom_Red = { nullptr };
+	CTexture* m_pTextureCom_Green = { nullptr };
+	CTexture* m_pMaskCom = { nullptr };
+
+
+	CTexture* m_pNormalTextureCom = { nullptr };
+	CTexture* m_pORMTextureCom = { nullptr };
+	CTexture* m_pORMTextureCom_Red = { nullptr };
+	CTexture* m_pORMTextureCom_Green = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
 	class CMapTool_Desert* m_pMaptool = { nullptr };

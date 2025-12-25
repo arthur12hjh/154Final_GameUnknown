@@ -25,15 +25,15 @@ CModel::CModel(const CModel& Prototype)
     , m_PreTransformMatrix{ Prototype.m_PreTransformMatrix }
     , m_iNumAnimations{ Prototype.m_iNumAnimations }
     , m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
-    , m_pBoneSource{ nullptr }
-    , m_pChannelSource{ nullptr }
-    , m_pKeyFrameSource{ nullptr }
+    , m_AnimationIndexMap{ Prototype.m_AnimationIndexMap }
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
+    , m_pOutRootReadBack{nullptr }
     , m_pBoneMatricesSRV{ nullptr }
     , m_pPreBoneMatricesSRV{ nullptr }
     , m_pComputeShaderCom{ nullptr }
+    , m_pCombinedMatrixComputeShaderCom{ nullptr }
 {
     for (auto& pPrototypeBone : Prototype.m_Bones)
         m_Bones.push_back(pPrototypeBone->Clone());
@@ -44,11 +44,22 @@ CModel::CModel(const CModel& Prototype)
     for (auto& pMaterial : m_Materials)
         Safe_AddRef(pMaterial);
 
+    for (auto* pChannelBuffer : Prototype.m_pChannelBufferList)
+    {
+        Safe_AddRef(pChannelBuffer);
+        m_pChannelBufferList.push_back(pChannelBuffer);
+    }
+
+    for (auto* pKeyFrameBuffer : Prototype.m_pKeyFrameBufferList)
+    {
+        Safe_AddRef(pKeyFrameBuffer);
+        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+    }
+
     for (auto& pPrototypeAnim : Prototype.m_Animations)
         m_Animations.push_back(pPrototypeAnim->Clone());
 
     memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
-
 }
 
 _uint CModel::Get_Mesh_MaterialIndex(_uint iIdx) const
@@ -86,6 +97,11 @@ _int CModel::Get_BoneIndex(const _char* pBoneName) const
     return iBoneIndex;
 }
 
+vector<class CAnimation*>* CModel::Get_Animations()
+{
+    return &m_Animations;
+}
+
 vector<class CBone*>* CModel::Get_Bones()
 {
     return &m_Bones;
@@ -101,8 +117,10 @@ _uint CModel::Get_AnimationKeyFrameIndex() const
     return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
-const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
+const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 {
+    AddCount_PartialBone(pBoneName);
+
     auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
         {
             if (true == pBone->Compare_Name(pBoneName))
@@ -111,8 +129,28 @@ const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName) const
             return false;
         });
 
+    if (m_Bones.end() == iter)
+        return nullptr;
 
     return (*iter)->Get_CombinedTransformationMatrixPtr();
+}
+
+const _float4x4* CModel::Get_LocalBoneMatrixPtr(const _char* pBoneName)
+{
+    AddCount_PartialBone(pBoneName);
+
+    auto   iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+        {
+            if (true == pBone->Compare_Name(pBoneName))
+                return true;
+
+            return false;
+        });
+
+    if (m_Bones.end() == iter)
+        return nullptr;
+
+    return (*iter)->Get_TransformationMatrixPtr();
 }
 
 void CModel::Attach_CombinedTransformationMatrix()
@@ -121,6 +159,50 @@ void CModel::Attach_CombinedTransformationMatrix()
     {
         pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
     }
+}
+
+void CModel::Set_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];    
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
+}
+
+void CModel::Override_CombinedTransformationMatrix(const _char* pBoneName, _fmatrix CombinedMatrix)
+{
+    _int iIdx = Get_BoneIndex(pBoneName);
+    CBone* pBone = m_Bones[iIdx];
+
+    pBone->Set_CombinedTransformationMatrix(CombinedMatrix);
+
+    D3D11_BOX BoxDesc{};
+
+	_uint iStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+
+	BoxDesc.left = iIdx * iStride;
+	BoxDesc.right = BoxDesc.left + iStride;
+    BoxDesc.top = 0;
+    BoxDesc.bottom = 1;
+    BoxDesc.front = 0;
+    BoxDesc.back = 1;
+
+    COMPUTE_BONEMATRIX_OUT OutStruct = {};
+     XMStoreFloat4x4(&OutStruct.BoneCombinedTransformMatrix, CombinedMatrix);
+
+    m_pContext->UpdateSubresource(m_pOutSource, 0, &BoxDesc, &OutStruct, 0, 0);
+
+}
+
+HRESULT CModel::Set_AnimationKeyFrameIndex(_uint iKeyFrameIndex)
+{
+	if (m_iCurrentAnimIndex == -1)
+        return E_FAIL;
+
+	_uint iNormalizedKeyFrameIndex = iKeyFrameIndex % (_uint)m_Animations[m_iCurrentAnimIndex]->Get_Duration();
+
+	m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition((_float)iNormalizedKeyFrameIndex);
+    return S_OK;
 }
 
 void CModel::Copy_MeshBuffer(_uint iMeshNum, ID3D11Buffer** pVIBuffer, ID3D11Buffer** pIndexBuffer)
@@ -144,8 +226,18 @@ DXGI_FORMAT CModel::Get_MeshIndexFormat(_uint iMeshNum)
     return m_Meshes[iMeshNum]->GetIndexFormat();
 }
 
-void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+_float CModel::Get_AnimationRatio()
 {
+    if (-1 == m_iCurrentAnimIndex)
+        return 0.f;
+
+    return m_Animations[m_iCurrentAnimIndex]->Get_SaturatedTrackPosition();
+}
+
+void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
+{
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
     if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
         return;
 
@@ -189,7 +281,7 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
         m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
     }
 
-    m_iFlagPreRootModified = ROOTFLAG_RESET;
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
     XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
     XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
 
@@ -200,148 +292,351 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
     return;
 }
 
-void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
+
 {
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
     _char pName[MAX_PATH] = {};
 
     CStringHelper::ConvertWideToUTF(strAnimationTag.c_str(), pName);
 
-    _uint iAnimIndex = 0;
+    _uint iAnimIndex = Find_Animation(pName);
     m_fAnimationPlayRate = fAnimationPlayRate;
 
-    for (auto& pAnimation : m_Animations)
+    if (-1 == iAnimIndex)
+        return;
+
+    if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
+        return;
+
+    if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
     {
-        if (TRUE == pAnimation->CompareAnimationTag(pName))
-        {
-            if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
-                return;
-
-            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
-            {
-                m_isLerp = TRUE;
-                m_fBlendElapsed = 0.f;
-                m_fBlendRatio = 0.f;
-            }
-            else
-            {
-                m_isLerp = FALSE;
-                m_fBlendElapsed = 0.f;
-                m_fBlendRatio = 0.f;
-            }
-
-            m_fEndTrackPosition = fEndTrackPosition;
-            m_fStartTrackPosition = fStartTrackPosition;
-            _float fPreTrackPosition = -1.f;
-            if (FALSE == isResetTrackPosition)
-            {
-                fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
-            }
-
-            m_fBlendDuration = fLerpDuration;
-            m_iCurrentAnimIndex = iAnimIndex;
-            m_isLoop = isLoop;
-
-
-            m_Animations[m_iCurrentAnimIndex]->Reset();
-
-            if (FALSE == isResetTrackPosition)
-            {
-                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
-            }
-            else
-            {
-                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
-            }
-
-            m_iFlagPreRootModified = ROOTFLAG_RESET;
-            XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
-            XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
-
-            Bind_ChannelAndKeyFrameBuffer();
-
-            if (AnimationChanged)
-                AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
-
-
-            return;
-        }
-
-        ++iAnimIndex;
+        m_isLerp = TRUE;
+        m_fBlendElapsed = 0.f;
+        m_fBlendRatio = 0.f;
     }
+    else
+    {
+        m_isLerp = FALSE;
+        m_fBlendElapsed = 0.f;
+        m_fBlendRatio = 0.f;
+    }
+
+    m_fEndTrackPosition = fEndTrackPosition;
+    m_fStartTrackPosition = fStartTrackPosition;
+    _float fPreTrackPosition = -1.f;
+    if (FALSE == isResetTrackPosition)
+    {
+        fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+    }
+
+    m_fBlendDuration = fLerpDuration;
+    m_iCurrentAnimIndex = iAnimIndex;
+    m_isLoop = isLoop;
+
+
+    m_Animations[m_iCurrentAnimIndex]->Reset();
+
+    if (FALSE == isResetTrackPosition)
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
+    }
+    else
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
+    }
+
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
+    XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
+    Bind_ChannelAndKeyFrameBuffer();
+
+    if (AnimationChanged)
+        AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+
+
+    return;
 }
 
-void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
 {
-    _uint iAnimIndex = 0;
+    m_isRootMotionUpdated = isRootMotionUpdated;
+
+    _uint iAnimIndex = Find_Animation(szAnimationTag);
     m_fAnimationPlayRate = fAnimationPlayRate;
 
-    for (auto& pAnimation : m_Animations)
+    if (-1 == iAnimIndex)
+        return;
+
+    if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
+        return;
+
+    if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
     {
-        if (TRUE == pAnimation->CompareAnimationTag(szAnimationTag))
-        {
-            if (m_iCurrentAnimIndex == iAnimIndex && bIsRestart == FALSE)
-                return;
-
-            if (m_iCurrentAnimIndex != -1 && m_pOutSource != nullptr && fLerpDuration != 0.f)
-            {
-                m_isLerp = TRUE;
-                m_fBlendElapsed = 0.f;
-                m_fBlendRatio = 0.f;
-            }
-            else
-            {
-                m_isLerp = FALSE;
-                m_fBlendElapsed = 0.f;
-                m_fBlendRatio = 0.f;
-            }
-
-            m_fEndTrackPosition = fEndTrackPosition;
-            m_fStartTrackPosition = fStartTrackPosition;
-            _float fPreTrackPosition = -1.f;
-            if (FALSE == isResetTrackPosition)
-            {
-                fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
-            }
-
-            m_fBlendDuration = fLerpDuration;
-            m_iCurrentAnimIndex = iAnimIndex;
-            m_isLoop = isLoop;
-
-            m_Animations[m_iCurrentAnimIndex]->Reset();
-
-            if (FALSE == isResetTrackPosition)
-            {
-                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
-            }
-            else
-            {
-                m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
-            }
-
-            m_iFlagPreRootModified = ROOTFLAG_RESET;
-            XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
-            XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
-
-            Bind_ChannelAndKeyFrameBuffer();
-
-            if (AnimationChanged)
-                AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
-
-
-            return;
-        }
-
-        ++iAnimIndex;
+        m_isLerp = TRUE;
+        m_fBlendElapsed = 0.f;
+        m_fBlendRatio = 0.f;
     }
+    else
+    {
+        m_isLerp = FALSE;
+        m_fBlendElapsed = 0.f;
+        m_fBlendRatio = 0.f;
+    }
+
+    m_fEndTrackPosition = fEndTrackPosition;
+    m_fStartTrackPosition = fStartTrackPosition;
+    _float fPreTrackPosition = -1.f;
+    if (FALSE == isResetTrackPosition)
+    {
+        fPreTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+    }
+
+    m_fBlendDuration = fLerpDuration;
+    m_iCurrentAnimIndex = iAnimIndex;
+    m_isLoop = isLoop;
+
+    m_Animations[m_iCurrentAnimIndex]->Reset();
+
+    if (FALSE == isResetTrackPosition)
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(fPreTrackPosition);
+    }
+    else
+    {
+        m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
+    }
+
+    m_iFlagPreRootModified = iFLAG_ROOT_RESET;
+    XMStoreFloat4x4(&m_PreRootMatrix, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_CurRootMatrix, XMMatrixIdentity());
+
+    Bind_ChannelAndKeyFrameBuffer();
+
+    if (AnimationChanged)
+        AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+
+
+    return;
 }
 
-HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations)
+HRESULT CModel::Initialize_AnimationIndexMap()
+{
+    m_AnimationIndexMap.clear();
+
+    _uint iAnimationIndex = 0;
+    for (auto& pAnimation : m_Animations)
+    {
+        m_AnimationIndexMap.emplace(pAnimation->Get_Name(), iAnimationIndex);;
+        ++iAnimationIndex;
+    }
+
+    return S_OK;
+}
+
+HRESULT CModel::Initialize_AnimationBufferResource()
+{
+    // 1) 다 밀어주기
+    for (auto& pChannelBuffer : m_pChannelBufferList)
+        Safe_Release(pChannelBuffer);
+    m_pChannelBufferList.clear();
+    
+    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
+        Safe_Release(pKeyFrameBuffer);
+    m_pKeyFrameBufferList.clear();
+
+    // 키프레임 수
+    _uint iMaxNumKeyFrames = 0;
+
+    for (auto& pAnim : m_Animations)
+    {
+        auto pChannels = pAnim->Get_vChannels();
+        if (pChannels == nullptr)
+            continue;
+
+        _uint iTotal = 0;
+        for (auto& pChannel : *pChannels)
+            iTotal += pChannel->Get_NumKeyFrames();
+
+        if (iTotal > iMaxNumKeyFrames)
+            iMaxNumKeyFrames = iTotal;
+    }
+
+    // 채널 수
+    _uint iNumData = (_uint)m_Bones.size();
+    iNumData = max(iNumData, iMaxNumKeyFrames);
+    if (iNumData == 0)
+        return S_OK;
+
+
+    // 컴퓨트 셰이더 최종 최적화 초식.. 버퍼로 보관하기
+    // 메모리 손해 아니냐고? 프레임이 이난리인데 메모리가 중하냐!
+    for (_uint iCurrentAnimationIndex = 0; iCurrentAnimationIndex < m_Animations.size(); ++iCurrentAnimationIndex)
+    {
+        vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
+        vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
+        vKeyFrameInfos.reserve(iNumData);
+
+        auto pChannels = m_Animations[iCurrentAnimationIndex]->Get_vChannels();
+        auto& BoneToChannelMappingList = m_Animations[iCurrentAnimationIndex]->Get_BoneToChannelMappingLists();
+
+        _uint iKeyFrameOffset = 0;
+
+        for (_uint i = 0; i < iNumData; ++i)
+        {
+            if (i >= m_Bones.size())
+            {
+                // 여기는 “padding 영역” – 유효한 본 없음
+                vChannelInfos[i].iBoneIndex = 0;
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            vChannelInfos[i].iBoneIndex = i;
+
+            _int iChannelIndex = BoneToChannelMappingList[i];
+
+            // 매핑된 채널이 없는 본
+            if (iChannelIndex < 0)
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            // 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
+            if (iChannelIndex >= (_int)pChannels->size())
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            CChannel* pChannel = (*pChannels)[iChannelIndex];
+
+            // 안전 장치 – pChannel이 null일 경우
+            if (pChannel == nullptr)
+            {
+                vChannelInfos[i].iNumKeyFrames = 0;
+                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
+                vChannelInfos[i].iKeyFrameOffset = 0;
+                continue;
+            }
+
+            // 이 본이 가진 키프레임 개수
+            _uint iNumKeyFrames = pChannel->Get_NumKeyFrames();
+            vChannelInfos[i].iNumKeyFrames = iNumKeyFrames;
+
+            // 현재 키프레임 인덱스(CAnimation이 관리하는 것)
+            vChannelInfos[i].iCurrentKeyFrameIndex =
+                m_Animations[iCurrentAnimationIndex]->Get_AnimationKeyFrameIndex(iChannelIndex);
+
+            // KeyFrame 버퍼 안에서 이 본의 키 시작 위치
+            vChannelInfos[i].iKeyFrameOffset = iKeyFrameOffset;
+
+            // 키프레임 데이터 밀어넣기
+            for (_uint j = 0; j < iNumKeyFrames; ++j)
+            {
+                const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
+
+                COMPUTE_KEYFRAMEINFO OutKF = {};
+                OutKF.vScale = KF.vScale;
+                OutKF.padding01 = 0.f;
+                OutKF.vRotation = KF.vRotation;
+                OutKF.vTranslation = KF.vTranslation;
+                OutKF.fTrackPosition = KF.fTrackPosition;
+
+                vKeyFrameInfos.push_back(OutKF);
+            }
+
+            iKeyFrameOffset += iNumKeyFrames;
+        }
+
+        if (vKeyFrameInfos.size() < iNumData)
+        {
+            COMPUTE_KEYFRAMEINFO pad{};
+            pad.vScale = { 1.f, 1.f, 1.f };
+            pad.padding01 = 0.f;
+            pad.vRotation = _float4(0.f, 0.f, 0.f, 1.f); // 단위 쿼터니언
+            pad.vTranslation = { 0.f, 0.f, 0.f };
+            pad.fTrackPosition = 0.f;
+
+            vKeyFrameInfos.resize(iNumData, pad);
+        }
+
+        ID3D11Buffer* pChannelBuffer = nullptr;
+        ID3D11Buffer* pKeyFrameBuffer = nullptr;
+
+        D3D11_BUFFER_DESC ChannelBufferDesc = {};
+        ChannelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        ChannelBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+        ChannelBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        ChannelBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        ChannelBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+
+        D3D11_SUBRESOURCE_DATA ChannelSubResource{};
+        ChannelSubResource.pSysMem = vChannelInfos.data();
+
+
+        if (FAILED(m_pDevice->CreateBuffer(&ChannelBufferDesc, &ChannelSubResource, &pChannelBuffer)))
+            return E_FAIL;
+
+        m_pChannelBufferList.push_back(pChannelBuffer);
+
+        D3D11_BUFFER_DESC KeyFrameBufferDesc = {};
+        KeyFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+        KeyFrameBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+        KeyFrameBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        KeyFrameBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        KeyFrameBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+
+        D3D11_SUBRESOURCE_DATA KeyFrameSubResource{};
+        KeyFrameSubResource.pSysMem = vKeyFrameInfos.empty() ? nullptr : vKeyFrameInfos.data();
+
+        if (FAILED(m_pDevice->CreateBuffer(
+            &KeyFrameBufferDesc,
+            vKeyFrameInfos.empty() ? nullptr : &KeyFrameSubResource,
+            &pKeyFrameBuffer)))
+            return E_FAIL;
+
+        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+    }        
+
+    Release_AnimationChannel();
+
+    return S_OK;
+}
+
+HRESULT CModel::Release_AnimationChannel()
+{
+    // 나중에 활성 메모리 부족하면 작업해야함
+    //for (auto& pAnim : m_Animations)
+    //{
+    //    auto pChannels = pAnim->Get_vChannels();
+    //    for (auto& pChannel : *pChannels)
+    //        Safe_Release(pChannel);
+    //
+    //    pChannels->clear();
+    //}
+
+    return S_OK;
+}
+
+HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations, _char* szName)
 {
     if (nullptr == pAnimations)
         return E_FAIL;
 
     for (auto& pAnimation : *pAnimations)
     {
+        pAnimation->Set_Name(szName);
+            
         Mapping_Animation(pAnimation);
 
         m_Animations.push_back(pAnimation);
@@ -404,19 +699,19 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
 
     if (FAILED(m_Materials[iMaterialIndex]->Import_Texture(Convert_TextureType(eType), pSRV)))
         return E_FAIL;
-    if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
-    {
-        m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
-    }
-    else
-    {
-        m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
-    }
+    //if (0 == m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)])
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].vNumSRVs[Convert_TextureType(eType)]++;
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)].push_back(szTextureFilePath);
+    //}
+    //else
+    //{
+    //    m_pModel->vMaterials[iMeshIndex].strTexturePaths[Convert_TextureType(eType)][0] = szTextureFilePath;
+    //}
 
 #ifdef _DEBUG
-    if (bIsSaved == TRUE)
-        m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    //if (bIsSaved == TRUE)
+    //    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
 #endif
     return S_OK;
 }
@@ -456,17 +751,56 @@ HRESULT CModel::Change_BoneTag(const _char* szAfterBoneTag, const vector<string>
     if (FALSE == bIsTagFound)
         return E_FAIL;
 
-    for (auto& pNode : m_pModel->vNodes)
+    //for (auto& pNode : m_pModel->vNodes)
+    //{
+    //    if (strcmp(pNode.szName, szNodeName) == 0)
+    //    {
+    //        strcpy_s(pNode.szName, szAfterBoneTag);
+    //        break;
+    //    }
+    //}
+
+#ifdef _DEBUG
+    //m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+#endif
+    //Safe_Delete(m_pModel);
+
+    return S_OK;
+}
+
+HRESULT CModel::AddCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto& iRefCount = m_PartialBoneCountMap[iBoneIndex];
+    ++iRefCount;
+
+    return S_OK;
+}
+
+HRESULT CModel::ReleaseCount_PartialBone(const _char* pBoneName)
+{
+    if (!pBoneName)
+        return E_FAIL;
+
+    _int iBoneIndex = Get_BoneIndex(pBoneName);
+    if (iBoneIndex < 0)
+        return E_FAIL;
+
+    auto iter = m_PartialBoneCountMap.find(iBoneIndex);
+
+    if (iter != m_PartialBoneCountMap.end())
     {
-        if (strcmp(pNode.szName, szNodeName) == 0)
-        {
-            strcpy_s(pNode.szName, szAfterBoneTag);
-            break;
-        }
+        --(*iter).second;
     }
 
-
-    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    if ((*iter).second <= 0)
+        m_PartialBoneCountMap.erase(iter);
 
     return S_OK;
 }
@@ -616,6 +950,15 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
     strcpy_s(m_ModelFilePath, szBinModelFilePath);
 #endif
 
+    if (m_eType == MODEL_TYPE::ANIM)
+    {
+        Initialize_AnimationIndexMap();
+
+        Initialize_AnimationBufferResource();
+    }
+
+    Safe_Delete(m_pModel);
+
     return S_OK;
 }
 
@@ -626,6 +969,8 @@ HRESULT CModel::Initialize(void* pArg)
         if (FAILED(Ready_ComputeShader()))
             return E_FAIL;
     }
+
+    Attach_CombinedTransformationMatrix();
 
     return S_OK;
 }
@@ -696,15 +1041,52 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_iCurrentAnimIndex >= m_iNumAnimations)
         return false;
 
+
+    const _uint iNumBones = (_uint)m_Bones.size();
+
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+        
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+        
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
+            {
+                _int iBoneIndex = BoneCountIndex.first;
+        
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+        
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
+            }
+        
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
+
+
+    // 루트모션 적용
+    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
+    {
+        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
+        Apply_RootMotion(pTransform, fRootMotionMagnification);
+    }
+
+
     // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
 
-    if (iAnimationState == ANIMATIONFLAG_FINISH)
+    if (iAnimationState == iFLAG_ANIMATION_FINISH)
         m_isFinish = TRUE;
-    else if (iAnimationState == ANIMATIONFLAG_PLAY)
+    else if (iAnimationState == iFLAG_ANIMATION_PLAY)
         m_isFinish = FALSE;
-    else if (iAnimationState == ANIMATIONFLAG_RESET)
+    else if (iAnimationState == iFLAG_ANIMATION_RESET)
     {
         if (AnimationChanged)
             AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
@@ -716,6 +1098,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     if (m_isLerp && m_fBlendElapsed == 0.f)
     {
         m_pContext->CopyResource(m_pLerpBoneMatrices, m_pOutSource);
+        m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 4, m_pLerpBoneMatrices);
     }
     m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
 
@@ -738,39 +1121,6 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     Bind_ComputeShader(fScaledDeltaTime);
 
-    const _uint iNumBones = (_uint)m_Bones.size();
-
-    // CPU CBone 전체 동기화
-    if (m_pOutReadBack)
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-
-        D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
-        {
-            COMPUTE_BONEMATRIX_OUT* pOut =
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
-
-            // 무조건 최적화
-            for (_uint i = 0; i < iNumBones; ++i)
-            {
-                m_Bones[i]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneLocalTransformMatrix));
-
-                m_Bones[i]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[i].BoneCombinedTransformMatrix));
-            }
-
-            m_pContext->Unmap(m_pOutReadBack, 0);
-        }
-    }
-
-    // 루트모션 적용
-    if (pTransform && fRootMotionMagnification != 0.f && m_pOutReadBack)
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pRootSource);
-        Apply_RootMotion(pTransform, fRootMotionMagnification);
-    }
 
     return m_isFinish;
 }
@@ -941,29 +1291,30 @@ HRESULT CModel::Ready_ComputeShader()
     m_pComputeShaderCom = CComputeShader::Create(
         m_pDevice, m_pContext,
         TEXT("../Bin/ShaderFiles/Shader_Compute_PlayAnimation.hlsl"),
+        "LocalMatrices",
+        iNumData);
+
+    m_pCombinedMatrixComputeShaderCom = CComputeShader::Create(
+        m_pDevice, m_pContext,
+        TEXT("../Bin/ShaderFiles/Shader_Compute_CombinedMatrices.hlsl"),
         "CombinedMatrices",
         iNumData);
 
     if (nullptr == m_pComputeShaderCom)
         return E_FAIL;
 
+    if (nullptr == m_pCombinedMatrixComputeShaderCom)
+        return E_FAIL;
+
     D3D11_BUFFER_DESC PreBoneBufferDesc = {};
     PreBoneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+    PreBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * m_Bones.size();
     PreBoneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     PreBoneBufferDesc.CPUAccessFlags = 0;
     PreBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
     PreBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&PreBoneBufferDesc, nullptr, &m_pPreBoneMatrices);
-
-    D3D11_BUFFER_DESC LerpBoneBufferDesc = {};
-    LerpBoneBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    LerpBoneBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
-    LerpBoneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-    LerpBoneBufferDesc.CPUAccessFlags = 0;
-    LerpBoneBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
-    LerpBoneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&PreBoneBufferDesc, nullptr, &m_pLerpBoneMatrices);
 
@@ -995,6 +1346,10 @@ HRESULT CModel::Ready_ComputeShader()
     if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
         return E_FAIL;
     m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::CONSTATNT, pBuffer);
+
+    Safe_AddRef(pBuffer);
+
+    m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::CONSTATNT, pBuffer);
 #pragma endregion
 
 
@@ -1008,13 +1363,13 @@ HRESULT CModel::Ready_ComputeShader()
     // 첫 번째로, Bone을 넣어주자
     {
         TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
+        TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * m_Bones.size();
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-        vector<COMPUTE_BONEINFO> vBoneInfos(iNumData);
-        for (_uint i = 0; i < iNumData; ++i)
+        vector<COMPUTE_BONEINFO> vBoneInfos(m_Bones.size());
+        for (_uint i = 0; i < m_Bones.size(); ++i)
         {
             if (i >= m_Bones.size())
             {
@@ -1034,18 +1389,14 @@ HRESULT CModel::Ready_ComputeShader()
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
 
-        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+        if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, m_Bones.size())))
             return E_FAIL;
 
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_BONEINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        Safe_AddRef(pBuffer);
 
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pBoneSource)))
+        if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, m_Bones.size())))
             return E_FAIL;
+
     }
     // 두 번째로, Channel을 넣어주자
     {
@@ -1054,7 +1405,7 @@ HRESULT CModel::Ready_ComputeShader()
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
+    
         vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
         for (_uint i = 0; i < iNumData; ++i)
         {
@@ -1063,24 +1414,24 @@ HRESULT CModel::Ready_ComputeShader()
             vChannelInfos[i].iNumKeyFrames = 0;
             vChannelInfos[i].iKeyFrameOffset = 0;
         }
-
+    
         SubResource.pSysMem = vChannelInfos.data();
-
+    
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
-
+    
         if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
-
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pChannelSource)))
-            return E_FAIL;
+    
+        //// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+        //D3D11_BUFFER_DESC ReadBufferDesc = {};
+        //ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+        //ReadBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+        //ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
+        //ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        //
+        //if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pChannelSource)))
+        //    return E_FAIL;
     }
     // 세 번째로, 키프레임을 넣어주자
     {
@@ -1089,7 +1440,7 @@ HRESULT CModel::Ready_ComputeShader()
         TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
         TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
+    
         vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos(iNumData);
         for (_uint i = 0; i < iNumData; ++i)
         {
@@ -1099,31 +1450,31 @@ HRESULT CModel::Ready_ComputeShader()
             vKeyFrameInfos[i].vTranslation = { 1.f, 1.f, 1.f };
             vKeyFrameInfos[i].fTrackPosition = 0.f;
         }
-
+    
         SubResource.pSysMem = vKeyFrameInfos.data();
-
+    
         if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &pBuffer)))
             return E_FAIL;
-
+    
         if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
             return E_FAIL;
-
-        // 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
-        D3D11_BUFFER_DESC ReadBufferDesc = {};
-        ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
-        ReadBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
-        ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
-        ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-
-        if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pKeyFrameSource)))
-            return E_FAIL;
+    
+        //// 이후에 매 프레임마다 바인딩해줘야하므로, 이 버퍼를 들고있어줘야한다 ㅇㅇ. 
+        //D3D11_BUFFER_DESC ReadBufferDesc = {};
+        //ReadBufferDesc.Usage = D3D11_USAGE_STAGING;
+        //ReadBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+        //ReadBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
+        //ReadBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        //
+        //if (FAILED(m_pDevice->CreateBuffer(&ReadBufferDesc, nullptr, &m_pKeyFrameSource)))
+        //    return E_FAIL;
     }
     // 끝난줄 알았지? 본 초기화를 위한 로컬 본 행렬도 넣어주자
     {
         _uint iNumBones = (_uint)m_Bones.size();
         if (iNumBones > 0)
         {
-            std::vector<COMPUTE_BONEMATRIX_OUT> vInit(iNumData);
+            vector<COMPUTE_BONEMATRIX_OUT> vInit(iNumData);
 
             for (_uint i = 0; i < iNumData; ++i)
             {
@@ -1141,23 +1492,56 @@ HRESULT CModel::Ready_ComputeShader()
                 }
             }
 
-            D3D11_BUFFER_DESC desc{};
-            desc.Usage = D3D11_USAGE_DEFAULT;
-            desc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
-            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-            desc.CPUAccessFlags = 0;
-            desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-            desc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+            D3D11_BUFFER_DESC FirstDesc{};
+            FirstDesc.Usage = D3D11_USAGE_DEFAULT;
+            FirstDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
+            FirstDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            FirstDesc.CPUAccessFlags = 0;
+            FirstDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+            FirstDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
 
-            D3D11_SUBRESOURCE_DATA sub{};
-            sub.pSysMem = vInit.data();
+            D3D11_SUBRESOURCE_DATA FirstSubResource{};
+            FirstSubResource.pSysMem = vInit.data();
 
             ID3D11Buffer* pBuffer = nullptr;
-            if (FAILED(m_pDevice->CreateBuffer(&desc, &sub, &pBuffer)))
+            if (FAILED(m_pDevice->CreateBuffer(&FirstDesc, &FirstSubResource, &pBuffer)))
+                return E_FAIL;
+
+            ID3D11Buffer* pLerpBuffer = nullptr;
+            if (FAILED(m_pDevice->CreateBuffer(&FirstDesc, &FirstSubResource, &pLerpBuffer)))
                 return E_FAIL;
 
             // CComputeShader 쪽 INPUT 버퍼 목록에 추가
-            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer)))
+            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pBuffer, iNumBones)))
+            {
+                Safe_Release(pBuffer);
+                return E_FAIL;
+            }
+
+            // CComputeShader 쪽 INPUT 버퍼 목록에 추가
+            if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pLerpBuffer, iNumBones)))
+            {
+                Safe_Release(pLerpBuffer);
+                return E_FAIL;
+            }
+
+            D3D11_BUFFER_DESC SecondDesc{};
+            SecondDesc.Usage = D3D11_USAGE_DEFAULT;
+            SecondDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
+            SecondDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            SecondDesc.CPUAccessFlags = 0;
+            SecondDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+            SecondDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+
+            D3D11_SUBRESOURCE_DATA SecondSubResource{};
+            SecondSubResource.pSysMem = vInit.data();
+
+            ID3D11Buffer* pSecondBuffer = nullptr;
+            if (FAILED(m_pDevice->CreateBuffer(&SecondDesc, &SecondSubResource, &pSecondBuffer)))
+                return E_FAIL;
+
+            // CComputeShader 쪽 INPUT 버퍼 목록에 추가
+            if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::INPUT, pSecondBuffer, iNumBones)))
             {
                 Safe_Release(pBuffer);
                 return E_FAIL;
@@ -1167,7 +1551,7 @@ HRESULT CModel::Ready_ComputeShader()
             // 끝난줄 알았지? Out도 세팅해주자
             {
                 TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumBones;
                 TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
                 TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -1175,33 +1559,42 @@ HRESULT CModel::Ready_ComputeShader()
                 D3D11_SUBRESOURCE_DATA outSub{};
                 outSub.pSysMem = vInit.data();
 
-                Safe_Release(m_pOutSource);
                 if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &outSub, &m_pOutSource)))
                     return E_FAIL;
 
-                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource)))
+                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource, iNumBones)))
+                    return E_FAIL;
+
+                Safe_AddRef(m_pOutSource);
+
+                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pOutSource, iNumBones)))
                     return E_FAIL;
             }
 
             // 루트모션용 m_pRootSource도 세팅해줘야된다고라고라고라고라고
             {
                 TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+                TrialInitBufferDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
                 TrialInitBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
                 TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-                D3D11_SUBRESOURCE_DATA rootSub{};
-                rootSub.pSysMem = vInit.data(); 
+                vector<COMPUTE_BONEMATRIX_OUT> vRootInit(1);
+
+                XMStoreFloat4x4(&vRootInit[0].BoneLocalTransformMatrix, XMMatrixIdentity());
+                XMStoreFloat4x4(&vRootInit[0].BoneCombinedTransformMatrix, XMMatrixIdentity());
+
+
+                D3D11_SUBRESOURCE_DATA RootSubResource{};
+                RootSubResource.pSysMem = vRootInit.data();
 
                 Safe_Release(m_pRootSource);
-                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &rootSub, &m_pRootSource)))
+                if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &RootSubResource, &m_pRootSource)))
                     return E_FAIL;
 
-                if (FAILED(m_pComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource)))
+                if (FAILED(m_pCombinedMatrixComputeShaderCom->ADD_Buffer(CComputeShader::BUFFER_TYPE::OUTPUT, m_pRootSource, 1)))
                     return E_FAIL;
             }
-
 
         }
 
@@ -1211,12 +1604,22 @@ HRESULT CModel::Ready_ComputeShader()
 
     D3D11_BUFFER_DESC readbackDesc = {};
     readbackDesc.Usage = D3D11_USAGE_STAGING;
-    readbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * iNumData;
+    readbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT) * m_Bones.size();
     readbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
     readbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
     readbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
     m_pDevice->CreateBuffer(&readbackDesc, nullptr, &m_pOutReadBack);
+
+
+    D3D11_BUFFER_DESC RootReadbackDesc = {};
+    RootReadbackDesc.Usage = D3D11_USAGE_STAGING;
+    RootReadbackDesc.ByteWidth = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    RootReadbackDesc.StructureByteStride = sizeof(COMPUTE_BONEMATRIX_OUT);
+    RootReadbackDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+    m_pDevice->CreateBuffer(&RootReadbackDesc, nullptr, &m_pOutRootReadBack);
 
 
 
@@ -1318,9 +1721,6 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 
     m_GlobalBuffer.g_PreTransformMatrix = m_PreTransformMatrix;
-    // 고민 1: 이거 근데 여기서 이렇게 하면 Update_TransformationMatrices 호출 안되지 않나? 어떻게 해야하지?
-    // Update_TrackPosition라는 함수를 만들어서, 거기서 m_fCurrentTrackPosition을 관리해주면 어떨까?
-    //  ㄴ 거기서 CChannel::Update_TransformationMatrix를 대체하는 함수도 만들어보자
     m_GlobalBuffer.g_fTimeDelta = fTimeDelta;
     m_GlobalBuffer.g_fTickPerSecond = m_Animations[m_iCurrentAnimIndex]->Get_TickPerSecond();
     m_GlobalBuffer.g_fCurrentTrackPosition = m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
@@ -1334,7 +1734,6 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
     m_GlobalBuffer.g_fBlendRatio = m_fBlendRatio;
 
-
     // 버퍼 세팅?
     // 컴퓨트 셰이더 실행 전에 최종으로 데이터 전달해주는 순간
     // 상수 버퍼 먼저 바로 GPU에 올려준다.
@@ -1347,30 +1746,16 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 
     {
-        _uint iInputIndices[4] = { 0, 1, 2, 3 }; // Bone, Channel, KeyFrame, InitialLocalMatrix
-        m_pComputeShaderCom->Bind_InputBuffer(4, iInputIndices);
+        _uint iInputIndices[5] = { 0, 1, 2, 3, 4 }; // Bone, Channel, KeyFrame, InitialLocalMatrix, LerpMatrix
+        m_pComputeShaderCom->Bind_InputBuffer(5, iInputIndices);
     }
 
     {
-        _uint iInputIndices[2] = { 0, 1 };
-        m_pComputeShaderCom->Bind_OutputBuffer(2, iInputIndices);
+        _uint iInputIndices[1] = { 0 };
+        m_pComputeShaderCom->Bind_OutputBuffer(1, iInputIndices);
     }
-
+    
     _uint iGroupCount = (m_Bones.size() + 127) / 128;
-
-    // 여기서 PreBoneMatrices SRV를 CS t4에 바인딩
-    if (m_pLerpBoneMatricesSRV == nullptr)
-    {
-        D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-        SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-        SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-        SRVDesc.Buffer.NumElements = m_Bones.size();
-        HRESULT hr = m_pDevice->CreateShaderResourceView(m_pLerpBoneMatrices, &SRVDesc, &m_pLerpBoneMatricesSRV);
-        if (FAILED(hr))
-            return E_FAIL;
-    }
-    ID3D11ShaderResourceView* preBoneSRV[1] = { m_pLerpBoneMatricesSRV };
-    m_pContext->CSSetShaderResources(4, 1, preBoneSRV);
 
     m_pComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
 
@@ -1379,8 +1764,39 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
     // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
     // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
     // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
-    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
-    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
+    //if(nullptr == m_pOutSource)
+    //    m_pComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+
+
+    m_pCombinedMatrixComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::CONSTATNT, 0, &m_GlobalBuffer);
+    {
+        _uint iIndex = 0; // 상수버퍼(전역변수)
+        m_pCombinedMatrixComputeShaderCom->Bind_ConstBuffer(1, &iIndex);
+    }
+
+
+    m_pCombinedMatrixComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pOutSource);
+    {
+        _uint iInputIndices[2] = { 0, 1}; // Local,LerpMatrix, 
+        m_pCombinedMatrixComputeShaderCom->Bind_InputBuffer(2, iInputIndices);
+    }
+
+    {
+        _uint iInputIndices[2] = { 0, 1 };
+        m_pCombinedMatrixComputeShaderCom->Bind_OutputBuffer(2, iInputIndices);
+    }
+
+    m_pCombinedMatrixComputeShaderCom->Update_Shader({ (_float)iGroupCount, 1, 1 });
+
+    // 데이터 가져오는거
+    // GetBufferResource
+    // 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지
+    // 매개변수 2 : 타입에 맞는 버퍼가 몇번째 버퍼인지
+    // 매개변수 3 : 값을 받아올 ID3D11Buffer 타입의 변수
+    //if (nullptr == m_pOutSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 0, m_pOutSource);
+    //if(nullptr == m_pRootSource)
+    //    m_pCombinedMatrixComputeShaderCom->GetBufferResource(CComputeShader::BUFFER_TYPE::OUTPUT, 1, m_pRootSource);
 
     {
         ID3D11UnorderedAccessView* pNullUAV[2] = { nullptr, nullptr };
@@ -1398,65 +1814,86 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagnification)
 {
-    if (ROOTFLAG_RESET == m_iFlagPreRootModified)
+    if (iFLAG_ROOT_RESET == m_iFlagPreRootModified)
     {
-        m_iFlagPreRootModified = ROOTFLAG_INIT;
+        m_iFlagPreRootModified = iFLAG_ROOT_INIT;
         return S_OK;
     }
 
-    if (nullptr == m_pOutReadBack)
+    if (nullptr == m_pOutRootReadBack)
         return S_OK;
 
     // 먼저, CBone에 Set도 해줘야하기 때문에 받아와준다.
     D3D11_MAPPED_SUBRESOURCE MappedSubResource{};
-    if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
+    if (SUCCEEDED(m_pContext->Map(m_pOutRootReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResource)))
     {
         COMPUTE_BONEMATRIX_OUT* pOut = reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResource.pData);
 
         // 찾았을 때
         if (m_iRootIndex >= 0 && m_iRootIndex < (_int)m_Bones.size())
         {
-            m_Bones[m_iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
-            m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix));
+            _matrix matLocal = XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix);
+            _matrix matCombined = XMLoadFloat4x4(&pOut[0].BoneCombinedTransformMatrix);
+
+            m_Bones[m_iRootIndex]->Set_TransformationMatrix(matLocal);
+            m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(matCombined);
 
             // 첫 프레임이라는 뜻
-            if (ROOTFLAG_INIT == m_iFlagPreRootModified)
+            if (iFLAG_ROOT_INIT == m_iFlagPreRootModified)
             {
                 m_PreRootMatrix = pOut[0].BoneCombinedTransformMatrix;
                 m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
-                m_iFlagPreRootModified = ROOTFLAG_ACTIVE;
+                m_iFlagPreRootModified = iFLAG_ROOT_ACTIVE;
             }
             else
             {
                 // 루트 이동량이 있을 때, 로컬 본 기준으로 CombinedMatrix를 변화를 준다. 가 지금까지인데, 
                 m_PreRootMatrix = m_CurRootMatrix;
                 m_CurRootMatrix = pOut[0].BoneCombinedTransformMatrix;
+            }
 
-                if ((pTransform != nullptr)
-                    && (fRootMotionMagnification != 0.f))
-                {
-                    _vector vRootAmount = XMVectorSet(
-                        m_CurRootMatrix._41 - m_PreRootMatrix._41,
-                        m_CurRootMatrix._42 - m_PreRootMatrix._42,
-                        m_CurRootMatrix._43 - m_PreRootMatrix._43
-                        , 0.f);
 
-                    _matrix matTransform = XMLoadFloat4x4(pTransform->Get_WorldMatrixPtr());
-                    matTransform.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+            if ((m_isRootMotionUpdated == TRUE) &&
+                (pTransform != nullptr)
+                && (fRootMotionMagnification != 0.f))
+            {
+                _vector vRootAmount = XMVectorSet(
+                    m_CurRootMatrix._41 - m_PreRootMatrix._41,
+                    m_CurRootMatrix._42 - m_PreRootMatrix._42,
+                    m_CurRootMatrix._43 - m_PreRootMatrix._43
+                    , 0.f);
 
-                    vRootAmount = XMVector3TransformNormal(vRootAmount, matTransform);
+                _matrix matTransform = XMLoadFloat4x4(pTransform->Get_WorldMatrixPtr());
+                matTransform.r[3] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
-                    vRootAmount = XMVectorScale(vRootAmount, fRootMotionMagnification);
+                vRootAmount = XMVector3TransformNormal(vRootAmount, matTransform);
 
-                    _vector vRootMotion = pTransform->Get_State(STATE::POSITION) + vRootAmount;
+                vRootAmount = XMVectorScale(vRootAmount, fRootMotionMagnification);
 
-                    pTransform->Set_State(STATE::POSITION, vRootMotion);
-                }
+                _vector vRootMotion = pTransform->Get_State(STATE::POSITION) + vRootAmount;
+
+                pTransform->Set_State(STATE::POSITION, vRootMotion);
+            }
+            else
+            {
+                _vector vRootAmount = XMVectorSet(
+                    m_CurRootMatrix._41 - m_PreRootMatrix._41,
+                    m_CurRootMatrix._42 - m_PreRootMatrix._42,
+                    m_CurRootMatrix._43 - m_PreRootMatrix._43
+                    , 0.f);
+
+                _matrix vRootCombined = m_Bones[m_iRootIndex]->Get_CombinedTransformationMatrix();
+
+                vRootCombined.r[3] += vRootAmount;
+
+                m_Bones[m_iRootIndex]->Set_TransformationMatrix(XMLoadFloat4x4(&pOut[0].BoneLocalTransformMatrix));
+                m_Bones[m_iRootIndex]->Set_CombinedTransformationMatrix(vRootCombined);
+
             }
 
         }
 
-        m_pContext->Unmap(m_pOutReadBack, 0);
+        m_pContext->Unmap(m_pOutRootReadBack, 0);
     }
 
     return S_OK;
@@ -1464,117 +1901,10 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 
 HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
 {
+    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
 
-    _uint iNumData = m_Bones.size();
-
-    // 구조체가 3개라는건.. 귀찮다는 뜻이다.
-    // 각자 별개의 방식으로 바인딩 해줘야한다는 뜻이다.
-
-
-    // 2) Channel이랑 KeyFrame은, uint iKeyFrameOffset 때문에 같이 바인딩 해주는걸 권한다.
-    {
-        vector<COMPUTE_CHANNELINFO> vChannelInfos(m_Bones.size());
-        vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
-
-        auto pChannels = m_Animations[m_iCurrentAnimIndex]->Get_vChannels();
-        auto& BoneToChannelMappingList = m_Animations[m_iCurrentAnimIndex]->Get_BoneToChannelMappingLists();
-
-        _uint iKeyFrameOffset = 0;
-
-        for (_uint i = 0; i < m_Bones.size(); ++i)
-        {
-            vChannelInfos[i].iBoneIndex = i;
-
-            _int iChannelIndex = BoneToChannelMappingList[i];
-
-            // 매핑된 채널이 없는 본
-            if (iChannelIndex < 0)
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            // 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
-            if (iChannelIndex >= (_int)pChannels->size())
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            CChannel* pChannel = (*pChannels)[iChannelIndex];
-
-            // 안전 장치 – pChannel이 null일 경우
-            if (pChannel == nullptr)
-            {
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
-            // 이 본이 가진 키프레임 개수
-            _uint iNumKeyFrames = pChannel->Get_NumKeyFrames();
-            vChannelInfos[i].iNumKeyFrames = iNumKeyFrames;
-
-            // 현재 키프레임 인덱스(CAnimation이 관리하는 것)
-            vChannelInfos[i].iCurrentKeyFrameIndex =
-                m_Animations[m_iCurrentAnimIndex]->Get_AnimationKeyFrameIndex(iChannelIndex);
-
-            // KeyFrame 버퍼 안에서 이 본의 키 시작 위치
-            vChannelInfos[i].iKeyFrameOffset = iKeyFrameOffset;
-
-            // 키프레임 데이터 밀어넣기
-            for (_uint j = 0; j < iNumKeyFrames; ++j)
-            {
-                const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
-
-                COMPUTE_KEYFRAMEINFO OutKF = {};
-                OutKF.vScale = KF.vScale;
-                OutKF.padding01 = 0.f;
-                OutKF.vRotation = KF.vRotation;
-                OutKF.vTranslation = KF.vTranslation;
-                OutKF.fTrackPosition = KF.fTrackPosition;
-
-                vKeyFrameInfos.push_back(OutKF);
-            }
-
-            iKeyFrameOffset += iNumKeyFrames;
-        }
-
-        // ChannelInfo 업로드
-        if (m_pChannelSource)
-        {
-            D3D11_MAPPED_SUBRESOURCE SubResource{};
-            if (SUCCEEDED(m_pContext->Map(m_pChannelSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
-            {
-                memcpy(SubResource.pData, vChannelInfos.data(),
-                    sizeof(COMPUTE_CHANNELINFO) * m_Bones.size());
-                m_pContext->Unmap(m_pChannelSource, 0);
-            }
-            m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelSource);
-        }
-
-        // KeyFrameInfo 업로드
-        if (m_pKeyFrameSource)
-        {
-            D3D11_MAPPED_SUBRESOURCE SubResource{};
-            if (SUCCEEDED(m_pContext->Map(m_pKeyFrameSource, 0, D3D11_MAP_WRITE, 0, &SubResource)))
-            {
-                if (!vKeyFrameInfos.empty())
-                {
-                    memcpy(SubResource.pData, vKeyFrameInfos.data(),
-                        sizeof(COMPUTE_KEYFRAMEINFO) * static_cast<size_t>(vKeyFrameInfos.size()));
-                }
-                m_pContext->Unmap(m_pKeyFrameSource, 0);
-            }
-            m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameSource);
-        }
-    }
-
+    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
+    
     return S_OK;
 }
 
@@ -1582,9 +1912,17 @@ HRESULT CModel::Update_BoneMatrices()
 {
     m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
 
-
-
     return S_OK;
+}
+
+_int CModel::Find_Animation(const _char* szAnimationTag)
+{
+    auto iter = m_AnimationIndexMap.find(szAnimationTag);
+
+    if (iter == m_AnimationIndexMap.end())
+        return -1;
+
+    return (*iter).second;
 }
 
 HRESULT CModel::Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName)
@@ -1673,10 +2011,18 @@ void CModel::Free()
 {
     __super::Free();
 
-    if (m_isCloned == FALSE)
-        Safe_Delete(m_pModel);
+    //if (m_isCloned == FALSE)
+    //    Safe_Delete(m_pModel);
 
+    for (auto& pChannelBuffer : m_pChannelBufferList)
+        Safe_Release(pChannelBuffer);
+    m_pChannelBufferList.clear();
 
+    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
+        Safe_Release(pKeyFrameBuffer);
+    m_pKeyFrameBufferList.clear();
+
+     
     for (auto& pAnimation : m_Animations)
         Safe_Release(pAnimation);
     m_Animations.clear();
@@ -1695,17 +2041,16 @@ void CModel::Free()
 
     m_GlobalOffsetMatrices.clear();
 
-    Safe_Release(m_pBoneSource);
-    Safe_Release(m_pChannelSource);
-    Safe_Release(m_pKeyFrameSource);
     Safe_Release(m_pOutReadBack);
+    Safe_Release(m_pOutRootReadBack);
     //Safe_Release(m_pOutSource);
+    //Safe_Release(m_pRootSource);
     Safe_Release(m_pPreBoneMatrices);
     Safe_Release(m_pLerpBoneMatrices);
 
     Safe_Release(m_pBoneMatricesSRV);
     Safe_Release(m_pPreBoneMatricesSRV);
-    Safe_Release(m_pLerpBoneMatricesSRV);
     Safe_Release(m_pComputeShaderCom);
+    Safe_Release(m_pCombinedMatrixComputeShaderCom);
 
 }

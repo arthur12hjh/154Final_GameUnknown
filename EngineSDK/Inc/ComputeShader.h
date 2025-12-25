@@ -28,9 +28,12 @@ public:
 	_uint									GetNumData() { return m_iNumData; }
 	void									GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pOutBuffer);
 
-
 public:
-	HRESULT									ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffer);
+	HRESULT									ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffer, _uint iNumData = 0);
+
+	// Append 속성이 부여된 BUFFER만 가능함
+	HRESULT									ADD_AppendOutBuffer(ID3D11Buffer* pBuffer);
+
 	HRESULT									Update_BufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, void* pData);
 	HRESULT									Update_BufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pBuffer);
 

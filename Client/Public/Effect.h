@@ -13,9 +13,8 @@ NS_END
 NS_BEGIN(Client)
 
 class CMeshEffect;
-class CPointParticle;
+class CMeshParticle;
 class CSpriteParticle;
-class CSpriteUVEffect;
 class CEffect : public CGameObject
 {
 public:
@@ -23,9 +22,11 @@ public:
     {
         const   _float4x4* pWorldMatrix = { nullptr };
         const   _float4x4* pRootMatrix = { nullptr };
+        const   _float3*   pDir = { nullptr };
         _vector vPos;
         _float3 fRot;
         _float fSize;
+        _int   iFloor;
     }EFFECT_TRANSFORM_DESC;
     
 private:
@@ -42,28 +43,29 @@ public:
     virtual HRESULT Render() override;
     void    Stop();
     void    Play(_float fTime = -10);
-    void    End();
+    void    End(_bool bisRelease = true);
 
 private:
     HRESULT Load_Binary(const _char* szFile);
     _char* ReadString(ifstream& fileBinaryStream);
     _int    ReadInt(ifstream& fileBinaryStream);
-    RENDER    ReadRENDER(ifstream& fileBinaryStream);
     _float4 ReadFloat4(ifstream& fileBinaryStream);
     _float3 ReadFloat3(ifstream& fileBinaryStream);
     _float2 ReadFloat2(ifstream& fileBinaryStream);
     _float  ReadFloat(ifstream& fileBinaryStream);
     _int2   ReadInt2(ifstream& fileBinaryStream);
     _bool   ReadBool(ifstream& fileBinaryStream);
+
 private:
     const   _float4x4* m_pParentWorldMat = { nullptr };
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
     _float	        m_fStopTime = {};
+    _int           m_iFloor = {};
     vector<CMeshEffect*> m_pMeshEffects;
-    vector<CPointParticle*> m_pPointParticles;
+    vector<CMeshParticle*> m_pMeshParticles;
     vector<CSpriteParticle*> m_pSpriteParticles;
-    vector<CSpriteUVEffect*> m_pSpriteEffects;
+
 public:
     static  CEffect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile);
     virtual CGameObject* Clone(void* pArg) override;

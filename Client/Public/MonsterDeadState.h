@@ -29,9 +29,10 @@ private :
 	
 	DIRECTION									m_eDeadDir = {};
 
+	_bool										m_bIsDeadEffect = { false };
 	_float3										m_vImpactDir = {};
-	_float										m_fImpactForce = {};
 
+	_float										m_fImpactForce = {};
 	_float2										m_fDeadEndTime = {};
 
 public:

@@ -7,6 +7,7 @@ texture2D g_MaskTexture, g_DiffuseTexture, g_NormalTexture;
 float2 g_fSize;
 int2 g_iUV;
 float g_fFPS, g_fTime, g_fAngle;
+float g_fFar;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 
 struct VS_IN
@@ -157,7 +158,7 @@ PS_NORMAL_OUT PS_MAIN(PS_IN In)
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     return Out;
 }
 
@@ -207,7 +208,7 @@ PS_NORMAL_OUT PS_NORMAL_MASK_MAIN(PS_IN In, bool isFrontFace : SV_IsFrontFace)
     float3x3 TBN = float3x3(T, B, G);
     float3 finalNormal = normalize(mul(N, TBN));
     Out.vNormal = float4(finalNormal * 0.5f + 0.5f, 1.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     return Out;
 }
 
@@ -221,12 +222,12 @@ PS_OUT PS_MASK(PS_IN In)
     float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
     Out.vDiffuse = g_vColor;
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a);
-    float linearDepth = 0.1 * 500 / (500.f - (In.vProjPos.z / In.vProjPos.w) * (500 - 0.1));
-    float weight = saturate(pow(1 - linearDepth / 500, 3));
+    float linearDepth = 0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1));
+    float weight = saturate(pow(1 - linearDepth / g_fFar, 3));
     Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight;
     Out.vWeight.r = Out.vDiffuse.a * weight;
     Out.vWeight.g = Out.vDiffuse.a;
-    Out.vWeight.b = weight;
+    Out.vWeight.b = 1 - weight;
     Out.vDiffuse.a = 1;
     Out.vWeight.a = 1;
     return Out;

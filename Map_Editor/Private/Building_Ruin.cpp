@@ -20,20 +20,16 @@ HRESULT CBuilding_Ruin::Initialize_Prototype()
 HRESULT CBuilding_Ruin::Initialize(void* pArg)
 {
 
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
+	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)
 	{
 		wcsncpy_s(m_ComponentTag, 256, pDesc->pComponentTag, _TRUNCATE);
 	}
-	
+
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
@@ -64,14 +60,16 @@ HRESULT CBuilding_Ruin::Render()
 
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
+
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
+
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;

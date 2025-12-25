@@ -65,6 +65,10 @@ void CTransform::Set_Scale(_float fX, _float fY, _float fZ)
 
 void CTransform::Update_PreWorldMatrix()
 {
+	_vector vCurrPos = XMLoadFloat4(reinterpret_cast<const _float4*>(&m_WorldMatrix.m[ENUM_CLASS(STATE::POSITION)]));
+	_vector vPrePos = XMLoadFloat4(reinterpret_cast<const _float4*>(&m_PreWorldMatrix.m[ENUM_CLASS(STATE::POSITION)]));
+	XMStoreFloat3(&m_vDelta, vCurrPos - vPrePos);
+
 	memcpy(&m_PreWorldMatrix, &m_WorldMatrix, sizeof(_float4x4));
 }
 
@@ -140,6 +144,26 @@ void CTransform::Go_Right(_float fTimeDelta)
 	_vector		vRight = Get_State(STATE::RIGHT);
 
 	vPosition += XMVector3Normalize(vRight) * m_fSpeedPerSec * fTimeDelta;
+
+	Set_State(STATE::POSITION, vPosition);
+}
+
+void CTransform::Go_Up(_float fTimeDelta)
+{
+	_vector		vPosition = Get_State(STATE::POSITION);
+	_vector		vUp = Get_State(STATE::UP);
+
+	vPosition += XMVector3Normalize(vUp) * m_fSpeedPerSec * fTimeDelta;
+
+	Set_State(STATE::POSITION, vPosition);
+}
+
+void CTransform::Go_Down(_float fTimeDelta)
+{
+	_vector		vPosition = Get_State(STATE::POSITION);
+	_vector		vUp = Get_State(STATE::UP);
+
+	vPosition -= XMVector3Normalize(vUp) * m_fSpeedPerSec * fTimeDelta;
 
 	Set_State(STATE::POSITION, vPosition);
 }
@@ -256,7 +280,8 @@ void CTransform::LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed)
 	_vector		vTarget = XMVector3Normalize(vAt - Get_State(STATE::POSITION));
 	vTarget = XMVectorSetW(vTarget, 0.f);
 
-	vLook = XMVector3Normalize(XMVectorLerp(Get_State(STATE::LOOK), vTarget, fRatio * fSpeed));
+	fRatio = Clamp<_float>(fRatio * fSpeed, 0.f, 1.f);
+	vLook = XMVector3Normalize(XMVectorLerp(Get_State(STATE::LOOK), vTarget, fRatio));
 	vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	vUp = XMVector3Cross(vLook, vRight);
 

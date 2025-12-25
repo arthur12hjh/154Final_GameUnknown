@@ -20,13 +20,9 @@ HRESULT CLift_Platform::Initialize_Prototype()
 HRESULT CLift_Platform::Initialize(void* pArg)
 {
 
-	RuinComponentDesc* pDesc = nullptr;
-	if (pArg != nullptr)
-	{
-		pDesc = reinterpret_cast<RuinComponentDesc*>(pArg);
-	}
+	LIFT_PLATFORM_DESC* pDesc = static_cast<LIFT_PLATFORM_DESC*>(pArg);
 
-	if (FAILED(__super::Initialize(nullptr)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pDesc && pDesc->pComponentTag)
@@ -37,6 +33,9 @@ HRESULT CLift_Platform::Initialize(void* pArg)
 	if (FAILED(Ready_Components(m_ComponentTag)))
 		return E_FAIL;
 
+	m_iPlatformId = pDesc->iPlatFormID;
+	m_fMoveDistance = pDesc->fMoveDistance;
+
 	return S_OK;
 }
 
@@ -46,12 +45,20 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 void CLift_Platform::Update(_float fTimeDelta)
 {
+	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
+	pCullingCollider->SetCollision({ 4.f, 2.f, 0.f }, {}, { 5.f, 4.f, 5.f });
+
+	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
 void CLift_Platform::Late_Update(_float fTimeDelta)
 {
-
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+#endif
 }
 
 HRESULT CLift_Platform::Render()

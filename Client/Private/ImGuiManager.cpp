@@ -8,6 +8,8 @@
 #include "DebugCheatUI.h"
 #include "DebugHierarchy.h"
 #include "ShaderDebugger.h"
+#include "CameraActionInserter.h"
+#include "CinematicMaker.h"
 
 IMPLEMENT_SINGLETON(CImGuiManager);
 
@@ -102,6 +104,22 @@ HRESULT CImGuiManager::ADD_ImGuiObject()
 		return E_FAIL;
 
 	m_ImGuis.emplace(TEXT("ImGui_ShaderDebuffer"), pShaderDebugger);
+#pragma endregion
+
+#pragma region CameraActionInserter
+	auto pCameraActionInserter = CCameraActionInserter::Create(m_pDevice, m_pContext);
+	if (nullptr == pCameraActionInserter)
+		return E_FAIL;
+
+	m_ImGuis.emplace(TEXT("ImGui_CameraActionInserter"), pCameraActionInserter);
+#pragma endregion
+
+#pragma region CameraActionInserter
+	auto pCinematicMaker = CCinematicMaker::Create(m_pDevice, m_pContext);
+	if (nullptr == pCinematicMaker)
+		return E_FAIL;
+
+	m_ImGuis.emplace(TEXT("ImGui_CinematicMaker"), pCinematicMaker);
 #pragma endregion
 
 	return S_OK;

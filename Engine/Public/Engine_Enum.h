@@ -4,13 +4,24 @@
 namespace Engine
 {
 
-#define ROOTFLAG_RESET		0
-#define ROOTFLAG_INIT		(1 << 0)
-#define ROOTFLAG_ACTIVE		(1 << 1)
+#define iFLAG_ROOT_RESET			0
+#define iFLAG_ROOT_INIT				(1 << 0)
+#define iFLAG_ROOT_ACTIVE			(1 << 1)
 
-#define ANIMATIONFLAG_RESET		0
-#define ANIMATIONFLAG_PLAY		(1 << 0)
-#define ANIMATIONFLAG_FINISH	(1 << 1)
+#define iFLAG_ANIMATION_RESET		0
+#define iFLAG_ANIMATION_PLAY		(1 << 0)
+#define iFLAG_ANIMATION_FINISH		(1 << 1)
+
+#define PHYSX_DEFAULT	(1 << 1)
+#define PHYSX_CCT		(1 << 2)
+#define PHYSX_DYNAMIC	(1 << 3)
+#define PHYSX_STATIC	(1 << 4)
+#define PHYSX_KINEMATIC (1 << 5)
+#define PHYSX_NONTERRAIN  (1 << 6)
+#define PHYSX_TERRAIN   (1 << 7)
+#define PHYSX_CUSTOM_3  (1 << 8)
+
+#define CASCADE_LEVEL 5
 
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
@@ -25,6 +36,7 @@ namespace Engine
 								  STATIC,
 								  PLAYER,
 								  MONSTER,
+								  NPC,
 								  SENCE,
 								  INTERACTION,
 								  END };
@@ -38,7 +50,7 @@ namespace Engine
 	enum class KEY_INPUT		{ KEYBOARD, MOUSE, END };
 								// 이전 프레임 뷰 투영도 추가
 	enum class D3DTS			{ VIEW, PROJ, END };
-	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, END };
+	enum class MODEL_TYPE		{ ANIM, NONANIM, PARTANIM, ANIMONLY,  END };
 								
 	enum class VISIBILITY		{ VISIBLE, HIDDEN, END };
 	enum class STATE			{ RIGHT, UP, LOOK, POSITION, END };
@@ -88,10 +100,13 @@ namespace Engine
 		PRIORITY,
 		SHADOW,
 		MOTIONBLUR,
+		OCCLUSION,
 		NONBLEND,
 		NONLIGHT,
 		BLUR,
 		GLOW,
+		METABALL,
+		BLACKBLEND,
 		DISTORTION,
 		BLEND,
 		UI,
@@ -107,7 +122,11 @@ namespace Engine
 		//톤 매핑
 		TONE_MAPPING, 
 		//진짜 렌더타겟으로 넘기기
-		FINAL
+		FINAL,
+		SPOT,
+		OCCLUSION,
+		SHADOW_BLUR_X,
+		COMBINE_SHADOW
 	};
 
 	
@@ -117,5 +136,7 @@ namespace Engine
 	enum class NAVI_LINE		{ AB, BC, CA, END };
 
 	enum CHANNELID				{ BGM, EFFECT, EFFECT2, END };
+
+	enum class CAMERA_ROLE		{ MAIN, DEBUG, END };
 }
 #endif // Engine_Enum_h__

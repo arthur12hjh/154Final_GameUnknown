@@ -8,18 +8,22 @@
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
 #include "Weapon.h"
+#include "CameraBone_Player.h"
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Effect.h"
 #include "Notify.h"
 #include "AttackHitBox.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
+#include "PlayerCCTQueryFilterCallback.h"
 
 #include "PlayerFSM.h"
-
+#include "PlayerState.h"
+#include "Prob_Interaction.h"
+ 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
 {
@@ -124,7 +128,7 @@ HRESULT CPlayer::Initialize_Prototype()
 HRESULT CPlayer::Initialize(void* pArg)
 {
 	CGameManager::GetInstance()->Bind_GameCharacter(this);
-	if(FAILED(__super::Initialize(pArg)))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Ready_PartObjects()))
@@ -144,6 +148,25 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pColliderCom->SetOwner(this);
 
+	SetVisibility(VISIBILITY::VISIBLE);
+
+
+	//
+	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	//EffectDesc.fRotationPerSec = 1.f;
+	//EffectDesc.fSpeedPerSec = 1.f;
+	//
+	//EffectDesc.pRootMatrix = nullptr;
+	//EffectDesc.pWorldMatrix = nullptr;
+	//
+	//EffectDesc.vPos = GetTransform()->Get_State(STATE::POSITION);
+	//EffectDesc.fRot = _float3(0, 0, 0);
+	//EffectDesc.fSize = 0.9f;
+	//
+	//static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+
 	return S_OK;
 }
 
@@ -162,40 +185,63 @@ void CPlayer::Update(_float fTimeDelta)
 	m_pGameManager->Lockon(fTimeDelta);
 
 	Update_TestLogic(fTimeDelta);
-	Update_RushSkill(fTimeDelta);
-	Update_BetaSkill();
-	Update_FSM(fTimeDelta);
-	
-	// [JU] Use_RushSkill 테스트(마우스 우클릭)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 1))
-		Use_RushSkill();
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
-	{
-		auto pInteraction = m_pGameInstance->GetNearInteraction();
-		pInteraction->Action_InteractionEvent(this);
-	}
+	//링크 어택이 가장 최우선 판정으로 들어간다.
+	Update_LinkAttack(fTimeDelta);
+	Update_RushSkill(fTimeDelta);
+	Update_BetaSkill(fTimeDelta);
+	Update_FSM(fTimeDelta);
+	Update_Interaction(fTimeDelta);
+	Update_PotionUse(fTimeDelta);
+	Update_ReactionSkills(fTimeDelta);
+	//일단 테스트 입력 최우선 처리
+	Update_ReactionSkillInput(fTimeDelta);
+
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+		Use_RushSkill();
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta); 
-	
-	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
+	if (m_bIsActive == TRUE)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-	m_pGameInstance->Add_PhysxGeometry(m_pCCT->Get_PxActor(), m_pCCT->Get_PxShape());
 #endif
+	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CPlayer::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Render_Shadow()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Render_MotionBlur()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_MotionBlur();
+
 	return S_OK;
 }
 
@@ -203,36 +249,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
-
-	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
-	_float4 vAttackerPos{};
-	_float fImpactForce;
-
-	vHitDir = pDamageDesc->vHitDir;
-	vHitPoint = pDamageDesc->vHitPoint;
-	vImpactDir = pDamageDesc->vImpactDir;
-	fImpactForce = pDamageDesc->fImpactForce;
-
-	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
-
-	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-	if (0 >= m_PlayerDesc.iCurrentHealth)
-		m_PlayerDesc.iCurrentHealth = 0.f;
-
-	if (false == m_PlayerDesc.isSuperArmor)
-	{
-		PLAYER_TRANSITION_DESC Desc{};
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::HIT;
-
-		if (m_pWeapon)
-		{
-			m_iSkillID = -1;
-			m_pWeapon->EnableCollider(false);
-		}
-
-		m_pFSM->Handle_Transition(Desc);
-	}
 
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
@@ -242,29 +258,146 @@ HRESULT CPlayer::Damaged(void* pArg)
 		// ㄴ 여기서 아마 상태 추가할거같긴 한데 몬스터 본이랑 몬스터 애니메이션 정보 연동해야 될 듯?
 		pCharacter->ActionSuccess(nullptr);
 	}
+	else
+	{
+		// Interaction 아니라면 따로 뻈음.
+		// 안에서 플레이어 모션 제어 중
+		Handle_Hit(pDamageDesc, pSkillDesc);
+	}
 
 	return S_OK;
 }
 
-void CPlayer::SetSillDataID(_uint iSkillID)
+void CPlayer::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
+{
+	switch (eRecoveryType)
+	{
+	case RECOVERY_TYPE::RECOVERY_HP:
+	{
+		if (0 == iCost)
+			m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
+		else
+		{
+			m_PlayerDesc.iCurrentHealth += iCost;
+			m_PlayerDesc.iCurrentHealth = Clamp<long long>(m_PlayerDesc.iCurrentHealth, 0, m_PlayerDesc.iMaxHealth);
+		}
+	}
+		break;
+	case RECOVERY_TYPE::RECOVERY_SHILED:
+	{
+		if (0 == iCost)
+			m_PlayerDesc.iCurrentShield = m_PlayerDesc.iMaxShield;
+		else
+		{
+			m_PlayerDesc.iCurrentShield += iCost;
+			m_PlayerDesc.iCurrentShield = Clamp<long long>(m_PlayerDesc.iCurrentShield, 0, m_PlayerDesc.iMaxShield);
+		}
+	}
+		break;
+	default :
+		return;
+	}
+}
+/*
+데스크 받아와서 iFrame 만큼의 프레임 동안은 
+저회, 리펄스, 블링크가 가능한 상태로 바꿔준다.
+*/
+void CPlayer::Attack_Interaction(void* pArg)
+{
+	ATK_INTERACTION_DESC* pNotifyDesc = static_cast<ATK_INTERACTION_DESC*>(pArg);
+	// 보이드 포인터는 혹시 몰라서 받아온거니까 따로 당장 처리하지 않음.
+	// PERFECT_DOGE, BLINK, REPULSE;
+	ATK_INTERACTION_TYPE eType = pNotifyDesc->eInteraction_Type;
+	// 프레임 단위 판정이니까.. 키 입력을 프레임 단위로 판정해야되나?
+	_uint iFrame = pNotifyDesc->iFrameCnt;
+
+	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame * 10.f;
+	m_PlayerDesc.eReactionType = eType;
+}
+
+void CPlayer::SetSkillDataID(_uint iSkillID)
 {
 	m_iSkillID = iSkillID;
 }
 
-_int CPlayer::GetSillDataID()
+_int CPlayer::GetSkillDataID()
 {
 	return m_iSkillID;
 }
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-	m_fTestTimer += fTimeDelta;
 
-	if (m_fTestTimer >= 2.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	m_fTestTimer += fTimeDelta;
+	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
+	}
+}
+
+void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
+{
+	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
+	// 락온 중이라면
+	if (true == m_PlayerDesc.HasTarget)
+	{
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::REPULSE;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+	}
+
+	/* 실제 로직 */
+	//if (true == m_PlayerDesc.HasTarget)
+	//{
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::REPULSE;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -291,6 +424,9 @@ HRESULT CPlayer::Ready_Components()
 	Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
 	Desc.pHitReporter = CPlayerCCTHitReporter::Create();
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
+	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
+	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.iCollisionMask &= ~(PHYSX_CUSTOM_3);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
@@ -310,6 +446,10 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
 		TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
+	// 바디가 생성 되자마자 세팅.
+	// 이래야 다른 파트오브젝트에서 바디를 참조 가능하지 ㅇㅇ
+	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
 
@@ -351,9 +491,18 @@ HRESULT CPlayer::Ready_PartObjects()
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
+	
+	CCameraBone_Player::CAMERABONE_DESC CameraBoneDesc{};
+	CameraBoneDesc.pParentTransform = m_pTransformCom;
+	CameraBoneDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Root");
+	CameraBoneDesc.pCharacter = this;
+	
+	/* Part_CameraBone */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CameraBone_Player"),
+		TEXT("Part_CameraBone"), &CameraBoneDesc)))
+		return E_FAIL;
 
-	Import_ModelPtr();
-	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+	m_pCameraBone = static_cast<CCameraBone_Player*>(Find_PartObject(TEXT("Part_CameraBone")));
 
 	return S_OK;
 }
@@ -377,8 +526,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
 
-	m_PlayerDesc.iCurrentPotions = 3;
-	m_PlayerDesc.iMaxPotions = 3;
+	m_PlayerDesc.iCurrentPotions = 5;
+	m_PlayerDesc.iMaxPotions = 5;
 
 	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;
@@ -392,9 +541,11 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.pPlayerController = m_pCCT;
+	m_PlayerDesc.pPlayerController  = m_pCCT;
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
-	m_PlayerDesc.ePlayerMode = PLAYER_MODE::IDLE;
+	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
+
+	m_PlayerDesc.iOwnGold			= 0;
 
 	return S_OK;
 }
@@ -448,7 +599,8 @@ void CPlayer::Update_RushSkill(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Update_BetaSkill()
+//베타스킬 상태 변경
+void CPlayer::Update_BetaSkill(_float fTimeDelta)
 {
 	_uint iIdx = 0;
 
@@ -467,6 +619,234 @@ void CPlayer::Update_BetaSkill()
 
 		else if (SKILL_STATE::ACTIVE_ON == m_PlayerDesc.eBetaSkillState[i] && iGauge <= m_PlayerDesc.iCurrentBetaEnergy)
 			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::ACTIVE;
+
+		else if (SKILL_STATE::ACTIVE == m_PlayerDesc.eBetaSkillState[i] && iGauge > m_PlayerDesc.iCurrentBetaEnergy)
+			m_PlayerDesc.eBetaSkillState[i] = SKILL_STATE::DEFAULT;
+
+	}
+}
+
+//인터랙션 관련 처리 (키입력)
+void CPlayer::Update_Interaction(_float fTimeDelta)
+{
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
+		if (nullptr == pInteractionCom)
+			return;
+
+		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+
+ 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
+
+		switch (InteractionState)
+		{
+		case INTERACTION_STATE::DEFAULT:
+			pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+			break;
+		case INTERACTION_STATE::CONTACT:
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.isChangeMode = false;
+			Desc.pArg = pInteractionCom;
+
+			switch (pInteractionData->eType)
+			{
+			// 만약 서플라이 박스라면 (발로 차는 모션)
+			case INTERACTION_TYPE::SUPPLY_BOX:
+			{
+				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+			}
+			case INTERACTION_TYPE::CORPSE:
+			{
+				Desc.eNextState = PLAYER_STATE::CORPSE_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+
+			}
+			case INTERACTION_TYPE::ITEM:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			}
+		}
+		// 끝났거나 잠겨있다면, 그냥 Break 처리.
+		// 디폴트여도 상호작용은 안되니까 Break 처리.
+		case INTERACTION_STATE::LOCK:
+		case INTERACTION_STATE::END:
+			break;
+		}
+	}
+	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
+	{
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
+		if (nullptr == pInteractionCom)
+			return;
+
+		if (0.f < pInteractionCom->Get_InterDesc()->fInteractionTime)
+			pInteractionCom->Reset_Interaction();
+	}
+}
+
+void CPlayer::Update_PotionUse(_float fTimeDelta)
+{
+	m_PlayerDesc.fCurrentPotionCoolDown += fTimeDelta;
+
+	if (m_PlayerDesc.fCurrentPotionCoolDown >= m_PlayerDesc.fPotionCoolDown)
+		m_PlayerDesc.fCurrentPotionCoolDown = m_PlayerDesc.fPotionCoolDown;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Q))
+	{
+		/* 여기서 포션 사용 이펙트 쏴줘 */
+		if (m_PlayerDesc.fPotionCoolDown <= m_PlayerDesc.fCurrentPotionCoolDown &&
+			m_PlayerDesc.iCurrentPotions > 0 && m_PlayerDesc.iCurrentHealth < m_PlayerDesc.iMaxHealth)
+		{
+			m_PlayerDesc.iCurrentPotions--;
+			m_PlayerDesc.fPotionCoolDown = 0.f;
+			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
+			
+
+
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 9.f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			
+			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
+				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
+		}
+	}
+}
+
+void CPlayer::Update_LinkAttack(_float fTimeDelta)
+{
+	if (false == m_PlayerDesc.isLinkAttackAvailable || nullptr == m_PlayerDesc.pLinkAttackTarget)
+		return;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
+	{
+		NAYITBA_EXECUTION_TYPE eExecutionState = m_PlayerDesc.pLinkAttackTarget->bIsThesholdAction();
+
+		if (NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK == eExecutionState)
+			Execution_Nayitba();
+
+		else if(NAYITBA_EXECUTION_TYPE::LINK_ATTACK == eExecutionState)
+			LinkAttack_Nayitba();
+	}
+}
+
+void CPlayer::Update_ReactionSkills(_float fTimeDelta)
+{
+	//0보다 크다면 프레임 계속 감소.
+	if (0 < m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.iLeftReactionSkillFrameAcc--; 
+	// END로 바꿔
+	else if (0 == m_PlayerDesc.iLeftReactionSkillFrameAcc)
+		m_PlayerDesc.eReactionType = ATK_INTERACTION_TYPE::END;
+}
+
+void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
+{
+	//무적이면 충돌처리 안하게 처리
+	if (true == m_PlayerDesc.isInvincible)
+		return;
+
+	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
+	_float4 vAttackerPos{};
+	_float fImpactForce;
+
+	XMStoreFloat4(&vAttackerPos, pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION));
+
+	PLAYER_HIT_DESC HitDesc;
+	memcpy(&HitDesc.fImpact, &pDamageDesc->fImpactForce, sizeof(_float));
+	memcpy(&HitDesc.vHitDir, &pDamageDesc->vHitDir, sizeof(_float3));
+	memcpy(&HitDesc.vHitPoint, &pDamageDesc->vHitPoint, sizeof(_float3));
+	memcpy(&HitDesc.vImpactDir, &pDamageDesc->vImpactDir, sizeof(_float3));
+	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
+
+	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
+
+	// 패리 성공. 만약 몬스터 팅겨나는거 제어하고 싶으면
+	// 이 분기문 안에서 Attacker 정보 있으니까 그걸로 제어하면 될듯
+	if (true == m_PlayerDesc.isJustParryable)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
+		Desc.pArg = &HitDesc;
+
+		m_pFSM->Handle_Transition(Desc);
+
+		Default_Damage_Desc DamageDesc = {};
+		DamageDesc.pAttacker = this;
+
+		auto pNayitba = static_cast<CNayitba*>(pDamageDesc->pAttacker);
+		if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+		{
+			if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+			else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+		}
+		else
+			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+
+		pNayitba->Damaged(&DamageDesc);
+		//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
+	}
+	// 가드만 성공
+	else if (true == m_PlayerDesc.isParryable)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
+		Desc.pArg = &HitDesc;
+
+		m_pFSM->Handle_Transition(Desc);
+	}
+
+	else if (false == m_PlayerDesc.isSuperArmor)
+	{
+		PLAYER_TRANSITION_DESC Desc{};
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+		Desc.pArg = &HitDesc;
+
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
+		m_pFSM->Handle_Transition(Desc);
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
 	}
 }
 
@@ -504,9 +884,41 @@ void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 	vCharacterPos += vCharacterLook * pSkillData->fRange;
 	XMStoreFloat3(&pHitBoxDesc.vPosition, vCharacterPos);
 
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iGameLevel, szProtoType.c_str(),
-		iGameLevel, szLayerName.c_str(), &pHitBoxDesc)))
+	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
+	if(pHitBox)
+		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
+}
+
+void CPlayer::Execution_Nayitba()
+{
+	DEFAULT_DAMAGE_DESC Desc;
+	Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
+
+	m_PlayerDesc.pLinkAttackTarget->Damaged(&Desc);
+}
+
+void CPlayer::LinkAttack_Nayitba()
+{
+	PLAYER_TRANSITION_DESC TransitionDesc{};
+	SOCKETMATRIX_DESC TargetDesc{};
+
+	_uint iMonsterID = m_PlayerDesc.pLinkAttackTarget->GetStaticMonsterData()->iMonsetID;
+
+	TargetDesc.pParentTransformMatrix = m_PlayerDesc.pLinkAttackTarget->GetTransform()->Get_WorldMatrixPtr();
+	TargetDesc.pSocketMatrix = m_PlayerDesc.pLinkAttackTarget->GetLinkTargetBone();
+
+	switch (iMonsterID)
+	{
+	case 1:
+		TransitionDesc.eNextState = PLAYER_STATE::GIGAS_LINKATTACK;
+		//여기서 기가스 정보 꺼내와서 넘겨줘야함
+		TransitionDesc.pArg = &TargetDesc;
+		break;
+	default:
 		return;
+	}
+
+	m_pFSM->Handle_Transition(TransitionDesc);
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -537,6 +949,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
+	m_pGameManager->Bind_GameCharacter(nullptr);
+
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);

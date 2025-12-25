@@ -2,12 +2,14 @@
 #include "UIBase.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "UIHUD.h"
 #include "UIPlayAnimEvent.h"
 #include "UIActionEvent.h"
 
 #include "UIWorldWrapper.h"
+#include "UIText.h"
 
 CUIBase::CUIBase(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -30,7 +32,14 @@ HRESULT CUIBase::Initialize(void* pArg)
 
 	if (FAILED(__super::Initialize(&m_tOriginUIDesc)))
 		return E_FAIL;
-	
+
+  	m_pGameManager = CGameManager::GetInstance();
+
+	if (!m_pGameManager)
+		return E_FAIL;
+
+	Safe_AddRef(m_pGameManager);
+
 	m_tUIDesc = m_tOriginUIDesc;
 	m_iZOrder = m_tUIDesc.iDepth;
 
@@ -48,6 +57,9 @@ HRESULT CUIBase::Initialize(void* pArg)
 	if (FAILED(Ready_Events()))
 		return E_FAIL;
 
+	for (auto& AinmDesc : m_tOriginUIDesc.m_AnimTags)
+		m_AnimFinishStates[AinmDesc.first] = true;
+
 	return S_OK;
 }
 
@@ -62,7 +74,6 @@ void CUIBase::Update(_float fTimeDelta)
 		//부모 따라가기
 		if (dynamic_cast<CUIBase*>(m_pParent))
 		{
-		
 			m_tUIDesc.fX = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fX + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetX;
 			m_tUIDesc.fY = dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fY + dynamic_cast<CUIBase*>(m_pParent)->Get_UIBase_Desc().fOffsetY;
 		
@@ -89,11 +100,6 @@ void CUIBase::Update(_float fTimeDelta)
 		if (!m_pParent || !m_pTargetPos)
 			return;
 
-		/*if (m_pParent->GetVisibility() == VISIBILITY::HIDDEN)
-			return;
-
-		m_eVisibility = m_pParent->GetVisibility();*/
-
 		// View / Projection 행렬 로드
 		_matrix view = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW));
 		_matrix proj = XMLoadFloat4x4(m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ));
@@ -118,7 +124,7 @@ void CUIBase::Update(_float fTimeDelta)
 		XMStoreFloat3(&ndc, vClip / w); // (-1~1)
 
 		// 4) NDC → Screen
-		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
+ 		_uint2 half = { g_iHalfWinSizeX, g_iHalfWinSizeY };
 
 		if (m_pTargetPos)
 		{
@@ -126,8 +132,10 @@ void CUIBase::Update(_float fTimeDelta)
 			m_tUIDesc.fY = -ndc.y * half.y + half.y;  // Y 반전
 			
 			m_pTransformCom->Set_State(STATE::POSITION,
-				XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX - half.x, -(m_tUIDesc.fY + m_tUIDesc.fOffsetY) + half.y, 0.f, 1.f));
+				XMVectorSet(m_tUIDesc.fX /*+ m_tUIDesc.fOffsetX*/ - half.x, -(m_tUIDesc.fY /*+ m_tUIDesc.fOffsetY*/) + half.y, 0.f, 1.f));
 		}
+
+		int a = 0;
 
 		for(auto& pChild : m_Children)
 			Update_Children(pChild);
@@ -172,6 +180,11 @@ void CUIBase::Set_Position(_float fX, _float fY)
 void CUIBase::Set_Rotation(_float fRotation)
 {
 	m_tUIDesc.fRotation = fRotation;
+}
+
+void CUIBase::Set_Texture_Scale(_float fScale)
+{
+	m_tUIDesc.m_tUIShaderDesc.fScale = fScale;
 }
 
 void CUIBase::Set_Size(_float fSizeX, _float fSizeY) {
@@ -298,7 +311,43 @@ HRESULT CUIBase::Ready_Texture()
 CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 {
 	UIBASE_DESC Desc = m_tOriginUIDesc;
-	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Pooled_") + to_wstring(iIdx);
+	Desc.szUITag = m_tOriginUIDesc.szUITag + TEXT("_Cloned_") + to_wstring(iIdx);
+
+	map<_wstring, vector<UI_EVENT_DESC>> rebuiltEvents;
+
+	for (auto& it : Desc.m_Events)
+	{
+		vector<UI_EVENT_DESC>& eventList = it.second;
+
+		// (1) 내부 값 재정의
+		for (auto& ev : eventList)
+		{
+			ev.szActionTag += TEXT("_") + to_wstring(iIdx);
+			ev.szArg += TEXT("_") + to_wstring(iIdx);
+			ev.szTypeTag = ev.szTypeTag;
+
+			for (auto& sub : ev.szSubscribeEventTags)
+				sub += TEXT("_") + to_wstring(iIdx);
+		}
+
+		_wstring newKey = it.first + TEXT("_") + to_wstring(iIdx);
+		rebuiltEvents.emplace(newKey, eventList);
+	}
+
+	Desc.m_Events = rebuiltEvents;
+
+	map<_wstring, _wstring> rebuiltAnims;
+
+	for (auto& it : Desc.m_AnimTags)
+	{
+		const wstring& oldKey = it.first;     // 기존 key
+
+		wstring newKey = oldKey + TEXT("_") + to_wstring(iIdx);
+
+		rebuiltAnims.emplace(newKey, it.second);
+	}
+
+	Desc.m_AnimTags = rebuiltAnims;
 
 	CGameObject* pObj = nullptr;
 	if (FAILED(pHUD->Add_UserInterface(Desc.iLevel, Desc.szProtoTag.c_str(),
@@ -311,6 +360,8 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 	if (!pUIBase)
 		return nullptr;
 
+	pUIBase->Set_CloneIdx(iIdx);
+
 	// 3) Children deep clone
 	//pUIBase->m_Children.clear(); // 기존 children 포인터 복사된 것 제거
 
@@ -318,22 +369,26 @@ CUIBase* CUIBase::Clone_UI(CUIHUD* pHUD, _uint iIdx)
 	{
 		CUIBase* pClonedChild = pChild->Clone_UI(pHUD, iIdx);
 		pClonedChild->SetParent(pUIBase);
-
 		pUIBase->Add_Child(pClonedChild);
 	}
 
 	return pUIBase;
-}
+} 
 
 void CUIBase::Update_Children(CUIBase* pObj)
 {
 	pObj->SetVisibility(pObj->GetParent()->GetVisibility());
+	pObj->Set_Rent(static_cast<CUIBase*>(pObj->GetParent())->Get_Rent());
 
-	pObj->Get_UIBase_Desc().fX = XMVectorGetX(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
-	pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+	if (pObj->GetVisibility() == VISIBILITY::VISIBLE)
+	{
+		pObj->Get_UIBase_Desc().fX = XMVectorGetX(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
+		pObj->Get_UIBase_Desc().fY = XMVectorGetY(pObj->GetParent()->GetTransform()->Get_State(STATE::POSITION));
 
-	pObj->GetTransform()->Set_State(STATE::POSITION,
-		XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX, pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+		pObj->GetTransform()->Set_State(STATE::POSITION,
+			XMVectorSet(pObj->Get_UIBase_Desc().fX + pObj->Get_UIBase_Desc().fOffsetX,
+				pObj->Get_UIBase_Desc().fY - pObj->Get_UIBase_Desc().fOffsetY, 0.f, 1.f));
+	}
 
 	for (auto& pChild : *pObj->Get_Children())
 	{
@@ -341,15 +396,21 @@ void CUIBase::Update_Children(CUIBase* pObj)
 	}
 }
 
+_bool CUIBase::IsAnimFinished(const _wstring& szAnimTag) const
+{
+	auto it = m_AnimFinishStates.find(szAnimTag);
+	return it != m_AnimFinishStates.end() && it->second;
+}
 #ifdef _DEBUG
 HRESULT CUIBase::Ready_Components_For_Debug()
 {
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Point"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_UIDebug"),
 		TEXT("Com_VIBuffer_Debug"), reinterpret_cast<CComponent**>(&m_pVIDebugBufferCom))))
 		return E_FAIL;
 
 	return S_OK;
 }
+
 
 void CUIBase::Render_Debug_Rect()
 {
@@ -463,6 +524,10 @@ HRESULT CUIBase::Ready_Events()
 
 HRESULT CUIBase::Initialize_ShaderResources()
 {
+	_float2 atlasCount = { 0, 0 };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_AtlasCount", &atlasCount, sizeof(_float2))))
+		return E_FAIL;
+
 	_float fAlpha{ 1.f };
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
@@ -531,6 +596,10 @@ HRESULT CUIBase::Initialize_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &g_GlowIntensity, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowSpread", &g_GlowSpread, sizeof(_float))))
+		return E_FAIL;
+
+	_float fScale{ 1.f };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &fScale, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -634,6 +703,12 @@ HRESULT CUIBase::Bind_ShaderResources()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_PulseSpeed", &m_tUIDesc.m_tUIShaderDesc.fPulseSpeed, sizeof(_float))))
 				return E_FAIL;
 		}
+
+		if (m_tUIDesc.m_tUIShaderDesc.bUseScale)
+		{
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_tUIDesc.m_tUIShaderDesc.fScale, sizeof(_float))))
+				return E_FAIL;
+		}
 	}
 
 	return S_OK;
@@ -656,7 +731,7 @@ HRESULT CUIBase::Broadcast_Event(const _wstring& szEventTag, const _wstring& szA
 	for (auto* pHandle : it->second)
 	{
 		if (!pHandle) continue;
- 		pHandle->Notify(pArg);
+  		pHandle->Notify(pArg);
 	}
 	return S_OK;
 }
@@ -686,7 +761,10 @@ void CUIBase::Free()
 	for (auto& EventHandle : m_pEventHandles)
 	{
 		for (auto& Event : EventHandle.second)
-			Safe_Release(Event);
+		{
+			m_pGameInstance->Remove_Event(EventHandle.first.c_str());
+			Safe_Release(Event); 
+		}
 		EventHandle.second.clear();
 	}
 	m_pEventHandles.clear();
@@ -695,7 +773,7 @@ void CUIBase::Free()
 	Safe_Release(m_pVIDebugBufferCom);
 #endif
 
-	//Safe_Release(m_pParent);
+	Safe_Release(m_pGameManager);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);

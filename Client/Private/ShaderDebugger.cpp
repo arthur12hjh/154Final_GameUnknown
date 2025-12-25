@@ -22,6 +22,8 @@ HRESULT CShaderDebugger::Initialize()
     m_pDoFDesc = static_cast<DOF_DESC*>(m_pGameInstance->Get_DoF_Desc());
     m_pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
     m_pVolumetricDesc = static_cast<VOLUMETRIC_DESC*>(m_pGameInstance->Get_Volumetric_Desc());
+    m_pHDRDesc = static_cast<HDR_DESC*>(m_pGameInstance->Get_HDR_Desc());
+	m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
 #endif
 
     return S_OK;
@@ -33,13 +35,28 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::Begin("Shader Debugger", &bIsOpen);
 
+    if (nullptr != m_pDirectionalLightDesc)
+    {
+        ImGui::Text("DIRECTIONAL INFO");
+        ImGui::ColorEdit4("Light Diffuse", reinterpret_cast<float*>(&m_pDirectionalLightDesc->vDiffuse));
+
+        ImGui::DragFloat3("Light Direction", reinterpret_cast<float*>(&m_pDirectionalLightDesc->vDirection), 0.01f, -1.0f, 1.0f);
+
+
+        ImGui::Separator();
+    }
+    else
+        m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
+
     ImGui::Text("FOG INFO");
 
-    ImGui::DragFloat("Fog Start", m_pFogDesc->fFogStart, 1.f, 0.0f, 500.0f);
-    ImGui::DragFloat("Fog End", m_pFogDesc->fFogEnd, 1.f, 0.f, 500.0f);
-    ImGui::DragFloat("Fog Power Max", m_pFogDesc->fFogPowerMax, 0.01f, 0.f, 1.0f);
-    ImGui::DragFloat("Fog Power Min", m_pFogDesc->fFogPowerMin, 0.01f, 0.f, 1.0f);
+    ImGui::DragFloat("Fog Start", m_pFogDesc->fFogStart, 1.f, 0.0f, 1000.0f);
+    ImGui::DragFloat("Fog End", m_pFogDesc->fFogEnd, 1.f, 0.f, 1000.0f);
+    ImGui::DragFloat("Fog Power Max", m_pFogDesc->fFogPowerMax, 0.01f, 0.f, 2.0f);
+    ImGui::DragFloat("Fog Power Min", m_pFogDesc->fFogPowerMin, 0.01f, 0.f, 2.0f);
+    ImGui::DragFloat("SkyBox Fog Power", m_pFogDesc->fSkyboxFogPower, 0.01f, 0.f, 1.0f);
     ImGui::ColorEdit4("Fog Color", &m_pFogDesc->vFogColor->x);
+
 
     ImGui::Separator();
 
@@ -65,7 +82,8 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     _uint iMax = 16, iMin = 1;
 
-    ImGui::DragFloat("MB CamBlur Scale", m_pMotioBlurDesc->fCamBlurScale, 0.001f, -2.f, 2.0f);
+    ImGui::DragFloat("MB ObjectBlur Scale", m_pMotioBlurDesc->fObjectBlurScale, 0.001f, -2.f, 2.0f);
+    ImGui::DragFloat("MB CamBlur Scale", m_pMotioBlurDesc->fCamBlurScale, 0.001f, -10.f, 10.0f);
     ImGui::DragFloat("MB Bias", m_pMotioBlurDesc->fBias, 0.001f, -2.f, 2.f);
     ImGui::DragScalar("MB Sample Count", ImGuiDataType_U32, m_pMotioBlurDesc->iSampleCount, 1.0f, &iMin, &iMax, "%u", 1);
 
@@ -77,6 +95,14 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     ImGui::DragFloat("VM StepSize", m_pVolumetricDesc->fStepSize, 0.001f, 0.f, 2.f);
     ImGui::DragFloat("VM G", m_pVolumetricDesc->fVolumetricG, 0.001f, -1.f, 1.f);
     ImGui::Separator();
+
+    ImGui::Text("HDR Info");
+
+    ImGui::Checkbox("HDR Activate", m_pHDRDesc->isHDR);
+    ImGui::DragFloat("HDR Desc", m_pHDRDesc->fHDRExposure, 0.001f, 0.f, 2.f);
+
+    ImGui::Separator();
+
 
     ImGui::Text("Bloom INFO (CANNOT EDIT. JUST SHOW)");
     

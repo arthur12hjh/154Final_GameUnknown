@@ -7,6 +7,8 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CCamera abstract : public CGameObject
 {
 public:
+	enum class CAMERA_STATE { NONE, CINEMATIC, TRANSFORM, FOLLOW, END };
+
 	typedef struct tagCameraDesc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_float3		vEye{}, vAt{};
@@ -17,6 +19,10 @@ protected:
 	CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCamera(const CCamera& Prototype);
 	virtual ~CCamera() = default;
+
+public:
+	void Shake(_float fShakeTime, _float fIntensity);
+	void Set_MainCamera(const WCHAR* szCameraTag);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -39,8 +45,24 @@ public:
 protected:
 	CAMERA_INFO					m_pCameraInfo = {};
 
+	CAMERA_STATE				m_eCameraState = { CAMERA_STATE::NONE };
+
+#pragma region CAMERA_SHAKE
+	_bool							m_IsShake = { false };
+	_float							m_fShakeTime = {};
+	_float							m_fShakeTimeAcc = { 0.f };
+	_float							m_fIntensity = {};
+	_float4							m_vOriginPos = {};
+#pragma endregion
+
+	_float4x4					m_PreLerpMatrix;
+	_float4x4					m_BeforeMatrix;
+
+	_float2						m_fTransitionLerpTime;
+	_bool						m_bIsTransition;
+
 protected:
-	HRESULT Bind_Matrices();
+	HRESULT Bind_Matrices(_float fTimeDelta);
 
 
 public:

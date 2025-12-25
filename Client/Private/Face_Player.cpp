@@ -116,7 +116,7 @@ HRESULT CFace_Player::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::OPACITY, "g_OpacityTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
-	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
 
@@ -130,13 +130,17 @@ void CFace_Player::Priority_Update(_float fTimeDelta)
 
 void CFace_Player::Update(_float fTimeDelta)
 {
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CFace_Player::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+
+	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
+
+	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
 
@@ -153,22 +157,18 @@ HRESULT CFace_Player::Render()
 	//Shader_Eve_Face
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		//if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_EVE_Eyeshadow_Occlusion") == 0)
-		//{
-		//	//if (FAILED(m_pShaderCom->Begin()))
-		//	//	return E_FAIL;
+		if (FAILED(m_pSpecDetailTextureCom->Bind_ShaderResource(m_pShaderCom, "g_SpecDetailTexture", 0)))
+			return E_FAIL;
 
-		//	//if (FAILED(m_pModelCom->Render(i)))
-		//	//	return E_FAIL;
-		//	continue;
-		//}
+		if (FAILED(m_pSSSAOCom->Bind_ShaderResource(m_pShaderCom, "g_SSSAOTexture", 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
 			return E_FAIL;
-
+		
 		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 
@@ -191,17 +191,17 @@ HRESULT CFace_Player::Render_Shadow()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_Shadow_Resource(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(1)))
@@ -210,6 +210,38 @@ HRESULT CFace_Player::Render_Shadow()
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CFace_Player::Render_MotionBlur()
+{
+	/* 이전 프레임 월드매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreWorldMatrix", &m_PreCombinedWorldMatrix)))
+		return E_FAIL;
+
+	/* 이전 뷰 매트릭스도 바인딩 */
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_PreViewMatrix", m_pGameInstance->Get_PreTransform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Begin(4)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -224,6 +256,44 @@ HRESULT CFace_Player::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Face"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+
+	/* Com_SpecDetail */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SSSAO"),
+		TEXT("Com_SpecDetail"), reinterpret_cast<CComponent**>(&m_pSSSAOCom))))
+		return E_FAIL;
+
+	/* Com_SSSAO */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
+		TEXT("Com_SSSAO"), reinterpret_cast<CComponent**>(&m_pSpecDetailTextureCom))))
+		return E_FAIL;
+
+	//PxUserData tUserData;
+	//tUserData.szActorTag = TEXT("Face");
+
+	////리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
+	//CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	//// 콜라이더 모양
+	//RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+
+	//// 충돌처리를 할지말지 
+	//// DYNAMIC : 충돌 
+	//// KINEMATIC : 충돌 X
+	//RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+
+	//RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
+	//RigidBodyDesc.tUserData = tUserData;
+	//RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
+	//RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
+	//RigidBodyDesc.fMass = { 0.3f };
+	//RigidBodyDesc.isQuery = { false };
+	///* Com_RigidBody */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+	//	TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBody), &RigidBodyDesc)))
+	//	return E_FAIL;
+
+	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
+	// 없으면 충돌 안됨
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 
 	return S_OK;
 }
@@ -283,4 +353,7 @@ void CFace_Player::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pSpecDetailTextureCom);
+	Safe_Release(m_pSSSAOCom);
+	Safe_Release(m_pRigidBody);
 }

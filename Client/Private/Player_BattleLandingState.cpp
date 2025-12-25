@@ -5,10 +5,11 @@
 #include "GameInstance.h"
 
 CPlayer_BattleLandingState::CPlayer_BattleLandingState()
+	: CPlayerState{}
 {
 }
 
-void CPlayer_BattleLandingState::Start(void* pArg)
+void CPlayer_BattleLandingState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::LANDING;
 
@@ -26,15 +27,24 @@ PLAYER_TRANSITION_DESC CPlayer_BattleLandingState::Update(_float fTimeDelta)
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
 		fAnimationRatio >= 0.75f)
+	{
+		//°É¾î
 		m_tNextState.eNextState = PLAYER_STATE::WALK;
-	else if (true == isAnimFinished)
+	}
+	
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
+
+	if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
 	return m_tNextState;
 }
 
-void CPlayer_BattleLandingState::End()
+_float CPlayer_BattleLandingState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_BattleLandingState* CPlayer_BattleLandingState::Create(void* pArg)

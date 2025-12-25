@@ -20,6 +20,7 @@ public :
 	void									Update();
 
 	void									SetInteractionBaseObject(CGameObject* pObject);
+	
 	void									ADD_Interaction(CInteraction_Component* pInteraction_Com);
 	void									Remove_Interaction(CInteraction_Component* pInteraction_Com);
 
@@ -31,6 +32,8 @@ private:
 	CGameObject*							m_pBaseObject = { nullptr };
 
 	vector<CInteraction_Component*>			m_pInteractionList;
+	list<CInteraction_Component*>			m_pCandidates;
+
 	CInteraction_Component*					m_pNearInteraction = { nullptr };
 
 public:

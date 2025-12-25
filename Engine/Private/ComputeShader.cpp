@@ -58,7 +58,8 @@ void CComputeShader::SetConstantData(_uint iIndex, void* pData)
     m_pContext->UpdateSubresource(m_pCBuffer[iIndex], 0, nullptr, pData, 0, 0);
 }
 
-void CComputeShader::GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pOutBuffer){
+void CComputeShader::GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferIndex, ID3D11Buffer* pOutBuffer)
+{
     switch (eBufferType)
     {
     case CComputeShader::BUFFER_TYPE::INPUT:
@@ -91,10 +92,13 @@ void CComputeShader::GetBufferResource(BUFFER_TYPE eBufferType, _uint iBufferInd
     return;
 }
 
-HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffer)
+HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffer, _uint iNumData)
 {
     if (nullptr == pBuffer)
         return E_FAIL;
+
+    if (0 == iNumData)
+        iNumData = m_iNumData;
 
     switch (eBufferType)
     {
@@ -104,7 +108,7 @@ HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffe
         D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
         SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
         SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-        SRVDesc.Buffer.NumElements = m_iNumData;
+        SRVDesc.Buffer.NumElements = iNumData;
 
         if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &pSRV)))
             return E_FAIL;
@@ -120,7 +124,7 @@ HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffe
         D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc = {};
         UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
         UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
-        UAVDesc.Buffer.NumElements = m_iNumData;
+        UAVDesc.Buffer.NumElements = iNumData;
 
         if (FAILED(m_pDevice->CreateUnorderedAccessView(pBuffer, &UAVDesc, &pUAV)))
             return E_FAIL;
@@ -144,6 +148,23 @@ HRESULT CComputeShader::ADD_Buffer(BUFFER_TYPE eBufferType, ID3D11Buffer* pBuffe
     }
         break;
     }
+    return S_OK;
+}
+
+HRESULT CComputeShader::ADD_AppendOutBuffer(ID3D11Buffer* pBuffer)
+{
+    ID3D11UnorderedAccessView* pUAV = nullptr;
+    D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc = {};
+    UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+    UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+    UAVDesc.Buffer.NumElements = m_iNumData;
+    UAVDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
+
+    if (FAILED(m_pDevice->CreateUnorderedAccessView(pBuffer, &UAVDesc, &pUAV)))
+        return E_FAIL;
+
+    m_pOutputBuffer.push_back(pBuffer);
+    m_pUAVs.push_back(pUAV);
     return S_OK;
 }
 

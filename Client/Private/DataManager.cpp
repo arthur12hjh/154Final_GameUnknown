@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "DataManager.h"
 
 #include "GameInstance.h"
@@ -17,7 +17,16 @@ HRESULT CDataManager::Initalize()
     if (FAILED(LoadAnimNotifyData()))
         return E_FAIL;
 
+    if (FAILED(LoadCameraAnimationData()))
+        return E_FAIL;
+
+    if (FAILED(LoadCinematicData()))
+        return E_FAIL;
+
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNaytibaData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNpcData(pArg); });
 
     return S_OK;
 }
@@ -49,9 +58,36 @@ const BETA_SKILL_DESC* CDataManager::Find_BetaSkillData(_uint iSkillID)
     return &iter->second;
 }
 
+const NPC_DATA_DESC* CDataManager::Find_NpcData(_uint iSkillID)
+{
+    auto iter = m_pNpcDatas.find(iSkillID);
+    if (iter == m_pNpcDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
 map<_uint, BETA_SKILL_DESC>* CDataManager::Get_AllBetaSkillDesc()
 {
     return &m_pBetaSkills;
+}
+
+const INTERACTION_DATA* CDataManager::Get_InteractionData(_uint iID)
+{
+    auto iter = m_pInteractionDatas.find(iID);
+    if (iter == m_pInteractionDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const SCRIPT_DESC* CDataManager::Get_ScriptData(const _wstring& szScriptTag)
+{
+    auto iter = m_ScriptDatas.find(szScriptTag);
+    if (iter == m_ScriptDatas.end())
+        return nullptr;
+
+    return &iter->second;
 }
 
 const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring& szAnimationTag)
@@ -63,6 +99,158 @@ const vector<ANIM_NOTIFY>* CDataManager::Find_AnimationNotifyData(const _wstring
     return &iter->second;
 }
 
+const CAMERA_ANIMATION_DATA* CDataManager::Find_CameraAnimationData(_uint iCameraAnimationData)
+{
+    auto iter = m_CameraAnimationDatas.find(iCameraAnimationData);
+    if (iter == m_CameraAnimationDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+const CINEMATIC_DESC* CDataManager::Find_CinematicData(_uint iCinematicDataID)
+{
+    auto iter = m_CinematicDatas.find(iCinematicDataID);
+    if (iter == m_CinematicDatas.end())
+        return nullptr;
+
+    return &iter->second;
+}
+
+void CDataManager::Save_CameraAnimationData()
+{
+    if (m_CameraAnimationDatas.size() == 0)
+        return;
+
+    for (auto& pData : m_CameraAnimationDatas)
+    {
+        Json jArray = Json::array();
+        Json jData;
+
+        jData["iCameraAnimationID"] = pData.first;
+        jData["iCameraAnimationFlag"] = pData.second.iCameraAnimationFlag;
+        jData["fBaseFOV"] = pData.second.fBaseFOV;
+        jData["vBaseCameraPivot"] = { pData.second.vBaseCameraPivot.x, pData.second.vBaseCameraPivot.y, pData.second.vBaseCameraPivot.z};
+        jData["vBaseBonePosition"] = { pData.second.vBaseBonePosition.x, pData.second.vBaseBonePosition.y, pData.second.vBaseBonePosition.z};
+        jData["vBaseBoneRotation"] = { pData.second.vBaseBoneRotation.x, pData.second.vBaseBoneRotation.y, pData.second.vBaseBoneRotation.z};
+        jData["szCameraAnimationName"] = pData.second.szCameraAnimationName;
+
+        for (auto& pMember : pData.second.FOVTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["FOVTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.PivotTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["PivotTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.BonePositionTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["BonePositionTrackList"].push_back(jMember);
+        }
+
+        for (auto& pMember : pData.second.BoneRotationTrackList)
+        {
+            Json jMember;
+
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["vTrackValue"] = { pMember.vTrackValue.x, pMember.vTrackValue.y, pMember.vTrackValue.z };
+            jMember["fTangentStart"] = pMember.fTangentStart;
+            jMember["fTangentEnd"] = pMember.fTangentEnd;
+            jMember["iInterpolationFlag"] = pMember.iInterpolationFlag;
+            
+            jData["BoneRotationTrackList"].push_back(jMember);
+        }
+
+        jArray.push_back(jData);
+
+        _wstring szFilePath = TEXT("../../Client/Bin/DataFiles/CameraData/");
+
+        szFilePath += to_wstring(pData.first);
+        szFilePath += TEXT(".json");
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+        CJsonParser::SaveJsonData(szPath, jArray);
+    }
+}
+
+void CDataManager::Save_CinematicData()
+{
+    if (m_CinematicDatas.size() == 0)
+        return;
+
+    for (auto& pData : m_CinematicDatas)
+    {
+        Json jArray = Json::array();
+        Json jData;
+
+        jData["iCinematicID"] = pData.first;
+        jData["szCinematicName"] = pData.second.szCinematicName;
+
+        for (auto& pMember : pData.second.CinematicNodeTrackList)
+        {
+            Json jMember;
+
+            jMember["eState"] = pMember.eState;
+            jMember["fTrackPosition"] = pMember.fTrackPosition;
+            jMember["szObjectTag"] = pMember.szObjectTag;
+            jMember["iActiveIndex"] = pMember.iActiveIndex;
+
+            jData["CinematicNodeTrackList"].push_back(jMember);
+        }
+
+        jArray.push_back(jData);
+
+        _wstring szFilePath = TEXT("../../Client/Bin/DataFiles/CinematicData/");
+
+        szFilePath += to_wstring(pData.first);
+        szFilePath += TEXT(".json");
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFilePath.c_str(), szPath);
+
+        CJsonParser::SaveJsonData(szPath, jArray);
+    }
+}
+
+
+
+map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
+{
+    return &m_CameraAnimationDatas;
+}
+
+map<_uint, CINEMATIC_DESC>* CDataManager::Get_CinematicDataMap()
+{
+    return &m_CinematicDatas;
+}
 
 HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {
@@ -70,10 +258,10 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     vector<string> BossDataList; 
     BossDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/NaytibaData/NaytibaData.csv", BossDataList);
+    CStringHelper::CSVRead("../Bin/DataFiles/AIData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-    for (auto i = 17; i < iMaxSize;)
+    for (auto i = 23; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
@@ -82,6 +270,11 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
         strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szMonsterName, BossDataList[i++].c_str());
         
+        strcpy_s(BossDesc.szLeftWeaponPrototypeName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szLeftBoneName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szRightWeaponPrototypeName, BossDataList[i++].c_str());
+        strcpy_s(BossDesc.szRightBoneName, BossDataList[i++].c_str());
+
         BossDesc.eNaytiba_Type = NAYTIBA_TYPE(atoi(BossDataList[i++].c_str()));
         BossDesc.eAI_Type = AI_TYPE(atoi(BossDataList[i++].c_str()));
 
@@ -89,12 +282,14 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
         strcpy_s(BossDesc.szAIControllerPrototype, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szAIBehaviorPrototype, BossDataList[i++].c_str());
 
-        BossDesc.iMaxHealth = atoi(BossDataList[i++].c_str());
-        BossDesc.iMaxShield = atoi(BossDataList[i++].c_str());
-        BossDesc.fMoveSpeed = atoi(BossDataList[i++].c_str());
+        BossDesc.iMaxHealth = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.iMaxShield = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.iMaxStamina = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fMoveSpeed = static_cast<_float>(atoi(BossDataList[i++].c_str()));
 
-        BossDesc.fAttackCoolTime = atoi(BossDataList[i++].c_str());
-        BossDesc.fAttackRange = atoi(BossDataList[i++].c_str());
+        BossDesc.fAttackCoolTime = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fAttackRange = static_cast<_float>(atoi(BossDataList[i++].c_str()));
+        BossDesc.fLerpRatio = static_cast<_float>(atof(BossDataList[i++].c_str()));
 
         BossDesc.fColliderExtents.x = (_float)atof(BossDataList[i++].c_str());
         BossDesc.fColliderExtents.y = (_float)atof(BossDataList[i++].c_str());
@@ -109,15 +304,169 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     return S_OK;
 }
 
+HRESULT CDataManager::LoadNpcData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    vector<string> NpcDataList;
+    NpcDataList.reserve(1000);
+
+    CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
+    size_t iMaxSize = NpcDataList.size();
+    for (auto i = 9; i < iMaxSize;)
+    {
+        NPC_DATA_DESC pNpcDesc = {};
+        pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
+
+        strcpy_s(pNpcDesc.szName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szPrototypeModel, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szAIController, NpcDataList[i++].c_str());
+
+        pNpcDesc.vExtents.x = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vExtents.y = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vExtents.z = (_float)atof(NpcDataList[i++].c_str());
+
+        pNpcDesc.iTeamIndex = atoi(NpcDataList[i++].c_str());
+        pNpcDesc.iInteractionID = atoi(NpcDataList[i++].c_str());
+
+        _int iScriptCount = atoi(NpcDataList[i++].c_str());
+
+        for (auto j = 0; j < iScriptCount; ++j)
+        {
+            char szText[MAX_PATH]{};
+            strcpy_s(szText, NpcDataList[i++].c_str());
+
+            WCHAR szWText[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(szText, szWText);
+            pNpcDesc.szScriptTags.push_back(szWText);
+        }
+
+        m_pNpcDatas.emplace(pNpcDesc.iNpcID, pNpcDesc);
+    }
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadInteractionData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json InterDatas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/InteractionData/InteractionData.json", InterDatas);
+
+    for (auto& iter : InterDatas["Interactions"].items())
+    {
+        _uint id = stoi(iter.key());
+
+        auto& jInfo = iter.value();
+
+        INTERACTION_DATA desc{};
+        desc.iID = id;
+
+        // ë¬¸ìì—´ ë³€í™˜
+        {
+            string name = jInfo["Name"];
+            string text = jInfo["Text"];
+            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
+        }
+
+        desc.fInteractionTime = jInfo["CoolTime"];
+
+        // Pivot
+        desc.vUIPivot.x = jInfo["Pivot"]["x"];
+        desc.vUIPivot.y = jInfo["Pivot"]["y"];
+        desc.vUIPivot.z = jInfo["Pivot"]["z"];
+
+        // Type
+        desc.eType = (INTERACTION_TYPE)jInfo["Type"];
+
+        m_pInteractionDatas[id] = desc;
+    }
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadScriptData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json ScriptDatas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ScriptData/ScriptData.json", ScriptDatas);
+
+    for (auto& iter : ScriptDatas["ScriptData"].items())
+    {
+        SCRIPT_DESC ScriptDesc{};
+
+        Json Value = iter.value();
+
+        string szKey = iter.key();
+
+        vector<SCRIPT_DATA> Scripts{};
+        for (auto& jInfo : Value["Scripts"].items())
+        {
+            SCRIPT_DATA desc{};
+
+            Json jScript = jInfo.value();
+
+            desc.szScriptText = UTF8ToWString(jScript["szText"]);
+
+            if (jScript.contains("vColor"))
+            {
+                desc.vColor.x = jScript["vColor"][0];
+                desc.vColor.y = jScript["vColor"][1];
+                desc.vColor.z = jScript["vColor"][2];
+                desc.vColor.w = jScript["vColor"][3];
+            }
+
+            Scripts.push_back(desc);
+        }
+
+        WCHAR szScriptKey[MAX_PATH]{};
+        CStringHelper::ConvertUTFToWide(szKey.c_str(), szScriptKey);
+
+        ScriptDesc.Scripts = Scripts;
+        ScriptDesc.szScriptTag = szScriptKey;
+
+        if (Value.contains("szAnimTag"))
+        {
+            string szAnimTag = Value["szAnimTag"];
+            WCHAR szText[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(szAnimTag.c_str(), szText);
+            ScriptDesc.szAnimTag = szText;
+        }
+
+        if (Value.contains("bCanControl"))
+            ScriptDesc.bCanControl = Value["bCanControl"];
+
+        if (Value.contains("szSpeaker"))
+        {
+            //string szSpeaker = Value["szSpeaker"];
+            //WCHAR szText[MAX_PATH]{};
+            //CStringHelper::ConvertUTFToWide(szSpeaker.c_str(), szText);
+            ScriptDesc.szSpeaker = UTF8ToWString(Value["szSpeaker"]);
+        }
+
+        if (Value.contains("vInitOffset"))
+        {
+            ScriptDesc.vInitOffset.x = Value["vInitOffset"][0];
+            ScriptDesc.vInitOffset.y = Value["vInitOffset"][1];
+        }
+
+        m_ScriptDatas[szScriptKey] = ScriptDesc;
+    }
+
+    return S_OK;
+}
+
 HRESULT CDataManager::LoadSkillData()
 {
     vector<string> SkillDataList;
     SkillDataList.reserve(1000);
 
-    CStringHelper::CSVRead("../Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
+    CStringHelper::CSVRead("../../Client/Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 10; i < iMaxSize;)
+    for (auto i = 12; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
@@ -126,15 +475,16 @@ HRESULT CDataManager::LoadSkillData()
         strcpy_s(SkillDesc.szLinkBoneName, SkillDataList[i++].c_str());
 
         SkillDesc.iSkillDamage = atoi(SkillDataList[i++].c_str());
-        SkillDesc.fRange = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.x = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.y = atof(SkillDataList[i++].c_str());
-        SkillDesc.vHitBoxExtents.z = atof(SkillDataList[i++].c_str());
+        SkillDesc.fRange = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.x = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.y = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.vHitBoxExtents.z = static_cast<_float>(atof(SkillDataList[i++].c_str()));
+        SkillDesc.iMaxComboCount = atoi(SkillDataList[i++].c_str());
+        SkillDesc.iMaxRepulseCount = atoi(SkillDataList[i++].c_str());
 
         SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eProPerty = SKILL_PROPERTY(atoi(SkillDataList[i++].c_str()));
-
 
         m_pSkillDatas.emplace(SkillDesc.iSkillID, SkillDesc);
 
@@ -147,15 +497,15 @@ HRESULT CDataManager::LoadSkillData()
 
 HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 {
-    //	- ¸ğµç ¾Ö´Ï¸ŞÀÌ¼Ç °ü·Ã ÀÌº¥Æ®¸¦ ´ã´çÇÏ´Â ANIM_NOTIFY
-    //  - ¸¦ ´ã°í ÀÖ´Â vector<ANIM_NOTIFY>
-    //  - µéÀ» ¾Ö´Ï¸ŞÀÌ¼Ç ÅÂ±×(_char*)·Î ±¸ºĞÁş´Â map
+    //	- ëª¨ë“  ì• ë‹ˆë©”ì´ì…˜ ê´€ë ¨ ì´ë²¤íŠ¸ë¥¼ ë‹´ë‹¹í•˜ëŠ” ANIM_NOTIFY
+    //  - ë¥¼ ë‹´ê³  ìˆëŠ” vector<ANIM_NOTIFY>
+    //  - ë“¤ì„ ì• ë‹ˆë©”ì´ì…˜ íƒœê·¸(_char*)ë¡œ êµ¬ë¶„ì§“ëŠ” map
 
-    // _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+    // _finddata_t : <io.h>ì—ì„œ ì œê³µí•˜ë©° íŒŒì¼ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
     _finddatai64_t  fd;
 
-    // _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
-    // jsonµµ µÇ·Á³ª ÀÌ°Å..
+    // _findfirst : <io.h>ì—ì„œ ì œê³µí•˜ë©° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ê²½ë¡œ ë‚´ì—ì„œ ê°€ì¥ ì²« ë²ˆì§¸ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜
+    // jsonë„ ë˜ë ¤ë‚˜ ì´ê±°..
     intptr_t handle = _findfirst64("../Bin/DataFiles/Animation/*.json*", &fd);
 
     if (handle == -1)
@@ -171,7 +521,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         WCHAR* pFileName = new WCHAR[iLength];
         ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
 
-        // ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+        // ì•„ìŠ¤í‚¤ ì½”ë“œ ë¬¸ìì—´ì„ ìœ ë‹ˆì½”ë“œ ë¬¸ìì—´ë¡œ ë³€í™˜ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜
         MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
 
         _wstring szFullPath = szFrontPath + pFileName;
@@ -187,7 +537,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
 
         for (auto& pAnim : jAnim)
         {
-            WCHAR szText[MAX_PATH];
+            _tchar szText[MAX_PATH];
             _wstring szAnimTag;
 
             vector<ANIM_NOTIFY> AnimationNotifyList;
@@ -247,11 +597,238 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         }
 
 
-        //_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
+        //_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, ë”ì´ìƒ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
+        iResult = _findnext64(handle, &fd);
+        Safe_Delete_Array(pFileName);
+    }
+    //P_Eve_Sword_Normal_MoveBackAttack1_E
+
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
+{
+    //	- ì¹´ë©”ë¼ ì• ë‹ˆë©”ì´ì…˜ ê´€ë¦¬í•˜ëŠ” ë°ì´í„°íŒŒì¼
+    //  < ì¹´ë©”ë¼ Data íŒŒì¼ >
+    //      ì¹´ë©”ë¼ ID
+    //      ì¹´ë©”ë¼ í”Œë˜ê·¸(ë³¸ë¶€ì°©, ì „í™˜ì‹œ ë³´ê°„ì—¬ë¶€ ë“±)
+    //      ê¸°ë³¸ FOV
+    //      ê¸°ë³¸ ì¹´ë©”ë¼ LookAt í¬ì¸íŠ¸
+    //      ì¹´ë©”ë¼ë³¸ ê¸°ë³¸ ìœ„ì¹˜(í”Œë˜ê·¸ í™œì„± ì‹œ)
+    //      ì¹´ë©”ë¼ë³¸ ê¸°ë³¸ ê°ë„(í”Œë˜ê·¸ í™œì„± ì‹œ)
+    //      ì¹´ë©”ë¼ë³¸ ì• ë‹ˆë©”ì´ì…˜ ì´ë¦„
+    //      FOV ì±„ë„
+    //      ì¹´ë©”ë¼ LookAt í¬ì¸íŠ¸ ì±„ë„
+    //      ì¹´ë©”ë¼ë³¸ ìœ„ì¹˜ ì±„ë„
+    //      ì¹´ë©”ë¼ë³¸ ê°ë„ ì±„ë„
+
+
+    // _finddata_t : <io.h>ì—ì„œ ì œê³µí•˜ë©° íŒŒì¼ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
+    _finddatai64_t  fd;
+
+    // _findfirst : <io.h>ì—ì„œ ì œê³µí•˜ë©° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ê²½ë¡œ ë‚´ì—ì„œ ê°€ì¥ ì²« ë²ˆì§¸ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜
+    intptr_t handle = _findfirst64("../Bin/DataFiles/CameraData/*.json*", &fd);
+
+    if (handle == -1)
+        return S_OK;
+
+    int iResult = 0;
+
+    _wstring szFrontPath = TEXT("../Bin/DataFiles/CameraData/");
+
+    while (iResult != -1)
+    {
+        int iLength = strlen(fd.name) + 1;
+        WCHAR* pFileName = new WCHAR[iLength];
+        ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
+
+        // ì•„ìŠ¤í‚¤ ì½”ë“œ ë¬¸ìì—´ì„ ìœ ë‹ˆì½”ë“œ ë¬¸ìì—´ë¡œ ë³€í™˜ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜
+        MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
+
+        _wstring szFullPath = szFrontPath + pFileName;
+        _wstring szFilePath = pFileName;
+        Json jAnim;
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFullPath.c_str(), szPath);
+
+        CJsonParser::ReadJsonData(szPath, jAnim);
+
+        for (auto& pAnim : jAnim)
+        {
+            CAMERA_ANIMATION_DATA CameraAnimationData;
+
+            CameraAnimationData.iCameraAnimationID = pAnim["iCameraAnimationID"].get<_int>();
+            CameraAnimationData.iCameraAnimationFlag = pAnim["iCameraAnimationFlag"].get<_int>();
+            CameraAnimationData.fBaseFOV = pAnim["fBaseFOV"].get<_float>();
+
+            CameraAnimationData.vBaseCameraPivot = {
+               pAnim["vBaseCameraPivot"][0].get<_float>(),
+               pAnim["vBaseCameraPivot"][1].get<_float>(),
+               pAnim["vBaseCameraPivot"][2].get<_float>()
+            };
+
+            CameraAnimationData.vBaseBonePosition = {
+               pAnim["vBaseBonePosition"][0].get<_float>(),
+               pAnim["vBaseBonePosition"][1].get<_float>(),
+               pAnim["vBaseBonePosition"][2].get<_float>()
+            };
+
+            CameraAnimationData.vBaseBoneRotation = {
+               pAnim["vBaseBoneRotation"][0].get<_float>(),
+               pAnim["vBaseBoneRotation"][1].get<_float>(),
+               pAnim["vBaseBoneRotation"][2].get<_float>()
+            };
+
+            strcpy_s(CameraAnimationData.szCameraAnimationName, pAnim["szCameraAnimationName"].get<string>().c_str());
+
+
+            for (auto& pFOVTrack : pAnim["FOVTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pFOVTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pFOVTrack["vTrackValue"][0].get<_float>(),
+                    pFOVTrack["vTrackValue"][1].get<_float>(),
+                    pFOVTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pFOVTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pFOVTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pFOVTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.FOVTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pPivotTrack : pAnim["PivotTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pPivotTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pPivotTrack["vTrackValue"][0].get<_float>(),
+                    pPivotTrack["vTrackValue"][1].get<_float>(),
+                    pPivotTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pPivotTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pPivotTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pPivotTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.PivotTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pBonePositionTrack : pAnim["BonePositionTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pBonePositionTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pBonePositionTrack["vTrackValue"][0].get<_float>(),
+                    pBonePositionTrack["vTrackValue"][1].get<_float>(),
+                    pBonePositionTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pBonePositionTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pBonePositionTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pBonePositionTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.BonePositionTrackList.push_back(TrackDesc);
+            }
+
+            for (auto& pBoneRotationTrack : pAnim["BoneRotationTrackList"])
+            {
+                CAMERA_TRACK_DESC TrackDesc = {};
+
+                TrackDesc.fTrackPosition = pBoneRotationTrack["fTrackPosition"].get<_float>();
+                TrackDesc.vTrackValue = {
+                    pBoneRotationTrack["vTrackValue"][0].get<_float>(),
+                    pBoneRotationTrack["vTrackValue"][1].get<_float>(),
+                    pBoneRotationTrack["vTrackValue"][2].get<_float>()
+                };
+                TrackDesc.fTangentStart = pBoneRotationTrack["fTangentStart"].get<_float>();
+                TrackDesc.fTangentEnd = pBoneRotationTrack["fTangentEnd"].get<_float>();
+                TrackDesc.iInterpolationFlag = pBoneRotationTrack["iInterpolationFlag"].get<_uint>();
+
+                CameraAnimationData.BoneRotationTrackList.push_back(TrackDesc);
+            }
+
+
+            m_CameraAnimationDatas.emplace(CameraAnimationData.iCameraAnimationID, CameraAnimationData);
+        }
+
+
+        //_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, ë”ì´ìƒ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
 
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadCinematicData(void* pArg)
+{
+   
+    _finddatai64_t  fd;
+
+
+    intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
+
+    if (handle == -1)
+        return S_OK;
+
+    int iResult = 0;
+
+    _wstring szFrontPath = TEXT("../Bin/DataFiles/CinematicData/");
+
+    while (iResult != -1)
+    {
+        int iLength = strlen(fd.name) + 1;
+        WCHAR* pFileName = new WCHAR[iLength];
+        ZeroMemory(pFileName, sizeof(WCHAR) * iLength);
+
+        MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pFileName, iLength);
+
+        _wstring szFullPath = szFrontPath + pFileName;
+        _wstring szFilePath = pFileName;
+        Json jCinematic;
+
+        _char szPath[MAX_PATH]{};
+        CStringHelper::ConvertWideToUTF(szFullPath.c_str(), szPath);
+
+        CJsonParser::ReadJsonData(szPath, jCinematic);
+
+        for (auto& pCinematic : jCinematic)
+        {
+            CINEMATIC_DESC CinematicData;
+
+            CinematicData.iCinematicID = pCinematic["iCinematicID"].get<_int>();
+
+            strcpy_s(CinematicData.szCinematicName, pCinematic["szCinematicName"].get<string>().c_str());
+
+
+            for (auto& pCinematicNodeTrack : pCinematic["CinematicNodeTrackList"])
+            {
+                CINEMATIC_NODE_DESC CinematicNodeDesc = {};
+
+                CinematicNodeDesc.eState = static_cast<CINEMATICNODE_STATE>(pCinematicNodeTrack["eState"].get<_int>());
+                CinematicNodeDesc.fTrackPosition = pCinematicNodeTrack["fTrackPosition"].get<_float>();
+
+                strcpy_s(CinematicNodeDesc.szObjectTag, pCinematicNodeTrack["szObjectTag"].get<string>().c_str());
+
+                CinematicNodeDesc.iActiveIndex = pCinematicNodeTrack["iActiveIndex"].get<_uint>();
+
+
+                CinematicData.CinematicNodeTrackList.push_back(CinematicNodeDesc);
+            }
+
+            m_CinematicDatas.emplace(CinematicData.iCinematicID, CinematicData);
+        }
+
+
+        iResult = _findnext64(handle, &fd);
+        Safe_Delete_Array(pFileName);
+    }
 
 
     return S_OK;
@@ -267,20 +844,30 @@ HRESULT CDataManager::AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc)
     {
     //Charge Slash
     case 1004:
-        BetaSkillDesc.iRequiredBetaGauge = 4;
+        BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
-    //Å×½ºÆ® ¿ëÀ¸·Î 0 Ã³¸®
+    //í…ŒìŠ¤íŠ¸ ìš©ìœ¼ë¡œ 0 ì²˜ë¦¬
     case 1005:
-        BetaSkillDesc.iRequiredBetaGauge = 0;
+        BetaSkillDesc.iRequiredBetaGauge = 8;
         break;
     default:
-        BetaSkillDesc.iRequiredBetaGauge = 10;
+        BetaSkillDesc.iRequiredBetaGauge = 12;
         break;
     }
 
     m_pBetaSkills.emplace(iSkillID, BetaSkillDesc);
 
     return S_OK;
+}
+
+_wstring CDataManager::UTF8ToWString(const string& str)
+{
+    if (str.empty()) return {};
+
+    _uint size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+    _wstring result(size_needed - 1, 0); // null ì œì™¸
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
+    return result;
 }
 
 CDataManager* CDataManager::Create()

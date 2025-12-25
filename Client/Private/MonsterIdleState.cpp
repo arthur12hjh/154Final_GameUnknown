@@ -9,6 +9,7 @@
 
 CMonsterIdleState::CMonsterIdleState()
 {
+    m_iStateID = 0;
 }
 
 HRESULT CMonsterIdleState::Initialize(void* pArg)
@@ -72,7 +73,7 @@ void CMonsterIdleState::Update(_float fTimeDelta)
             
     }
 
-    pEntity->Set_Animation(m_szAnimationName.c_str());
+    pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, m_pStaticOwnerInfo->fLerpRatio);
     pEntity->Play_Animation(fTimeDelta);
 }
 

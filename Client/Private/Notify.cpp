@@ -8,6 +8,8 @@
 #include "Effect.h"
 #include "AttackHitBox.h"
 
+#include "Camera_Action.h"
+
 #include "StringHelper.h"
 #include "PartObject.h"
 
@@ -41,7 +43,7 @@ HRESULT CNotify::Initialize(void* pArg)
 
 void CNotify::AnimationChanged(const _char* szAnimationTag)
 {
-	// ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ º¯°æµÉ °æ¿ì, ³ëÆ¼ÆÄÀÌ Å¥¸¦ ÃÊ±âÈ­ÇÏ°í »õ·Î Ã¤¿ö³Ö´Â´Ù.
+	// ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ Å¥ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½Ö´Â´ï¿½.
 	while (!m_NotifyQueue.empty())
 		m_NotifyQueue.pop();
 
@@ -77,7 +79,7 @@ void CNotify::Update(_float fTimeDelta)
 {
 	while (!m_NotifyQueue.empty())
 	{
-		// ÀÌº¥Æ® È£Ãâ
+		// ï¿½Ìºï¿½Æ® È£ï¿½ï¿½
 		_uint index = m_pModelCom->Get_AnimationKeyFrameIndex();
 		if (m_NotifyQueue.top().iNotifyKeyFrame <= index)
 		{
@@ -118,23 +120,34 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case Client::CNotify::SET_TRANSFORM:
 		return Notify_Set_Transform(AnimNotify);
 		break;
-	case Client::CNotify::SET_DYNAMICTRANSFORM:
-		return Notify_Set_DynamicTransform(AnimNotify);
-		break;
-	case Client::CNotify::SET_DELTATIMESPEED:
-		return Notify_Set_DeltaTimeSpeed(AnimNotify);
-		break;
-	case Client::CNotify::ADJUST_LIGHT:
-		return Notify_Adjust_Light(AnimNotify);
-		break;
-	case Client::CNotify::PLAY_SCREENSFX:
-		return Notify_Play_ScreenSFX(AnimNotify);
-		break;
 	case CNotify::ACTIVE_PARTOBJECT_COLLISION:
 		return Notify_Active_PartObject_Collision(AnimNotify);
 		break;
-	case Client::CNotify::UNDEFINED:
-		return Notify_Undefined(AnimNotify);
+	case CNotify::HIT_REACTION:
+		return Notify_Hit_Reaction(AnimNotify);
+		break;
+	case CNotify::SPAWN_OBJECT:
+		return Notify_Spawn_Object(AnimNotify);
+		break;
+	case CNotify::SHOOT_PROJECTILE:
+		return Notify_Shoot_Projectile(AnimNotify);
+		break;
+	case CNotify::ACTIVE_PHYSX_COLLISION:
+		return m_pCharacter->CallNotify(CNotify::ACTIVE_PHYSX_COLLISION, &AnimNotify);
+		break;
+	case CNotify::PLAY_CINEMATIC:
+		return Notify_Play_Cinematic(AnimNotify);
+		break;
+	case CNotify::ATTACK_INTERACTION:
+		return m_pCharacter->CallNotify(CNotify::ATTACK_INTERACTION, &AnimNotify);
+		break;
+	case CNotify::CAMERA_SHAKE:
+		return Notify_Camera_Shake(AnimNotify);
+	case CNotify::CHANGE_COLOR:
+		return m_pCharacter->CallNotify(CNotify::CHANGE_COLOR, &AnimNotify);
+		break;
+	case CNotify::SET_VISIBLITY:
+		return m_pCharacter->CallNotify(CNotify::SET_VISIBLITY, &AnimNotify);
 		break;
 	case Client::CNotify::END:
 		return E_FAIL;
@@ -152,17 +165,22 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Active_SFX")					return ACTIVE_SFX;
 	if (szNotifyTag == "Play_Sound")					return PLAY_SOUND;
 	if (szNotifyTag == "Active_Collision")				return ACTIVE_COLLISION;
+	if (szNotifyTag == "Active_PhysxCollision")			return ACTIVE_PHYSX_COLLISION;
 	if (szNotifyTag == "Set_Transform")					return SET_TRANSFORM;
-	if (szNotifyTag == "Set_DynamicTransform")			return SET_DYNAMICTRANSFORM;
-	if (szNotifyTag == "Set_DeltaTimeSpeed")			return SET_DELTATIMESPEED;
-	if (szNotifyTag == "Adjust_Light")					return ADJUST_LIGHT;
-	if (szNotifyTag == "Play_ScreenSFX")				return PLAY_SCREENSFX;
 	if (szNotifyTag == "Active_PartObjectCollision")	return ACTIVE_PARTOBJECT_COLLISION; 
+	if (szNotifyTag == "Hit_Reaction")					return HIT_REACTION;
+	if (szNotifyTag == "Spawn_Object")					return SPAWN_OBJECT;
+	if (szNotifyTag == "Attack_Interaction")			return ATTACK_INTERACTION;
+	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
+	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
+	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
+	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
+	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 
-	return NOTIFY_TYPE::UNDEFINED;
+	return NOTIFY_TYPE::END;
 }
 
-HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 {
 	const _float4x4* pWorldMatrix = m_pCharacter->GetTransform()->Get_WorldMatrixPtr();
 
@@ -186,15 +204,30 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 		EffectDesc.pRootMatrix = pWorldMatrix;
 		EffectDesc.pWorldMatrix = nullptr;
 	}
-	else
+	else if (AnimNotify.szSocketTag.compare("NoneBone") != 0)
 	{
 		EffectDesc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(AnimNotify.szSocketTag.c_str());
 		EffectDesc.pWorldMatrix = pWorldMatrix;
 	}
 
 	EffectDesc.vPos = XMVectorSet(AnimNotify.vNotifyPosition.x, AnimNotify.vNotifyPosition.y, AnimNotify.vNotifyPosition.z, 1);
-	EffectDesc.fRot = _float3(AnimNotify.vNotifyRotation.x, AnimNotify.vNotifyRotation.y, AnimNotify.vNotifyRotation.z);
+	EffectDesc.fRot = _float3(XMConvertToRadians(AnimNotify.vNotifyRotation.x), XMConvertToRadians(AnimNotify.vNotifyRotation.y), XMConvertToRadians(AnimNotify.vNotifyRotation.z));
 	EffectDesc.fSize = AnimNotify.vNotifyScale.x;
+
+	if (AnimNotify.iNumData01 == 1 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
+		_float4x4 matTransform;
+		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+	}
+	else if (AnimNotify.iNumData01 == 2 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
+		_float4x4 matTransform;
+		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + pWorldMatrix->_42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+	}
 
 	_TCHAR szEffectTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szEffectTag);
@@ -213,7 +246,7 @@ HRESULT CNotify::Notify_Play_SFX(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Active_SFX(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szPartTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg08.c_str(), szPartTag);
@@ -226,7 +259,7 @@ HRESULT CNotify::Notify_Active_SFX(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szNotifyTag[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szNotifyTag);
@@ -235,14 +268,35 @@ HRESULT CNotify::Notify_Play_Sound(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Active_Collision(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
+{
+	_float4x4 PrePosMatrix = {};
+
+	m_pGameInstance->SetMainCamera(TEXT("ActionCamera"), &PrePosMatrix);
+	CCamera* pCamera = m_pGameInstance->GetMainCamera();
+
+	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
+
+	Safe_Release(pCamera);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Camera_Shake(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pGameInstance->Shake_Camera(AnimNotify.fNumData01, AnimNotify.fNumData02);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Active_Collision(const ANIM_NOTIFY& AnimNotify)
 {
 	m_pCharacter->CallNotify(ACTIVE_COLLISION, &AnimNotify);
 
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Set_Transform(const ANIM_NOTIFY& AnimNotify)
 {
 	_vector vCurrentPosition = m_pCharacter->Get_Position();
 
@@ -256,34 +310,32 @@ HRESULT CNotify::Notify_Set_Transform(ANIM_NOTIFY AnimNotify)
 	m_pCharacter->GetTransform()->Set_State(STATE::POSITION, vNotifyPosition);
 
 
-	/* ¹ÌÀû¿ë
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_pCharacter->Set_Rotation
 	*/
 
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Set_DynamicTransform(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Hit_Reaction(const ANIM_NOTIFY& AnimNotify)
 {
+	m_pCharacter->CallNotify(HIT_REACTION, &AnimNotify);
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Set_DeltaTimeSpeed(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Spawn_Object(const ANIM_NOTIFY& AnimNotify)
 {
+	m_pCharacter->CallNotify(SPAWN_OBJECT, &AnimNotify);
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Adjust_Light(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Shoot_Projectile(const ANIM_NOTIFY& AnimNotify)
 {
+	m_pCharacter->CallNotify(SHOOT_PROJECTILE, &AnimNotify);
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Play_ScreenSFX(ANIM_NOTIFY AnimNotify)
-{
-	return S_OK;
-}
-
-HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
+HRESULT CNotify::Notify_Active_PartObject_Collision(const ANIM_NOTIFY& AnimNotify)
 {
 	_TCHAR szPartObjectName[MAX_PATH], szComponentName[MAX_PATH];
 	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szPartObjectName);
@@ -294,10 +346,6 @@ HRESULT CNotify::Notify_Active_PartObject_Collision(ANIM_NOTIFY AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Undefined(ANIM_NOTIFY AnimNotify)
-{
-	return S_OK;
-}
 
 CNotify* CNotify::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

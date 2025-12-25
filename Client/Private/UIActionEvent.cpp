@@ -8,8 +8,6 @@ CUIActionEvent::CUIActionEvent(function<void(void*)> Func) :
 
 CUIActionEvent* CUIActionEvent::Create(function<void(void*)> Func)
 {
-    int a = 0;
-
     return new CUIActionEvent(Func);
 }
 

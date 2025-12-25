@@ -28,7 +28,8 @@
             },
             {
                 "TextDesc": {
-                    "szText": "로딩 텍스트",
+                    "szFont": "KoPub",
+                    "szText": "그럴 리가 없고, 그럴 수도 없다",
                     "fScale": 0.8,
                     "vColor": [
                         1.0,
@@ -51,14 +52,14 @@
                 "iRenderGroup": 9,
                 "iVisibility": 0,
                 "szLayerTag": "Layer_Loading",
-                "szProtoTag": "Prototype_GameObject_UI_Text",
-                "szUIID": "Logo_Panel_Loading_Text_1-2",
-                "szUITag": "Loading_Text"
+                "szProtoTag": "Prototype_GameObject_UI_Script",
+                "szUIID": "Logo_Panel_Loading_UI_Scripts_1-2",
+                "szUITag": "UI_Scripts"
             },
             {
                 "Shader": {
                     "bUseGlow": true,
-                    "fGlowIntensity": 0.05166143551468849,
+                    "fGlowIntensity": 0.05,
                     "fGlowSpread": 0.0
                 },
                 "fAlpha": 1.0,

@@ -36,6 +36,7 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
+	HRESULT						Initialize(const HIT_BOX_DESC& pArg);
 
 	virtual void				Priority_Update(_float fTimeDelta) override;
 	virtual void				Update(_float fTimeDelta) override;
@@ -45,6 +46,7 @@ public:
 
 private :
 	CCollider*					m_pColliderCom = { nullptr };
+	_float2						m_vAliveTime = {0.f, 0.3f};
 
 	CGameObject*				m_pAttacker = { nullptr };
 	const void*					m_pData = { nullptr };
@@ -54,7 +56,7 @@ private :
 
 #ifdef _DEBUG
 	_bool						m_bIsDelayDead = { false };
-	_float2						m_vDelayDead = {};
+	_float2						m_vDelayDead = {0.f, 1.f};
 #endif // _DEBUG
 
 private :
@@ -64,6 +66,7 @@ private :
 	void						OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 	void						End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
+	void						ReturnObjectPool();
 public:
 	static	CAttackHitBox*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*		Clone(void* pArg) override;

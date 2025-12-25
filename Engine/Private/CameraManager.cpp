@@ -1,8 +1,9 @@
 #include "CameraManager.h"
 
 #include "Camera.h"
+#include "GameInstance.h"
 
-HRESULT CCameraManager::Initialize()
+HRESULT CCameraManager::Initialize() 
 {
     return S_OK;
 }
@@ -45,6 +46,11 @@ void CCameraManager::Late_Update(_float fTimeDelta)
 #endif // _DEBUG
 }
 
+void CCameraManager::Shake(_float fShakeTime, _float fIntensity)
+{
+    m_pMainCamera->Shake(fShakeTime, fIntensity);
+}
+
 HRESULT CCameraManager::Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera)
 {
     CCamera* pFindCamera = Find_Camera(szCameraTag);
@@ -71,6 +77,9 @@ HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreC
 {
     if (nullptr != m_pMainCamera)
     {
+        //혹시 모를 Shake 초기화.
+        m_pMainCamera->Shake(0.f, 0.f);
+
         if (nullptr != pPreCameraMatrix)
         {
             memcpy(pPreCameraMatrix, m_pMainCamera->GetTransform()->Get_WorldMatrixPtr(), sizeof(_float4x4));
@@ -120,7 +129,7 @@ _matrix CCameraManager::GetMainCameraWorldMatrix()
 const _float4x4* CCameraManager::GetMainCameraWorldMatrixPtr()
 {
     if (nullptr == m_pMainCamera)
-        return nullptr;
+        return CGameInstance::GetInstance()->GetIdentityMatrixPtr();
 
     return m_pMainCamera->GetTransform()->Get_WorldMatrixPtr();
 }
@@ -146,10 +155,25 @@ const _float4x4* CCameraManager::GetCameraWorldMatrixPtr(const WCHAR* szCameraTa
 void CCameraManager::Clear_Cameras()
 {
     Safe_Release(m_pMainCamera);
-
     for (auto& iter : m_pCameras)
-        Safe_Release(iter.second);
-    m_pCameras.clear();
+        iter.second->Set_Dead(true);
+}
+
+void CCameraManager::Clear_DeadCameras()
+{
+    for (auto iter = m_pCameras.begin(); iter != m_pCameras.end();)
+    {
+        if (iter->second->isDead())
+        {
+            if (m_pMainCamera == iter->second)
+                m_pMainCamera = nullptr;
+
+            Safe_Release(iter->second);
+            iter = m_pCameras.erase(iter);
+        }
+        else
+            iter++;
+    }
 }
 
 CCamera* CCameraManager::Find_Camera(const WCHAR* szCameraTag)
@@ -177,7 +201,6 @@ void CCameraManager::Free()
     __super::Free();
 
     Safe_Release(m_pMainCamera);
-
     for (auto& iter : m_pCameras)
         Safe_Release(iter.second);
 

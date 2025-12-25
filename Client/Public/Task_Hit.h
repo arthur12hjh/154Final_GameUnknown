@@ -5,7 +5,9 @@
 NS_BEGIN(Client)
 class CNayitba;
 class CBossBlackBoard;
+
 struct Default_Damage_Desc;
+struct Character_Skill_Desc;
 
 class CTask_Hit : public CTask
 {
@@ -26,8 +28,14 @@ private:
 	string								m_szAnimationName = {};
 	const Default_Damage_Desc*			m_pHit_Data = { nullptr };
 
+	_bool								m_bIsHitRepulse = { false };
+	_float3								m_vImpactDir = {};
+	_float								m_fImpactForce = {};
+
 private :
 	void								Refresh_HitMotion();
+
+	void								Damaged_Attack(const Character_Skill_Desc* pData, _vector vDir);
 
 public:
 	static	CTask_Hit*					Create(CBehaviorTree* pOwnerTree);

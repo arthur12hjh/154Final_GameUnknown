@@ -38,21 +38,21 @@ void CInteraction_Component::SetOwner(CGameObject* pGameObject)
     m_pOBBColiider->SetOwner(pGameObject);
 }
 
-void CInteraction_Component::Update_Com()
+void CInteraction_Component::Update_Com(_matrix WorldMat)
 {
-    m_pOBBColiider->UpdateColiision(XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr()));
+    m_pOBBColiider->UpdateColiision(WorldMat);
     m_pGameInstance->ADD_Collider(m_pOBBColiider);
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pOBBColiider);
 #endif // _DEBUG
 }
 
-void CInteraction_Component::Action_InteractionEvent(CGameObject* pGameObject)
+void CInteraction_Component::Action_InteractionEvent(_float fTimeDelta, CGameObject* pGameObject)
 {
     // 여기서 인터렉션 호출
     // 호출하면 여기서 호출한 녀석과 함께 넘겨준다.
     if(m_InteractionFunc)
-        m_InteractionFunc(pGameObject);
+        m_InteractionFunc(fTimeDelta, pGameObject);
 }
 
 void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)
@@ -62,12 +62,17 @@ void CInteraction_Component::SetInteractionHitType(HIT_TYPE eHitType)
 
 void CInteraction_Component::ADD_InteractionIgnoreObject(HIT_TYPE eHitType)
 {
-    m_pOBBColiider->ADD_IgnoreObject(eHitType);
+    m_pOBBColiider->ADD_IgnoreObjectType(eHitType);
 }
 
 void CInteraction_Component::ADD_InteractionOnlyHitObject(HIT_TYPE typeID)
 {
-    m_pOBBColiider->ADD_OnlyHitObject(typeID);
+    m_pOBBColiider->ADD_OnlyHitObjectType(typeID);
+}
+
+const _float3& CInteraction_Component::Get_CenterPos()
+{
+    return m_pOBBColiider->GetBounding().Center;
 }
 
 #ifdef _DEBUG
@@ -110,30 +115,36 @@ HRESULT CInteraction_Component::Ready_Components(const INTERACTION_DESC& Desc)
     m_pOBBColiider->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_BeginCallBackFunc(); });
     m_pOBBColiider->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { m_EndCallBackFunc(); });
 
+    m_pOBBColiider->SetColliderHitType(HIT_TYPE::INTERACTION);
+
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::OBJECT);
+    m_pOBBColiider->ADD_IgnoreObjectType(HIT_TYPE::STATIC);
     return S_OK;
 }
 
-CInteraction_Component* CInteraction_Component::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-    CInteraction_Component* pInteraction_Com = new CInteraction_Component(pDevice, pContext);
-    if (FAILED(pInteraction_Com->Initialize_Prototype()))
-    {
-        Safe_Release(pInteraction_Com);
-        MSG_BOX("Create Fail : Interaction Component");
-    }
-    return pInteraction_Com;
-}
+//CInteraction_Component* CInteraction_Component::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+//{
+//    CInteraction_Component* pInteraction_Com = new CInteraction_Component(pDevice, pContext);
+//    if (FAILED(pInteraction_Com->Initialize_Prototype()))
+//    {
+//        Safe_Release(pInteraction_Com);
+//        MSG_BOX("Create Fail : Interaction Component");
+//    }
+//    return pInteraction_Com;
+//}
 
-CComponent* CInteraction_Component::Clone(void* pArg)
-{
-    CInteraction_Component* pInteraction_Com = new CInteraction_Component(*this);
-    if (FAILED(pInteraction_Com->Initialize(pArg)))
-    {
-        Safe_Release(pInteraction_Com);
-        MSG_BOX("Clone Fail : Interaction Component");
-    }
-    return pInteraction_Com;
-}
+//CComponent* CInteraction_Component::Clone(void* pArg)
+//{
+//    CInteraction_Component* pInteraction_Com = new CInteraction_Component(*this);
+//    if (FAILED(pInteraction_Com->Initialize(pArg)))
+//    {
+//        Safe_Release(pInteraction_Com);
+//        MSG_BOX("Clone Fail : Interaction Component");
+//    }
+//    return pInteraction_Com;
+//}
 
 void CInteraction_Component::Free()
 {

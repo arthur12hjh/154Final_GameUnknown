@@ -12,29 +12,22 @@ private:
 
 public:
 	HRESULT				Initialize();
-
-	/* ������ ã�� �����Ͽ� ���̾ �߰��Ѵ�. */
 	void				Priority_Update(_float fTimeDelta);
 	void				Update(_float fTimeDelta);
 	void				Late_Update(_float fTimeDelta);
 
 public :
+	void				Shake(_float fShakeTime, _float fIntensity);
+
 	HRESULT				Add_Camera(const WCHAR* szCameraTag, CCamera* pCamera);
 	HRESULT				Remove_Camera(const WCHAR* szCameraTag);
 
 	HRESULT				SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreCameraMatrix);
 
-	//	ī�޶� �Ŵ������� ī�޶� ������ ������ ���۷��� ī��Ʈ ������
-	//  ���������� �����ּ���
 	CCamera*			GetCamrea(const WCHAR* szCameraTag);
 	const unordered_map<_wstring, CCamera*>* GetAllCamera() { return &m_pCameras; }
 	
-
-	//	ī�޶� �Ŵ������� ī�޶� ������ ������ ���۷��� ī��Ʈ ������
-	//  ���������� �����ּ���
 	CCamera*			GetMainCamera();
-
-	//����ī�޶� ���� ��� ��������
 	_matrix				GetMainCameraWorldMatrix();
 	const _float4x4*	GetMainCameraWorldMatrixPtr();
 	
@@ -43,6 +36,7 @@ public :
 
 	_bool				IsMainCamera(CCamera* pCamera);
 	void				Clear_Cameras();
+	void				Clear_DeadCameras();
 
 private:
 	CCamera*								m_pMainCamera = { nullptr };

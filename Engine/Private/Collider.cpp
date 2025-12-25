@@ -11,8 +11,8 @@ CCollider::CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 CCollider::CCollider(const CCollider& rhs) :
     CComponent(rhs),
     m_eType(rhs.m_eType)
-#ifdef _DEBUG
     , m_pBatch{ rhs.m_pBatch }
+#ifdef _DEBUG
     , m_pEffect{ rhs.m_pEffect }
     , m_pInputLayout{ rhs.m_pInputLayout }
 #endif
@@ -24,8 +24,8 @@ CCollider::CCollider(const CCollider& rhs) :
 
 HRESULT CCollider::Initialize_Prototype()
 {
-#ifdef _DEBUG
     m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
+#ifdef _DEBUG
     m_pEffect = new BasicEffect(m_pDevice);
     m_pEffect->SetVertexColorEnabled(true);
 
@@ -120,18 +120,33 @@ void CCollider::ADD_HitObject(CGameObject* pObject)
     }
 }
 
-void CCollider::ADD_IgnoreObject(HIT_TYPE eHitType)
+void CCollider::ADD_HitObjectType(HIT_TYPE eHitType)
+{
+    auto iter = m_IgnoreObject.find(eHitType);
+    if (iter != m_IgnoreObject.end())
+        m_IgnoreObject.erase(iter);
+}
+
+void CCollider::ADD_IgnoreObjectType(HIT_TYPE eHitType)
 {
     m_IgnoreObject.insert(eHitType);
 }
 
-void CCollider::ADD_OnlyHitObject(HIT_TYPE eHitType)
+void CCollider::ADD_OnlyHitObjectType(HIT_TYPE eHitType)
 {
     m_eOnlyHitType = eHitType;
 }
 
+void CCollider::Clear_HitObjectTypeList()
+{
+    m_IgnoreObject.clear();
+}
+
 void CCollider::CallFunction()
 {
+    if (m_pOwner->isDead())
+        return;
+
     list<CGameObject*> ExitObject;
     for (auto& HitObject : m_HitList)
     {
@@ -186,12 +201,12 @@ void CCollider::Free()
 {
     __super::Free();
 
+    if (false == m_isCloned)
+        Safe_Delete(m_pBatch);
+
 #ifdef _DEBUG
     if (false == m_isCloned)
-    {
-        Safe_Delete(m_pBatch);
         Safe_Delete(m_pEffect);
-    }
 
     Safe_Release(m_pInputLayout);
 #endif // _DEBUG

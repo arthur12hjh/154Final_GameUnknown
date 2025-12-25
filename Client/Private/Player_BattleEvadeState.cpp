@@ -9,25 +9,25 @@ CPlayer_BattleEvadeState::CPlayer_BattleEvadeState()
 {
 }
 
-void CPlayer_BattleEvadeState::Start(void* pArg)
+void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
-	if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode || PLAYER_MODE::LOCKON == m_Desc->ePlayerMode)
-		m_fMaxRatio = 0.35f;
-	else
-		m_fMaxRatio = 0.7f;
+	//if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode)
+	//	m_fMaxRatio = 0.35f;
+	//else
+	m_fMaxRatio = 0.45f;
 
 	/* 방향 */
 	/* 1. 아무것도 안눌렀으면 백스텝 */
 	/* 2. 방향키 하나라도 눌렀으면 그 방향으로 스텝. (이동 로직이랑 똑같이 카메라 look 기준으로)*/
 
 	if (false == (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
-		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+		//m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
 	{
-		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Backward", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Backward", false, 1.7);
 		m_isBackStep = true;
 	}
 	else
@@ -50,7 +50,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg)
 		vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
 
 		m_Desc->pPlayerTransform->Change_Look(vCameraLook);
-		m_pPlayer->Set_Animation("P_Eve_Peaceful_Evade_Forward", false);
+		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.7f);
 	}
 }
 
@@ -60,11 +60,23 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 	_float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
 	if(true == m_isBackStep && fAnimationRatio < 0.33f)
-		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.35f);
+		m_Desc->pPlayerTransform->Go_Backward(fTimeDelta * 1.8f);
 	else if(false == m_isBackStep && fAnimationRatio < 0.33f)
-		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.35f);
+		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.8f);
 
-	if (fAnimationRatio >= m_fMaxRatio &&
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+		fAnimationRatio >= m_fMaxRatio)
+	{
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_tNextState.eNextState = PLAYER_STATE::SPRINT;
+		else
+			m_tNextState.eNextState = PLAYER_STATE::EVADE;
+	}
+
+	else if (fAnimationRatio >= m_fMaxRatio &&
 		(m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
@@ -74,15 +86,36 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 		m_NextStateDesc.isEvade = true;
 		m_tNextState.pArg = &m_NextStateDesc;
 	}
+	
+	else if ((m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
+		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E)) && fAnimationRatio >= m_fMaxRatio)
+		m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
-	else if (fAnimationRatio >= m_fMaxRatio + 0.1f)
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1)
+		&& fAnimationRatio >= m_fMaxRatio)
+	{
+		m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
+		m_tNextState.isChangeMode = true;
+		m_tNextState.eMode = PLAYER_MODE::BATTLE;
+	}
+
+	else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2)
+		&& fAnimationRatio >= m_fMaxRatio)
+	{
+		m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
+		m_tNextState.isChangeMode = true;
+		m_tNextState.eMode = PLAYER_MODE::BATTLE;
+	}
+
+	else if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;
 
 	return m_tNextState;
 }
 
-void CPlayer_BattleEvadeState::End()
+_float CPlayer_BattleEvadeState::End()
 {
+	return m_fNextBlendRatio;
 }
 
 CPlayer_BattleEvadeState* CPlayer_BattleEvadeState::Create(void* pArg)

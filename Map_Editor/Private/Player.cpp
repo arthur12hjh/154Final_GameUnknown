@@ -64,7 +64,6 @@ void CPlayer::Update(_float fTimeDelta)
 		m_pTransformCom->Go_Straight(fTimeDelta, m_pNavigationCom);
 	}
 
-
 	m_pNavigationCom->Compute_Height(m_pTransformCom);
 }
 

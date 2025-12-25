@@ -76,7 +76,7 @@ HRESULT CData_Manager::Save_Data()
 
         jArray.push_back(jData);
 
-        _wstring szFilePath = TEXT("../Bin/DataFiles/Animation/");
+        _wstring szFilePath = TEXT("../../Client/Bin/DataFiles/Animation/");
         szFilePath += pData.first;
         szFilePath += TEXT(".json");
 
@@ -109,14 +109,14 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
 
     // _findfirst : <io.h>에서 제공하며 사용자가 설정한 경로 내에서 가장 첫 번째 파일을 찾는 함수
     // json도 되려나 이거..
-    intptr_t handle = _findfirst64("../Bin/DataFiles/Animation/*.json*", &fd);
+    intptr_t handle = _findfirst64("../../Client/Bin/DataFiles/Animation/*.json*", &fd);
 
     if (handle == -1)
         return S_OK;
 
     int iResult = 0;
 
-    _wstring szFrontPath = TEXT("../Bin/DataFiles/Animation/");
+    _wstring szFrontPath = TEXT("../../Client/Bin/DataFiles/Animation/");
 
     while (iResult != -1)
     {
@@ -199,13 +199,10 @@ HRESULT CData_Manager::LoadAnimNotifyData(void* pArg)
             m_AnimationNotifyDatas.emplace(szAnimTag, AnimationNotifyList);
         }
 
-
         //_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
-
-    
 
     return S_OK;
 }

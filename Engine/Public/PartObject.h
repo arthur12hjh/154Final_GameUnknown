@@ -34,6 +34,16 @@ public:
 
 	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) {};
 	virtual void			Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef) {};
+	virtual void			Set_Animation(const _char* szAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE,
+		_bool isRootMotionUpdated = TRUE) {
+	};
 
 protected:	
 	class CModel*			m_pModelCom = { nullptr };

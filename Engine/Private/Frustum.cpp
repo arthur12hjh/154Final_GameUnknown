@@ -6,6 +6,7 @@
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
+#endif // _DEBUG
 
 CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	m_pDevice(pDevice),
@@ -16,17 +17,9 @@ CFrustum::CFrustum(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	Safe_AddRef(m_pContext);
 	Safe_AddRef(m_pGameInstance);
 }
-#else
-CFrustum::CFrustum()
-	: m_pGameInstance { CGameInstance::GetInstance() }
-{
-	Safe_AddRef(m_pGameInstance);
-}
-#endif // _DEBUG
 
 HRESULT CFrustum::Initialize()
 {
-	/* 투영공간상의 점 여덟개의 정보를 채운다. */
 	m_vOriginalPoints[0] = _float4(-1.f, 1.f, 0.f, 1.f);
 	m_vOriginalPoints[1] = _float4(1.f, 1.f, 0.f, 1.f);
 	m_vOriginalPoints[2] = _float4(1.f, -1.f, 0.f, 1.f);
@@ -36,7 +29,6 @@ HRESULT CFrustum::Initialize()
 	m_vOriginalPoints[5] = _float4(1.f, 1.f, 1.f, 1.f);
 	m_vOriginalPoints[6] = _float4(1.f, -1.f, 1.f, 1.f);
 	m_vOriginalPoints[7] = _float4(-1.f, -1.f, 1.f, 1.f);
-
 	m_OrizinBoundingFrustom = new BoundingFrustum();
 
 #ifdef _DEBUG
@@ -62,12 +54,13 @@ void CFrustum::Update()
 	_matrix		ProjMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::PROJ);
 	_matrix		ViewMatrixInverse = m_pGameInstance->Get_Transform_Matrix_Inverse(D3DTS::VIEW);
 	_matrix		matPV = ProjMatrixInverse * ViewMatrixInverse;
-	/* 투영 스페이스 (3차원공간) 에서 월드로 내려줌. 절두체의 형태로 바뀐다.*/
+
 	for (size_t i = 0; i < 8; i++)
 	{
 		XMStoreFloat4(&m_vWorldPoints[i], 
 			XMVector3TransformCoord(XMLoadFloat4(&m_vOriginalPoints[i]), matPV));
 	}
+
 	auto pMainCamera = m_pGameInstance->GetMainCamera();
 	if (pMainCamera)
 	{
@@ -76,9 +69,23 @@ void CFrustum::Update()
 		m_OrizinBoundingFrustom->Near = CameraInfo.fNear;
 		m_OrizinBoundingFrustom->Far = CameraInfo.fFar;
 
-		m_OrizinBoundingFrustom->Transform(m_BoundingFrustom, m_pGameInstance->GetMainCameraWorldMatrix());
+		auto pCamWorldMat = m_pGameInstance->GetMainCameraWorldMatrix();
+		m_OrizinBoundingFrustom->Transform(m_BoundingFrustom, pCamWorldMat);
+		XMStoreFloat3(&m_vCamPos, pCamWorldMat.r[3]);
 	}
+
+
+	// 캐스케이드 연산을 위해 벡터 연산.
+	// Near -> Far로 향하는 모서리 4개의 벡터를 계산함.
+	for (_uint i = 0; i < 4; ++i)
+	{
+		XMStoreFloat4(&m_vWorldRays[i], 
+			XMLoadFloat4(&m_vWorldPoints[i + 4]) - XMLoadFloat4(&m_vWorldPoints[i]));
+	}
+
+
 	Make_Planes(m_vWorldPoints, m_vWorldPlanes);
+
 	Safe_Release(pMainCamera);
 }
 
@@ -165,6 +172,15 @@ _bool CFrustum::isIn_LocalFrustum(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
+_bool CFrustum::isIn_DistanceFrustum(_vector vPoint, _float fDistance)
+{
+	_float fLength = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_vCamPos) - vPoint));
+	if (fLength < fDistance)
+		return true;
+
+	return false;
+}
+
 void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 {
 	XMStoreFloat4(&pPlanes[0], XMPlaneFromPoints(XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[5]), XMLoadFloat4(&pPoints[6])));
@@ -175,7 +191,6 @@ void CFrustum::Make_Planes(const _float4* pPoints, _float4* pPlanes)
 	XMStoreFloat4(&pPlanes[5], XMPlaneFromPoints(XMLoadFloat4(&pPoints[0]), XMLoadFloat4(&pPoints[1]), XMLoadFloat4(&pPoints[2])));
 }
 
-#ifdef _DEBUG
 CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CFrustum* pInstance = new CFrustum(pDevice, pContext);
@@ -188,29 +203,15 @@ CFrustum* CFrustum::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	return pInstance;
 }
-#else
-CFrustum* CFrustum::Create()
-{
-	CFrustum* pInstance = new CFrustum();
-
-	if (FAILED(pInstance->Initialize()))
-	{
-		MSG_BOX("Failed to Created : CFrustum");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-#endif // _DEBUG
 
 void CFrustum::Free()
 {
 	__super::Free();
 
-#ifdef _DEBUG
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
+#ifdef _DEBUG
 	Safe_Delete(m_pBatch);
 	Safe_Delete(m_pEffect);
 	Safe_Release(m_pInputLayout);

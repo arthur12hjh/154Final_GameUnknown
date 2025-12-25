@@ -9,6 +9,7 @@
 #include "HUDLayer.h"
 #include "GameObject.h"
 #include "ChangeLevelEvent.h"
+#include "UIStruct.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -36,10 +37,17 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI")))) 
 		return E_FAIL;
 
-	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_TrainingRoom_01_A.OGG"), 0.5f);
+	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_EVETrailer.wav"), 1.f);
 
-	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { m_bChangeLevel = *static_cast<_bool*>(pArg); });
+	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { 
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+		});
 	m_pGameInstance->Bind_Observer(TEXT("Start_Button_Click"), m_pLevelChangeEvent);
+
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Setting_PoolManager(ENUM_CLASS(LEVEL::LOGO));
 
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
@@ -52,14 +60,20 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (!m_bLevelTransitioning
-		&& (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE)))
+	if (!m_bLevelTransitioning)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
 		m_bLevelTransitioning = true;
 	}
 
-	if (m_bLevelTransitioning && m_bChangeLevel
+	/*if (!m_bLevelTransitioning
+		&& (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE)))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
+		m_bLevelTransitioning = true;
+	}*/
+
+	if ((m_bLevelTransitioning || m_bChangeLevel)
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro")))
 	{
 		for (auto& pLayers : dynamic_cast<CUIHUD*>(m_pHUD)->Get_Layers())
@@ -72,9 +86,6 @@ void CLevel_Logo::Update(_float fTimeDelta)
 			}
 		}
 
-		// 레벨 전환 시 Outro 재생하고 끝나면 전환
-
-		m_pGameInstance->Clear_LevelResource();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY))))
 			return;
 	}

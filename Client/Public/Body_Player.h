@@ -18,6 +18,11 @@ public:
 	{
 	} BODY_PLAYER_DESC;
 
+	enum class BODY_MATERIAL {
+		//이 4개는 그냥 둬야함
+		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR, ORSS, END
+	};
+
 private:
 	CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Player(const CBody_Player& Prototype);
@@ -26,7 +31,10 @@ private:
 public:
 	_bool isFinish_Att();
 
-	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
+	virtual void			Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
+
+	HRESULT Mapping_Shader_Material(_uint iIdx);
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
@@ -36,12 +44,17 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
+
 private:
+	CCollider*			m_pColliderCom = { nullptr };
 	_bool				m_isAnimFinish = { false };	
-	
+	_bool				m_bIsEnableCollider = { false };
+
 private:
-	HRESULT Ready_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT				Ready_Components();
+	HRESULT				Bind_ShaderResources();
+
+	void				Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

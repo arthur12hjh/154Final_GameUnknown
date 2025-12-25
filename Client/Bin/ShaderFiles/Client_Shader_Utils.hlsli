@@ -3,13 +3,69 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
-float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord, float3 vNormal, float3 vTangent, float3 vBinormal)
+#define CASCADE_LEVEL 5
+
+struct GS_OUT_SHADOW
 {
-    vector vNormalDesc = NormalTexture.Sample(MirrorSampler, vTexcoord);
+    float4 vPosition : SV_Position;
+    float4 vProjPos : TEXCOORD0; 
+    uint iSlice : SV_RenderTargetArrayIndex;
+};
+
+struct PS_IN_SHADOW
+{
+    float4 vPosition : SV_Position;
+    float4 vProjPos : TEXCOORD0;
+    uint iSlice : SV_RenderTargetArrayIndex;
+};
+
+float4 Calc_TerrainNormal(texture2D NormalTexture, float2 vTexcoord, float3 vNormal)
+{
+    //노말 벡터밖에 없으니까 탄젠트랑 바이노말을 만들어주자..
+    float3 vTangent = cross(float3(0.f, 1.f, 0.f), vNormal);
+    float3 vBinormal = cross(vNormal, vTangent);
+   
+    
+    float2 vXY = NormalTexture.SampleLevel(MirrorSampler, vTexcoord, 2.f).rg * 2.f - 1.f;
+    float fZ = sqrt(saturate(1.f - dot(vXY, vXY)));
+    
+    float3 vNormalTS = float3(vXY, fZ); // tangent-space normal
+
     float3x3 WorldMatrix = float3x3(vTangent, vBinormal * -1.f, vNormal);
-    float3 vResultNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
- 
-    return float4(vResultNormal * 0.5f + 0.5f, 0.f);
+    float3 vResultNormal = mul(vNormalTS, WorldMatrix);
+    
+    return float4(normalize(vResultNormal) * 0.5f + 0.5f, 0.f);
+}
+
+float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
+                   float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
+{
+    // XY only normal map
+    float2 vXY = NormalTexture.SampleLevel(MirrorSampler, vTexcoord, 2.f).rg * 2.f - 1.f;
+
+    vXY *= fScale;
+    // Z 복원
+    float fZ = sqrt(saturate(1.f - dot(vXY, vXY)));
+
+    float3 vNormalTS = float3(vXY, fZ); // tangent-space normal
+
+    float3x3 WorldMatrix = float3x3(vTangent,vBinormal * -1.f, vNormal);
+
+    float3 vResultNormal = mul(vNormalTS, WorldMatrix);
+
+    return float4(normalize(vResultNormal) * 0.5f + 0.5f, 0.f);
+}
+
+vector Calc_ORSS(texture2D ORSSTexture, float2 vTexcoord)
+{
+    vector vORSS = ORSSTexture.Sample(DefaultSampler, vTexcoord);
+    return float4(vORSS.r, vORSS.g, vORSS.b, vORSS.a);
+}
+
+vector Calc_ORM(texture2D ORMTexture, float2 vTexcoord)
+{
+    vector vORM = ORMTexture.Sample(DefaultSampler, vTexcoord);
+    return float4(vORM.r, vORM.g, vORM.b, 0.f);
 }
 
 vector Calc_Emissive(texture2D EmissiveMask, vector vDiffuse, float2 vTexCoord)

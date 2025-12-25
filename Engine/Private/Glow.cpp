@@ -23,9 +23,14 @@ HRESULT CGlow::Initialize()
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vScreenSize.y, sizeof(_int))))
         return E_FAIL;
 
-    /* Target_Glow. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+
+    /* Target_Glow_Bloom. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Bloom"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
+    /* Target_Glow_Texture. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Texture"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+
     /* Target_Glow_X. X에 대해서 우선 블러처리. */
     if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_X"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
@@ -33,35 +38,24 @@ HRESULT CGlow::Initialize()
     if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Final"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
 
-    /* Target_Glow_Weight. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    /* Target_Glow_X_Weight. X에 대해서 우선 블러처리. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_X_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
-        return E_FAIL;
-    /* Target_Glow_Final_Weight. Y에 대해서도 블러처리 수행. */
-    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Final_Weight"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+    /* Target_Glow_Core. */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Glow_Core"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
 
     /* MRT_Glow */
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow"), TEXT("Target_Glow"))))
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow"), TEXT("Target_Glow_Bloom"))))
         return E_FAIL;
-    /* MRT_Glow */
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow"), TEXT("Target_Glow_Weight"))))
+    /* MRT_Glow_Weight */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Texture"), TEXT("Target_Glow_Texture"))))
         return E_FAIL;
-
     /* MRT_Glow_X */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_X"), TEXT("Target_Glow_X"))))
         return E_FAIL;
-    /* MRT_Glow_X_Weight */
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_X"), TEXT("Target_Glow_X_Weight"))))
-        return E_FAIL;
-
     /* MRT_Glow_Final */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Final"), TEXT("Target_Glow_Final"))))
         return E_FAIL;
-    /* MRT_Glow_Final_Weight */
-    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Final"), TEXT("Target_Glow_Final_Weight"))))
+    /* MRT_Glow_Core */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Glow_Core"), TEXT("Target_Glow_Core"))))
         return E_FAIL;
 
     return S_OK;
@@ -71,18 +65,7 @@ HRESULT CGlow::Add_RenderObject(CGameObject* pRenderObject)
 {
     if (nullptr == pRenderObject)
         return E_FAIL;
-    switch (pRenderObject->GetTeam())
-    {
-    case OBJECT_TEAM::FRIENDLY:
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].push_back(pRenderObject);
-        break;
-    case OBJECT_TEAM::ENEMY:
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].push_back(pRenderObject);
-        break;
-    case OBJECT_TEAM::NEUTRAL:
-        m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::NEUTRAL)].push_back(pRenderObject);
-        break;
-    }
+    m_GlowObjects.push_back(pRenderObject);
     Safe_AddRef(pRenderObject);
 
     return S_OK;
@@ -91,173 +74,104 @@ HRESULT CGlow::Add_RenderObject(CGameObject* pRenderObject)
 HRESULT CGlow::Render(CVIBuffer_Rect* pVIBuffer)
 {
     /* 블러 기록할 물체들만 뺴서 기록 */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow"))))
-        return E_FAIL;
+    m_pGameInstance->Clear_MRT(TEXT("MRT_Glow_Final"));
+    m_pGameInstance->Clear_MRT(TEXT("MRT_Glow_Core"));
 
-    for (auto& pRenderObject : m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)])
-    {
-        if (nullptr != pRenderObject)
-            pRenderObject->Render();
-
-        Safe_Release(pRenderObject);
-    }
-
-    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].clear();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    /* 블러 X 처리 */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_X"))))
-        return E_FAIL;
-    
     m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
     m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
     m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
-    
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-    
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-    
-    m_pShader->Begin(0);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-    
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    /* 블러 Y 처리 */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_Final"))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-    
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-    
-    m_pShader->Begin(1);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-    
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-    
-    m_pShader->Begin(2);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
 
 
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow"))))
-        return E_FAIL;
+    if (0 < m_GlowObjects.size()) {
+        if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_Texture"))))
+            return E_FAIL;
 
-    for (auto& pRenderObject : m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)])
-    {
-        if (nullptr != pRenderObject)
-            pRenderObject->Render();
+        for (auto& pRenderObject : m_GlowObjects)
+        {
+            if (nullptr != pRenderObject)
+                pRenderObject->Render();
+        }
 
-        Safe_Release(pRenderObject);
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        // 중심 Glow
+        if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_Core"))))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Texture"), m_pShader, "g_GlowTexture")))
+            return E_FAIL;
+
+        m_pShader->Begin(2);
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow"))))
+            return E_FAIL;
+
+        for (auto& pRenderObject : m_GlowObjects)
+        {
+            if (nullptr != pRenderObject)
+                pRenderObject->Render();
+
+            Safe_Release(pRenderObject);
+        }
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        // 블러 X 처리
+        if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_X"))))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Bloom"), m_pShader, "g_GlowTexture")))
+            return E_FAIL;
+
+        m_pShader->Begin(0);
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
+
+        // 블러 Y 처리
+        if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Glow_Final"))))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowTexture")))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Bloom"), m_pShader, "g_GlowPowerTexture")))
+            return E_FAIL;
+
+        m_pShader->Begin(1);
+        pVIBuffer->Bind_Resources();
+        pVIBuffer->Render();
+
+        if (FAILED(m_pGameInstance->End_MRT()))
+            return E_FAIL;
     }
+    m_GlowObjects.clear();
 
-    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].clear();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    /* 블러 X 처리 */
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow_X"))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(3);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    /* 블러 Y 처리 */
-    if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Glow_Final"))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_X_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightFinalTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(4);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Glow"))))
-        return E_FAIL;
-
-    for (auto& pRenderObject : m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::NEUTRAL)])
-    {
-        if (nullptr != pRenderObject)
-            pRenderObject->Render();
-
-        Safe_Release(pRenderObject);
-    }
-
-    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::NEUTRAL)].clear();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    /* 블러 Y 처리 */
-    if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Glow_Final"))))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow"), m_pShader, "g_GlowTexture")))
-        return E_FAIL;
-
-    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Weight"), m_pShader, "g_WeightTexture")))
-        return E_FAIL;
-
-    m_pShader->Begin(5);
-    pVIBuffer->Bind_Resources();
-    pVIBuffer->Render();
-
-    if (FAILED(m_pGameInstance->End_MRT()))
-        return E_FAIL;
-
-    m_bisWeight = false;
+    m_bisBloom = true;
     return S_OK;
 }
 
 HRESULT CGlow::Bind_RenderTarget(CShader* pShader, const _char* pConstantName)
 {
-    if (m_bisWeight) {
-        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final_Weight"), pShader, pConstantName)))
-            return E_FAIL;
-        m_bisWeight = false;
-    }
-    else {
+    if (m_bisBloom) {
         if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Final"), pShader, pConstantName)))
             return E_FAIL;
-        m_bisWeight = true;
+        m_bisBloom = false;
     }
+    else {
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Glow_Core"), pShader, pConstantName)))
+            return E_FAIL;
+    }
+
     return S_OK;
 }
 
@@ -296,14 +210,9 @@ void CGlow::Free()
 {
     __super::Free();
 
-    for (auto& BlurObject : m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)])
+    for (auto& BlurObject : m_GlowObjects)
     {
         Safe_Release(BlurObject);
     }
-    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::FRIENDLY)].clear();
-    for (auto& BlurObject : m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)])
-    {
-        Safe_Release(BlurObject);
-    }
-    m_GlowObjects[ENUM_CLASS(OBJECT_TEAM::ENEMY)].clear();
+    m_GlowObjects.clear();
 }

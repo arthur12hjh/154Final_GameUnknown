@@ -55,6 +55,12 @@ void CUISkillSlot::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);	
 
+	auto pSKillWrapper = static_cast<CUISkillWrapper*>(m_pParent);
+	m_iCharacterSkillIndex = pSKillWrapper ? pSKillWrapper->Get_SkillID(m_tSkillInfo.iSkillIndex) : -1;
+
+	auto pSkillData = m_pGameManager->Find_BetaSkillData(m_iCharacterSkillIndex);
+	m_iBetaGauge = nullptr != pSkillData ? pSkillData->iRequiredBetaGauge : 0;
+
 #ifdef _DEBUG
 #endif
 }
@@ -71,11 +77,14 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 		Safe_Release(pHUD);
 	}
-	else if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
+	
+	if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 		&& m_bPlayingAnim == false)
 	{
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+		pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
 
 		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Skill_") + to_wstring(m_tSkillInfo.iSkillIndex) + TEXT("_ActiveOn"));
 		if (AnimTag != m_tUIDesc.m_AnimTags.end())
@@ -83,7 +92,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+	
+	if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 			|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_bPlayingAnim == false)
@@ -96,7 +106,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
+	
+	if(m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
 		&& m_bPlayingAnim == true)
 	{
@@ -132,6 +143,10 @@ HRESULT CUISkillSlot::Render()
 		if (FAILED(Render_Glow()))
 			return E_FAIL;
 	}
+	else
+	{
+		m_tUIDesc.m_tUIShaderDesc = m_tOriginUIDesc.m_tUIShaderDesc;
+	}
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();
@@ -146,7 +161,7 @@ HRESULT CUISkillSlot::Ready_Components()
 
 	/* Com_VIBuffer */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
+		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
 		return E_FAIL;
 
 	/* Com_VIBuffer */
@@ -184,13 +199,21 @@ HRESULT CUISkillSlot::Ready_Components()
 		TEXT("Com_Texture_UI_Skill_Slot_Covor"), reinterpret_cast<CComponent**>(&m_pCoverTextureCom))))
 		return E_FAIL;
 
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
+		TEXT("Com_Texture_Cost"), reinterpret_cast<CComponent**>(&m_pCostTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Beta_Cost_Deco"),
+		TEXT("Com_Texture_CostDeco"), reinterpret_cast<CComponent**>(&m_pCostDecoTextureCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CUISkillSlot::Bind_ShaderResources()
 {
-	__super::Bind_ShaderResources();
-
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->GetIdentityMatrixPtr())))
@@ -204,12 +227,34 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 
 	_bool bSkillUseable = false;
 
-	if (m_tSkillInfo.iSkillIndex >= 0)
+	/*if (FAILED(m_pShaderCom->Bind_SRV("g_Texture2", nullptr)))
+		return E_FAIL;*/
+	if (m_pParent)
 	{
-		bSkillUseable = true;
+		if (m_iCharacterSkillIndex != 0)
+		{
+			bSkillUseable = true;
+			switch (m_iCharacterSkillIndex)
+			{
+			case 1004:
+			{
+				if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+					return E_FAIL;
+				break;
+			}
+			case 1005:
+			{
+				if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", 1))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+					return E_FAIL;
+				break;
+			}
+			}
 
-		if (FAILED(m_pTextureCom2->Bind_ShaderResource(m_pShaderCom, "g_Texture2", m_tSkillInfo.iSkillIndex))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
-			return E_FAIL;
+			if (FAILED(m_pCostTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture4", (m_iBetaGauge / 4)))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+				return E_FAIL;
+			if (FAILED(m_pCostDecoTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture5", 0))) // 스킬 텍스쳐 : 플레이어한테서 받아야함
+				return E_FAIL;
+		}
 	}
 
 	_bool bUseTintColor = false;
@@ -222,9 +267,6 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 		if (FAILED(m_pShaderCom->Bind_SRV("g_Texture3", nullptr)))
 			return E_FAIL;
 	}
-
-	/*if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
-		&& m_bPlayingAnim == false)*/
 	if ((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
 		|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
@@ -235,7 +277,6 @@ HRESULT CUISkillSlot::Bind_ShaderResources()
 			return E_FAIL;
 	}
 
-	//if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE))
 	if (m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::USE)
 		&& m_bPlayingAnim == true)
@@ -282,9 +323,6 @@ HRESULT CUISkillSlot::Execute(const UI_EVENT_DESC& EventDesc)
 
 		Safe_Release(pHUD);
 	}
-	if (Type == TEXT("ActionEvent"))
-	{
-	}
 
 	return S_OK;
 }
@@ -297,22 +335,6 @@ void CUISkillSlot::CallbackEvent(void* pArg)
 	auto* pDesc = static_cast<UI_SKILL_INFO_DESC*>(arg->pData);
 	
 	m_tSkillInfo = *pDesc;
-
-	//CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	//
-	//// 이거 애니메이션 매니저로 돌리면 안될지도..
-	//if (m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
-	//{
-	//	pHUD->Anim_Stop(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag);
-	//	Safe_Release(pHUD);
-	//	return;
-	//}
-
-	//auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	//if (AnimTag != m_tUIDesc.m_AnimTags.end())
-	//	pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	//Safe_Release(pHUD);
 }
 
 HRESULT CUISkillSlot::Render_Glow()
@@ -347,6 +369,9 @@ HRESULT CUISkillSlot::Bind_GlowShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseGlow", &m_tUIDesc.m_tUIShaderDesc.bUseGlow, sizeof(_bool))))
 		return E_FAIL;
+
+	//m_tUIDesc.m_tUIShaderDesc.fGlowIntensity = 1.f;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_tUIDesc.m_tUIShaderDesc.fGlowIntensity, sizeof(_float))))
 		return E_FAIL;
 
@@ -388,6 +413,8 @@ void CUISkillSlot::Free()
 	Safe_Release(m_pShadowTextureCom);
 	Safe_Release(m_pGlowTextureCom);
 	Safe_Release(m_pGlowTextureCom2);
+	Safe_Release(m_pCostTextureCom);
+	Safe_Release(m_pCostDecoTextureCom);
 	Safe_Release(m_pVIBaseBufferCom);
 	Safe_Release(m_pVIGlowBufferCom);
 }

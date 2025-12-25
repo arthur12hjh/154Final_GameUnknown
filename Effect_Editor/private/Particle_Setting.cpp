@@ -31,7 +31,7 @@ HRESULT CParticle_Setting::Initialize()
     m_tParticleData.fSpeed = _float2(1.f, 0.5f);
     m_tParticleData.bisLoop = true;
     m_tParticleData.fGravityDiagram = _float4(0, 0, 0, 0);
-    m_tParticleData.iSelectRender = 3;
+    m_tParticleData.iSelectRender = 0;
     m_tParticleData.fColor = { 0,0,0,1 };
     m_tParticleData.szCS = "CS";
     m_tParticleData.fSizeDiagrams.clear();
@@ -262,6 +262,9 @@ void CParticle_Setting::Add_Particle()
 {
     CParticle::PARTICLE_DATA tParticleData;
 
+    char szModelPath[MAX_PATH] = {};
+    strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[0].c_str(), _TRUNCATE);
+    tParticleData.szModel = szModelPath;
     tParticleData.szMaskTexture = m_ImageFiles[0][0];
     tParticleData.szDiffuseTexture = m_ImageFiles[1][0];
     tParticleData.szDissolveTexture = m_ImageFiles[2][0];
@@ -276,6 +279,7 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fPivot = _float3(0.0f, 0.f, 0.0f);
     tParticleData.fRange = _float3(1.f, 1.f, 1.f);
     tParticleData.fRotation = _float3(0, 0, 0);
+    tParticleData.fMeshRotation = _float3(0, 0, 0);
     tParticleData.fSize = _float2(0.5f, 1.f);
     tParticleData.fLifeTime = _float2(0.5f, 1.f);
     tParticleData.fSpeed = _float2(1.f, 0.5f);
@@ -296,8 +300,7 @@ void CParticle_Setting::Add_Particle()
     tParticleData.fCircleSpeed = 1.f;
     tParticleData.iBegin = 0;
     tParticleData.iNumInstance = 100;
-    tParticleData.iSelectRender = 3;
-    tParticleData.bisBillboard = true;
+    tParticleData.iSelectRender = 0;
     tParticleData.bisLoop = true;
     tParticleData.bisSphere = false;
     tParticleData.bisCircle = false;
@@ -376,8 +379,10 @@ void CParticle_Setting::Add_SpriteParticle()
     tSpriteParticleData.fCircleSpeed = 1.f;
     tSpriteParticleData.iBegin = 0;
     tSpriteParticleData.iNumInstance = 100;
-    tSpriteParticleData.iSelectRender = 3;
+    tSpriteParticleData.iSelectRender = 0;
     tSpriteParticleData.bisBillboard = true;
+    tSpriteParticleData.bisAngleBillboard = false;
+    tSpriteParticleData.bisStart = false;
     tSpriteParticleData.bisLoop = true;
     tSpriteParticleData.bisSphere = false;
     tSpriteParticleData.bisCircle = false;
@@ -477,55 +482,6 @@ void CParticle_Setting::Delete_MeshEffect()
     else {
         Safe_Release(m_pMeshs[0]);
         m_pMeshs.clear();
-    }
-}
-
-void CParticle_Setting::Add_SpriteEffect()
-{
-    CSpriteEffect::SPRITE_DATA		SpriteDesc{};
-    SpriteDesc.szMaskTexture = m_ImageFiles[0][0];
-    SpriteDesc.szDiffuseTexture = m_ImageFiles[1][0];
-    SpriteDesc.szNormalTexture = m_ImageFiles[3][0];
-    SpriteDesc.fPosition = _float4(0, 0, 0, 1);
-    SpriteDesc.fColor = _float4(0, 0, 0, 1);
-    SpriteDesc.fSize = _float2(1, 1);
-    SpriteDesc.iUV = _int2(1, 1);
-    SpriteDesc.fFPS = 0.1f;
-    SpriteDesc.fAngle = 0.f;
-    SpriteDesc.iBegin = 0;
-    SpriteDesc.iSelectRender = 3;
-    SpriteDesc.bisLoop = true;
-
-    CSpriteEffect* pSpriteEffect = CSpriteEffect::Create(m_pDevice, m_pContext);
-    pSpriteEffect->Initialize(nullptr);
-
-    pSpriteEffect->Set_Components(SpriteDesc);
-    pSpriteEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
-
-    m_iSelectSprite = m_pSprites.size();
-    m_pSprites.push_back(pSpriteEffect);
-    m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
-}
-
-void CParticle_Setting::Delete_SpriteEffect()
-{
-    if (1 < m_pSprites.size()) {
-        _uint i = 0;
-        for (auto j = m_pSprites.begin(); j != m_pSprites.end();) {
-            if (m_iSelectSprite == i) {
-                Safe_Release((*j));
-                m_pSprites.erase(j);
-                m_iSelectSprite = max(0, m_iSelectSprite - 1);
-                m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
-                break;
-            }
-            ++i;
-            ++j;
-        }
-    }
-    else {
-        Safe_Release(m_pSprites[0]);
-        m_pSprites.clear();
     }
 }
 
@@ -644,65 +600,6 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt(fileBinaryStream, pMesh->Get_Data().iBegin);
         WriteInt(fileBinaryStream, pMesh->Get_Data().iSelectRender);
     }
-    WriteInt(fileBinaryStream, m_pParticles.size());
-    for (auto pParticle : m_pParticles) {
-
-
-        char szImageFile[MAX_PATH] = {};
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-        memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szCS.c_str(), _TRUNCATE);
-        WriteString(fileBinaryStream, szImageFile);
-
-        WriteInt(fileBinaryStream, pParticle->Get_Data().fSizeDiagrams.size());
-        for (auto fSizeDiagram : pParticle->Get_Data().fSizeDiagrams) {
-            WriteFloat3(fileBinaryStream, fSizeDiagram);
-        }
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fGravityDiagram);
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fPosition);
-        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fColor);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fCenter);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fPivot);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRange);
-        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRotation);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fTurnPower);
-        
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUV);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSpeed);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
-        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fCircle);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
-        WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
-        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisBillboard);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
-        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
-    }
     WriteInt(fileBinaryStream, m_pSpriteParticles.size());
     for (auto pSpriteParticle : m_pSpriteParticles) {
 
@@ -760,34 +657,77 @@ HRESULT CParticle_Setting::Save_Binary(const _char* szFile)
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iNumInstance);
         WriteInt(fileBinaryStream, pSpriteParticle->Get_Data().iSelectRender);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisBillboard);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisAngleBillboard);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisStart);
+        WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisAnimation);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisLoop);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSphere);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisCircle);
         WriteBool(fileBinaryStream, pSpriteParticle->Get_Data().bisSpectrum);
     }
-    WriteInt(fileBinaryStream, m_pSprites.size());
-    for (auto pSprite : m_pSprites) {
+    WriteInt(fileBinaryStream, m_pParticles.size());
+    for (auto pParticle : m_pParticles) {
+    
+    
         char szImageFile[MAX_PATH] = {};
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szModel.c_str(), _TRUNCATE);
         WriteString(fileBinaryStream, szImageFile);
         memset(szImageFile, 0, sizeof(szImageFile));
 
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szMaskTexture.c_str(), _TRUNCATE);
         WriteString(fileBinaryStream, szImageFile);
         memset(szImageFile, 0, sizeof(szImageFile));
-
-        strncpy_s(szImageFile, sizeof(szImageFile), pSprite->Get_Data().szNormalTexture.c_str(), _TRUNCATE);
+    
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDiffuseTexture.c_str(), _TRUNCATE);
         WriteString(fileBinaryStream, szImageFile);
         memset(szImageFile, 0, sizeof(szImageFile));
-
-        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fPosition);
-        WriteFloat4(fileBinaryStream, pSprite->Get_Data().fColor);
-        WriteFloat2(fileBinaryStream, pSprite->Get_Data().fSize);
-        WriteInt2(fileBinaryStream, pSprite->Get_Data().iUV);
-        WriteFloat(fileBinaryStream, pSprite->Get_Data().fFPS);
-        WriteInt(fileBinaryStream, pSprite->Get_Data().iBegin);
-        WriteInt(fileBinaryStream, pSprite->Get_Data().iSelectRender);
-        WriteBool(fileBinaryStream, pSprite->Get_Data().bisLoop);
+    
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szDissolveTexture.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+        memset(szImageFile, 0, sizeof(szImageFile));
+    
+        strncpy_s(szImageFile, sizeof(szImageFile), pParticle->Get_Data().szCS.c_str(), _TRUNCATE);
+        WriteString(fileBinaryStream, szImageFile);
+    
+        WriteInt(fileBinaryStream, pParticle->Get_Data().fSizeDiagrams.size());
+        for (auto fSizeDiagram : pParticle->Get_Data().fSizeDiagrams) {
+            WriteFloat3(fileBinaryStream, fSizeDiagram);
+        }
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fGravityDiagram);
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fPosition);
+        WriteFloat4(fileBinaryStream, pParticle->Get_Data().fColor);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fCenter);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fPivot);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRange);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fRotation);
+        WriteFloat3(fileBinaryStream, pParticle->Get_Data().fMeshRotation);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fLifeTime);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fSpeed);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fTurnPower);
+        
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUV);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSpeed);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fMaskUVSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUV);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSpeed);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDiffuseUVSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUV);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSpeed);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fDissolveUVSize);
+        WriteFloat2(fileBinaryStream, pParticle->Get_Data().fCircle);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fDelayTime);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fEndTime);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fSphereSize);
+        WriteFloat(fileBinaryStream, pParticle->Get_Data().fCircleSpeed);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iBegin);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iNumInstance);
+        WriteInt(fileBinaryStream, pParticle->Get_Data().iSelectRender);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisLoop);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisMeshTexture);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisSphere);
+        WriteBool(fileBinaryStream, pParticle->Get_Data().bisCircle);
+         WriteBool(fileBinaryStream, pParticle->Get_Data().bisSpectrum);
     }
     return S_OK;
 }
@@ -800,22 +740,16 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
             Delete_MeshEffect();
         }
     }
-    if (0 < m_pParticles.size()) {
-        _uint iParticleCount = m_pParticles.size();
-        for (_uint i = 0; i < iParticleCount; ++i) {
-            Delete_Particle();
-        }
-    }
     if (0 < m_pSpriteParticles.size()) {
         _uint iSpriteParticleCount = m_pSpriteParticles.size();
         for (_uint i = 0; i < iSpriteParticleCount; ++i) {
             Delete_SpriteParticle();
         }
     }
-    if (0 < m_pSprites.size()) {
-        _uint iSpriteCount = m_pSprites.size();
-        for (_uint i = 0; i < iSpriteCount; ++i) {
-            Delete_SpriteEffect();
+    if (0 < m_pParticles.size()) {
+        _uint iParticleCount = m_pParticles.size();
+        for (_uint i = 0; i < iParticleCount; ++i) {
+            Delete_Particle();
         }
     }
     CMeshEffect::MeshEffectData		MeshDesc{};
@@ -879,70 +813,6 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_pMeshs.push_back(pMeshEffect);
         m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
     }
-    _int iParticleCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iParticleCount; ++i) {
-        _char* szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szMaskTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDiffuseTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szDissolveTexture = szTemp;
-        Safe_Delete(szTemp);
-        szTemp = ReadString(fileBinaryStream);
-        ParticleDesc.szCS = szTemp;
-        Safe_Delete(szTemp);
-        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
-        ParticleDesc.fSizeDiagrams.clear();
-        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
-            ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
-        }
-        ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
-        ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
-        ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
-
-        ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
-        ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
-        ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
-        ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
-
-        ParticleDesc.iBegin = ReadInt(fileBinaryStream);
-        ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
-        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
-
-        ParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
-        ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
-        ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
-        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
-        CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
-        pParticle->Initialize(nullptr);
-
-        pParticle->Set_Components(ParticleDesc);
-        pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
-        m_iSelectParticle = m_pParticles.size();
-        m_pParticles.push_back(pParticle);
-        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
-    }
     _int iSpriteParticleCount = ReadInt(fileBinaryStream);
     for (_uint i = 0; i < iSpriteParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
@@ -997,6 +867,9 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
        SpriteParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
        SpriteParticleDesc.bisBillboard = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisAngleBillboard = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisStart = ReadBool(fileBinaryStream);
+       SpriteParticleDesc.bisAnimation = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisLoop = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisSphere = ReadBool(fileBinaryStream);
        SpriteParticleDesc.bisCircle = ReadBool(fileBinaryStream);
@@ -1011,36 +884,73 @@ HRESULT CParticle_Setting::Load_Binary(const _char* szFile)
         m_pSpriteParticles.push_back(pParticle);
         m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
     }
-    _int iSpriteCount = ReadInt(fileBinaryStream);
-    for (_uint i = 0; i < iSpriteCount; ++i) {
+    _int iParticleCount = ReadInt(fileBinaryStream);
+    for (_uint i = 0; i < iParticleCount; ++i) {
         _char* szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szMaskTexture = szTemp;
+        ParticleDesc.szModel = szTemp;
         Safe_Delete(szTemp);
         szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szDiffuseTexture = szTemp;
+        ParticleDesc.szMaskTexture = szTemp;
         Safe_Delete(szTemp);
         szTemp = ReadString(fileBinaryStream);
-        SpriteDesc.szNormalTexture = szTemp;
+        ParticleDesc.szDiffuseTexture = szTemp;
         Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szDissolveTexture = szTemp;
+        Safe_Delete(szTemp);
+        szTemp = ReadString(fileBinaryStream);
+        ParticleDesc.szCS = szTemp;
+        Safe_Delete(szTemp);
+        _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+        ParticleDesc.fSizeDiagrams.clear();
+        for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+            ParticleDesc.fSizeDiagrams.push_back(ReadFloat3(fileBinaryStream));
+        }
+        ParticleDesc.fGravityDiagram = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fPosition = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fColor = ReadFloat4(fileBinaryStream);
+        ParticleDesc.fCenter = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fPivot = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fRange = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fRotation = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fMeshRotation = ReadFloat3(fileBinaryStream);
+        ParticleDesc.fSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fLifeTime = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fSpeed = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fTurnPower = ReadFloat2(fileBinaryStream);
 
-        SpriteDesc.fPosition = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fColor = ReadFloat4(fileBinaryStream);
-        SpriteDesc.fSize = ReadFloat2(fileBinaryStream);
-        SpriteDesc.iUV = ReadInt2(fileBinaryStream);
-        SpriteDesc.fFPS = ReadFloat(fileBinaryStream);
-        SpriteDesc.iBegin = ReadInt(fileBinaryStream);
-        SpriteDesc.iSelectRender = ReadInt(fileBinaryStream);
-        SpriteDesc.bisLoop = ReadBool(fileBinaryStream);
+        ParticleDesc.fMaskUV = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fMaskUVSpeed = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fMaskUVSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDiffuseUV = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDiffuseUVSpeed = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDiffuseUVSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDissolveUV = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDissolveUVSpeed = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDissolveUVSize = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fCircle = ReadFloat2(fileBinaryStream);
+        ParticleDesc.fDelayTime = ReadFloat(fileBinaryStream);
+        ParticleDesc.fEndTime = ReadFloat(fileBinaryStream);
+        ParticleDesc.fSphereSize = ReadFloat(fileBinaryStream);
+        ParticleDesc.fCircleSpeed = ReadFloat(fileBinaryStream);
 
+        ParticleDesc.iBegin = ReadInt(fileBinaryStream);
+        ParticleDesc.iNumInstance = ReadInt(fileBinaryStream);
+        ParticleDesc.iSelectRender = ReadInt(fileBinaryStream);
 
-        CSpriteEffect* pSprite = CSpriteEffect::Create(m_pDevice, m_pContext);
-        pSprite->Initialize(nullptr);
+        ParticleDesc.bisLoop = ReadBool(fileBinaryStream);
+        ParticleDesc.bisMeshTexture = ReadBool(fileBinaryStream);
+        ParticleDesc.bisSphere = ReadBool(fileBinaryStream);
+        ParticleDesc.bisCircle = ReadBool(fileBinaryStream);
+        ParticleDesc.bisSpectrum = ReadBool(fileBinaryStream);
+        CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
+        pParticle->Initialize(nullptr);
 
-        pSprite->Set_Components(SpriteDesc);
-        pSprite->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
-        m_iSelectSprite = m_pSprites.size();
-        m_pSprites.push_back(pSprite);
-        m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
+        pParticle->Set_Components(ParticleDesc);
+        pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+        m_iSelectParticle = m_pParticles.size();
+        m_pParticles.push_back(pParticle);
+        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
     }
     return S_OK;
 }
@@ -1157,11 +1067,11 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
     ImGui::SameLine();
     ImGui::DragFloat("Speed", &m_fSpeed, 0.1f, 0.1f, 100.f);
-    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "Particle" : m_iSelectMeshParticle == 1 ? "SpriteParticle" : m_iSelectMeshParticle == 2 ? "MeshEffect" : m_iSelectMeshParticle == 3 ? "SpriteEffect" : "TrailEffect"))
+    if (ImGui::BeginCombo("Effect Type", m_iSelectMeshParticle == 0 ? "MeshEffect" : m_iSelectMeshParticle == 1 ? "SpriteParticle" : m_iSelectMeshParticle == 2 ? "MeshParticle" : "TrailEffect"))
     {
-        for (_uint i = 0; i < 5; ++i) {
+        for (_uint i = 0; i < 4; ++i) {
             _bool sel = i == m_iSelectMeshParticle;
-            if (ImGui::Selectable(i == 0 ? "Particle" : i == 1 ? "SpriteParticle" : i == 2 ? "MeshEffect" : i == 3 ? "SpriteEffect" : "TrailEffect", sel)) {
+            if (ImGui::Selectable(i == 0 ? "MeshEffect" : i == 1 ? "SpriteParticle" : i == 2 ? "MeshParticle" : "TrailEffect", sel)) {
                 m_iSelectMeshParticle = i;
             }
             if (sel)
@@ -1169,7 +1079,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
         ImGui::EndCombo();
     }
-    if (4 == m_iSelectMeshParticle) {
+    if (3 == m_iSelectMeshParticle) {
 
         m_pTransform->Set_State(STATE::RIGHT, m_pTrailEffect->GetTransform()->Get_State(STATE::RIGHT));
         m_pTransform->Set_State(STATE::UP, m_pTrailEffect->GetTransform()->Get_State(STATE::UP));
@@ -1273,930 +1183,18 @@ void CParticle_Setting::Update(_float fTimeDelta)
         if (ImGui::Button("Load", btn)) {
             Load_Binary(m_Effects[m_iSelectEffect].c_str());
         }
+
+        if (ImGui::Button("ReSave", btn)) {
+            for (_uint i = 0; i < m_Effects.size(); ++i) {
+                Load_Binary(m_Effects[i].c_str());
+                Save_Binary(m_Effects[i].c_str());
+            }
+        }
     }
     
     switch (m_iSelectMeshParticle)
     {
     case 0:
-        if (ImGui::Button("Add Particle", btn)) {
-            Add_Particle();
-        }
-        if (0 < m_pParticles.size())
-        {
-            ImGui::SameLine();
-            if (ImGui::Button("Delete Particle", btn)) {
-                Delete_Particle();
-                if (0 >= m_pParticles.size()) {
-                    ImGui::End();
-                    return;
-                }
-            }
-            if (ImGui::Button("Effect", btn)) {
-                m_iLevel = 0;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Shader", btn)) {
-                m_iLevel = 1;
-            }
-            char str[3];
-            snprintf(str, sizeof(str), "%d", m_iSelectParticle);
-            if (ImGui::BeginCombo("Particles", str))
-            {
-                for (_uint i = 0; i < m_pParticles.size(); ++i) {
-                    _bool sel = i == m_iSelectParticle;
-                    snprintf(str, sizeof(str), "%d", i);
-                    if (ImGui::Selectable(str, sel)) {
-                        m_iSelectParticle = i;
-                        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
-                    }
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            if (ImGui::Button("All Replay", btn)) {
-                m_fTime = 0.f;
-                m_bisReplay = true;
-                for (_uint i = 0; i < m_pParticles.size(); ++i) {
-                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
-                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
-                }
-                ImGui::End();
-                return;
-            }
-
-            ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
-                m_bisReplay = true;
-                m_fTime = 0.f;
-                m_pParticles[m_iSelectParticle]->Set_Components(m_pParticles[m_iSelectParticle]->Get_Data());
-                ImGui::End();
-                return;
-            }
-            if (ImGui::Button("Stop", btn)) {
-                m_pParticles[m_iSelectParticle]->Stop();
-            }
-            if (ImGui::Button("Play", btn)) {
-                m_pParticles[m_iSelectParticle]->Play();
-            }
-
-            m_pParticles[m_iSelectParticle]->Update(m_tParticleData);
-
-
-            ImGui::BeginChild("Menu", ImVec2(300, 500), true);
-            switch (m_iLevel)
-            {
-            case 0:
-            {
-                m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
-                CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-                Desc.iNumInstance = m_tParticleData.iNumInstance;
-                Desc.vCenter = m_tParticleData.fCenter;
-                Desc.vPivot = m_tParticleData.fPivot;
-                Desc.vRange = m_tParticleData.fRange;
-                Desc.vSize = m_tParticleData.fSize;
-                Desc.vLifeTime = m_tParticleData.fLifeTime;
-                Desc.vSpeed = m_tParticleData.fSpeed;
-                Desc.isLoop = m_tParticleData.bisLoop;
-                _float4 fGravity = m_tParticleData.fGravityDiagram;
-                vector<_float3> fSizeDiagrams = m_tParticleData.fSizeDiagrams;
-                _float fDelayTime = m_tParticleData.fDelayTime;
-                _float fEndTime = m_tParticleData.fEndTime;
-
-                _float time = 1.f / 100;
-                _float fMax = 5;
-                float values[100] = {};
-
-                if (ImGui::TreeNode("Particle"))
-                {
-                    if (ImGui::TreeNode("Particle Transform"))
-                    {
-                        ImGui::DragFloat3("Particle Position", reinterpret_cast<_float*>(&m_tParticleData.fPosition), 0.1f, -1000.f, 1000.f);
-                        ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&m_tParticleData.fRotation), 1.f, 0.f, 360.f);
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("Particle Data"))
-                    {
-                        ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 1, 0);
-                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tParticleData.fCenter), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tParticleData.fDelayTime), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tParticleData.fEndTime), 0.1f, 0.f, 100.f);
-                        ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
-
-
-                        ImGui::TreePop();
-                    }
-
-                    ImGui::TreePop();
-                }
-
-                ImGui::SetNextItemWidth(180);
-
-                for (_uint i = 0; i < 100; ++i) {
-                    _float t = time * i;
-                    if (fabsf(m_tParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tParticleData.fGravityDiagram.w) >= 90.f) {
-                        values[i] = m_tParticleData.fGravityDiagram.x;
-                    }
-                    else {
-
-                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fGravityDiagram.x
-                            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.y)) * 100
-                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fGravityDiagram.z
-                            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.w)) * 100;
-                    }
-                    fMax = max(fMax, fabsf(values[i]));
-                }
-
-
-                if (ImGui::TreeNode("Size Diagram")) {
-                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
-                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
-                        _float time = 1.f / 100;
-                        _float fMax = 5;
-                        for (_uint i = 0; i < 100; ++i) {
-                            _float3* in = {};
-                            _float3* out = {};
-                            for (_uint j = 0; j < (_uint)m_tParticleData.fSizeDiagrams.size(); ++j) {
-                                if (m_tParticleData.fSizeDiagrams[j].x <= time * i) {
-                                    in = &m_tParticleData.fSizeDiagrams[j];
-                                }
-                                if (m_tParticleData.fSizeDiagrams[j].x > time * i) {
-                                    out = &m_tParticleData.fSizeDiagrams[j];
-                                    break;
-                                }
-                            }
-                            if (nullptr == out)
-                                values[i] = in->y;
-                            else {
-                                _float t = (time * i - in->x) / (out->x - in->x);
-                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
-                                    values[i] = in->y;
-                                }
-                                else {
-                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
-                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
-                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
-                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
-                                }
-                            }
-                            fMax = max(fMax, fabsf(values[i]));
-                        }
-                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
-                            "Size data", -fMax, fMax, ImVec2(0, 100));
-
-
-                        char str[10];
-                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tParticleData.fSizeDiagrams[m_iSelectSize].x);
-
-                        if (ImGui::BeginCombo("TimeValue", str))
-                        {
-                            for (_uint i = 0; i < (_uint)m_tParticleData.fSizeDiagrams.size(); ++i) {
-                                _bool sel = i == m_iSelectSize;
-                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tParticleData.fSizeDiagrams[i].x);
-                                if (ImGui::Selectable(str, sel))
-                                    m_iSelectSize = i;
-                                if (sel)
-                                    ImGui::SetItemDefaultFocus();
-                            }
-                            ImGui::EndCombo();
-                        }
-                    }
-                    if (ImGui::Button("AddTime", btn)) {
-                        if (0 < m_tParticleData.fSizeDiagrams.size()) {
-                            _float3 val = m_tParticleData.fSizeDiagrams.back();
-                            val.y = 0;
-                            m_tParticleData.fSizeDiagrams.push_back(val);
-                        }
-                        else {
-                            _float3 val = { 0,0,0 };
-                            m_tParticleData.fSizeDiagrams.push_back(val);
-                        }
-                        m_iSelectSize = m_tParticleData.fSizeDiagrams.size() - 1;
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("DeleteTime", btn)) {
-                        _uint iCount = 0;
-                        for (auto i = m_tParticleData.fSizeDiagrams.begin(); i != m_tParticleData.fSizeDiagrams.end();) {
-                            if (iCount == m_iSelectSize) {
-                                m_tParticleData.fSizeDiagrams.erase(i);
-                                break;
-                            }
-                            ++i;
-                            ++iCount;
-                        }
-                        m_iSelectSize = max(m_iSelectSize - 1, 0);
-                    }
-
-                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
-                        if (0 < m_iSelectSize)
-                            ImGui::DragFloat("Size Time", &m_tParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tParticleData.fSizeDiagrams.size() - 1 ? m_tParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
-                        ImGui::DragFloat("Size fx", &m_tParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
-                        ImGui::DragFloat("Size", &m_tParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
-                    }
-                    ImGui::TreePop();
-                }
-
-                if (ImGui::TreeNode("Gravity Diagram")) {
-                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
-                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
-
-                    ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
-                    ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
-                    ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
-                    ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
-                    ImGui::TreePop();
-                }
-
-                if (Desc.iNumInstance != m_tParticleData.iNumInstance ||
-                    Desc.vCenter.x != m_tParticleData.fCenter.x ||
-                    Desc.vCenter.y != m_tParticleData.fCenter.y ||
-                    Desc.vCenter.z != m_tParticleData.fCenter.z ||
-                    Desc.vPivot.x != m_tParticleData.fPivot.x ||
-                    Desc.vPivot.y != m_tParticleData.fPivot.y ||
-                    Desc.vPivot.z != m_tParticleData.fPivot.z ||
-                    Desc.vRange.x != m_tParticleData.fRange.x ||
-                    Desc.vRange.y != m_tParticleData.fRange.y ||
-                    Desc.vRange.z != m_tParticleData.fRange.z ||
-                    Desc.vSize.x != m_tParticleData.fSize.x ||
-                    Desc.vSize.y != m_tParticleData.fSize.y ||
-                    Desc.vLifeTime.x != m_tParticleData.fLifeTime.x ||
-                    Desc.vLifeTime.y != m_tParticleData.fLifeTime.y ||
-                    Desc.vSpeed.x != m_tParticleData.fSpeed.x ||
-                    Desc.vSpeed.y != m_tParticleData.fSpeed.y ||
-                    Desc.isLoop != m_tParticleData.bisLoop ||
-                    fGravity.x != m_tParticleData.fGravityDiagram.x ||
-                    fGravity.y != m_tParticleData.fGravityDiagram.y ||
-                    fGravity.z != m_tParticleData.fGravityDiagram.z ||
-                    fGravity.w != m_tParticleData.fGravityDiagram.w ||
-                    fDelayTime != m_tParticleData.fDelayTime ||
-                    fSizeDiagrams.size() != m_tParticleData.fSizeDiagrams.size()) {
-                    Desc.iNumInstance = m_tParticleData.iNumInstance;
-                    Desc.vCenter = m_tParticleData.fCenter;
-                    Desc.vPivot = m_tParticleData.fPivot;
-                    Desc.vRange = m_tParticleData.fRange;
-                    Desc.vSize = m_tParticleData.fSize;
-                    Desc.vLifeTime = m_tParticleData.fLifeTime;
-                    Desc.vSpeed = m_tParticleData.fSpeed;
-                    Desc.isLoop = m_tParticleData.bisLoop;
-                    m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
-                }
-                else if (fSizeDiagrams.size() == m_tParticleData.fSizeDiagrams.size()) {
-                    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
-                        if (fSizeDiagrams[i].x != m_tParticleData.fSizeDiagrams[i].x ||
-                            fSizeDiagrams[i].y != m_tParticleData.fSizeDiagrams[i].y ||
-                            fSizeDiagrams[i].z != m_tParticleData.fSizeDiagrams[i].z) {
-                            m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
-                        }
-                    }
-                }
-            }
-            break;
-            case 1:
-            {
-
-                if (ImGui::TreeNode("Color")) {
-                    ImGui::ColorPicker4("Color", (_float*)&m_tParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-                    ImGui::TreePop();
-                }
-
-                if (ImGui::TreeNode("Shader")) {
-                    ImGui::TreePop();
-                }
-                string szRender;
-                switch (m_tParticleData.iSelectRender) {
-                case 0:
-                    szRender = "NONBLEND";
-                    break;
-                case 1:
-                    szRender = "NONLIGHT";
-                    break;
-                case 2:
-                    szRender = "BLUR";
-                    break;
-                case 3:
-                    szRender = "EFFECT BLEND";
-                    break;
-                case 4:
-                    szRender = "CLEAN GLOW";
-                    break;
-                case 5:
-                    szRender = "GLOW";
-                    break;
-                case 6:
-                    szRender = "DISTORTION";
-                    break;
-                case 7:
-                    szRender = "BLEND";
-                    break;
-                }
-                if (ImGui::BeginCombo("RenderType", szRender.c_str()))
-                {
-                    for (_uint i = 0; i <= 7; ++i) {
-                        _bool sel = i == m_tParticleData.iSelectRender;
-                        switch (i) {
-                        case 0:
-                            szRender = "NONBLEND";
-                            break;
-                        case 1:
-                            szRender = "NONLIGHT";
-                            break;
-                        case 2:
-                            szRender = "BLUR";
-                            break;
-                        case 3:
-                            szRender = "EFFECT BLEND";
-                            break;
-                        case 4:
-                            szRender = "CLEAN GLOW";
-                            break;
-                        case 5:
-                            szRender = "GLOW";
-                            break;
-                        case 6:
-                            szRender = "DISTORTION";
-                            break;
-                        case 7:
-                            szRender = "BLEND";
-                            break;
-                        }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tParticleData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    ImGui::EndCombo();
-                }
-                char szName[30] = {};
-                strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
-                if (ImGui::InputText("File", szName, sizeof(szName))) {
-                    m_szCS = szName;
-                }
-                if (ImGui::Button("Refresh Shader", btn)) {
-                    m_tParticleData.szCS = m_szCS;
-                    m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
-                }
-                ImGui::InputInt("Shader Begine", &m_tParticleData.iBegin);
-                if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
-                {
-                    for (_uint i = 0; i < 3; ++i) {
-                        _bool sel = i == m_iImageType;
-                        if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
-                            m_iImageType = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    ImGui::EndCombo();
-                }
-                ImGui::Checkbox("Billboard", &m_tParticleData.bisBillboard);
-                ImGui::Checkbox("Spectrum", &m_tParticleData.bisSpectrum);
-                if(!m_tParticleData.bisCircle)
-                    ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
-                if (!m_tParticleData.bisSphere)
-                ImGui::Checkbox("Circle Pointer", &m_tParticleData.bisCircle);
-                if (m_tParticleData.bisSphere) {
-                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
-                }
-                if (m_tParticleData.bisCircle) {
-                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
-                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
-                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tParticleData.fCircle), 0.1f, 0.f, 100.f);
-                }
-                if (ImGui::TreeNode("TurnPower"))
-                {
-                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tParticleData.fTurnPower), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("MaskUV"))
-                {
-                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tParticleData.fMaskUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("DiffuseUV"))
-                {
-                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("DissolveUV"))
-                {
-                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-
-                ImGui::Separator();
-
-                ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-                if (0 < m_SRVs[m_iImageType].size()) {
-                    _uint i = 0;
-                    for (auto SRV : m_SRVs[m_iImageType]) {
-                        if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                            m_pParticles[m_iSelectParticle]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
-
-
-                            switch (m_iImageType) {
-                            case 0:
-                                m_tParticleData.szMaskTexture = m_ImageFiles[m_iImageType][i];
-                                break;
-                            case 1:
-                                m_tParticleData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
-                                break;
-                            case 2:
-                                m_tParticleData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
-                                break;
-                            }
-
-                        }
-                        if (1 == ++i % 2)
-                            ImGui::SameLine();
-                    }
-                }
-                ImGui::EndChild();
-            }
-            break;
-            }
-            ImGui::EndChild();
-
-
-        }
-        break;
-    case 1:
-        if (ImGui::Button("Add SpriteParticle", btn)) {
-            Add_SpriteParticle();
-        }
-        if (0 < m_pSpriteParticles.size())
-        {
-            ImGui::SameLine();
-            if (ImGui::Button("Delete SpriteParticle", btn)) {
-                Delete_SpriteParticle();
-                if (0 >= m_pSpriteParticles.size()) {
-                    ImGui::End();
-                    return;
-                }
-            }
-            if (ImGui::Button("Effect", btn)) {
-                m_iLevel = 0;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Shader", btn)) {
-                m_iLevel = 1;
-            }
-            char str[3];
-            snprintf(str, sizeof(str), "%d", m_iSelectSpriteParticle);
-            if (ImGui::BeginCombo("SpriteParticles", str))
-            {
-                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
-                    _bool sel = i == m_iSelectSpriteParticle;
-                    snprintf(str, sizeof(str), "%d", i);
-                    if (ImGui::Selectable(str, sel)) {
-                        m_iSelectSpriteParticle = i;
-                        m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
-                    }
-                    if (sel)
-                        ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            if (ImGui::Button("All Replay", btn)) {
-                m_bisReplay = true;
-                m_fTime = 0.f;
-                for (_uint i = 0; i < m_pParticles.size(); ++i) {
-                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
-                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
-                }
-                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
-                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
-                }
-                ImGui::End();
-                return;
-            }
-
-            ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
-                m_bisReplay = true;
-                m_fTime = 0.f;
-                m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
-                ImGui::End();
-                return;
-            }
-            if (ImGui::Button("Stop", btn)) {
-                m_pSpriteParticles[m_iSelectParticle]->Stop();
-            }
-            if (ImGui::Button("Play", btn)) {
-                m_pSpriteParticles[m_iSelectParticle]->Play();
-            }
-
-            m_pSpriteParticles[m_iSelectSpriteParticle]->Update(m_tSpriteParticleData);
-
-
-            ImGui::BeginChild("Menu", ImVec2(300, 500), true);
-            switch (m_iLevel)
-            {
-            case 0:
-            {
-                m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
-                CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
-                Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
-                Desc.vCenter = m_tSpriteParticleData.fCenter;
-                Desc.vPivot = m_tSpriteParticleData.fPivot;
-                Desc.vRange = m_tSpriteParticleData.fRange;
-                Desc.vSize = m_tSpriteParticleData.fSize;
-                Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
-                Desc.vSpeed = m_tSpriteParticleData.fSpeed;
-                Desc.isLoop = m_tSpriteParticleData.bisLoop;
-                _float4 fGravity = m_tSpriteParticleData.fGravityDiagram;
-                vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
-                _float fDelayTime = m_tSpriteParticleData.fDelayTime;
-                _float fEndTime = m_tSpriteParticleData.fEndTime;
-
-                _float time = 1.f / 100;
-                _float fMax = 5;
-                float values[100] = {};
-
-                if (ImGui::TreeNode("SpriteParticle"))
-                {
-                    if (ImGui::TreeNode("SpriteParticle Transform"))
-                    {
-                        ImGui::DragFloat3("SpriteParticle Position", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPosition), 0.1f, -1000.f, 1000.f);
-                        ImGui::DragFloat3("SpriteParticle Rotation", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRotation), 1.f, 0.f, 360.f);
-                        ImGui::TreePop();
-                    }
-                    if (ImGui::TreeNode("SpriteParticle Data"))
-                    {
-                        ImGui::DragInt("NumInstance", &m_tSpriteParticleData.iNumInstance, 1, 1, 0);
-                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCenter), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPivot), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRange), 0.1f, -100.f, 100.f);
-                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSize), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tSpriteParticleData.fLifeTime), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSpeed), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDelayTime), 0.1f, 0.f, 100.f);
-                        ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fEndTime), 0.1f, 0.f, 100.f);
-                        ImGui::Checkbox("Loop", &m_tSpriteParticleData.bisLoop);
-
-
-                        ImGui::TreePop();
-                    }
-
-                    ImGui::TreePop();
-                }
-
-                ImGui::SetNextItemWidth(180);
-
-                for (_uint i = 0; i < 100; ++i) {
-                    _float t = time * i;
-                    if (fabsf(m_tSpriteParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tSpriteParticleData.fGravityDiagram.w) >= 90.f) {
-                        values[i] = m_tSpriteParticleData.fGravityDiagram.x;
-                    }
-                    else {
-
-                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tSpriteParticleData.fGravityDiagram.x
-                            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.y)) * 100
-                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tSpriteParticleData.fGravityDiagram.z
-                            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.w)) * 100;
-                    }
-                    fMax = max(fMax, fabsf(values[i]));
-                }
-
-
-                if (ImGui::TreeNode("Size Diagram")) {
-                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tSpriteParticleData.fSizeDiagrams.size() - 1);
-                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
-                        _float time = 1.f / 100;
-                        _float fMax = 5;
-                        for (_uint i = 0; i < 100; ++i) {
-                            _float3* in = {};
-                            _float3* out = {};
-                            for (_uint j = 0; j < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++j) {
-                                if (m_tSpriteParticleData.fSizeDiagrams[j].x <= time * i) {
-                                    in = &m_tSpriteParticleData.fSizeDiagrams[j];
-                                }
-                                if (m_tSpriteParticleData.fSizeDiagrams[j].x > time * i) {
-                                    out = &m_tSpriteParticleData.fSizeDiagrams[j];
-                                    break;
-                                }
-                            }
-                            if (nullptr == out)
-                                values[i] = in->y;
-                            else {
-                                _float t = (time * i - in->x) / (out->x - in->x);
-                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
-                                    values[i] = in->y;
-                                }
-                                else {
-                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
-                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
-                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
-                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
-                                }
-                            }
-                            fMax = max(fMax, fabsf(values[i]));
-                        }
-                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
-                            "Size data", -fMax, fMax, ImVec2(0, 100));
-
-
-                        char str[10];
-                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x);
-
-                        if (ImGui::BeginCombo("TimeValue", str))
-                        {
-                            for (_uint i = 0; i < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++i) {
-                                _bool sel = i == m_iSelectSize;
-                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tSpriteParticleData.fSizeDiagrams[i].x);
-                                if (ImGui::Selectable(str, sel))
-                                    m_iSelectSize = i;
-                                if (sel)
-                                    ImGui::SetItemDefaultFocus();
-                            }
-                            ImGui::EndCombo();
-                        }
-                    }
-                    if (ImGui::Button("AddTime", btn)) {
-                        if (0 < m_tSpriteParticleData.fSizeDiagrams.size()) {
-                            _float3 val = m_tSpriteParticleData.fSizeDiagrams.back();
-                            val.y = 0;
-                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
-                        }
-                        else {
-                            _float3 val = { 0,0,0 };
-                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
-                        }
-                        m_iSelectSize = m_tSpriteParticleData.fSizeDiagrams.size() - 1;
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("DeleteTime", btn)) {
-                        _uint iCount = 0;
-                        for (auto i = m_tSpriteParticleData.fSizeDiagrams.begin(); i != m_tSpriteParticleData.fSizeDiagrams.end();) {
-                            if (iCount == m_iSelectSize) {
-                                m_tSpriteParticleData.fSizeDiagrams.erase(i);
-                                break;
-                            }
-                            ++i;
-                            ++iCount;
-                        }
-                        m_iSelectSize = max(m_iSelectSize - 1, 0);
-                    }
-
-                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
-                        if (0 < m_iSelectSize)
-                            ImGui::DragFloat("Size Time", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tSpriteParticleData.fSizeDiagrams.size() - 1 ? m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
-                        ImGui::DragFloat("Size fx", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
-                        ImGui::DragFloat("Size", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
-                    }
-                    ImGui::TreePop();
-                }
-
-                if (ImGui::TreeNode("Gravity Diagram")) {
-                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
-                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
-
-                    ImGui::DragFloat("Start Gravity", &m_tSpriteParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
-                    ImGui::DragFloat("Start Gravity fx", &m_tSpriteParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
-                    ImGui::DragFloat("End Gravity", &m_tSpriteParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
-                    ImGui::DragFloat("End Gravity fx", &m_tSpriteParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
-                    ImGui::TreePop();
-                }
-
-                if (Desc.iNumInstance != m_tSpriteParticleData.iNumInstance ||
-                    Desc.vCenter.x != m_tSpriteParticleData.fCenter.x ||
-                    Desc.vCenter.y != m_tSpriteParticleData.fCenter.y ||
-                    Desc.vCenter.z != m_tSpriteParticleData.fCenter.z ||
-                    Desc.vPivot.x != m_tSpriteParticleData.fPivot.x ||
-                    Desc.vPivot.y != m_tSpriteParticleData.fPivot.y ||
-                    Desc.vPivot.z != m_tSpriteParticleData.fPivot.z ||
-                    Desc.vRange.x != m_tSpriteParticleData.fRange.x ||
-                    Desc.vRange.y != m_tSpriteParticleData.fRange.y ||
-                    Desc.vRange.z != m_tSpriteParticleData.fRange.z ||
-                    Desc.vSize.x != m_tSpriteParticleData.fSize.x ||
-                    Desc.vSize.y != m_tSpriteParticleData.fSize.y ||
-                    Desc.vLifeTime.x != m_tSpriteParticleData.fLifeTime.x ||
-                    Desc.vLifeTime.y != m_tSpriteParticleData.fLifeTime.y ||
-                    Desc.vSpeed.x != m_tSpriteParticleData.fSpeed.x ||
-                    Desc.vSpeed.y != m_tSpriteParticleData.fSpeed.y ||
-                    Desc.isLoop != m_tSpriteParticleData.bisLoop ||
-                    fGravity.x != m_tSpriteParticleData.fGravityDiagram.x ||
-                    fGravity.y != m_tSpriteParticleData.fGravityDiagram.y ||
-                    fGravity.z != m_tSpriteParticleData.fGravityDiagram.z ||
-                    fGravity.w != m_tSpriteParticleData.fGravityDiagram.w ||
-                    fDelayTime != m_tSpriteParticleData.fDelayTime ||
-                    fSizeDiagrams.size() != m_tSpriteParticleData.fSizeDiagrams.size()) {
-                    Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
-                    Desc.vCenter = m_tSpriteParticleData.fCenter;
-                    Desc.vPivot = m_tSpriteParticleData.fPivot;
-                    Desc.vRange = m_tSpriteParticleData.fRange;
-                    Desc.vSize = m_tSpriteParticleData.fSize;
-                    Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
-                    Desc.vSpeed = m_tSpriteParticleData.fSpeed;
-                    Desc.isLoop = m_tSpriteParticleData.bisLoop;
-                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
-                }
-                else if (fSizeDiagrams.size() == m_tSpriteParticleData.fSizeDiagrams.size()) {
-                    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
-                        if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
-                            fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
-                            fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
-                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
-                        }
-                    }
-                }
-            }
-            break;
-            case 1:
-            {
-
-                if (ImGui::TreeNode("Color")) {
-                    ImGui::ColorPicker4("Color", (_float*)&m_tSpriteParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-                    ImGui::TreePop();
-                }
-
-                if (ImGui::TreeNode("Shader")) {
-                    ImGui::TreePop();
-                }
-                string szRender;
-                switch (m_tSpriteParticleData.iSelectRender) {
-                case 0:
-                    szRender = "NONBLEND";
-                    break;
-                case 1:
-                    szRender = "NONLIGHT";
-                    break;
-                case 2:
-                    szRender = "BLUR";
-                    break;
-                case 3:
-                    szRender = "EFFECT BLEND";
-                    break;
-                case 4:
-                    szRender = "CLEAN GLOW";
-                    break;
-                case 5:
-                    szRender = "GLOW";
-                    break;
-                case 6:
-                    szRender = "DISTORTION";
-                    break;
-                case 7:
-                    szRender = "BLEND";
-                    break;
-                }
-                if (ImGui::BeginCombo("RenderType", szRender.c_str()))
-                {
-                    for (_uint i = 0; i <= 7; ++i) {
-                        _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.iSelectRender);
-                        switch (i)
-                        {
-                        case 0:
-                            szRender = "NONBLEND";
-                            break;
-                        case 1:
-                            szRender = "NONLIGHT";
-                            break;
-                        case 2:
-                            szRender = "BLUR";
-                            break;
-                        case 3:
-                            szRender = "EFFECT BLEND";
-                            break;
-                        case 4:
-                            szRender = "CLEAN GLOW";
-                            break;
-                        case 5:
-                            szRender = "GLOW";
-                            break;
-                        case 6:
-                            szRender = "DISTORTION";
-                            break;
-                        case 7:
-                            szRender = "BLEND";
-                            break;
-                        }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tSpriteParticleData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    ImGui::EndCombo();
-                }
-                char szName[30] = {};
-                strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
-                if (ImGui::InputText("File", szName, sizeof(szName))) {
-                    m_szCS = szName;
-                }
-                if (ImGui::Button("Refresh Shader", btn)) {
-                    m_tSpriteParticleData.szCS = m_szCS;
-                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
-                }
-                ImGui::InputInt("Shader Begine", &m_tSpriteParticleData.iBegin);
-                if (ImGui::BeginCombo("ImageType", m_iSpriteImageType == 0 ? "Mask" : m_iSpriteImageType == 1 ? "Diffuse" : "Normal"))
-                {
-                    if (ImGui::Selectable("Mask", 0 == m_iSpriteImageType))
-                        m_iSpriteImageType = 0;
-                    if (0 == m_iSpriteImageType)
-                        ImGui::SetItemDefaultFocus();
-                    if (ImGui::Selectable("Diffuse", 1 == m_iSpriteImageType))
-                        m_iSpriteImageType = 1;
-                    if (1 == m_iSpriteImageType)
-                        ImGui::SetItemDefaultFocus();
-                    if (ImGui::Selectable("Normal", 3 == m_iSpriteImageType))
-                        m_iSpriteImageType = 3;
-                    if (3 == m_iSpriteImageType)
-                        ImGui::SetItemDefaultFocus();
-                    ImGui::EndCombo();
-                }
-                ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fParticleSize), 0.1f, 0.f, 100.f);
-                ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
-                ImGui::Checkbox("Spectrum", &m_tSpriteParticleData.bisSpectrum);
-                if(!m_tSpriteParticleData.bisCircle)
-                    ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
-                if (!m_tSpriteParticleData.bisSphere)
-                ImGui::Checkbox("Circle Pointer", &m_tSpriteParticleData.bisCircle);
-                if (m_tSpriteParticleData.bisSphere) {
-                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
-                }
-                if (m_tSpriteParticleData.bisCircle) {
-                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
-                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
-                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircle), 0.1f, 0.f, 100.f);
-                }
-                if (ImGui::TreeNode("TurnPower"))
-                {
-                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tSpriteParticleData.fTurnPower), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("MaskUV"))
-                {
-                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("DiffuseUV"))
-                {
-                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-                if (ImGui::TreeNode("DissolveUV"))
-                {
-                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUV), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
-                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSize), 0.1f, -100.f, 100.f);
-                    ImGui::TreePop();
-                }
-
-                ImGui::DragFloat("Sprite Angle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fAngle), 0.1f, 0.f, 360.f);
-                ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteParticleData.iUV));
-
-                ImGui::Separator();
-
-                ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-                if (0 < m_SRVs[m_iSpriteImageType].size()) {
-                    _uint i = 0;
-                    for (auto SRV : m_SRVs[m_iSpriteImageType]) {
-                        if (ImGui::ImageButton(m_ImageFiles[m_iSpriteImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
-                            switch (m_iSpriteImageType) {
-                            case 0:
-                                m_tSpriteParticleData.szMaskTexture = m_ImageFiles[m_iSpriteImageType][i];
-                                break;
-                            case 1:
-                                m_tSpriteParticleData.szDiffuseTexture = m_ImageFiles[m_iSpriteImageType][i];
-                                break;
-                            case 3:
-                                m_tSpriteParticleData.szNormalTexture = m_ImageFiles[m_iSpriteImageType][i];
-                                break;
-                            }
-                        }
-                        if (1 == ++i % 2)
-                            ImGui::SameLine();
-                    }
-                }
-                ImGui::EndChild();
-            }
-            break;
-            }
-            ImGui::EndChild();
-        }
-        break;
-    case 2:
 
         if (ImGui::Button("Add MeshEffect", btn)) {
             Add_MeshEffect();
@@ -2285,7 +1283,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
             ImGui::ColorPicker4("MyColor", (_float*)&m_tMeshData.fColor, ImGuiColorEditFlags_PickerHueWheel);
 
-            ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f);
+            ImGui::DragFloat3("Effect Scale", reinterpret_cast<_float*>(&m_tMeshData.fScale), 0.1f, 0.f, 100.f, "%.4f");
             ImGui::DragFloat3("Effect Position", reinterpret_cast<_float*>(&m_tMeshData.fPosition), 0.1f, -1000.f, 1000.f);
             ImGui::DragFloat3("Effect Rotation", reinterpret_cast<_float*>(&m_tMeshData.fRotation), 1.f, 0.f, 360.f);
 
@@ -2299,27 +1297,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 szRender = "NONLIGHT";
                 break;
             case 2:
-                szRender = "BLUR";
+                szRender = "BLEND";
                 break;
             case 3:
-                szRender = "EFFECT BLEND";
+                szRender = "BLUR";
                 break;
             case 4:
-                szRender = "CLEAN GLOW";
+                szRender = "GLOW";
                 break;
             case 5:
-                szRender = "GLOW";
+                szRender = "METABALL";
                 break;
             case 6:
                 szRender = "DISTORTION";
                 break;
-            case 7:
-                szRender = "BLEND";
-                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 7; ++i) {
+                for (_uint i = 0; i <= 6; ++i) {
                     _bool sel = i == m_tMeshData.iSelectRender;
                     switch (i)
                     {
@@ -2330,28 +1325,25 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         szRender = "NONLIGHT";
                         break;
                     case 2:
-                        szRender = "BLUR";
+                        szRender = "BLEND";
                         break;
                     case 3:
-                        szRender = "EFFECT BLEND";
+                        szRender = "BLUR";
                         break;
                     case 4:
-                        szRender = "CLEAN GLOW";
+                        szRender = "GLOW";
                         break;
                     case 5:
-                        szRender = "GLOW";
+                        szRender = "METABALL";
                         break;
                     case 6:
                         szRender = "DISTORTION";
                         break;
-                    case 7:
-                        szRender = "BLEND";
-                        break;
                     }
-                        if (ImGui::Selectable(szRender.c_str(), sel))
-                            m_tMeshData.iSelectRender = i;
-                        if (sel)
-                            ImGui::SetItemDefaultFocus();
+                    if (ImGui::Selectable(szRender.c_str(), sel))
+                        m_tMeshData.iSelectRender = i;
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
@@ -2511,173 +1503,873 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
         }
         break;
-
-    case 3:
-        if (ImGui::Button("Add SpriteEffect", btn)) {
-            Add_SpriteEffect();
+    case 1:
+        if (ImGui::Button("Add SpriteParticle", btn)) {
+            Add_SpriteParticle();
         }
-        if (0 < m_pSprites.size())
+        if (0 < m_pSpriteParticles.size())
         {
             ImGui::SameLine();
-            if (ImGui::Button("Delete SpriteEffect", btn)) {
-                Delete_SpriteEffect();
-                if (0 >= m_pSprites.size()) {
+            if (ImGui::Button("Delete SpriteParticle", btn)) {
+                Delete_SpriteParticle();
+                if (0 >= m_pSpriteParticles.size()) {
                     ImGui::End();
                     return;
                 }
             }
-
+            if (ImGui::Button("Effect", btn)) {
+                m_iLevel = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Shader", btn)) {
+                m_iLevel = 1;
+            }
             char str[3];
-            snprintf(str, sizeof(str), "%d", m_iSelectSprite);
-            if (ImGui::BeginCombo("Particles", str))
+            snprintf(str, sizeof(str), "%d", m_iSelectSpriteParticle);
+            if (ImGui::BeginCombo("SpriteParticles", str))
             {
-                for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                    _bool sel = i == m_iSelectSprite;
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    _bool sel = i == m_iSelectSpriteParticle;
                     snprintf(str, sizeof(str), "%d", i);
                     if (ImGui::Selectable(str, sel)) {
-                        m_iSelectSprite = i;
-                        m_tSpriteData = m_pSprites[m_iSelectSprite]->Get_Data();
+                        m_iSelectSpriteParticle = i;
+                        m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
                     }
                     if (sel)
                         ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
-            ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteData.fSize), 0.1f, 0.f, 100.f);
-            ImGui::DragFloat3("Sprite Position", reinterpret_cast<_float*>(&m_tSpriteData.fPosition), 0.1f, -1000.f, 1000.f);
-            ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
+            if (ImGui::Button("All Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
+            }
 
-            string szRender;
-            switch (m_tSpriteData.iSelectRender)
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("Stop", btn)) {
+                m_pSpriteParticles[m_iSelectParticle]->Stop();
+            }
+            if (ImGui::Button("Play", btn)) {
+                m_pSpriteParticles[m_iSelectParticle]->Play();
+            }
+
+            m_pSpriteParticles[m_iSelectSpriteParticle]->Update(m_tSpriteParticleData);
+
+
+            ImGui::BeginChild("Menu", ImVec2(300, 500), true);
+            switch (m_iLevel)
             {
             case 0:
-                szRender = "NONBLEND";
-                break;
-            case 1:
-                szRender = "NONLIGHT";
-                break;
-            case 2:
-                szRender = "BLUR";
-                break;
-            case 3:
-                szRender = "EFFECT BLEND";
-                break;
-            case 4:
-                szRender = "CLEAN GLOW";
-                break;
-            case 5:
-                szRender = "GLOW";
-                break;
-            case 6:
-                szRender = "DISTORTION";
-                break;
-            case 7:
-                szRender = "BLEND";
-                break;
-            }
-            if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 7; ++i) {
-                    _bool sel = i == ENUM_CLASS(m_tSpriteData.iSelectRender);
-                    switch (i)
+                _float4 fGravity = m_tSpriteParticleData.fGravityDiagram;
+                vector<_float3> fSizeDiagrams = m_tSpriteParticleData.fSizeDiagrams;
+                _float fDelayTime = m_tSpriteParticleData.fDelayTime;
+                _float fEndTime = m_tSpriteParticleData.fEndTime;
+
+                _float time = 1.f / 100;
+                _float fMax = 5;
+                float values[100] = {};
+
+                if (ImGui::TreeNode("SpriteParticle"))
+                {
+                    if (ImGui::TreeNode("SpriteParticle Transform"))
                     {
-                    case 0:
-                        szRender = "NONBLEND";
-                        break;
-                    case 1:
-                        szRender = "NONLIGHT";
-                        break;
-                    case 2:
-                        szRender = "BLUR";
-                        break;
-                    case 3:
-                        szRender = "EFFECT BLEND";
-                        break;
-                    case 4:
-                        szRender = "CLEAN GLOW";
-                        break;
-                    case 5:
-                        szRender = "GLOW";
-                        break;
-                    case 6:
-                        szRender = "DISTORTION";
-                        break;
-                    case 7:
-                        szRender = "BLEND";
-                        break;
+                        ImGui::DragFloat3("SpriteParticle Position", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPosition), 0.1f, -1000.f, 1000.f);
+                        ImGui::DragFloat3("SpriteParticle Rotation", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRotation), 1.f, 0.f, 360.f);
+                        ImGui::TreePop();
                     }
-                    if (ImGui::Selectable(szRender.c_str(), sel))
-                        m_tSpriteData.iSelectRender = i;
+                    if (ImGui::TreeNode("SpriteParticle Data"))
+                    {
+                        ImGui::DragInt("NumInstance", &m_tSpriteParticleData.iNumInstance, 1, 1, 0);
+                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCenter), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tSpriteParticleData.fPivot), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tSpriteParticleData.fRange), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSize), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tSpriteParticleData.fLifeTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSpeed), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDelayTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tSpriteParticleData.fEndTime), 0.1f, 0.f, 100.f);
+                        ImGui::Checkbox("Loop", &m_tSpriteParticleData.bisLoop);
+
+
+                        ImGui::TreePop();
+                    }
+
+                    ImGui::TreePop();
+                }
+
+                ImGui::SetNextItemWidth(180);
+
+                for (_uint i = 0; i < 100; ++i) {
+                    _float t = time * i;
+                    if (fabsf(m_tSpriteParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tSpriteParticleData.fGravityDiagram.w) >= 90.f) {
+                        values[i] = m_tSpriteParticleData.fGravityDiagram.x;
+                    }
+                    else {
+
+                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tSpriteParticleData.fGravityDiagram.x
+                            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.y)) * 100
+                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tSpriteParticleData.fGravityDiagram.z
+                            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tSpriteParticleData.fGravityDiagram.w)) * 100;
+                    }
+                    fMax = max(fMax, fabsf(values[i]));
+                }
+
+
+                if (ImGui::TreeNode("Size Diagram")) {
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tSpriteParticleData.fSizeDiagrams.size() - 1);
+                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                        _float time = 1.f / 100;
+                        _float fMax = 5;
+                        for (_uint i = 0; i < 100; ++i) {
+                            _float3* in = {};
+                            _float3* out = {};
+                            for (_uint j = 0; j < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++j) {
+                                if (m_tSpriteParticleData.fSizeDiagrams[j].x <= time * i) {
+                                    in = &m_tSpriteParticleData.fSizeDiagrams[j];
+                                }
+                                if (m_tSpriteParticleData.fSizeDiagrams[j].x > time * i) {
+                                    out = &m_tSpriteParticleData.fSizeDiagrams[j];
+                                    break;
+                                }
+                            }
+                            if (nullptr == out)
+                                values[i] = in->y;
+                            else {
+                                _float t = (time * i - in->x) / (out->x - in->x);
+                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                    values[i] = in->y;
+                                }
+                                else {
+                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                                }
+                            }
+                            fMax = max(fMax, fabsf(values[i]));
+                        }
+                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                            "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                        char str[10];
+                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x);
+
+                        if (ImGui::BeginCombo("TimeValue", str))
+                        {
+                            for (_uint i = 0; i < (_uint)m_tSpriteParticleData.fSizeDiagrams.size(); ++i) {
+                                _bool sel = i == m_iSelectSize;
+                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tSpriteParticleData.fSizeDiagrams[i].x);
+                                if (ImGui::Selectable(str, sel))
+                                    m_iSelectSize = i;
+                                if (sel)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                    }
+                    if (ImGui::Button("AddTime", btn)) {
+                        if (0 < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                            _float3 val = m_tSpriteParticleData.fSizeDiagrams.back();
+                            val.y = 0;
+                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        else {
+                            _float3 val = { 0,0,0 };
+                            m_tSpriteParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        m_iSelectSize = m_tSpriteParticleData.fSizeDiagrams.size() - 1;
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("DeleteTime", btn)) {
+                        _uint iCount = 0;
+                        for (auto i = m_tSpriteParticleData.fSizeDiagrams.begin(); i != m_tSpriteParticleData.fSizeDiagrams.end();) {
+                            if (iCount == m_iSelectSize) {
+                                m_tSpriteParticleData.fSizeDiagrams.erase(i);
+                                break;
+                            }
+                            ++i;
+                            ++iCount;
+                        }
+                        m_iSelectSize = max(m_iSelectSize - 1, 0);
+                    }
+
+                    if (m_iSelectSize < m_tSpriteParticleData.fSizeDiagrams.size()) {
+                        if (0 < m_iSelectSize)
+                            ImGui::DragFloat("Size Time", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tSpriteParticleData.fSizeDiagrams.size() - 1 ? m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                        ImGui::DragFloat("Size fx", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                        ImGui::DragFloat("Size", &m_tSpriteParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                    }
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Gravity Diagram")) {
+                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
+
+                    ImGui::DragFloat("Start Gravity", &m_tSpriteParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("Start Gravity fx", &m_tSpriteParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("End Gravity", &m_tSpriteParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("End Gravity fx", &m_tSpriteParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
+                    ImGui::TreePop();
+                }
+
+                //if (Desc.iNumInstance != m_tSpriteParticleData.iNumInstance ||
+                //    Desc.vCenter.x != m_tSpriteParticleData.fCenter.x ||
+                //    Desc.vCenter.y != m_tSpriteParticleData.fCenter.y ||
+                //    Desc.vCenter.z != m_tSpriteParticleData.fCenter.z ||
+                //    Desc.vPivot.x != m_tSpriteParticleData.fPivot.x ||
+                //    Desc.vPivot.y != m_tSpriteParticleData.fPivot.y ||
+                //    Desc.vPivot.z != m_tSpriteParticleData.fPivot.z ||
+                //    Desc.vRange.x != m_tSpriteParticleData.fRange.x ||
+                //    Desc.vRange.y != m_tSpriteParticleData.fRange.y ||
+                //    Desc.vRange.z != m_tSpriteParticleData.fRange.z ||
+                //    Desc.vSize.x != m_tSpriteParticleData.fSize.x ||
+                //    Desc.vSize.y != m_tSpriteParticleData.fSize.y ||
+                //    Desc.vLifeTime.x != m_tSpriteParticleData.fLifeTime.x ||
+                //    Desc.vLifeTime.y != m_tSpriteParticleData.fLifeTime.y ||
+                //    Desc.vSpeed.x != m_tSpriteParticleData.fSpeed.x ||
+                //    Desc.vSpeed.y != m_tSpriteParticleData.fSpeed.y ||
+                //    Desc.isLoop != m_tSpriteParticleData.bisLoop ||
+                //    fGravity.x != m_tSpriteParticleData.fGravityDiagram.x ||
+                //    fGravity.y != m_tSpriteParticleData.fGravityDiagram.y ||
+                //    fGravity.z != m_tSpriteParticleData.fGravityDiagram.z ||
+                //    fGravity.w != m_tSpriteParticleData.fGravityDiagram.w ||
+                //    fDelayTime != m_tSpriteParticleData.fDelayTime ||
+                //    fSizeDiagrams.size() != m_tSpriteParticleData.fSizeDiagrams.size()) {
+                //    Desc.iNumInstance = m_tSpriteParticleData.iNumInstance;
+                //    Desc.vCenter = m_tSpriteParticleData.fCenter;
+                //    Desc.vPivot = m_tSpriteParticleData.fPivot;
+                //    Desc.vRange = m_tSpriteParticleData.fRange;
+                //    Desc.vSize = m_tSpriteParticleData.fSize;
+                //    Desc.vLifeTime = m_tSpriteParticleData.fLifeTime;
+                //    Desc.vSpeed = m_tSpriteParticleData.fSpeed;
+                //    Desc.isLoop = m_tSpriteParticleData.bisLoop;
+                //    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                //}
+                //else if (fSizeDiagrams.size() == m_tSpriteParticleData.fSizeDiagrams.size()) {
+                //    for (_uint i = 0; i < fSizeDiagrams.size(); ++i) {
+                //        if (fSizeDiagrams[i].x != m_tSpriteParticleData.fSizeDiagrams[i].x ||
+                //            fSizeDiagrams[i].y != m_tSpriteParticleData.fSizeDiagrams[i].y ||
+                //            fSizeDiagrams[i].z != m_tSpriteParticleData.fSizeDiagrams[i].z) {
+                //            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                //        }
+                //    }
+                //}
+            }
+            break;
+            case 1:
+            {
+
+                if (ImGui::TreeNode("Color")) {
+                    ImGui::ColorPicker4("Color", (_float*)&m_tSpriteParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Shader")) {
+                    ImGui::TreePop();
+                }
+                string szRender;
+                switch (m_tSpriteParticleData.iSelectRender) {
+                case 0:
+                    szRender = "NONBLEND";
+                    break;
+                case 1:
+                    szRender = "NONLIGHT";
+                    break;
+                case 2:
+                    szRender = "BLEND";
+                    break;
+                case 3:
+                    szRender = "BLUR";
+                    break;
+                case 4:
+                    szRender = "GLOW";
+                    break;
+                case 5:
+                    szRender = "METABALL";
+                    break;
+                case 6:
+                    szRender = "DISTORTION";
+                    break;
+                }
+                if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+                {
+                    for (_uint i = 0; i <= 6; ++i) {
+                        _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.iSelectRender);
+                        switch (i)
+                        {
+                        case 0:
+                            szRender = "NONBLEND";
+                            break;
+                        case 1:
+                            szRender = "NONLIGHT";
+                            break;
+                        case 2:
+                            szRender = "BLEND";
+                            break;
+                        case 3:
+                            szRender = "BLUR";
+                            break;
+                        case 4:
+                            szRender = "GLOW";
+                            break;
+                        case 5:
+                            szRender = "METABALL";
+                            break;
+                        case 6:
+                            szRender = "DISTORTION";
+                            break;
+                        }
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tSpriteParticleData.iSelectRender = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+                char szName[30] = {};
+                strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
+                if (ImGui::InputText("File", szName, sizeof(szName))) {
+                    m_szCS = szName;
+                }
+                if (ImGui::Button("Refresh Shader", btn)) {
+                    m_tSpriteParticleData.szCS = m_szCS;
+                    m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_tSpriteParticleData);
+                }
+                ImGui::InputInt("Shader Begine", &m_tSpriteParticleData.iBegin);
+                if (ImGui::BeginCombo("ImageType", m_iSpriteImageType == 0 ? "Mask" : m_iSpriteImageType == 1 ? "Diffuse" : "Normal"))
+                {
+                    if (ImGui::Selectable("Mask", 0 == m_iSpriteImageType))
+                        m_iSpriteImageType = 0;
+                    if (0 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    if (ImGui::Selectable("Diffuse", 1 == m_iSpriteImageType))
+                        m_iSpriteImageType = 1;
+                    if (1 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    if (ImGui::Selectable("Normal", 3 == m_iSpriteImageType))
+                        m_iSpriteImageType = 3;
+                    if (3 == m_iSpriteImageType)
+                        ImGui::SetItemDefaultFocus();
+                    ImGui::EndCombo();
+                }
+                ImGui::DragFloat2("Sprite Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fParticleSize), 0.1f, 0.f, 100.f);
+                ImGui::Checkbox("Billboard", &m_tSpriteParticleData.bisBillboard);
+                ImGui::Checkbox("AngleBillboard", &m_tSpriteParticleData.bisAngleBillboard);
+                ImGui::Checkbox("CoreStart", &m_tSpriteParticleData.bisStart);
+                ImGui::Checkbox("Spectrum", &m_tSpriteParticleData.bisSpectrum);
+                ImGui::Checkbox("Animation", &m_tSpriteParticleData.bisAnimation);
+                if (!m_tSpriteParticleData.bisCircle)
+                    ImGui::Checkbox("Sphere Pointer", &m_tSpriteParticleData.bisSphere);
+                if (!m_tSpriteParticleData.bisSphere)
+                    ImGui::Checkbox("Circle Pointer", &m_tSpriteParticleData.bisCircle);
+                if (m_tSpriteParticleData.bisSphere) {
+                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (m_tSpriteParticleData.bisCircle) {
+                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tSpriteParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fCircle), 0.1f, 0.f, 100.f);
+                }
+                if (ImGui::TreeNode("TurnPower"))
+                {
+                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tSpriteParticleData.fTurnPower), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("MaskUV"))
+                {
+                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fMaskUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DiffuseUV"))
+                {
+                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DissolveUV"))
+                {
+                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tSpriteParticleData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+
+                ImGui::DragFloat("Sprite Angle", reinterpret_cast<_float*>(&m_tSpriteParticleData.fAngle), 0.1f, 0.f, 360.f);
+                ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteParticleData.iUV));
+
+                ImGui::Separator();
+
+                ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+                if (0 < m_SRVs[m_iSpriteImageType].size()) {
+                    _uint i = 0;
+                    for (auto SRV : m_SRVs[m_iSpriteImageType]) {
+                        if (ImGui::ImageButton(m_ImageFiles[m_iSpriteImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                            m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
+                            switch (m_iSpriteImageType) {
+                            case 0:
+                                m_tSpriteParticleData.szMaskTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            case 1:
+                                m_tSpriteParticleData.szDiffuseTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            case 3:
+                                m_tSpriteParticleData.szNormalTexture = m_ImageFiles[m_iSpriteImageType][i];
+                                break;
+                            }
+                        }
+                        if (1 == ++i % 2)
+                            ImGui::SameLine();
+                    }
+                }
+                ImGui::EndChild();
+            }
+            break;
+            }
+            ImGui::EndChild();
+        }
+        break;
+    case 2:
+        if (ImGui::Button("Add Mesh Particle", btn)) {
+            Add_Particle();
+        }
+        if (0 < m_pParticles.size())
+        {
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Mesh Particle", btn)) {
+                Delete_Particle();
+                if (0 >= m_pParticles.size()) {
+                    ImGui::End();
+                    return;
+                }
+            }
+            if (ImGui::Button("Effect", btn)) {
+                m_iLevel = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Shader", btn)) {
+                m_iLevel = 1;
+            }
+            char str[3];
+            snprintf(str, sizeof(str), "%d", m_iSelectParticle);
+            if (ImGui::BeginCombo("Mesh Particles", str))
+            {
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    _bool sel = i == m_iSelectParticle;
+                    snprintf(str, sizeof(str), "%d", i);
+                    if (ImGui::Selectable(str, sel)) {
+                        m_iSelectParticle = i;
+                        m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+                    }
                     if (sel)
                         ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
             }
-            if (ImGui::Button("Refresh Shader", btn)) {
-                m_pSprites[m_iSelectSprite]->Set_Components(m_tSpriteData);
+            if (ImGui::Button("All Replay", btn)) {
+                m_fTime = 0.f;
+                m_bisReplay = true;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Components(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Components(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
             }
-            ImGui::InputInt("Shader Begine", &m_tSpriteData.iBegin);
-            if (ImGui::BeginCombo("ImageType", m_iSpriteImageType == 0 ? "Mask" : m_iSpriteImageType == 1 ? "Diffuse" : "Normal"))
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                m_pParticles[m_iSelectParticle]->Set_Components(m_pParticles[m_iSelectParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("Stop", btn)) {
+                m_pParticles[m_iSelectParticle]->Stop();
+            }
+            if (ImGui::Button("Play", btn)) {
+                m_pParticles[m_iSelectParticle]->Play();
+            }
+
+            m_pParticles[m_iSelectParticle]->Update(m_tParticleData);
+
+            if (ImGui::BeginCombo("Models", m_ModelFilePaths[m_iSelectModel].c_str()))
             {
-                if (ImGui::Selectable("Mask", 0 == m_iSpriteImageType))
-                    m_iSpriteImageType = 0;
-                if (0 == m_iSpriteImageType)
-                    ImGui::SetItemDefaultFocus();
-                if (ImGui::Selectable("Diffuse", 1 == m_iSpriteImageType))
-                    m_iSpriteImageType = 1;
-                if (1 == m_iSpriteImageType)
-                    ImGui::SetItemDefaultFocus();
-                if (ImGui::Selectable("Normal", 3 == m_iSpriteImageType))
-                    m_iSpriteImageType = 3;
-                if (3 == m_iSpriteImageType)
-                    ImGui::SetItemDefaultFocus();
+                for (_uint i = 0; i < m_ModelFilePaths.size(); ++i) {
+                    _bool sel = i == m_iSelectModel;
+                    if (ImGui::Selectable(m_ModelFilePaths[i].c_str(), sel)) {
+                        m_iSelectModel = i;
+                        _tchar szPath[256] = { 0, };
+                        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_ModelFilePaths[m_iSelectModel].c_str(), strlen(m_ModelFilePaths[m_iSelectModel].c_str()), szPath, 256);
+
+                        char szModelPath[MAX_PATH] = {};
+                        strncpy_s(szModelPath, sizeof(szModelPath), m_ModelFilePaths[m_iSelectModel].c_str(), _TRUNCATE);
+                        m_tParticleData.szModel = szModelPath;
+                    }
+                    if (sel)
+                        ImGui::SetItemDefaultFocus();
+                }
                 ImGui::EndCombo();
             }
 
-            if (ImGui::TreeNode("Sprite Color"))
+            ImGui::BeginChild("Menu", ImVec2(300, 500), true);
+            switch (m_iLevel)
             {
-                ImGui::ColorPicker4("MyColor", (_float*)&m_tSpriteData.fColor, ImGuiColorEditFlags_PickerHueWheel);
-                ImGui::TreePop();
-            }
-
-            if (ImGui::TreeNode("MaskUV"))
+            case 0:
             {
-                ImGui::DragFloat("Sprite FPS", reinterpret_cast<_float*>(&m_tSpriteData.fFPS), 0.01f, 0.f, 100.f);
-                ImGui::InputInt2("Sprite UV", reinterpret_cast<_int*>(&m_tSpriteData.iUV));
-                ImGui::DragFloat("Sprite Angle", reinterpret_cast<_float*>(&m_tSpriteData.fAngle), 0.1f, 0.f, 360.f);
-                ImGui::TreePop();
-            }
+                _float4 fGravity = m_tParticleData.fGravityDiagram;
+                vector<_float3> fSizeDiagrams = m_tParticleData.fSizeDiagrams;
+                _float fDelayTime = m_tParticleData.fDelayTime;
+                _float fEndTime = m_tParticleData.fEndTime;
 
-            ImGui::Separator();
+                _float time = 1.f / 100;
+                _float fMax = 5;
+                float values[100] = {};
 
-            ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
-            if (0 < m_SRVs[m_iSpriteImageType].size()) {
-                _uint i = 0;
-                for (auto SRV : m_SRVs[m_iSpriteImageType]) {
-                    if (ImGui::ImageButton(m_ImageFiles[m_iSpriteImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
-                        m_pSprites[m_iSelectSprite]->Set_Texture(0 == m_iSpriteImageType ? 0 : 1 == m_iSpriteImageType ? 1 : 2, m_ImageFiles[m_iSpriteImageType][i].c_str());
-                        switch (m_iSpriteImageType) {
-                        case 0:
-                            m_tSpriteData.szMaskTexture = m_ImageFiles[m_iSpriteImageType][i];
-                            break;
-                        case 1:
-                            m_tSpriteData.szDiffuseTexture = m_ImageFiles[m_iSpriteImageType][i];
-                            break;
-                        case 3:
-                            m_tSpriteData.szNormalTexture = m_ImageFiles[m_iSpriteImageType][i];
-                            break;
+                if (ImGui::TreeNode("Particle"))
+                {
+                    if (ImGui::TreeNode("Particle Transform"))
+                    {
+                        ImGui::DragFloat3("Particle Position", reinterpret_cast<_float*>(&m_tParticleData.fPosition), 0.1f, -1000.f, 1000.f);
+                        ImGui::DragFloat3("Particle Rotation", reinterpret_cast<_float*>(&m_tParticleData.fRotation), 1.f, 0.f, 360.f);
+                        ImGui::TreePop();
+                    }
+                    if (ImGui::TreeNode("Particle Data"))
+                    {
+                        ImGui::DragInt("NumInstance", &m_tParticleData.iNumInstance, 1, 1, 0);
+                        ImGui::DragFloat3("Center", reinterpret_cast<_float*>(&m_tParticleData.fCenter), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Pivot", reinterpret_cast<_float*>(&m_tParticleData.fPivot), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat3("Range", reinterpret_cast<_float*>(&m_tParticleData.fRange), 0.1f, -100.f, 100.f);
+                        ImGui::DragFloat2("Size", reinterpret_cast<_float*>(&m_tParticleData.fSize), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("LifeTime", reinterpret_cast<_float*>(&m_tParticleData.fLifeTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat2("Speed", reinterpret_cast<_float*>(&m_tParticleData.fSpeed), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("Delay Time", reinterpret_cast<_float*>(&m_tParticleData.fDelayTime), 0.1f, 0.f, 100.f);
+                        ImGui::DragFloat("End Time", reinterpret_cast<_float*>(&m_tParticleData.fEndTime), 0.1f, 0.f, 100.f);
+                        ImGui::Checkbox("Loop", &m_tParticleData.bisLoop);
+
+
+                        ImGui::TreePop();
+                    }
+
+                    ImGui::TreePop();
+                }
+
+                ImGui::SetNextItemWidth(180);
+
+                for (_uint i = 0; i < 100; ++i) {
+                    _float t = time * i;
+                    if (fabsf(m_tParticleData.fGravityDiagram.y) >= 90.f || fabsf(m_tParticleData.fGravityDiagram.w) >= 90.f) {
+                        values[i] = m_tParticleData.fGravityDiagram.x;
+                    }
+                    else {
+
+                        values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * m_tParticleData.fGravityDiagram.x
+                            + (powf(t, 3) - 2 * powf(t, 2) + t) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.y)) * 100
+                            + (-2 * powf(t, 3) + 3 * powf(t, 2)) * m_tParticleData.fGravityDiagram.z
+                            + (powf(t, 3) - powf(t, 2)) * tanf(XMConvertToRadians(m_tParticleData.fGravityDiagram.w)) * 100;
+                    }
+                    fMax = max(fMax, fabsf(values[i]));
+                }
+
+
+                if (ImGui::TreeNode("Size Diagram")) {
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
+                        _float time = 1.f / 100;
+                        _float fMax = 5;
+                        for (_uint i = 0; i < 100; ++i) {
+                            _float3* in = {};
+                            _float3* out = {};
+                            for (_uint j = 0; j < (_uint)m_tParticleData.fSizeDiagrams.size(); ++j) {
+                                if (m_tParticleData.fSizeDiagrams[j].x <= time * i) {
+                                    in = &m_tParticleData.fSizeDiagrams[j];
+                                }
+                                if (m_tParticleData.fSizeDiagrams[j].x > time * i) {
+                                    out = &m_tParticleData.fSizeDiagrams[j];
+                                    break;
+                                }
+                            }
+                            if (nullptr == out)
+                                values[i] = in->y;
+                            else {
+                                _float t = (time * i - in->x) / (out->x - in->x);
+                                if (fabsf(in->z) >= 90.f || fabsf(out->z) >= 90.f) {
+                                    values[i] = in->y;
+                                }
+                                else {
+                                    values[i] = (2 * powf(t, 3) - 3 * powf(t, 2) + 1) * in->y
+                                        + (powf(t, 3) - 2 * powf(t, 2) + t) * (tanf(XMConvertToRadians(in->z)) * (out->x - in->x) * 100)
+                                        + (-2 * powf(t, 3) + 3 * powf(t, 2)) * out->y
+                                        + (powf(t, 3) - powf(t, 2)) * (tanf(XMConvertToRadians(out->z)) * (out->x - in->x) * 100);
+                                }
+                            }
+                            fMax = max(fMax, fabsf(values[i]));
+                        }
+                        ImGui::PlotLines("Size Wave", values, IM_ARRAYSIZE(values), 0,
+                            "Size data", -fMax, fMax, ImVec2(0, 100));
+
+
+                        char str[10];
+                        snprintf(str, sizeof(str), "%d. %.2f", m_iSelectSize + 1, m_tParticleData.fSizeDiagrams[m_iSelectSize].x);
+
+                        if (ImGui::BeginCombo("TimeValue", str))
+                        {
+                            for (_uint i = 0; i < (_uint)m_tParticleData.fSizeDiagrams.size(); ++i) {
+                                _bool sel = i == m_iSelectSize;
+                                snprintf(str, sizeof(str), "%d. %.2f", i + 1, m_tParticleData.fSizeDiagrams[i].x);
+                                if (ImGui::Selectable(str, sel))
+                                    m_iSelectSize = i;
+                                if (sel)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
                         }
                     }
-                    if (1 == ++i % 2)
-                        ImGui::SameLine();
+                    if (ImGui::Button("AddTime", btn)) {
+                        if (0 < m_tParticleData.fSizeDiagrams.size()) {
+                            _float3 val = m_tParticleData.fSizeDiagrams.back();
+                            val.y = 0;
+                            m_tParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        else {
+                            _float3 val = { 0,0,0 };
+                            m_tParticleData.fSizeDiagrams.push_back(val);
+                        }
+                        m_iSelectSize = m_tParticleData.fSizeDiagrams.size() - 1;
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("DeleteTime", btn)) {
+                        _uint iCount = 0;
+                        for (auto i = m_tParticleData.fSizeDiagrams.begin(); i != m_tParticleData.fSizeDiagrams.end();) {
+                            if (iCount == m_iSelectSize) {
+                                m_tParticleData.fSizeDiagrams.erase(i);
+                                break;
+                            }
+                            ++i;
+                            ++iCount;
+                        }
+                        m_iSelectSize = max(m_iSelectSize - 1, 0);
+                    }
+
+                    if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
+                        if (0 < m_iSelectSize)
+                            ImGui::DragFloat("Size Time", &m_tParticleData.fSizeDiagrams[m_iSelectSize].x, 0.01f, m_tParticleData.fSizeDiagrams[m_iSelectSize - 1].x, m_iSelectSize != m_tParticleData.fSizeDiagrams.size() - 1 ? m_tParticleData.fSizeDiagrams[m_iSelectSize + 1].x : 1);
+                        ImGui::DragFloat("Size fx", &m_tParticleData.fSizeDiagrams[m_iSelectSize].z, 1.f, -90.f, 90.f);
+                        ImGui::DragFloat("Size", &m_tParticleData.fSizeDiagrams[m_iSelectSize].y, 0.01f, -100.f, 100.f);
+                    }
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Gravity Diagram")) {
+                    ImGui::PlotLines("Gravity Wave", values, IM_ARRAYSIZE(values), 0,
+                        "Gravity Data", -fMax, fMax, ImVec2(0, 100));
+
+                    ImGui::DragFloat("Start Gravity", &m_tParticleData.fGravityDiagram.x, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("Start Gravity fx", &m_tParticleData.fGravityDiagram.y, 1.f, -90.f, 90.f);
+                    ImGui::DragFloat("End Gravity", &m_tParticleData.fGravityDiagram.z, 0.01f, -100.f, 100.f);
+                    ImGui::DragFloat("End Gravity fx", &m_tParticleData.fGravityDiagram.w, 1.f, -90.f, 90.f);
+                    ImGui::TreePop();
                 }
             }
-            m_pSprites[m_iSelectSprite]->Update(m_tSpriteData);
+            break;
+            case 1:
+            {
+
+                if (ImGui::TreeNode("Color")) {
+                    ImGui::ColorPicker4("Color", (_float*)&m_tParticleData.fColor, ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::TreePop();
+                }
+
+                if (ImGui::TreeNode("Shader")) {
+                    ImGui::TreePop();
+                }
+                ImGui::DragFloat3("Mesh Rotation", reinterpret_cast<_float*>(&m_tParticleData.fMeshRotation), 0.1f, 0.f, 360.f);
+                ImGui::Checkbox("Mesh Texture", &m_tParticleData.bisMeshTexture);
+                string szRender;
+                switch (m_tParticleData.iSelectRender) {
+                case 0:
+                    szRender = "NONBLEND";
+                    break;
+                case 1:
+                    szRender = "NONLIGHT";
+                    break;
+                case 2:
+                    szRender = "BLEND";
+                    break;
+                case 3:
+                    szRender = "BLUR";
+                    break;
+                case 4:
+                    szRender = "GLOW";
+                    break;
+                case 5:
+                    szRender = "METABALL";
+                    break;
+                case 6:
+                    szRender = "DISTORTION";
+                    break;
+                }
+                if (ImGui::BeginCombo("RenderType", szRender.c_str()))
+                {
+                    for (_uint i = 0; i <= 6; ++i) {
+                        _bool sel = i == m_tParticleData.iSelectRender;
+                        switch (i) {
+                        case 0:
+                            szRender = "NONBLEND";
+                            break;
+                        case 1:
+                            szRender = "NONLIGHT";
+                            break;
+                        case 2:
+                            szRender = "BLEND";
+                            break;
+                        case 3:
+                            szRender = "BLUR";
+                            break;
+                        case 4:
+                            szRender = "GLOW";
+                            break;
+                        case 5:
+                            szRender = "METABALL";
+                            break;
+                        case 6:
+                            szRender = "DISTORTION";
+                            break;
+                        }
+                        if (ImGui::Selectable(szRender.c_str(), sel))
+                            m_tParticleData.iSelectRender = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+                char szName[30] = {};
+                strncpy_s(szName, sizeof(szName), m_szCS.c_str(), _TRUNCATE);
+                if (ImGui::InputText("File", szName, sizeof(szName))) {
+                    m_szCS = szName;
+                }
+                if (ImGui::Button("Refresh Shader", btn)) {
+                    m_tParticleData.szCS = m_szCS;
+                    m_pParticles[m_iSelectParticle]->Set_Components(m_tParticleData);
+                }
+                ImGui::InputInt("Shader Begine", &m_tParticleData.iBegin);
+                if (ImGui::BeginCombo("ImageType", m_iImageType == 0 ? "Mask" : m_iImageType == 1 ? "Diffuse" : "Dissolve"))
+                {
+                    for (_uint i = 0; i < 3; ++i) {
+                        _bool sel = i == m_iImageType;
+                        if (ImGui::Selectable(i == 0 ? "Mask" : i == 1 ? "Diffuse" : "Dissolve", sel))
+                            m_iImageType = i;
+                        if (sel)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::Checkbox("Spectrum", &m_tParticleData.bisSpectrum);
+                if(!m_tParticleData.bisCircle)
+                    ImGui::Checkbox("Sphere Pointer", &m_tParticleData.bisSphere);
+                if (!m_tParticleData.bisSphere)
+                ImGui::Checkbox("Circle Pointer", &m_tParticleData.bisCircle);
+                if (m_tParticleData.bisSphere) {
+                    ImGui::DragFloat("SpereSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                }
+                if (m_tParticleData.bisCircle) {
+                    ImGui::DragFloat("CircleSize", reinterpret_cast<_float*>(&m_tParticleData.fSphereSize), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat("CircleSpeed", reinterpret_cast<_float*>(&m_tParticleData.fCircleSpeed), 0.1f, 0.f, 100.f);
+                    ImGui::DragFloat2("Circle", reinterpret_cast<_float*>(&m_tParticleData.fCircle), 0.1f, 0.f, 100.f);
+                }
+                if (ImGui::TreeNode("TurnPower"))
+                {
+                    ImGui::DragFloat2("TurnPower", reinterpret_cast<_float*>(&m_tParticleData.fTurnPower), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("MaskUV"))
+                {
+                    ImGui::DragFloat2("MaskUV", reinterpret_cast<_float*>(&m_tParticleData.fMaskUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("MaskUV Size", reinterpret_cast<_float*>(&m_tParticleData.fMaskUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DiffuseUV"))
+                {
+                    ImGui::DragFloat2("DiffuseUV", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DiffuseUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDiffuseUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("DissolveUV"))
+                {
+                    ImGui::DragFloat2("DissolveUV", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUV), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Speed", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSpeed), 0.1f, -100.f, 100.f);
+                    ImGui::DragFloat2("DissolveUV Size", reinterpret_cast<_float*>(&m_tParticleData.fDissolveUVSize), 0.1f, -100.f, 100.f);
+                    ImGui::TreePop();
+                }
+
+                ImGui::Separator();
+
+                ImGui::BeginChild("ImageScroll", ImVec2(300, 200), true);
+                if (0 < m_SRVs[m_iImageType].size()) {
+                    _uint i = 0;
+                    for (auto SRV : m_SRVs[m_iImageType]) {
+                        if (ImGui::ImageButton(m_ImageFiles[m_iImageType][i].c_str(), (ImTextureRef)SRV, ImVec2(100, 100))) {
+                            m_pParticles[m_iSelectParticle]->Set_Texture(m_iImageType, m_ImageFiles[m_iImageType][i].c_str());
+
+
+                            switch (m_iImageType) {
+                            case 0:
+                                m_tParticleData.szMaskTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            case 1:
+                                m_tParticleData.szDiffuseTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            case 2:
+                                m_tParticleData.szDissolveTexture = m_ImageFiles[m_iImageType][i];
+                                break;
+                            }
+
+                        }
+                        if (1 == ++i % 2)
+                            ImGui::SameLine();
+                    }
+                }
+                ImGui::EndChild();
+            }
+            break;
+            }
             ImGui::EndChild();
+
 
         }
         break;
-    case 4: {
+    case 3: {
         ImGui::SameLine();
 
         if (ImGui::Button("Add TrailData", btn)) {
@@ -2728,27 +2420,24 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 szRender = "NONLIGHT";
                 break;
             case 2:
-                szRender = "BLUR";
+                szRender = "BLEND";
                 break;
             case 3:
-                szRender = "EFFECT BLEND";
+                szRender = "BLUR";
                 break;
             case 4:
-                szRender = "CLEAN GLOW";
+                szRender = "GLOW";
                 break;
             case 5:
-                szRender = "GLOW";
+                szRender = "METABALL";
                 break;
             case 6:
                 szRender = "DISTORTION";
                 break;
-            case 7:
-                szRender = "BLEND";
-                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 7; ++i) {
+                for (_uint i = 0; i <= 6; ++i) {
 
                     _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
                     switch (i)
@@ -2760,22 +2449,19 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         szRender = "NONLIGHT";
                         break;
                     case 2:
-                        szRender = "BLUR";
+                        szRender = "BLEND";
                         break;
                     case 3:
-                        szRender = "EFFECT BLEND";
+                        szRender = "BLUR";
                         break;
                     case 4:
-                        szRender = "CLEAN GLOW";
+                        szRender = "GLOW";
                         break;
                     case 5:
-                        szRender = "GLOW";
+                        szRender = "METABALL";
                         break;
                     case 6:
                         szRender = "DISTORTION";
-                        break;
-                    case 7:
-                        szRender = "BLEND";
                         break;
                     }
                     if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2869,7 +2555,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
         m_bisReplay = false;
         return;
     }
-    if (m_iSelectMeshParticle == 4) {
+    if (m_iSelectMeshParticle == 3) {
         if (m_bisPause) {
             for (_uint i = 0; i < m_pMeshs.size(); ++i) {
                 m_pMeshs[i]->Priority_Update(fTimeDelta * m_fSpeed);
@@ -2885,11 +2571,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_pSpriteParticles[i]->Priority_Update(fTimeDelta * m_fSpeed);
                 m_pSpriteParticles[i]->Update(fTimeDelta * m_fSpeed);
                 m_pSpriteParticles[i]->Late_Update(fTimeDelta * m_fSpeed);
-            }
-            for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                m_pSprites[i]->Priority_Update(fTimeDelta * m_fSpeed);
-                m_pSprites[i]->Update(fTimeDelta * m_fSpeed);
-                m_pSprites[i]->Late_Update(fTimeDelta * m_fSpeed);
             }
             m_pTrailEffect->Priority_Update(fTimeDelta * m_fSpeed);
             m_pTrailEffect->Update(fTimeDelta * m_fSpeed);
@@ -2907,9 +2588,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
             for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
                 m_pSpriteParticles[i]->Late_Update(0);
-            }
-            for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                m_pSprites[i]->Late_Update(0);
             }
             for (_uint i = 0; i < m_pTrailDatas.size(); ++i) {
                 m_pTrailDatas[i]->Late_Update(0);
@@ -2933,11 +2611,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_pSpriteParticles[i]->Update(fTimeDelta* m_fSpeed);
                 m_pSpriteParticles[i]->Late_Update(fTimeDelta* m_fSpeed);
             }
-            for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                m_pSprites[i]->Priority_Update(fTimeDelta* m_fSpeed);
-                m_pSprites[i]->Update(fTimeDelta* m_fSpeed);
-                m_pSprites[i]->Late_Update(fTimeDelta* m_fSpeed);
-            }
         }
         else {
             for (_uint i = 0; i < m_pMeshs.size(); ++i) {
@@ -2948,9 +2621,6 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
             for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
                 m_pSpriteParticles[i]->Late_Update(0);
-            }
-            for (_uint i = 0; i < m_pSprites.size(); ++i) {
-                m_pSprites[i]->Late_Update(0);
             }
         }
     }
@@ -2973,9 +2643,6 @@ void CParticle_Setting::Free()
     for (auto pMesh : m_pMeshs)
         Safe_Release(pMesh);
     m_pMeshs.clear();
-    for (auto pSprite : m_pSprites)
-        Safe_Release(pSprite);
-    m_pSprites.clear();
     for (auto pTrailData : m_pTrailDatas)
         Safe_Release(pTrailData);
     m_pTrailDatas.clear();
@@ -2997,35 +2664,6 @@ void CParticle_Setting::WriteString(ofstream& fileBinaryStream, _char* pStr)
     fileBinaryStream.write(reinterpret_cast<const _char*>(&iStringLength), sizeof(iStringLength));
 
     fileBinaryStream.write(pStr, iStringLength);
-}
-
-void CParticle_Setting::WriteRENDER(ofstream& fileBinaryStream, RENDER vTmp)
-{
-    _int iRenderType;
-    switch (vTmp)
-    {
-    case Engine::RENDER::NONBLEND:
-        iRenderType = 0;
-        break;
-    case Engine::RENDER::NONLIGHT:
-        iRenderType = 1;
-        break;
-    case Engine::RENDER::BLUR:
-        iRenderType = 2;
-        break;
-    case Engine::RENDER::GLOW:
-        iRenderType = 3;
-        break;
-    case Engine::RENDER::DISTORTION:
-        iRenderType = 4;
-        break;
-    case Engine::RENDER::BLEND:
-        iRenderType = 5;
-        break;
-    default:
-        iRenderType = 6;
-    }
-    fileBinaryStream.write((_char*)&iRenderType, sizeof(_int));
 }
 
 void CParticle_Setting::WriteInt(ofstream& fileBinaryStream, _int vTmp)
@@ -3073,28 +2711,6 @@ _char* CParticle_Setting::ReadString(ifstream& fileBinaryStream)
 
     sz[iStringLength] = '\0';
     return sz;
-}
-
-RENDER CParticle_Setting::ReadRENDER(ifstream& fileBinaryStream)
-{
-    _int iValue;
-    fileBinaryStream.read((_char*)&iValue, sizeof(_int));
-    switch (iValue)
-    {
-    case 0:
-        return RENDER::NONBLEND;
-    case 1:
-        return RENDER::NONLIGHT;
-    case 2:
-        return RENDER::BLUR;
-    case 3:
-        return RENDER::GLOW;
-    case 4:
-        return RENDER::DISTORTION;
-    case 5:
-        return RENDER::BLEND;
-    }
-    return RENDER::UI;
 }
 
 _int CParticle_Setting::ReadInt(ifstream& fileBinaryStream)

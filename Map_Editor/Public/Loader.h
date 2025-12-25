@@ -45,6 +45,7 @@ private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_Village();
 
+	HRESULT Loading_For_Monster(void* pArg);
 
 	HRESULT Loading_For_Desert();
 	HRESULT Loading_For_Desert_Building_Ruin(void* pArg);
@@ -54,18 +55,25 @@ private:
 	HRESULT Loading_For_Desert_Canyon2(void* pArg);
 	HRESULT Loading_For_Desert_Canyon2_1(void* pArg);
 	HRESULT Loading_For_Desert_Canyon2_2(void* pArg);
+
 	HRESULT Loading_For_Desert_Deco(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Camp(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Corpse_And_Container(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Fence_And_Ruin(void* pArg);
+	HRESULT Loading_For_Desert_Bridge(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Vehicle_And_Wheel(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Building_And_Trash(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Sign_And_Crane(void* pArg);
+
 	HRESULT Loading_For_Desert_Archi(void* pArg);
 
-	HRESULT Loading_For_Desert_Instance_Canyon1(void* pArg);
-	HRESULT Loading_For_Desert_Instance_Canyon1_1(void* pArg);
-	HRESULT Loading_For_Desert_Instance_Canyon1_2(void* pArg);
-	HRESULT Loading_For_Desert_Instance_Canyon2(void* pArg);
-	HRESULT Loading_For_Desert_Instance_Canyon2_1(void* pArg);
-	HRESULT Loading_For_Desert_Instance_Canyon2_2(void* pArg);
-	
+	HRESULT Loading_For_Desert_Environment_Tree1(void* pArg);
+	HRESULT Loading_For_Desert_Environment_Tree2(void* pArg);
+	HRESULT Loading_For_Desert_Environment_Grass1(void* pArg);
 
-
+	HRESULT Loading_For_Desert_Deco_Boxes(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Duct(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Garden_And_Poster(void* pArg);
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

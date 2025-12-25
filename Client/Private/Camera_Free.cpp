@@ -44,8 +44,15 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
+	fTimeDelta = 0.016;
+
 	if (false == m_pGameInstance->IsMainCamera(this))
 		return;
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE))
+	{
+		m_bIsLock[1] = !m_bIsLock[1];
+	}
 
 	m_fMouseSensor = 0.1f;
 	if(m_pGameInstance->IsMainCamera(this))
@@ -54,24 +61,32 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 		{
 			if (false == m_bIsLock[0])
 			{
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_UPARROW))
 					m_pTransformCom->Go_Straight(fTimeDelta * m_fCameraSpeed);
 
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_DOWNARROW))
 					m_pTransformCom->Go_Backward(fTimeDelta * m_fCameraSpeed);
 
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LEFTARROW))
 					m_pTransformCom->Go_Left(fTimeDelta * m_fCameraSpeed);
 
-				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_RIGHTARROW))
 					m_pTransformCom->Go_Right(fTimeDelta * m_fCameraSpeed);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_COMMA))
+					m_pTransformCom->Go_Up(fTimeDelta * m_fCameraSpeed);
+
+				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_PERIOD))
+					m_pTransformCom->Go_Down(fTimeDelta * m_fCameraSpeed);
+
 
 				if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 				{
 					auto pInterraction = m_pGameInstance->GetNearInteraction();
 					if (pInterraction)
-						pInterraction->Action_InteractionEvent(this);
+						pInterraction->Action_InteractionEvent(fTimeDelta, this);
 				}
+
 			}
 
 			if (false == m_bIsLock[1])
@@ -110,7 +125,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 				m_pTransformCom->LookAt(vLookPos);
 			}
 		}
-		__super::Bind_Matrices();
+		__super::Bind_Matrices(fTimeDelta);
 	}
 }
 
@@ -118,6 +133,9 @@ void CCamera_Free::Update(_float fTimeDelta)
 {
 	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	//m_pColliderCom->UpdateColiision(WorldMat);
+
+	//카메라 쉐이킹을 위해서 부모 Update 호출. 
+	//__super::Update(fTimeDelta);
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)

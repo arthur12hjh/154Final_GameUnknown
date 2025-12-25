@@ -4,7 +4,8 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 
-#include "UIBossVitalWrapper.h"
+#include "UIWorldWrapper.h"
+#include "Nayitba.h"
 
 CUIMonsterHPBar::CUIMonsterHPBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -35,28 +36,26 @@ HRESULT CUIMonsterHPBar::Initialize(void* pArg)
 void CUIMonsterHPBar::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (!m_isRent)
+	{
+		m_fCurrentFill = 0.f;
+		m_fTargetFill = 1.f;
+	}
 }
 
 void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	// 테스트 용
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_U))
+	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	if (pMonster)
 	{
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_9) && m_fTargetFill > 0.f)
-			m_fTargetFill -= 0.1f;
-		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0) && m_fTargetFill < 1.f)
-			m_fTargetFill += 0.1f;
+		auto StaticDesc = pMonster->GetStaticMonsterData();
+		auto CurDesc = pMonster->GetMonsterData();
+
+		m_fTargetFill = (_float)CurDesc.iCurrentHealth / (_float)StaticDesc->iMaxHealth;
 	}
-
-	/*if (dynamic_cast<CUIWorldUIWrapper*>(m_pParent)->Get_NaytibaDesc() && m_pParent->GetVisibility() == VISIBILITY::VISIBLE)
-	{
-		CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(m_pParent);
-
-		m_fTargetFill = static_cast<_float>(pVitalWrapper->Get_NaytibaDesc()->iCurrentHealth) / static_cast<_float>(pVitalWrapper->Get_NetworkDesc()->iMaxHealth);
-
-	}*/
 		
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 }
@@ -118,6 +117,11 @@ HRESULT CUIMonsterHPBar::Bind_ShaderResources()
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 1)))
+		return E_FAIL;
+
+	_bool bUseTintColor = false;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseTintColor", &bUseTintColor, sizeof(_bool))))
 		return E_FAIL;
 
 	_float2 vUV{};

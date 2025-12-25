@@ -7,6 +7,8 @@ class CBehaviorTree;
 NS_END
 
 NS_BEGIN(Client)
+class CBossBlackBoard;
+
 class CBossController final : public CAIController
 {
 public:
@@ -33,7 +35,11 @@ public:
 	virtual	void						Damage(void* pArg) override;
 	virtual void						ActionSuccess(void* pArg) override;
 
+	_bool								bIsLastAttack();
+	_bool								bIsEntranceAttack();
+
 private:
+	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	CBehaviorTree*						m_pBehaviorTree = { nullptr };
 
 private :

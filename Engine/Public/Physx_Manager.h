@@ -29,6 +29,7 @@ public:
 	PxControllerManager* Get_PxCCTManager() { return m_pPxCCTManager; }
 	PxPhysics*	Get_PxPhysics() { return m_PxPhysics; }
 	PxScene*	Get_PxScene() { return m_PxScene; }
+	
 	/* CCT는 생성한 순간 씬에 들어가므로, 피직스에서 충돌쌍만 들고 있게 한다. (쓸지도 모름) */
 	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
@@ -41,6 +42,7 @@ public:
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
 
 private:
+	class PxDefaultContactCallback* m_pSceneEventCallback = { nullptr };
 	/* 모든 Physx 모듈을 사용하려면 필요한 인스턴스. 다렉의 Device나 현재 프레임워크의 GameInstance 같은 녀석.*/
 	PxPvdTransport* m_PxTransport = { nullptr };
 	PxFoundation* m_PxFoundation = { nullptr };
@@ -74,6 +76,8 @@ private:
 	/* 리지드 바디 객체들 보관용 */
 	vector<pair<class CGameObject*, CRigidBody*>> m_RigidBodies = {};
 	class CGameInstance* m_pGameInstance = { nullptr };
+	PxHeightField* m_pHeightField = { nullptr };
+
 public:
 	static CPhysx_Manager* Create();
 	virtual void Free() override;

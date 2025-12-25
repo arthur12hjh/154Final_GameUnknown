@@ -13,8 +13,8 @@ class CEventHandle;
 NS_END
 
 NS_BEGIN(Client)
-class CUIAnimationCom;
 class CUIHUD;
+class CGameManager;
 
 class CUIBase abstract : public CUIObject
 {
@@ -48,13 +48,6 @@ public:
 		m_iZOrder = iDepth;
 	}
 
-	/*void Set_Parent(CGameObject* pParent) {
-		m_pParent = pParent;
-	}
-	CUIBase* Get_Parent() {
-		return dynamic_cast<CUIBase*>(m_pParent);
-	}*/
-
 	void Set_DrawType(DRAW_TYPE eDrawType) {
 		m_tUIDesc.iDrawType = ENUM_CLASS(eDrawType);
 		m_eDrawType = eDrawType;
@@ -68,6 +61,7 @@ public:
 
 	void Set_Position(_float fX, _float fY);
 	void Set_Rotation(_float fRotation);
+	void Set_Texture_Scale(_float fScale);
 	void Set_Size(_float fSizeX, _float fSizeY);
 	void Set_Alpha(_float fAlpha);
 	void Set_Pass(_uint iPass);
@@ -89,10 +83,30 @@ public:
 	void Set_Anim_Playing(_bool bActive) { m_bPlayingAnim = bActive; }
 	_bool Get_Anim_Playing() { return m_bPlayingAnim; }
 
-	void Set_TargetPos(const _float3* pPos) { m_pTargetPos = pPos; }
+	void Set_TargetPos(const _float3* pPos, _bool isPtr = true) {
+		if (!isPtr)
+		{
+			m_vTargetPos = *pPos;
+			m_pTargetPos = &m_vTargetPos;
+		}
+		else
+			m_pTargetPos = pPos;
+	}
 
 	CUIBase* Clone_UI(CUIHUD* pHUD, _uint iIdx);
+	void Set_CloneIdx(_uint iIdx) { m_iCloneIdx = iIdx; }
 	void Update_Children(CUIBase* pChild);
+
+	void Set_Rent(_bool isRent) { m_isRent = isRent; }
+	_bool Get_Rent() const { return m_isRent; }
+
+	void SetAnimFinish(const _wstring& szAnimTag, _bool bFinish) {
+		m_AnimFinishStates[szAnimTag] = bFinish;
+		m_bAnimPlaying = !bFinish;
+	}
+
+	_bool IsAnimFinished(const _wstring& szAnimTag) const;
+	_bool IsAnimPlaying() const { return m_bAnimPlaying; }
 
 #ifdef _DEBUG
 	void Render_Debug_Rect();
@@ -111,14 +125,23 @@ protected:
 	vector<_wstring>						m_SubscribeEvents{}; // 내가 구독할 이벤트 목록
 
 	_bool					m_bFollowParent{ true };
-	_bool					m_bPlayingAnim{ false };
+	_bool					m_bPlayingAnim{ false }; // 일단 둔다
 
-	const _float3*					m_pTargetPos{nullptr};
+	unordered_map<_wstring, _bool> m_AnimFinishStates;
+	_bool					m_bAnimPlaying{ false };
+
+	const _float3*			m_pTargetPos{nullptr};
+	_float3					m_vTargetPos{};
+
+	_uint					m_iCloneIdx{ 0 };
+
+	_bool					m_isRent{ false };
+
+	CGameManager*			m_pGameManager{ nullptr };
 
 private:
 	HRESULT Ready_Texture();
 	HRESULT Ready_Events();
-	HRESULT Initialize_ShaderResources();
 
 	// ★ 중앙 브로드캐스트: 파생형에서 더 이상 오버라이드 필요 없음
 	virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg);
@@ -136,6 +159,8 @@ private:
 protected:
 	virtual HRESULT Ready_Components();
 	virtual HRESULT Bind_ShaderResources();
+	virtual HRESULT Initialize_ShaderResources();
+
 	//virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) PURE; // 이벤트 동작 수행
 	//virtual HRESULT Broadcast_Event(const _wstring& szEventTag, const _wstring& szActionTag, void* pArg) PURE; // 어떤 데이터를 감지할지
 	//virtual void CallbackEvent(void* pArg) PURE; // 콜백 함수

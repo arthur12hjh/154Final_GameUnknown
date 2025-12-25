@@ -4,13 +4,25 @@
 
 #include "JsonParser.h"
 #include "StringHelper.h"
+#include "InteractionUIBinder.h"
 
 #include "UIBase.h"
 #include "UIAnimManager.h"
 #include "GameInstance.h"
 #include "Camera.h"
+#include "GameManager.h"
 
 #include "UIBossVitalWrapper.h"
+#include "UIWorldWrapper.h"
+#include "UISimpleKey.h"
+#include "Prob_Interaction.h"
+
+#include "Player.h"
+#include "PlayerFSM.h"
+
+#include "UIPopup.h"
+#include "UILockOn.h"
+#include "Lift_Controller.h"
 
 CUIHUD::CUIHUD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameHUD{ pDevice, pContext }
@@ -25,6 +37,7 @@ HRESULT CUIHUD::Initialize()
 		return E_FAIL;
 
 	m_pGameInstance = CGameInstance::GetInstance();
+	m_pGameManager = CGameManager::GetInstance();
 	
 	m_pUIAnimMgr->Load_Anim_Files();
 
@@ -33,23 +46,119 @@ HRESULT CUIHUD::Initialize()
 
 void CUIHUD::Update(_float fTimeDelta)
 {
+	auto& Interactions = *m_pGameInstance->GetAllInteraction();
+
+	for (_int i = 0; i < m_WorldUIs[TEXT("Pool_InteractionDot")].size(); ++i)
+	{
+		if (Interactions.size() > i)
+		{
+			if (Interactions[i])
+			{
+				_float3 newPos{};
+				_float3 vPivot{ 0.f, 0.f, 0.f };
+
+				CInteractionUIBinder* pInteraction = dynamic_cast<CInteractionUIBinder*>(Interactions[i]);
+				CGameObject* pOwner = pInteraction->GetOwner();
+
+				if (pInteraction->Get_InterDesc())
+					vPivot = pInteraction->Get_InterDesc()->vUIPivot;
+
+				if (dynamic_cast<CLift_Controller*>(pOwner)
+					&& dynamic_cast<CLift_Controller*>(pOwner)->Get_CombinedMatrix()
+					&& dynamic_cast<CLift_Controller*>(pOwner)->Get_LiftPlatformPosition())
+				{
+					CLift_Controller* pLiftController = dynamic_cast<CLift_Controller*>(pOwner);
+
+					XMStoreFloat3(&newPos,
+						XMVectorSet(
+							pLiftController->Get_CombinedMatrix()->m[3][0] + vPivot.x,
+							pLiftController->Get_CombinedMatrix()->m[3][1] + vPivot.y,
+							pLiftController->Get_CombinedMatrix()->m[3][2] + vPivot.z,
+							1.f
+						));
+				}
+				else
+				{
+					XMStoreFloat3(&newPos,
+						XMVectorSet(
+							XMVectorGetX(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.x,
+							XMVectorGetY(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.y,
+							XMVectorGetZ(pOwner->GetTransform()->Get_State(STATE::POSITION)) + vPivot.z,
+							1.f
+						));
+				}
+
+				Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(pOwner);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(&newPos, false);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::VISIBLE);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(true);
+			}
+			else
+			{
+				Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(nullptr);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(nullptr);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
+				m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
+			}
+		}
+		else
+		{
+			Reset_WorldUI_State(m_WorldUIs[TEXT("Pool_InteractionDot")][i]);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetParent(nullptr);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_TargetPos(nullptr);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
+			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
+		}
+	}		
+
 	__super::Update(fTimeDelta);
 
 	m_pUIAnimMgr->Update(fTimeDelta);
 
-	for(auto& pPool : m_WorldUIs)
+	auto pPlayer = m_pGameManager->GetGameCharacter();
+
+	if (dynamic_cast<CPlayer*>(pPlayer))
 	{
-		for (auto& pObj : pPool.second)
+		if (PLAYER_STATE::GIGAS_LINKATTACK == pPlayer->Get_PlayerFSM()->Get_StateEnum() || m_pGameManager->Is_CinematicPlaying())
 		{
-			CUIBase* pUIBase = dynamic_cast<CUIBase*>(pObj);
-			if (pUIBase && pUIBase->GetVisibility() == VISIBILITY::VISIBLE)
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pWorldUIs : m_RentWorldUIs)
 			{
-				pUIBase->Priority_Update(fTimeDelta);
-				pUIBase->Update(fTimeDelta);
-				pUIBase->Late_Update(fTimeDelta);
+				for (auto& pUI : pWorldUIs.second)
+				{
+					//if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::HIDDEN);
+				}
 			}
 		}
+		else if (m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth > 0.f)
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pWorldUIs : m_RentWorldUIs)
+			{
+				for (auto& pUI : pWorldUIs.second)
+				{
+					if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::VISIBLE);
+				}
+			}
+		}
+		else
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+		}
 	}
+
+	Safe_Release(pPlayer);
 }
 
 HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
@@ -97,12 +206,10 @@ HRESULT CUIHUD::Save_Data(_wstring szLayerTag)
 void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTIBA_DESC* pNaytibaDesc)
 {
 	auto pLayer = m_pLayers.find(TEXT("Layer_Boss"));
-
 	if (pLayer == m_pLayers.end())
 		return;
 
 	auto pUIObjects = pLayer->second->Get_UserInterfaces();
-
 	auto pUI = pUIObjects->find(TEXT("Boss_Vital_Wrapper"));
 
 	CUIBossVitalWrapper* pVitalWrapper = dynamic_cast<CUIBossVitalWrapper*>(pUI->second);
@@ -110,8 +217,8 @@ void CUIHUD::Set_Boss_Desc(const NAYTIBA_NETWORK_DESC* pNetworkDesc, const NAYTI
 		return;
 
 	pVitalWrapper->Set_Boss_Desc(pNetworkDesc, pNaytibaDesc);
-
-	for(auto& pChild : *pVitalWrapper->Get_Children())
+	m_pNaytibaDesc = pNaytibaDesc;
+	for (auto& pChild : *pVitalWrapper->Get_Children())
 		pVitalWrapper->Update_Children(pChild);
 }
 
@@ -127,6 +234,57 @@ CUIBase* CUIHUD::Get_UIObject(_wstring szLayerTag, _wstring szUITag)
 	CUIBase* pUI = dynamic_cast<CUIBase*>(pObj->second);
 
 	return pUI;
+}
+
+void CUIHUD::Open_Popup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return;
+
+	pPopup->Open_Popup();
+}
+
+void CUIHUD::Close_Popup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return;
+
+	pPopup->Close_Popup();
+}
+
+_bool CUIHUD::Check_isOpenPopup(const _wstring& szPopupTag)
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Popup"));
+
+	if (pLayer == m_pLayers.end())
+		return false;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(szPopupTag);
+
+	CUIPopup* pPopup = dynamic_cast<CUIPopup*>(pObj->second);
+
+	if (!pPopup)
+		return false;
+
+	return pPopup->Get_IsOpen();
 }
 
 void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
@@ -212,6 +370,11 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			jShader["fPulseTime"] = pDesc.m_tUIShaderDesc.fPulseTime;
 			jShader["fPulseSpeed"] = pDesc.m_tUIShaderDesc.fPulseSpeed;
 		}
+		if (pDesc.m_tUIShaderDesc.bUseScale)
+		{
+			jShader["bUseScale"] = pDesc.m_tUIShaderDesc.bUseScale;
+			jShader["fScale"] = pDesc.m_tUIShaderDesc.fScale;
+		}
 
 		jObj["Shader"] = jShader;
 	}
@@ -291,6 +454,7 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 	{
 		Json TextDesc;
 
+		TextDesc["szFont"] = pDesc.Get_UI_Text_Desc()->szFont;
 		TextDesc["szText"] = WStringToUTF8(pDesc.Get_UI_Text_Desc()->szText.c_str());
 		TextDesc["fScale"] = pDesc.Get_UI_Text_Desc()->fScale;
 		TextDesc["vColor"] = {
@@ -299,8 +463,20 @@ void CUIHUD::Save_Hierarchy(CUIBase* pUI, Json& OutData, _bool bIsRoot)
 			pDesc.Get_UI_Text_Desc()->vColor.z,
 			pDesc.Get_UI_Text_Desc()->vColor.w
 		};
-		//jObj["isHasTextDesc"] = pDesc.m_isHasTextDesc;
 		jObj["TextDesc"] = TextDesc;
+	}
+
+	if (pDesc.Get_UI_Popup_Desc())
+	{
+		Json jPopupDesc;
+
+		jPopupDesc["fPosX"] = pDesc.Get_UI_Popup_Desc()->fPosX;
+		jPopupDesc["fPosY"] = pDesc.Get_UI_Popup_Desc()->fPosY;
+		jPopupDesc["fSizeX"] = pDesc.Get_UI_Popup_Desc()->fSizeX;
+		jPopupDesc["fSizeY"] = pDesc.Get_UI_Popup_Desc()->fSizeY;
+		jPopupDesc["isDimed"] = pDesc.Get_UI_Popup_Desc()->isDimed;
+
+		jObj["PopupDesc"] = jPopupDesc;
 	}
 
 	const auto* children = pUI->Get_Children();
@@ -407,6 +583,12 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 				ShaderDesc.fGlowSpread = jShader["fGlowSpread"].get<_float>();
 			}
 
+			if (jShader.contains("bUseScale"))
+			{
+				ShaderDesc.bUseScale = jShader["bUseScale"].get<_bool>();
+				ShaderDesc.fScale = jShader["fScale"].get<_float>();
+			}
+
 			if (jShader.contains("bUsePulseEffect"))
 			{
 				ShaderDesc.bUsePulseEffect = jShader["bUsePulseEffect"].get<_bool>();
@@ -505,6 +687,7 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			Json jDesc = pUIObject["TextDesc"];
 			//CStringHelper::ConvertUTFToWide(jDesc["szText"].get<string>().c_str(), szText);
 			//TextDesc.szText = szText;
+			TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 			TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 			TextDesc.fScale = jDesc["fScale"].get<_float>();
 			TextDesc.vColor = {
@@ -515,6 +698,20 @@ HRESULT CUIHUD::Load_Data(_wstring szLayerTag)
 			};
 
 			Desc.Set_UI_Text_Desc(TextDesc);
+		}
+
+		if (pUIObject.contains("PopupDesc"))
+		{
+			UI_POPUP_DESC PopupDesc{};
+			Json jDesc = pUIObject["PopupDesc"];
+			
+			PopupDesc.fPosX = jDesc["fPosX"].get<_float>();
+			PopupDesc.fPosY = jDesc["fPosY"].get<_float>();
+			PopupDesc.fSizeX = jDesc["fSizeX"].get<_float>();
+			PopupDesc.fSizeY = jDesc["fSizeY"].get<_float>();
+			PopupDesc.isDimed = jDesc["isDimed"].get<_bool>();
+
+			Desc.Set_UI_Popup_Desc(PopupDesc);
 		}
 
 		CGameObject* pUI = nullptr;
@@ -615,6 +812,12 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		if (jShader.contains("bDiscardBlack"))
 		{
 			ShaderDesc.bDiscardBlack = jShader["bDiscardBlack"].get<_bool>();
+		}
+
+		if (jShader.contains("bUseScale"))
+		{
+			ShaderDesc.bUseScale = jShader["bUseScale"].get<_bool>();
+			ShaderDesc.fScale = jShader["fScale"].get<_float>();
 		}
 
 		if (jShader.contains("bUseGlow"))
@@ -719,6 +922,7 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 	{
 		UI_TEXT_DESC TextDesc{};
 		Json jDesc = jData["TextDesc"];
+		TextDesc.szFont = UTF8ToWString(jDesc["szFont"].get<string>().c_str());
 		TextDesc.szText = UTF8ToWString(jDesc["szText"].get<string>().c_str());
 		TextDesc.fScale = jDesc["fScale"].get<_float>();
 		TextDesc.vColor = {
@@ -729,6 +933,20 @@ void CUIHUD::Load_Hierarchy(CUIBase* pUIParent, Json jData)
 		};
 
 		Desc.Set_UI_Text_Desc(TextDesc);
+	}
+
+	if (jData.contains("PopupDesc"))
+	{
+		UI_POPUP_DESC PopupDesc{};
+		Json jDesc = jData["PopupDesc"];
+
+		PopupDesc.fPosX = jDesc["fPosX"].get<_float>();
+		PopupDesc.fPosY = jDesc["fPosY"].get<_float>();
+		PopupDesc.fSizeX = jDesc["fSizeX"].get<_float>();
+		PopupDesc.fSizeY = jDesc["fSizeY"].get<_float>();
+		PopupDesc.isDimed = jDesc["isDimed"].get<_bool>();
+
+		Desc.Set_UI_Popup_Desc(PopupDesc);
 	}
 
 	CGameObject* pUI = nullptr;
@@ -761,10 +979,9 @@ void CUIHUD::Reset_WorldUI_State(CUIBase* pUI)
 	if (!pUI) return;
 	// 알파/애니/이벤트 등의 런타임 상태 초기화
 	UIBASE_DESC d = pUI->Get_UIBase_OriginDesc();
-	d.fAlpha = 1.f;
+	//d.fAlpha = 1.f;
 	// 필요 시 더 초기화…
 	pUI->Set_UIBase_Desc(d);
-
 	m_pUIAnimMgr->Anim_Stop(pUI);
 }
 
@@ -837,50 +1054,93 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 	auto itLayer = m_pLayers.find(layerTag);
 	if (itLayer == m_pLayers.end()) return E_FAIL;
 
-	auto pObj = itLayer->second->Get_UserInterfaces()->find(szUITag);
+	if (itLayer->second->Get_UserInterfaces())
+	{
+		auto pObj = itLayer->second->Get_UserInterfaces()->find(szUITag);
 
-	if (pObj->second == nullptr)
-		return E_FAIL;
-
- 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
-
-	if (!pUIBase)
-		return E_FAIL;
-
-	auto& pool = m_WorldUIs[szPoolTag];
-   	pool.reserve(pool.size() + count);
-
-	for (_uint i = 0; i < count; ++i) {
- 		CUIBase* pUI = dynamic_cast<CUIBase*>(pUIBase)->Clone_UI(this, i);
-		
-		if (!pUI)
+		if (pObj->second == nullptr)
 			return E_FAIL;
 
-		Reset_WorldUI_State(pUI);
-		pUI->SetVisibility(VISIBILITY::HIDDEN);
+		CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
 
-		pool.push_back(pUI);
+		if (!pUIBase)
+			return E_FAIL;
+		Safe_AddRef(pUIBase);
+
+		auto& pool = m_WorldUIs[szPoolTag];
+		pool.reserve(pool.size() + count);
+
+		for (_uint i = 0; i < count; ++i) {
+			CUIBase* pUI = pUIBase->Clone_UI(this, i);
+
+			if (!pUI)
+				return E_FAIL;
+
+			Reset_WorldUI_State(pUI);
+			pUI->SetVisibility(VISIBILITY::HIDDEN);
+
+			pool.push_back(pUI);
+		}
+		Safe_Release(pUIBase);
 	}
+
 	return S_OK;
 }
 
-CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3& vTargetPos, _bool bBillboard)
+//HRESULT CUIHUD::Add_InteractionUI(_int iIdx)
+//{
+//	auto itLayer = m_pLayers.find(TEXT("Layer_World"));
+//	if (itLayer == m_pLayers.end()) return E_FAIL;
+//
+//	auto pObj = itLayer->second->Get_UserInterfaces()->find(TEXT("UI_Simple_Interaction"));
+//
+//	if (pObj->second == nullptr)
+//		return E_FAIL;
+//
+// 	CUIBase* pUIBase{ dynamic_cast<CUIBase*>(pObj->second) };
+//
+//	if (!pUIBase)
+//		return E_FAIL;
+//	Safe_AddRef(pUIBase);
+//
+//	CUIBase* pUI = pUIBase->Clone_UI(this, iIdx);
+//
+//	m_InteractionUIs.push_back(pUI);
+//
+//	Safe_Release(pUIBase);
+//
+//	return S_OK;
+//}
+//
+//void CUIHUD::Remove_InteractionUI(CUIBase* pUI)
+//{
+//	auto iter = find(m_InteractionUIs.begin(), m_InteractionUIs.end(), pUI);
+//	if (iter != m_InteractionUIs.end())
+//	{
+//		pUI->SetVisibility(VISIBILITY::HIDDEN);
+//		m_InteractionUIs.erase(iter);
+//	}
+//}
+
+CUIBase* CUIHUD::Rent_WorldUI(const _wstring& poolKey, CGameObject* pParent, const _float3* vTargetPos, _bool bBillboard)
 {
 	auto it = m_WorldUIs.find(poolKey);
 	if (it == m_WorldUIs.end() || it->second.empty()) return nullptr;
 
 	// 맨 뒤에서 꺼내기
 	CUIBase* pUI = it->second.back();
+	m_RentWorldUIs[poolKey].push_back(pUI);
 	it->second.pop_back();
 
 	// 상태 초기화 후 사용할 준비
 	Reset_WorldUI_State(pUI);
+	pUI->Set_Rent(true);
 	pUI->Set_DrawType((CUIObject::DRAW_TYPE)pUI->Get_UIBase_Desc().iDrawType);
 	pUI->SetVisibility(VISIBILITY::VISIBLE);
 
 	if (pParent) {
 		pUI->SetParent(pParent);
-		pUI->Set_TargetPos(&vTargetPos);
+		pUI->Set_TargetPos(vTargetPos);
 	}
 
 	return pUI;
@@ -892,6 +1152,7 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 
 	// Parent/계층/애니/가시성 원복
 	m_pUIAnimMgr->Anim_Stop(pUI);
+	pUI->Set_Rent(false);
 	pUI->SetVisibility(VISIBILITY::HIDDEN);
 
 	for (auto& pChild : *pUI->Get_Children())
@@ -902,7 +1163,16 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 
 	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag;
 
+	for (auto iter = m_RentWorldUIs[szPoolTag].begin(); iter == m_RentWorldUIs[szPoolTag].end();)
+	{
+		if (*iter == pUI)
+			iter = m_RentWorldUIs[szPoolTag].erase(iter);
+		else
+			++iter;
+	}
+
 	m_WorldUIs[szPoolTag].push_back(pUI);
+
 	pUI = nullptr;
 }
 
@@ -944,11 +1214,6 @@ void CUIHUD::Free()
 	__super::Free();
 
 	Safe_Release(m_pUIAnimMgr);
-	
-	for (auto& pPools : m_WorldUIs)
-	{
-		for(auto& pPool : pPools.second)
-			Safe_Release(pPool);
-	}
+	Safe_Release(m_pGameManager);
 }
 

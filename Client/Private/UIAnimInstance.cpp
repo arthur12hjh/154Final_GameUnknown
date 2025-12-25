@@ -12,6 +12,7 @@ HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc, _float fDelay)
 	m_pTargetUI = pUI;
 	m_pTargetUI->Set_Anim_Playing(true);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
+	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
 	m_fDelayTime = fDelay;
 
 	return S_OK;
@@ -22,13 +23,20 @@ _bool CUIAnimInstance::Update(_float fTimeDelta)
 	m_AnimFinishs.clear();
 
 	for (auto& pTrackDesc : m_tUIAnimDesc.m_Tracks)
+	{
 		m_AnimFinishs.push_back(Play_Anim(&m_tUIAnimDesc, &pTrackDesc.second, fTimeDelta));
+	}
 
 	for (auto pAnimFinish : m_AnimFinishs)
 	{
 		if (pAnimFinish == false)
+		{
+			m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
 			return false;
+		}
 	}
+
+	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, true);
 
 	return true;
 }
@@ -94,6 +102,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 			m_pTargetUI->Set_GlowIntensity(XMVectorGetX(vLerped));
 		if (TrackDesc.szTrackTag == TEXT("Rotation"))
 			m_pTargetUI->Set_Rotation(XMVectorGetX(vLerped));
+		if (TrackDesc.szTrackTag == TEXT("Scale"))
+			m_pTargetUI->Set_Texture_Scale(XMVectorGetX(vLerped));
 	}
 	else
 	{
@@ -150,6 +160,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 				m_pTargetUI->Set_GlowIntensity(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fGlowIntensity);
 			if (TrackDesc.szTrackTag == TEXT("Rotation"))
 				m_pTargetUI->Set_Rotation(m_pTargetUI->Get_UIBase_OriginDesc().fRotation);
+			if (TrackDesc.szTrackTag == TEXT("Scale"))
+				m_pTargetUI->Set_Texture_Scale(m_pTargetUI->Get_UIBase_OriginDesc().m_tUIShaderDesc.fScale);
 
 			m_fTimeStack = 0.f;
 		}
@@ -190,6 +202,8 @@ _bool CUIAnimInstance::Play_Anim(UI_ANIM_DESC* pAnimDesc, UI_ANIM_TRACK_DESC* pT
 				m_pTargetUI->Set_Texture_Index(static_cast<_uint>(XMVectorGetX(vEndParam)));
 			if (TrackDesc.szTrackTag == TEXT("Rotation"))
 				m_pTargetUI->Set_Rotation(XMVectorGetX(vEndParam));
+			if (TrackDesc.szTrackTag == TEXT("Scale"))
+				m_pTargetUI->Set_Texture_Scale(XMVectorGetX(vEndParam));
 
 			m_pTargetUI->Set_Anim_Playing(false);
 

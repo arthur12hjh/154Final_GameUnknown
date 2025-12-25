@@ -32,13 +32,17 @@ HRESULT CColliderRenderer::Add_PhysxGeometry(PxRigidActor* pActor, PxShape* pSha
         return S_OK;
 
     m_PxShapes.push_back(make_pair(pActor, pShape));
-
     return S_OK;
 }
 
 void CColliderRenderer::Set_DebugColliderVisible(_bool bIsVisible)
 {
     m_isColliderVisible = bIsVisible;
+}
+
+void CColliderRenderer::Clear()
+{
+    m_PxShapes.clear();
 }
 
 unique_ptr<GeometricPrimitive> CColliderRenderer::CreateHemisphere(ID3D11DeviceContext* pContext, _float fRadius, _int iTessellation, _bool isTop)
@@ -115,8 +119,11 @@ void CColliderRenderer::Render(class CShader* pShader)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F3))
         m_isColliderVisible = !m_isColliderVisible;
 
-    if (false == m_isColliderVisible)
+    if (false == m_isColliderVisible)    
+    {
+        Clear();
         return;
+    }
 
     Render_DebugCollider(pShader);
     Render_DebugPhysxCollider(pShader);
@@ -144,10 +151,10 @@ void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 
     for (auto& Pair : m_PxShapes)
     {
-        const _char* pActorName = Pair.first->getName();
+        if (nullptr == Pair.second || nullptr == Pair.first)
+            continue;
 
-        if (nullptr != pActorName && strcmp(Pair.first->getName(), "TERRAIN") == 0)
-            continue; 
+        const _char* pActorName = Pair.first->getName();
 
         PxGeometryHolder Geometry = Pair.second->getGeometry();
         PxTransform PhysxTransform = PxShapeExt::getGlobalPose(*Pair.second, *Pair.first);
@@ -180,16 +187,18 @@ void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
             _matrix ConvertMatrix = XMMatrixRotationAxis(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(-90.f)) * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
 
             /* 실린더 출력 */
-            m_pEffect->SetWorld(ConvertMatrix);
+            _matrix ScalingMatrix = XMMatrixScaling(CapsuleGeom.halfHeight * 2.f, CapsuleGeom.halfHeight * 2.f, CapsuleGeom.halfHeight * 2.f);
+            m_pEffect->SetWorld(ScalingMatrix * ConvertMatrix);
             m_pCapsuleCylinderShape->Draw(m_pEffect, m_pInputLayout, false, true);
 
             /* 상반구 출력 */
+            ScalingMatrix = XMMatrixScaling(CapsuleGeom.radius * 2.f, CapsuleGeom.radius * 2.f, CapsuleGeom.radius * 2.f);
             _vector		vQuternion = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(30.f), 0.f, XMConvertToRadians(-90.f));
             _matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuternion);
 
             PhysxTransform.p.y += CapsuleGeom.halfHeight;
             ConvertMatrix = RotationMatrix * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
-            m_pEffect->SetWorld(ConvertMatrix);
+            m_pEffect->SetWorld(ScalingMatrix * ConvertMatrix);
             m_pCapsuleHemiSphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
 
 
@@ -199,7 +208,7 @@ void CColliderRenderer::Render_DebugPhysxCollider(CShader* pShader)
 
             PhysxTransform.p.y -= 2.f * CapsuleGeom.halfHeight;
             ConvertMatrix = RotationMatrix * m_pGameInstance->Convert_PxTransform_ToMatrix(PhysxTransform);
-            m_pEffect->SetWorld(ConvertMatrix);
+            m_pEffect->SetWorld(ScalingMatrix * ConvertMatrix);
             m_pCapsuleHemiSphereShape->Draw(m_pEffect, m_pInputLayout, false, true);
         }
         //box, sphere, capsule만 드로우 지원. 나머진 고려해볼게요 ㅎ..

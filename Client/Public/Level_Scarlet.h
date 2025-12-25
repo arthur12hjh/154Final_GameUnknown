@@ -13,7 +13,6 @@ public:
 	typedef struct SavedObjectInfo
 	{
 		_float4x4	    worldMatrix;
-		_tchar			szComponentTag[256];
 	}SAVEDOBJECTINFO;
 
 	typedef struct tagModelInstanceLoadDesc
@@ -53,6 +52,7 @@ private:
 	HRESULT Load_Light_Data();
 	_float	m_fTime = 10;
 	_bool m_bChangeLevel{ false };
+	_bool m_isOverlay{ true };
 
 public:
 	static CLevel_Scarlet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

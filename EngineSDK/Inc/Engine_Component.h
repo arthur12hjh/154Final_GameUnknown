@@ -33,6 +33,7 @@
 #pragma region Physx
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include "JointChain.h"
 #pragma endregion
 
 #include "Light.h"

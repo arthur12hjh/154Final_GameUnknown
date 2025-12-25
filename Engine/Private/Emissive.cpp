@@ -17,6 +17,10 @@ HRESULT CEmissive::Initialize()
 
     /* 스크린 사이즈는 미리 바인딩 한다. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
+
+    CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
+    m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
+
     if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vScreenSize.x, sizeof(_int))))
         return E_FAIL;
 
@@ -48,10 +52,10 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
 	m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive"), m_pShader, "g_EmissiveTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
 
-	m_pShader->Begin(2);
+	m_pShader->Begin(1);
 	pVIBuffer->Bind_Resources();
 	pVIBuffer->Render();
 
@@ -62,10 +66,10 @@ HRESULT CEmissive::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Emissive_Blur_Final"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_X"), m_pShader, "g_EmissiveTexture")))
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Emissive_Blur_X"), m_pShader, "g_BlurTexture")))
 		return E_FAIL;
 
-	m_pShader->Begin(3);
+	m_pShader->Begin(2);
 	pVIBuffer->Bind_Resources();
 	pVIBuffer->Render();
 

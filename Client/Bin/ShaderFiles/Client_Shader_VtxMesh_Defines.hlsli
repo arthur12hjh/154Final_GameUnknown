@@ -27,6 +27,19 @@ struct VS_OUT_SHADOW
     float4 vProjPos : TEXCOORD0;
 };
 
+struct VS_OUT_STATIC_SHADOW
+{
+    float4 vPosition : SV_POSITION;
+    float4 vProjPos : TEXCOORD0;
+};
+
+struct PS_IN_STATIC_SHADOW
+{
+    float4 vPosition : SV_Position;
+    float4 vProjPos : TEXCOORD0;
+};
+
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -40,23 +53,21 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 vDiffuse : SV_TARGET0;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vORM : SV_Target3;
+    float4 vDiffuse  : SV_TARGET0;
+    float4 vNormal   : SV_TARGET1;
+    float4 vDepth    : SV_TARGET2;
+    float4 vORM      : SV_Target3;
     float4 vEmissive : SV_TARGET4;
 };
 
-struct PS_IN_SHADOW
+struct PS_OUT_STATIC_SHADOW
 {
-    float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    float4 vShadowLightDepth : SV_TARGET0;
 };
 
 struct PS_OUT_SHADOW
 {
     float4 vShadowLightDepth : SV_TARGET0;
 };
-
 
 #endif

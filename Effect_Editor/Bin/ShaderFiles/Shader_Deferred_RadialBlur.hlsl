@@ -3,9 +3,13 @@
 
 int g_iWinSizeX;
 int g_iWinSizeY;
+float g_fFar;
 
 float g_fTimeAcc;
 float g_fLifeTime;
+int g_iSampleCount;
+float g_fSamplePower;
+float g_fMin; 
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
@@ -32,24 +36,23 @@ PS_OUT_BACKBUFFER PS_MAIN_RADIAL_BLUR(PS_IN In)
     PS_OUT_BACKBUFFER Out;
  
     float4 vColor = 0.0f;
-    int iSampleCount = 3;
-    float fSamplePower = 0.5f;
     
     float2 vDir = float2(0.5f, 0.5f) - In.vTexcoord;
-    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * fSamplePower;
+    vDir *= length(float2(0.5f, 0.5f) - In.vTexcoord) * g_fSamplePower;
     
-    for (int i = 0; i < iSampleCount; i++)
+    [loop]
+    for (int i = 0; i < g_iSampleCount; i++)
     {
-        float fSampleRate = (float) i / (float) iSampleCount;
+        float fSampleRate = (float) i / (float) g_iSampleCount;
         
         // 샘플링 UV 좌표. 현재 UV + 방향 벡터 * 계수
-        float2 vSampleUV = In.vTexcoord + vDir * fSampleRate * (-4 * pow(g_fTimeAcc / g_fLifeTime, 2.f) + 4 * g_fTimeAcc / g_fLifeTime);
+        float2 vSampleUV = In.vTexcoord + vDir * fSampleRate * (-4 * pow(saturate(g_fTimeAcc / g_fLifeTime), 2.f) + 4 * saturate(g_fTimeAcc / g_fLifeTime));
         
         // 텍스처 샘플링 및 누적
         vColor += g_SceneTexture.Sample(DefaultSampler, vSampleUV);
     }
     
-    Out.vBackBuffer = vColor / (float) iSampleCount;
+    Out.vBackBuffer = vColor / (float) g_iSampleCount;
 
     return Out;
 }

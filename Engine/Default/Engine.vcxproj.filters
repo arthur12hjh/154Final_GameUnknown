@@ -151,9 +151,6 @@
     <ClInclude Include="..\public\BlendObject.h">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Shadow.h">
-      <Filter>01.Utility\11.Shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
     </ClInclude>
@@ -359,6 +356,42 @@
     <ClInclude Include="..\Public\Emissive.h">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Physx_FilterShader.h">
+      <Filter>01.Utility\17.Physx\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTQueryFilterCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PxDefaultContactCallback.h">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CCTFilterCallback.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JointChain.h">
+      <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Frustum.h">
+      <Filter>01.Utility\12.CameraManager\Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CascadeShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StaticShadow.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Instance_MeshParticle.h">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\MeshParticle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Metaball.h">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BlackBlend.h">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ReserveDeferred.h">
+      <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -492,9 +525,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BlendObject.cpp">
       <Filter>01.Utility\02.GameObjects\BlendObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Shadow.cpp">
-      <Filter>01.Utility\11.Shadow</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
       <Filter>01.Utility\12.CameraManager\Frustum</Filter>
@@ -691,6 +721,39 @@
     <ClCompile Include="..\Private\Emissive.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Physx_FilterShader.cpp">
+      <Filter>01.Utility\17.Physx\Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTQueryFilterCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PxDefaultContactCallback.cpp">
+      <Filter>01.Utility\17.Physx\SceneEventCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CCTFilterCallback.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JointChain.cpp">
+      <Filter>01.Utility\03.Components\PhysxComponent\JointChain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CascadeShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Cascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StaticShadow.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Shadow\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Instance_MeshParticle.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer\Instance\MeshParticle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Metaball.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BlackBlend.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ReserveDeferred.cpp">
+      <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -732,9 +795,6 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{ccaab4a9-3a94-4a6f-b842-d75b1077b29a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\11.Shadow">
-      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
     </Filter>
@@ -770,12 +830,6 @@
     </Filter>
     <Filter Include="01.Utility\17.Physx">
       <UniqueIdentifier>{82d440ea-a951-4a7a-911a-263ebf1469ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine">
-      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\18.StateMachine\State">
-      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\13.Sound">
       <UniqueIdentifier>{5342513f-c83e-4d4a-9316-9df72bea25d1}</UniqueIdentifier>
@@ -1095,6 +1149,54 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\Blur\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback">
+      <UniqueIdentifier>{4485119a-22b1-4fe0-bbd4-f2c184d9123d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\SceneEventCallback">
+      <UniqueIdentifier>{67b0a986-efab-42e5-8bf7-1dfb2b40fa33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\17.Physx\Filter">
+      <UniqueIdentifier>{5c39fd1e-1d94-4fe1-abfa-4368b4e262fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTFilterCallback">
+      <UniqueIdentifier>{5196f051-91b6-4501-8678-254eaf647f56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine">
+      <UniqueIdentifier>{73348327-cab4-4f57-93e5-a4706f0a2318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\18.StateMachine\State">
+      <UniqueIdentifier>{57588782-6017-4142-8110-cc730d710e10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\PhysxComponent\JointChain">
+      <UniqueIdentifier>{11243410-6763-4796-bbd3-8c11003bc23e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow">
+      <UniqueIdentifier>{319a0fe4-f89e-46d1-9521-5ab43acb8833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Cascade">
+      <UniqueIdentifier>{c607e44e-dc43-41de-99f3-9b81687c8b85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Shadow\Static">
+      <UniqueIdentifier>{f0688259-fb7c-4352-8239-3ab3ba4cf4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Instance\MeshParticle">
+      <UniqueIdentifier>{96f19e4d-55e8-4c1d-beb8-8eeb3f52a32d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball">
+      <UniqueIdentifier>{a69e8cfa-22b3-4ea6-8638-8403c1d69ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Metaball\ShaderFile">
+      <UniqueIdentifier>{b2127486-53fe-48a1-907e-159d3dfe4183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend">
+      <UniqueIdentifier>{8bd31ffe-f63c-4d7b-b7f9-5f69ee9f2028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile">
+      <UniqueIdentifier>{f17e8010-0159-438e-b71e-89b32bc1c84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\ReserveDeferred">
+      <UniqueIdentifier>{c0558339-073d-42f2-834c-125a12823cb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1138,6 +1240,18 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_CombinedMatrices.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_DepthOnly.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Metaball.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Metaball\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
