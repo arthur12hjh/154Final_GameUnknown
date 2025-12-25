@@ -934,6 +934,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
       <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\InteractionUIBinder">
+      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1873,6 +1876,9 @@
     <ClInclude Include="..\Public\UIUnlockFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\InteractionUIBinder.h">
+      <Filter>05.Component\InteractionUIBinder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2778,6 +2784,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIUnlockFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp">
+      <Filter>05.Component\InteractionUIBinder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

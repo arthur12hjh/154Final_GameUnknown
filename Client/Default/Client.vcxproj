@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\Public\InteractionUIBinder.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Level_Scarlet.h" />
@@ -502,6 +503,7 @@
     <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\private\Level_Scarlet.cpp" />

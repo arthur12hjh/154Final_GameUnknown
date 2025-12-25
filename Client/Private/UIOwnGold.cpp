@@ -65,6 +65,11 @@ void CUIOwnGold::Priority_Update(_float fTimeDelta)
 void CUIOwnGold::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
+}
+
+void CUIOwnGold::Late_Update(_float fTimeDelta)
+{
+	__super::Late_Update(fTimeDelta);
 
 	if (m_iPrevOwnGold != *m_iOwnGold)
 		m_bShow = true;
@@ -94,11 +99,6 @@ void CUIOwnGold::Update(_float fTimeDelta)
 		m_iPrevOwnGold = *m_iOwnGold;
 		m_vTransOffset = _float2(0.f, 0.f);
 	}
-}
-
-void CUIOwnGold::Late_Update(_float fTimeDelta)
-{
-	__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIOwnGold::Render()

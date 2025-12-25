@@ -4,8 +4,8 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
-#include "Interaction_Component.h"
-#include "Prob_Interaction.h"
+#include "InteractionUIBinder.h"
+#include "GameObject.h"
 #include "UIWorldWrapper.h"
 #include "StringHelper.h"
 #include "SciFi_Door.h"
@@ -45,22 +45,20 @@ void CUISimpleKey::Priority_Update(_float fTimeDelta)
 
 void CUISimpleKey::Update(_float fTimeDelta)
 {
-	auto pNearInterCom = m_pGameInstance->GetNearInteraction();
+	CInteractionUIBinder* pNearInterCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 
-	CProb_Interaction* pOwner = nullptr;
+	CGameObject* pOwner = nullptr;
 
 	if (pNearInterCom)
-		pOwner = static_cast<CProb_Interaction*>(pNearInterCom->GetOwner());
+		pOwner = pNearInterCom->GetOwner();
 
 	if (pOwner)
-		m_eInterState = pOwner->Get_InterState();
+		m_eInterState = pNearInterCom->Get_InterState();
 	else
-		m_eInterState = m_pTargetOwner ? m_pTargetOwner->Get_InterState() : INTERACTION_STATE::END;
+		m_eInterState = pNearInterCom ? pNearInterCom->Get_InterState() : INTERACTION_STATE::END;
 
 	if(m_eInterState != INTERACTION_STATE::CONTACT)
 		m_pTargetInteractionCom = pNearInterCom;
-
-
 
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
@@ -80,16 +78,16 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	if (m_pTargetInteractionCom)
 	{
 		if(m_pTargetInteractionCom->GetOwner())
-			m_pTargetOwner = dynamic_cast<CProb_Interaction*>(m_pTargetInteractionCom->GetOwner());
+			m_pTargetOwner = m_pTargetInteractionCom->GetOwner();
 
 		if(m_pTargetOwner != m_pParent)
-			m_pInterDesc = *const_cast<INTERACTION_DATA*>(m_pTargetOwner->Get_InterDesc());
+			m_pInterDesc = *const_cast<INTERACTION_DATA*>(m_pTargetInteractionCom->Get_InterDesc());
 
-		if (m_pTargetOwner && m_pTargetOwner->Get_InterDesc())
+		if (m_pTargetOwner && m_pTargetInteractionCom->Get_InterDesc())
 		{
 			_float3 vPivot{ 0.f, 0.f, 0.f };
 
-			if (m_pTargetOwner->Get_InterDesc())
+			if (m_pTargetInteractionCom->Get_InterDesc())
 				vPivot = m_pInterDesc.vUIPivot;
 
 			/*XMStoreFloat3(&m_vNewPivot,
@@ -165,7 +163,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 
 	if (m_pTargetOwner)
 	{
-		m_fInteractionRatio = m_pTargetOwner->Get_Ratio();
+		m_fInteractionRatio = m_pTargetInteractionCom->Get_Ratio();
 
 		if (m_eInterState != m_ePrevInterState)
 		{
@@ -186,7 +184,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 					&& dynamic_cast<CSciFi_Door*>(m_pTargetOwner)->Get_DoorState() == CSciFi_Door::SCIFI_DOOR_STATE::OPEN)
 					m_pInterDesc.szInteractionText = TEXT("닫기");
 				else
-					m_pInterDesc.szInteractionText = m_pTargetOwner->Get_InterDesc()->szInteractionText;
+					m_pInterDesc.szInteractionText = m_pTargetInteractionCom->Get_InterDesc()->szInteractionText;
 
 				break;
 			}

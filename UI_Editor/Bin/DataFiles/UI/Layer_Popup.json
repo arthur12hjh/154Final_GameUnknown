@@ -54,13 +54,13 @@
                 "fRotation": 0.0,
                 "fSizeX": 356.0,
                 "fSizeY": 200.0,
-                "fX": 1285.0,
+                "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 100,
                 "iDrawType": 1,
                 "iLevel": 3,
                 "iRenderGroup": 9,
-                "iVisibility": 1,
+                "iVisibility": 0,
                 "szEvents": {
                     "Input_Answer": [
                         {
@@ -73,6 +73,16 @@
                         {
                             "szActionTag": "Costume_Button_Click",
                             "szArg": "Costume_Button_Click",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Button_Can_Input": [
+                        {
+                            "szActionTag": "Get_Costume_Puzzle_Unlock",
+                            "szArg": "Get_Costume_Puzzle_Unlock",
+                            "szSubscribeEventTags": [
+                                "Get_Costume_Puzzle_Unlock"
+                            ],
                             "szTypeTag": "ActionEvent"
                         }
                     ]
@@ -122,13 +132,13 @@
                 "fRotation": 0.0,
                 "fSizeX": 356.0,
                 "fSizeY": 80.0,
-                "fX": 1285.0,
+                "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 100,
                 "iDrawType": 1,
                 "iLevel": 3,
                 "iRenderGroup": 9,
-                "iVisibility": 1,
+                "iVisibility": 0,
                 "szEvents": {
                     "Input_Answer_Listener": [
                         {
@@ -144,6 +154,13 @@
                         {
                             "szActionTag": "Costume_Puzzle_Unlock",
                             "szArg": "Costume_Puzzle_Unlock",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Get_Costume_Puzzle_Unlock": [
+                        {
+                            "szActionTag": "Get_Costume_Puzzle_Unlock",
+                            "szArg": "Get_Costume_Puzzle_Unlock",
                             "szTypeTag": "ActionEvent"
                         }
                     ]
@@ -191,7 +208,7 @@
                 "fRotation": 0.0,
                 "fSizeX": 356.0,
                 "fSizeY": 80.0,
-                "fX": 1285.0,
+                "fX": 800.0,
                 "fY": 450.0,
                 "iDepth": 100,
                 "iDrawType": 1,

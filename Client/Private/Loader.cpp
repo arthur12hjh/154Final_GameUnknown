@@ -78,11 +78,11 @@
 #pragma endregion
 
 #pragma region Client Component
-#include "Interaction_Component.h"
 #include "TargetComponent.h"
 #include "DropComponent.h"
 #include "AISenceComponent.h"
 #include "RimLight.h"
+#include "InteractionUIBinder.h"
 #pragma endregion
 
 #pragma region Prob
@@ -2429,9 +2429,9 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
-	/* For.Prototype_Component_Interaction */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Interaction");
-	pProtoDesc.pPrototype = CInteraction_Component::Create(m_pDevice, m_pContext);
+	/* For.Prototype_Component_InteractionUIBinder */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_InteractionUIBinder");
+	pProtoDesc.pPrototype = CInteractionUIBinder::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

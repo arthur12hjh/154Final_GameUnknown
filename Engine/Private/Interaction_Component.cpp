@@ -124,27 +124,27 @@ HRESULT CInteraction_Component::Ready_Components(const INTERACTION_DESC& Desc)
     return S_OK;
 }
 
-CInteraction_Component* CInteraction_Component::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-    CInteraction_Component* pInteraction_Com = new CInteraction_Component(pDevice, pContext);
-    if (FAILED(pInteraction_Com->Initialize_Prototype()))
-    {
-        Safe_Release(pInteraction_Com);
-        MSG_BOX("Create Fail : Interaction Component");
-    }
-    return pInteraction_Com;
-}
+//CInteraction_Component* CInteraction_Component::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+//{
+//    CInteraction_Component* pInteraction_Com = new CInteraction_Component(pDevice, pContext);
+//    if (FAILED(pInteraction_Com->Initialize_Prototype()))
+//    {
+//        Safe_Release(pInteraction_Com);
+//        MSG_BOX("Create Fail : Interaction Component");
+//    }
+//    return pInteraction_Com;
+//}
 
-CComponent* CInteraction_Component::Clone(void* pArg)
-{
-    CInteraction_Component* pInteraction_Com = new CInteraction_Component(*this);
-    if (FAILED(pInteraction_Com->Initialize(pArg)))
-    {
-        Safe_Release(pInteraction_Com);
-        MSG_BOX("Clone Fail : Interaction Component");
-    }
-    return pInteraction_Com;
-}
+//CComponent* CInteraction_Component::Clone(void* pArg)
+//{
+//    CInteraction_Component* pInteraction_Com = new CInteraction_Component(*this);
+//    if (FAILED(pInteraction_Com->Initialize(pArg)))
+//    {
+//        Safe_Release(pInteraction_Com);
+//        MSG_BOX("Clone Fail : Interaction Component");
+//    }
+//    return pInteraction_Com;
+//}
 
 void CInteraction_Component::Free()
 {

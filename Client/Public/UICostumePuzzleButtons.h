@@ -47,6 +47,8 @@ private:
 	BTN_STATE m_eBtnState{ BTN_STATE::DEFAULT };
 	BTN_STATE m_ePrevBtnState{ m_eBtnState };
 
+	_bool m_bCanInput = true;
+
 private:
 	HRESULT Render_Buttons();
 
