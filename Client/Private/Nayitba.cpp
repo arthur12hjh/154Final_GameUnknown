@@ -907,7 +907,7 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
 	{
 		pHitBoxDesc.vScale = pSkillData->vHitBoxExtents;
-		fRange = pSkillData->fRange;
+		fRange = m_pInitMonsterInfo->fAttackRange;
 	}
 	else
 	{

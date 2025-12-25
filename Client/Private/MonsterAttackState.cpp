@@ -50,13 +50,14 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 
 	_vector vOwnerPos = {};
 	if (bIsRandomAttack)
-	{
 		m_pSkillData = pEntity->GetSkillData(false);
-		m_szAnimationName = m_pSkillData->szAnimationName;
-	}
 
 	ReadySetting();
 	pEntity->SetAttackData(m_pSkillData);
+
+	SearchTargetDistance();
+	if (m_fDistance >= m_pSkillData->fRange)
+		m_bIsMoveAction = true;
 
 	m_bIsEnableChange = false;
 	
@@ -68,31 +69,51 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	SearchTargetDistance();
 
-	if (m_bIsPattern)
+	if (m_fDistance <= m_pSkillData->fRange)
+		m_bIsMoveAction = false;
+	
+	if(m_bIsMoveAction)
 	{
-		switch (m_StaticMonsterData->iMonsetID)
+		m_szAnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
+		m_szAnimationName += "_Run_L";
+		m_fPlayRatio = 1.f;
+
+		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 2.f));
+		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), m_fMoveSpeed * 2.5f);
+		pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, m_StaticMonsterData->fLerpRatio);
+	}
+	else
+	{
+		if (m_bIsPattern)
 		{
-		case 2 :
-			BeholderPattern(fTimeDelta);
-			break;
-		case 4:
-			StatueAPattern(fTimeDelta);
-			break;
-		case 5:
-			StatueBPattern(fTimeDelta);
-			break;
-		case 6:
-			SunFlowerPattern(fTimeDelta);
-			break;
-		case 7:
-			Minion11Pattern(fTimeDelta);
-			break;
-		}	
+			switch (m_StaticMonsterData->iMonsetID)
+			{
+			case 2:
+				BeholderPattern(fTimeDelta);
+				break;
+			case 3:
+				BanaclePattern(fTimeDelta);
+				break;
+			case 4:
+				StatueAPattern(fTimeDelta);
+				break;
+			case 5:
+				StatueBPattern(fTimeDelta);
+				break;
+			case 6:
+				SunFlowerPattern(fTimeDelta);
+				break;
+			case 7:
+				Minion11Pattern(fTimeDelta);
+				break;
+			}
+		}
+
+		m_fPlayRatio = 2.f;
+		pEntity->Set_Animation(m_pSkillData->szAnimationName, false, 1.f, m_StaticMonsterData->fLerpRatio);
 	}
 
-	pEntity->Set_Animation(m_szAnimationName.c_str(), false, 1.f, m_StaticMonsterData->fLerpRatio);
 	m_bIsFinished = pEntity->Play_Animation(fTimeDelta * m_fPlayRatio);
-
 	if (m_bIsFinished)
 	{
 		m_AttackCompletedFunc(0.f);
@@ -115,6 +136,7 @@ void CMonsterAttackState::ReadySetting()
 	switch (m_StaticMonsterData->iMonsetID)
 	{
 	case 2:
+	case 3:
 	case 4:
 	case 5:
 	case 6:
@@ -185,6 +207,61 @@ void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 		{
 			m_fMoveAnimMaxRatio = 0.6f;
 			fSpeed = m_fMoveSpeed - 1.f;
+			bMoveAction = true;
+		}
+	}
+
+	if (bMoveAction)
+		LerpMoveAction(fTimeDelta, fSpeed);
+}
+
+void CMonsterAttackState::BanaclePattern(_float fTimeDelta)
+{
+
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_float fSpeed = m_fMoveSpeed;
+	_bool bMoveAction = false;
+
+	if (541 == m_pSkillData->iSkillID)
+	{
+		// Punch Attack
+		if (0.2f >= fAnimPlayRatio)
+		{
+			// 이동 프레임 : 0 ~ 60
+			m_fMoveAnimMaxRatio = 0.2f;
+			bMoveAction = true;
+		}
+	}
+	else if (542 == m_pSkillData->iSkillID)
+	{
+		// TraceAttack
+		if (0.28f >= fAnimPlayRatio)
+		{	
+			// 이동 프레임 : 0 ~ 60
+			m_fMoveAnimMaxRatio = 0.28f;
+			bMoveAction = true;
+		}
+	}
+	else if (543 == m_pSkillData->iSkillID)
+	{
+		// Combo Attack
+		if (0.2f >= fAnimPlayRatio)
+		{	
+			// 이동 프레임 : 0 ~ 60
+			m_fMoveAnimMaxRatio = 0.2f;
+			bMoveAction = true;
+		}
+		else if (0.34f <= fAnimPlayRatio && 0.46f >= fAnimPlayRatio)
+		{	
+			// 이동 프레임 : 100 ~ 120
+			m_fMoveAnimMaxRatio = 0.41f;
+			bMoveAction = true;
+		}
+		else if (0.55f <= fAnimPlayRatio && 0.62f >= fAnimPlayRatio)
+		{	
+			// 이동 프레임 : 160 ~ 180
+			m_fMoveAnimMaxRatio = 0.62f;
 			bMoveAction = true;
 		}
 	}
@@ -350,6 +427,7 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		if (0.22f <= fAnimPlayRatio && 0.3f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.3f;
+			fSpeed = 10.f;
 			bMoveAction = true;
 		}
 		// 125 ~ 170
@@ -460,11 +538,11 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 
 	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
-	if (1.f >= m_fDistance - m_pSkillData->fRange)
+	if (1.f >= m_fDistance)
 		return;
 	
-	fSpeed =  m_StaticMonsterData->fMoveSpeed * (m_fDistance / m_pSkillData->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
-	fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
+	fSpeed =  m_StaticMonsterData->fMoveSpeed  * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
+	//fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
