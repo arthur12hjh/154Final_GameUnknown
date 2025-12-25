@@ -16,6 +16,7 @@
 #include "UIText.h"
 #include "UIScript.h"
 #include "UILoadingBlur.h"
+#include "UILoadingBlock.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -57,29 +58,19 @@ void CLevel_Loading::Update(_float fTimeDelta)
 		&& !m_bLevelTransitioning
 		&& (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1)))
 	{
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
 
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_0"));
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_1"));
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_2"));
-
-		CUIBase* pUI = dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"));
-
-		if (!pUI)
-			return;
-
-		pUI->SetVisibility(VISIBILITY::HIDDEN);
-
-		auto Children = pUI->Get_Children();
-
-		for (auto& pChild : *Children)
-			dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"))->Update_Children(pChild);
+		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts"))->SetVisibility(VISIBILITY::HIDDEN);
+		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
+		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Stella_Symbol"))->SetVisibility(VISIBILITY::HIDDEN);
+		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Loading_Dim"))->SetVisibility(VISIBILITY::HIDDEN);
 
 		m_bLevelTransitioning = true;
 	}
 
-	if (m_bLevelTransitioning
+	if (true == m_pLoader->isFinished()
+		&& m_bLevelTransitioning
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro")))
 	{
 		m_pGameInstance->Clear_LevelResource();
@@ -152,6 +143,10 @@ HRESULT CLevel_Loading::Ready_Prototypes()
 		CUILoadingBlur::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_Loading_Block"),
+		CUILoadingBlock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -184,12 +179,7 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 	Safe_Release(pGameManager);
 
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
-
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
-
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_0"), TEXT("Loading_BeapBeap"));
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_1"), TEXT("Loading_BeapBeap"), 0.3f);
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_2"), TEXT("Loading_BeapBeap"), 0.6f);
 
 	return S_OK;
 }
