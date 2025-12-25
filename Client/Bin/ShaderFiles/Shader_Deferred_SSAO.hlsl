@@ -100,7 +100,6 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     float fDepth = vDepth.r;
     float fViewDepth = vDepth.g * g_fFar;
     
-    // 0 ~ 0.5f
     float fRadius = lerp(g_fRadiusMin, g_fRadiusMax, saturate(vDepth.g));
     
     if (vDepth.r == 0.f && vDepth.g == 1.f && vDepth.b == 0.f && vDepth.a == 0.f)
@@ -129,7 +128,7 @@ PS_OUT_BACKBUFFER PS_MAIN_SSAO(PS_IN In)
     {
         float3 vSample = g_vRandom[i];
         
-        // 반구(Hemisphere) 강제 변
+        // 반구 영역으로 변환
         if (vSample.z < 0.0f)
         {
             vSample.z = -vSample.z;
