@@ -925,6 +925,12 @@
     <Filter Include="07. ReserveDeferred\ShaderFiles">
       <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack">
+      <UniqueIdentifier>{8093c9e1-07f8-4c0b-9854-5288c2311060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
+      <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
       <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
     </Filter>
@@ -1756,9 +1762,6 @@
     <ClInclude Include="..\public\Task_ScarletDead.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Task_ScarletAttack.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIScript.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClInclude>
@@ -1860,6 +1863,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\ColorChange.h">
       <Filter>07. ReserveDeferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIUnlockFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
@@ -2665,9 +2674,6 @@
     <ClCompile Include="..\private\Task_ScarletDead.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIScript.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClCompile>
@@ -2763,6 +2769,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\ColorChange.cpp">
       <Filter>07. ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIUnlockFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>

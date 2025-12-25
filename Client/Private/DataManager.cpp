@@ -444,7 +444,7 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../../Client/Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 11; i < iMaxSize;)
+    for (auto i = 12; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
@@ -458,6 +458,7 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.vHitBoxExtents.y = static_cast<_float>(atof(SkillDataList[i++].c_str()));
         SkillDesc.vHitBoxExtents.z = static_cast<_float>(atof(SkillDataList[i++].c_str()));
         SkillDesc.iMaxComboCount = atoi(SkillDataList[i++].c_str());
+        SkillDesc.iMaxRepulseCount = atoi(SkillDataList[i++].c_str());
 
         SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));

@@ -123,7 +123,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
 
     for (auto& pActionCamera : m_ActionCameraMap)
     {
-        Safe_Release(pActionCamera.second);
+     //   Safe_Release(pActionCamera.second);
     }
     m_ActionCameraMap.clear();
 

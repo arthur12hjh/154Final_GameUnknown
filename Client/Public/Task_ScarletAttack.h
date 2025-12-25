@@ -5,12 +5,11 @@
 NS_BEGIN(Client)
 class CNayitba;
 class CScarletBlackBoard;
-class CGorillaBehaviorTree;
 class CGameManager;
 
 struct Character_Skill_Desc;
 
-class CTask_ScarletAttack : public CTask
+class CTask_ScarletAttack final : public CTask
 {
 protected:
 	CTask_ScarletAttack();
@@ -71,6 +70,8 @@ private:
 
 	void								LookAtPoint(_float fTimeDelta);
 	void								ResetAttackTask(_bool bIsCoolTime = true);
+
+	void								Clear_ScarletAttackTask();
 
 public:
 	static	CTask_ScarletAttack*		Create(CBehaviorTree* pOwnerTree);

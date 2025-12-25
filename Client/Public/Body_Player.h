@@ -49,9 +49,12 @@ private:
 	CCollider*			m_pColliderCom = { nullptr };
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };
+
 private:
-	HRESULT Ready_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT				Ready_Components();
+	HRESULT				Bind_ShaderResources();
+
+	void				Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

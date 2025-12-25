@@ -25,7 +25,7 @@ HRESULT CTask_GorillaAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 3.5f;
+	m_fMaxDelayTime = 2.5f;
 	return S_OK;
 }
 
