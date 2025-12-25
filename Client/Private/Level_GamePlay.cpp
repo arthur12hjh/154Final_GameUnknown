@@ -415,11 +415,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	///*Desc.iMonsterID = 8;
-	//Desc.vPosition = { 1000.f, 1.f, 1000.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;*/
+	Desc.iMonsterID = 8;
+	Desc.vPosition = { 1000.f, 1.f, 1000.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
 
 	CNpc::NPC_DESC NpcDesc= {};
 	NpcDesc.bIsApplyTransform = true;

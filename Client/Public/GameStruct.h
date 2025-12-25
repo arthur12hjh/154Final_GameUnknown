@@ -543,6 +543,15 @@ namespace Client
 	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
 	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, EXECUTION_ATTACK, END};
 
+	typedef struct TransportDesc
+	{
+		_uint					iTeleportID;
+		char					szAreaName[MAX_PATH];
+
+		_float3					vTransportpoint;
+		_bool					bIsEnableMove;
+	} TRANSPORT_DESC;
+
 	typedef struct tagColorChange
 	{
 		_float4 vColor;

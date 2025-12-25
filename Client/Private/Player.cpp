@@ -201,6 +201,26 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
 
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	{
+		auto pTransportData = m_pGameManager->Find_TransportData(1);
+		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPos);
+		m_pCCT->Set_Position(vPos);
+	}
+
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	{
+		auto pTransportData = m_pGameManager->Find_TransportData(2);
+		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPos);
+		m_pCCT->Set_Position(vPos);
+	}
+
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
