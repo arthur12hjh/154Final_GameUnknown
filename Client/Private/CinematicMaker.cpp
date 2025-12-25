@@ -40,7 +40,7 @@ void CCinematicMaker::Update(_float fTimeDeleta)
 
     if (m_bIsCinematicStarted == TRUE)
     {
-        m_fTimer += fTimeDeleta * 0.34f;
+        m_fTimer += fTimeDeleta;
     }
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
     ImGui::Begin("Cinematic Maker", &bIsOpen);

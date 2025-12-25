@@ -33,6 +33,7 @@ HRESULT CWeapon_Scarlet::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	//m_vRotationQuaternion = { 90.f, -90.f, 0.f };
 	m_vRotationQuaternion = { 90.f, -90.f, 0.f };
 
 	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
@@ -108,7 +109,7 @@ HRESULT CWeapon_Scarlet::Render()
 			return E_FAIL;
 	}
 
-	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 0), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
+	//m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 400), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
 
 	return S_OK;
 }

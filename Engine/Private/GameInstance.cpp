@@ -215,7 +215,6 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
 #else
 		m_pObject_Manager->Update(fGameSpeed);
-
 #endif
 	}
 

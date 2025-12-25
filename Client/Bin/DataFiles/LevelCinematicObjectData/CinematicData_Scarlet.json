@@ -1,6 +1,6 @@
 [
     {
-        "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla",
+        "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet",
         "eType": 0,
         "vPosition": [760.197, 46.912, 700.319],
         "vRotation": [0.0, 0.0, 0.0, 1.0],
@@ -14,16 +14,93 @@
         "vScale": [1.0, 1.0, 1.0]
     },
     {
-        "szObjectTag": "ActionCamera_GigasMeetPlayer01",
+        "szObjectTag": "ActionCamera_ScarletBattleEnter01",
         "eType": 1,
-        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vPosition": [251.526, 11.486, 211.944],
         "vRotation": [0.0, 0.0, 0.0, 1.0],
         "vScale": [1.0, 1.0, 1.0]
     },
     {
-        "szObjectTag": "ActionCamera_GigasMeetGigas02",
+        "szObjectTag": "ActionCamera_ScarletBattleEnter02",
         "eType": 1,
-        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vPosition": [303,618, 34.502, 304.561],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter03",
+        "eType": 1,
+        "vPosition": [265.803, 28.545, 334.719],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter04",
+        "eType": 1,
+        "vPosition": [260.791, 25.597, 332.107],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter05",
+        "eType": 1,
+        "vPosition": [259.147, 23.791, 328.008],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter06",
+        "eType": 1,
+        "vPosition": [258.855, 25.936, 331.794],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter07",
+        "eType": 1,
+        "vPosition": [254.621, 27.255, 334.449],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter08",
+        "eType": 1,
+        "vPosition": [308.711, 17.424, 233.145],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter09",
+        "eType": 1,
+        "vPosition": [267.632, 26.824, 327.935],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter10",
+        "eType": 1,
+        "vPosition": [260.572, 21.348, 291.482],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter11",
+        "eType": 1,
+        "vPosition": [260.896, 27.432, 325.499],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter12",
+        "eType": 1,
+        "vPosition": [259.513, 9.414, 260.015],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_ScarletBattleEnter13",
+        "eType": 1,
+        "vPosition": [260.572, 21.348, 291.482],
         "vRotation": [0.0, 0.0, 0.0, 1.0],
         "vScale": [1.0, 1.0, 1.0]
     }

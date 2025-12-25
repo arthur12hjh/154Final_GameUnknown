@@ -10,8 +10,14 @@
             {
                 "eState": 1,
                 "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
+                "iActiveIndex": 21,
                 "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 21,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
             },
             {
                 "eState": 4,
@@ -26,49 +32,31 @@
                 "szObjectTag": "Layer_Monster"
             },
             {
-                "eState": 3,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 1112,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 3.5999999046325684,
-                "iActiveIndex": 1113,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 4.451000213623047,
-                "iActiveIndex": 0,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
-            },
-            {
                 "eState": 2,
-                "fTrackPosition": 12.199999809265137,
+                "fTrackPosition": 56.0,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Player"
             },
             {
                 "eState": 6,
-                "fTrackPosition": 12.199999809265137,
+                "fTrackPosition": 56.0,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
             {
                 "eState": 7,
-                "fTrackPosition": 12.600000381469727,
+                "fTrackPosition": 56.400001525878906,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
             {
                 "eState": 2,
-                "fTrackPosition": 12.600000381469727,
+                "fTrackPosition": 56.400001525878906,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Monster"
             }
         ],
-        "iCinematicID": 124,
-        "szCinematicName": "GorillaEnterTest02"
+        "iCinematicID": 142,
+        "szCinematicName": "ScarletBattlePhaseChange01"
     }
 ]
