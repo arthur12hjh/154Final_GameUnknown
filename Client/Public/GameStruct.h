@@ -399,7 +399,7 @@ namespace Client
 	}DEFAULT_DAMAGE_DESC;
 
 	//인터랙션 타입.
-	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, LIFT_CONTROLLER, CORPSE, END };
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, LIFT_CONTROLLER, CORPSE, NPC, END };
 	//인터랙션 상태(상호작용 중, 닿았는지 등)
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
@@ -429,6 +429,7 @@ namespace Client
 	{
 		_wstring szScriptTag{};
 		_wstring szAnimTag{};
+		_wstring szSpeaker{};
 		_bool bCanControl{ false };
 		_float2 vInitOffset{ 0.f, 0.f };
 		vector<SCRIPT_DATA> Scripts;
@@ -533,6 +534,9 @@ namespace Client
 
 		_float3						vExtents;
 		_uint						iTeamIndex;
+		_uint						iInteractionID;
+
+		vector<_wstring>			szScriptTags{};
 	}NPC_DATA_DESC;
 
 	//  LINK_ATTACK -> 그로기 상태에서 들어가는값

@@ -12,7 +12,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Effect.h"
 #include "Notify.h"
 #include "AttackHitBox.h"
@@ -631,14 +631,14 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
 
-		const INTERACTION_DATA* pInteractionData = pInteractionObject->Get_InterDesc();
-		INTERACTION_STATE InteractionState = pInteractionObject->Get_InterState();
+ 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
 
 		switch (InteractionState)
 		{
@@ -682,6 +682,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
@@ -693,13 +698,12 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 	}
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
-		if (0.f < pInteractionObject->Get_InterDesc()->fInteractionTime)
-			pInteractionObject->Reset_Interaction();
+		if (0.f < pInteractionCom->Get_InterDesc()->fInteractionTime)
+			pInteractionCom->Reset_Interaction();
 	}
 }
 

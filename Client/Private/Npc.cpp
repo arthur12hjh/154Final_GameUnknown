@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "StringHelper.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
@@ -13,6 +13,9 @@
 #include "AIController.h"
 #include "NpcBody.h"
 #include "NpcFace.h"
+
+#include "UIHUD.h"
+#include "UIScript.h"
 
 CNpc::CNpc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CCharacter(pDevice, pContext)
@@ -58,6 +61,37 @@ void CNpc::Update(_float fTimeDelta)
 {
     __super::Update(fTimeDelta);
 
+    if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
+    {
+        if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
+        {
+            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            if (!pHUD)
+            {
+                Safe_Release(pHUD);
+                return;
+            }
+
+            if (!dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")))->Get_Has_Script_Desc())
+                m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+
+            Safe_Release(pHUD);
+        }
+        //else
+        //{
+        //    auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
+        //    if (PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode || PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+        //    {
+        //        //if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
+        //        {
+        //            // 나중에 여기서 조건 체크하세요
+        //            //m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+        //        }
+        //    }
+        //}
+    }
+
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
     m_pAIController->Update(fTimeDelta);
 }
@@ -81,7 +115,7 @@ void CNpc::Late_Update(_float fTimeDelta)
 
             if (fCamDist < 100.f)
             {
-                m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+                //m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
                 m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
             }
 
@@ -142,7 +176,7 @@ HRESULT CNpc::Ready_Components()
     m_pAIController = static_cast<CAIController*>(pInstnace);
 
     /* Com_Interaction */
-    CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+   /* CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_Interaction(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_Interaction(); };
@@ -153,8 +187,22 @@ HRESULT CNpc::Ready_Components()
         return E_FAIL;
 
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);*/
 
+    /* Com_Interaction */
+    CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
+    InteractionDesc.vSize = Com_Size;
+    InteractionDesc.BeginCallBackFunc = [&]() { Begin_Interaction(); };
+    InteractionDesc.EndCallBackFunc = [&]() { End_Interaction(); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_Interaction(fTimeDelta, pActionObject); };
+
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+        TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
+        return E_FAIL;
+    m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(m_NpcDesc->iInteractionID));
+    m_pInteractionCom->SetOwner(this);
+    m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
 
     /* Com_CCT */
     CCharacterController::CCT_DESC Desc;
@@ -184,12 +232,49 @@ HRESULT CNpc::Ready_Components()
 
 void CNpc::Begin_Interaction()
 {
-    m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+    if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
+        m_pGameInstance->ADD_Interaction(m_pInteractionCom);
+
+    //// END일 땐 다시 안 보이게
+    //if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
+    //    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
 {
+    // 여기서 플레이어 상태 처리 및 Lock 상태 관리
+    if (!m_pInteractionCom->IsInteractionEnable())
+        m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
+    if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
+    {
+        if (m_pInteractionCom->IsInteractionEnable())
+        {
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+        }
+    }
+    else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+    {
+        m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+        m_pInteractionCom->Set_Duration(0.f);
+
+        CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+        if (!pHUD)
+        {
+            Safe_Release(pHUD);
+            return;
+        }
+
+        CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+        if (!pScript)
+            return;
+
+        pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[0]));
+
+        Safe_Release(pHUD);
+    }
 }
 
 void CNpc::End_Interaction()

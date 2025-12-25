@@ -55,6 +55,58 @@
                     "szText": "아무것도 없네..."
                 }
             ]
+        },
+        "NpcTest": {
+            "szAnimTag": "Default",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "줴훈줴훈.."
+                },
+                {
+                    "szText": "왜 예쁜 날 두고 가시나?"
+                },
+                {
+                    "szText": "날 두고 가시나?"
+                },
+                {
+                    "szText": "날 두고 떠나가시나?"
+                },
+                {
+                    "szText": "그리 쉽게 떠나가시나?"
+                },
+                {
+                    "szText": "같이 가자고 약속해놓고",
+                    "vColor": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ]
+                },
+                {
+                    "szText": "가시나, 가시나"
+                }
+            ]
+        },
+        "NpcTest2": {
+            "szAnimTag": "Default",
+            "bCanControl": true,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "줴훈줴훈.."
+                }
+            ]
         }
     }
 }

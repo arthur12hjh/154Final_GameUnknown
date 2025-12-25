@@ -75,7 +75,13 @@ HRESULT CUIScript::Render()
 
 	__super::Render();
 
-	if (FAILED(RenderText()))
+	if (m_pScriptDesc->szSpeaker != TEXT(""))
+	{
+		if (FAILED(RenderSpeaker()))
+			return E_FAIL;
+	}
+
+	if (FAILED(RenderScript()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -85,7 +91,50 @@ HRESULT CUIScript::Render()
 	return S_OK;
 }
 
-HRESULT CUIScript::RenderText()
+HRESULT CUIScript::RenderSpeaker()
+{
+	_float2 fTextSize = m_pGameInstance->Get_Text_Size(
+		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_pScriptDesc->szSpeaker.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
+	_float fAlpha{ m_tScriptAnimDesc.fAlpha };
+
+	_float2 vPivot{
+		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (fTextSize.x * 0.5f),
+		m_tUIDesc.fY + m_tUIDesc.fOffsetY + m_tScriptAnimDesc.vOffset.y - 40.f
+	};
+
+	_float2 vShadowPivot{
+		vPivot.x + 1.f,
+		vPivot.y + 1.f
+	};
+
+	_vector vColor = XMVectorSet(
+		COLOR_PATTERN_SCARLET.x * fAlpha,
+		COLOR_PATTERN_SCARLET.y * fAlpha,
+		COLOR_PATTERN_SCARLET.z * fAlpha,
+		COLOR_PATTERN_SCARLET.w * fAlpha
+	);
+
+	_vector vShadowColor = XMVectorSet(
+		0.f * fAlpha,
+		0.f * fAlpha,
+		0.f * fAlpha,
+		1.f * fAlpha
+	);
+
+	m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+		m_pScriptDesc->szSpeaker.c_str(),
+		vShadowPivot,
+		vShadowColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+	m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+		m_pScriptDesc->szSpeaker.c_str(),
+		vPivot,
+		vColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+	return S_OK;
+}
+
+HRESULT CUIScript::RenderScript()
 {
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(
 		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);

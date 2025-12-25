@@ -312,7 +312,7 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
     size_t iMaxSize = NpcDataList.size();
-    for (auto i = 6; i < iMaxSize;)
+    for (auto i = 9; i < iMaxSize;)
     {
         NPC_DATA_DESC pNpcDesc = {};
         pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
@@ -326,6 +326,20 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
         pNpcDesc.vExtents.z = (_float)atof(NpcDataList[i++].c_str());
 
         pNpcDesc.iTeamIndex = atoi(NpcDataList[i++].c_str());
+        pNpcDesc.iInteractionID = atoi(NpcDataList[i++].c_str());
+
+        _int iScriptCount = atoi(NpcDataList[i++].c_str());
+
+        for (auto j = 0; j < iScriptCount; ++j)
+        {
+            char szText[MAX_PATH]{};
+            strcpy_s(szText, NpcDataList[i++].c_str());
+
+            WCHAR szWText[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(szText, szWText);
+            pNpcDesc.szScriptTags.push_back(szWText);
+        }
+
         m_pNpcDatas.emplace(pNpcDesc.iNpcID, pNpcDesc);
     }
 
@@ -423,6 +437,14 @@ HRESULT CDataManager::LoadScriptData(void* pArg)
 
         if (Value.contains("bCanControl"))
             ScriptDesc.bCanControl = Value["bCanControl"];
+
+        if (Value.contains("szSpeaker"))
+        {
+            //string szSpeaker = Value["szSpeaker"];
+            //WCHAR szText[MAX_PATH]{};
+            //CStringHelper::ConvertUTFToWide(szSpeaker.c_str(), szText);
+            ScriptDesc.szSpeaker = UTF8ToWString(Value["szSpeaker"]);
+        }
 
         if (Value.contains("vInitOffset"))
         {
