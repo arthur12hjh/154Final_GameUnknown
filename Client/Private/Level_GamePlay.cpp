@@ -343,9 +343,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//		return E_FAIL;
 	//}
 
-	/*CNayitba::NAYITBA_DESC Desc = {};
+	CNayitba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
-	Desc.vScale = { 1.f, 1.f, 1.f };*/
+	Desc.vScale = { 1.f, 1.f, 1.f };
 
 	//Desc.iMonsterID = 1;
 	//Desc.vPosition = { 62.f, 1.f, 62.f };

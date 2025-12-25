@@ -285,9 +285,9 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 	if (521 == m_pSkillData->iSkillID)
 	{
 		//잡기 공격
-		if (0.1f <= fAnimPlayRatio && 0.3 >= fAnimPlayRatio)
+		if (0.15f <= fAnimPlayRatio && 0.4 >= fAnimPlayRatio)
 		{
-			m_fMoveAnimMaxRatio = 0.3f;
+			m_fMoveAnimMaxRatio = 0.4f;
 			bMoveAction = true;
 		}
 	}
@@ -295,14 +295,7 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 	{
 		// Slash 공격
 		// 0 ~ 40 프레임
-		if (0.0f <= fAnimPlayRatio && 0.24f >= fAnimPlayRatio)
-		{
-			m_fMoveAnimMaxRatio = 0.24f;
-			bMoveAction = true;
-		}
-
-		// 40 ~ 60 프레임
-		if (0.24f <= fAnimPlayRatio && 0.36f >= fAnimPlayRatio)
+		if (0.36f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.36f;
 			bMoveAction = true;
@@ -427,7 +420,6 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 		if (0.22f <= fAnimPlayRatio && 0.3f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.3f;
-			fSpeed = 10.f;
 			bMoveAction = true;
 		}
 		// 125 ~ 170
@@ -538,10 +530,10 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 
 	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
-	if (1.f >= m_fDistance)
+	if (m_StaticMonsterData->fAttackRange >= m_fDistance)
 		return;
 	
-	fSpeed =  m_StaticMonsterData->fMoveSpeed  * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
+	fSpeed =  m_StaticMonsterData->fMoveSpeed  * (m_fDistance / m_StaticMonsterData->fAttackRange);
 	//fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
 	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
