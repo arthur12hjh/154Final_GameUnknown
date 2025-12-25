@@ -60,6 +60,8 @@ public:
 
 	void		  Set_Position(_vector vPosition);
 	void		  Set_CCTCollision(_bool bFlag) { m_tUserData.isCollisionCCTToCCT = bFlag; }
+	//Capsule일때만 작동.
+	_float		  Get_Radius();
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

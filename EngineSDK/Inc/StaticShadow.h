@@ -34,7 +34,7 @@ private:
 	//정적 그림자 정보
 	_float4x4				 m_StaticTransformationMatrices[ENUM_CLASS(D3DTS::END)] = {};
 	ID3D11DepthStencilView*  m_pStaticShadowDSV = { nullptr };
-	_uint2					 m_vStaticOrhtoSize = { 2048, 2048 };
+	_uint2					 m_vStaticOrhtoSize = { 1024, 1024 };
 	_uint2					 m_vStaticShadowMapSize = { 16384, 16384 };
 
 	STATIC_SHADOW_DESC		 m_tShadowLightDesc = {};
