@@ -38,12 +38,6 @@ void CUIInteractionFX::Priority_Update(_float fTimeDelta)
 void CUIInteractionFX::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
-
-	/*if (!m_bPlayingAnim)
-	{
-		m_tUIDesc.fAlpha = 0.f;
-		m_tUIDesc.m_tUIShaderDesc.fGlowIntensity = 0.f;
-	}*/
 }
 
 void CUIInteractionFX::Late_Update(_float fTimeDelta)
@@ -61,10 +55,10 @@ HRESULT CUIInteractionFX::Render()
 	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::INTERACTION_FX))))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Bind_Resources()))
+	if (FAILED(m_pVIBufferCom->Bind_Resources()))
 		return E_FAIL;
 
-	if (FAILED(m_pVIBaseBufferCom->Render()))
+	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
 	if (FAILED(Glow_Render()))
@@ -82,12 +76,12 @@ HRESULT CUIInteractionFX::Ready_Components()
 	__super::Ready_Components();
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
-		TEXT("Com_VIBaseBuffer"), reinterpret_cast<CComponent**>(&m_pVIBaseBufferCom))))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect_Instance"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIGlowBuffer"), reinterpret_cast<CComponent**>(&m_pVIGlowBufferCom))))
 		return E_FAIL;
 
@@ -225,5 +219,4 @@ void CUIInteractionFX::Free()
 	__super::Free();
 
 	Safe_Release(m_pVIGlowBufferCom);
-	Safe_Release(m_pVIBaseBufferCom);
 }

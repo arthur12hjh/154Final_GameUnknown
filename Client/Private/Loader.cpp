@@ -214,6 +214,7 @@
 #include "UIGetterQueue.h"
 #include "UIOwnGold.h"
 #include "UIScript.h"
+#include "UIUnlockFX.h"
 
 #include "UIPopup.h"
 #include "UICostumePuzzleAnswer.h"
@@ -2507,7 +2508,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Terrain");
-	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp"));
+	pProtoDesc.pPrototype = CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp"));
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6910,6 +6911,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Puzzle_Unlock */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_Puzzle_Answer */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Puzzle_Answer");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1);
@@ -6941,6 +6949,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint");
 	pProtoDesc.pPrototype = CUICostumePuzzleHint::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_UnlockFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_UnlockFX");
+	pProtoDesc.pPrototype = CUIUnlockFX::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -4,7 +4,7 @@
 #include "UIBase.h"
 
 NS_BEGIN(Engine)
-class CVIBuffer_Rect_Instance;
+class CVIBuffer_Rect;
 class CTexture;
 class CShader;
 NS_END
@@ -37,8 +37,7 @@ private:
 	virtual HRESULT Bind_GlowShaderResources();
 
 private:
-	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom{ nullptr };
-	CVIBuffer_Rect_Instance* m_pVIGlowBufferCom{ nullptr };
+	CVIBuffer_Rect* m_pVIGlowBufferCom{ nullptr };
 
 public:
 	static CUIInteractionFX* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

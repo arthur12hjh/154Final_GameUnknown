@@ -25,6 +25,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Set_isSolved(_bool isSolved) { m_isSolved = isSolved; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -41,6 +43,7 @@ private:
 	vector<_int> m_Answer{};
 
 	_bool m_isAnswer{ false };
+	_bool m_isSolved{ false };
 	_int m_iSubmitAnswerIdx{ 0 };
 
 private:

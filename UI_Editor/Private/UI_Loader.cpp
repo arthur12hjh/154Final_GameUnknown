@@ -40,6 +40,7 @@
 #include "UIGetterQueue.h"
 #include "UIOwnGold.h"
 #include "UIScript.h"
+#include "UIUnlockFX.h"
 
 #include "UIPopup.h"
 #include "UICostumePuzzleAnswer.h"
@@ -719,6 +720,14 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Answer"),
 		TEXT("Com_Texture_UI_Puzzle_Answer"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Puzzle_Unlock */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock"),
+		TEXT("Com_Texture_UI_Puzzle_Unlock"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2);
 
 	/*=================================================================================================================*/
 
@@ -740,6 +749,11 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint"),
 		CUICostumePuzzleHint::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_UnlockFX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_UnlockFX"),
+		CUIUnlockFX::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

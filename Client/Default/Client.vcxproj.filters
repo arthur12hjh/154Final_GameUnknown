@@ -931,6 +931,9 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
       <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
+      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1867,6 +1870,9 @@
     <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIUnlockFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2769,6 +2775,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIUnlockFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
