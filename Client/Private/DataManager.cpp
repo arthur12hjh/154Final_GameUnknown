@@ -578,7 +578,7 @@ HRESULT CDataManager::LoadAnimNotifyData(void* pArg)
         iResult = _findnext64(handle, &fd);
         Safe_Delete_Array(pFileName);
     }
-
+    //P_Eve_Sword_Normal_MoveBackAttack1_E
 
 
     return S_OK;

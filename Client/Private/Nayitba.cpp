@@ -106,25 +106,30 @@ void CNayitba::Update(_float fTimeDelta)
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
+	_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
+
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 		m_pAIController->Update(fTimeDelta);
+
+	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{
+		if (m_pLockOnMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (SpineMatrix * WorldMatrix).r[3]);
+
+		if (m_pHeadBoneMatrix)
+			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+	}
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
 		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
 		m_pTargetCom->Target_Search(m_pAISenceCom->GetSearchAllObject());
 
-		m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+		WorldMatrix.r[3] += SpineMatrix.r[3];
+		m_pColliderCom->UpdateColiision(WorldMatrix);
 	}
 	
-	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
-	{
-		_matrix WorldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-		if(m_pLockOnMatrix)
-			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (XMLoadFloat4x4(m_pLockOnMatrix) * WorldMatrix).r[3]);
-		if(m_pHeadBoneMatrix)
-			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
-	}
 	__super::Update(fTimeDelta);
 }
 
@@ -182,9 +187,14 @@ HRESULT CNayitba::Render_Shadow()
 
 HRESULT CNayitba::Damaged(void* pArg)
 {
-	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
-	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
+	if (nullptr == pArg)
+		return E_FAIL;
 
+	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
+	if (nullptr == pDesc->pSkillData)
+		return E_FAIL;
+
+	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
@@ -197,7 +207,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	
 	if (0 >= m_MonsterInfo.iCurrentHealth)
 	{
-		m_bIsTheshold = false;
+		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		m_pCCT->Set_Active(false);
 	}
@@ -313,6 +323,15 @@ _uint CNayitba::GetMonsterID()
 	return m_iMonsterID;
 }
 
+void CNayitba::Excution()
+{
+	m_MonsterInfo.iCurrentHealth = 0.f;
+	m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
+
+}
+
 CGameObject* CNayitba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
@@ -388,9 +407,9 @@ void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 	m_iComboCount = 0;
 }
 
-void CNayitba::SetThesholdAction(_bool bIsTheshold)
+void CNayitba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
-	m_bIsTheshold = bIsTheshold;
+	m_eExcution = eExcution;
 }
 
 void CNayitba::EnablePhysxController(_bool bEnable)
@@ -407,6 +426,11 @@ _bool CNayitba::bIsHitReaction()
 		return true;
 
 	return false;
+}
+
+NAYITBA_EXECUTION_TYPE CNayitba::bIsThesholdAction()
+{
+	return m_eExcution;
 }
 
 CAIController* CNayitba::GetController()
@@ -450,7 +474,11 @@ HRESULT CNayitba::Ready_CharacterData()
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
 
 		m_MonsterInfo.iCurrentHealth = m_pInitMonsterInfo->iMaxHealth;
-		m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		if (8 != m_pInitMonsterInfo->iMonsetID)
+			m_MonsterInfo.iCurrentShield = m_pInitMonsterInfo->iMaxShield;
+		else
+			m_MonsterInfo.iCurrentShield = 0.f;
+
 		m_MonsterInfo.iCurrentStamina = m_pInitMonsterInfo->iMaxStamina;
 
 		m_MonsterInfo.fAttackCoolTime.y = m_pInitMonsterInfo->fAttackCoolTime;
@@ -477,7 +505,6 @@ HRESULT CNayitba::ADD_Components()
 	/* Com_Collider_AABB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 	OBBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
-	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
@@ -558,7 +585,7 @@ HRESULT CNayitba::ADD_Components()
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-
+		
 	}
 
 	/* Com_CCT */
@@ -576,6 +603,7 @@ HRESULT CNayitba::ADD_Components()
 	Desc.pBehaviorCallback = CPlayerBehaviorCallback::Create();
 	Desc.pQueryFilterCallback = CPlayerCCTQueryFilterCallback::Create();
 	Desc.iCollisionGroup = PHYSX_CCT;
+	Desc.fStepOffset = 0.05f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_CharacterController"),
 		TEXT("Com_CCT"), reinterpret_cast<CComponent**>(&m_pCCT), &Desc)))
@@ -713,11 +741,7 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
 	{
 		if (!m_pBulletList.empty())
-		{
-			for (auto& iter : m_pBulletList)
-				Safe_Release(iter);
 			m_pBulletList.clear();
-		}
 	}
 
 	if (NAYTIBA_STATE::BATTLE != m_MonsterInfo.eNaytibaState)
@@ -729,8 +753,31 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 
 	if (SKILL_PROPERTY::PARRY & pSkillDesc->eProPerty)
 	{
-		if (0 < m_MonsterInfo.iCurrentStamina)
-			m_MonsterInfo.iCurrentStamina--;
+		_bool bIsScarletParry = false;
+		if (8 == m_pInitMonsterInfo->iMonsetID)
+		{
+			_bool bIsLastAttack = false;
+			_bool bIsEntranceAttack = false;
+
+			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
+			auto pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+				bIsScarletParry = true;
+		}
+
+		if (bIsScarletParry)
+		{
+			_float fDamage = m_pGameInstance->Random(100.f, 150.f);
+			m_MonsterInfo.iCurrentShield -= fDamage;
+
+			if (0 >= m_MonsterInfo.iCurrentShield)
+				m_MonsterInfo.iCurrentShield = 0.f;
+		}
+		else
+		{
+			if (0 < m_MonsterInfo.iCurrentStamina)
+				m_MonsterInfo.iCurrentStamina--;
+		}
 	}
 	else
 	{
@@ -913,7 +960,12 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	// false : 비활성화
 	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
 	for (auto& iter : m_pBulletList)
-		iter->Shoot_Projectile(vTargetPos, 10000.f);
+	{
+		if (iter->bIsHit())
+			iter->Set_Dead(true);
+		else
+			iter->Shoot_Projectile(vTargetPos, 10000.f);
+	}
 
 	m_pBulletList.clear();
 }

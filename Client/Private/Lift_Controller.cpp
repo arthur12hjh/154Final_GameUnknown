@@ -35,16 +35,13 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 
 	m_bIsControllLift = pDesc->bIsControllerType;
 	m_iPlatformID = pDesc->iPlatformID;
+	m_iPosition = pDesc->iPosition;
 
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
 	ResetAction(true);
-	m_bIsControllLift = pDesc->bIsControllerType;
 
-	m_iPlatformID = pDesc->iPlatformID;
-	// 뭐야 찬빈햄도 여기서하네 나도 여기서할래
-	m_iPosition = pDesc->iPosition;
 
 	if(m_iPosition == 0)
 		m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
@@ -73,6 +70,7 @@ void CLift_Controller::Update(_float fTimeDelta)
 			WorldMat.r[3] += vPlatformPosition + vControllerPos * -4.8f;
 			WorldMat.r[3].m128_f32[3] = 1.f;
 
+			m_vLiftPlatformPos = vPlatformPosition;
 			XMStoreFloat4x4(&m_CombinedMatrix, WorldMat);
 		}
 	}
@@ -281,13 +279,14 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 	{
 		if (IsInteractionEnable())
 		{
-			m_eInterState = INTERACTION_STATE::CONTACT;
+ 			m_eInterState = INTERACTION_STATE::CONTACT;
 		}
 	}
-
-	if (INTERACTION_STATE::CONTACT == m_eInterState)
+	else if (INTERACTION_STATE::CONTACT == m_eInterState)
 	{
 		m_eInterState = INTERACTION_STATE::ACTIVE;
+		m_fInteractionDuration = 0.f;
+
 		if (m_bIsControllLift)
 		{
 			if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
@@ -296,7 +295,6 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
 		}
 
-		m_fInteractionDuration = 0.f;
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
 			m_pModelCom->Set_AnimationIndex(1, false);

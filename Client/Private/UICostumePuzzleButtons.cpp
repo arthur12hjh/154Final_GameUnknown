@@ -54,6 +54,9 @@ void CUICostumePuzzleButtons::Late_Update(_float fTimeDelta)
 	
 	if (FAILED(SetUp_Buttons()))
 		return;
+
+	for(auto& pChild : m_Children)
+		Update_Children(pChild);
 }
 
 HRESULT CUICostumePuzzleButtons::Render()
@@ -101,6 +104,9 @@ HRESULT CUICostumePuzzleButtons::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
 		TEXT("Com_UI_InstanceBuffer_Buttons"), reinterpret_cast<CComponent**>(&m_pUIButtonsBufferCom), &UIButtonsDesc)))
 		return E_FAIL;
+
+	/*if (FAILED(SetUp_Buttons()))
+		return E_FAIL;*/
 
 	/* Com_Texture_UI_Popup_Inner_Frame */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
@@ -221,8 +227,6 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 			m_tUIDesc.fY + m_tUIDesc.fOffsetY + (vUISize.y * (i / 4)) - (fUIHeight * 0.5f)
 		};
 
-		int a = 0;
-
 		if (MouseEnter(vUIPos, vUISize))
 		{
 			m_eBtnState = BTN_STATE::HOVER;
@@ -230,9 +234,26 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
 			{
 				UI_EVENT_ARG_DESC Arg{};
+				Arg.szActionTag = TEXT("Input_Answer");
 				Arg.Type = UI_EVENT_ARG_DESC::INT;
 				Arg.pData = &m_Buttons[i];
 				__super::Trigger_Event(TEXT("Input_Answer"), &Arg);
+
+				for (auto& pChild : m_Children)
+				{
+					if (pChild->Get_UIBase_Desc().szUITag == TEXT("UI_Costume_Button_FX"))
+					{
+						pChild->Set_Position((vUISize.x * 1.5f * (i % 4)) - (fUIWidth * 0.5f), (vUISize.y * (i / 4)) - (fUIHeight * 0.5f));
+						//pChild->SetVisibility(VISIBILITY::VISIBLE);
+
+						_bool bActive = true;
+						UI_EVENT_ARG_DESC Arg2{};
+						Arg2.szActionTag = TEXT("Costume_Button_Click");
+						Arg2.Type = UI_EVENT_ARG_DESC::BOOL;
+						Arg2.pData = &bActive;
+						__super::Trigger_Event(TEXT("Costume_Button_Click"), &Arg2);
+					}
+				}
 			}
 		}
 		else
@@ -335,51 +356,3 @@ void CUICostumePuzzleButtons::Free()
 	Safe_Release(m_pButtonsTextureCom);
 	Safe_Release(m_pSuitIconsTextureCom);
 }
-
-#pragma region 백업
-//_int iconCount = m_Buttons.size();
-//
-//_int iMaxCol = 4;
-//_int iMaxRow = 3;
-//
-//_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
-//_float iconWidth = baseWidth / iMaxCol;
-//_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
-//
-//_float baseHeight = m_tUIDesc.fSizeY; // 부모 UI 폭
-//_float iconHeight = baseHeight / iMaxRow;
-//_float scaleY = iconHeight / baseHeight;   // UI 기준 단위
-//
-//for (_int i = 0; i < iconCount; ++i)
-//{
-//	VTX_INSTANCE_DESC inst{};
-//
-//	_int atlasIdx = m_Buttons[i];
-//
-//	_int atlasCol = atlasIdx % 6;
-//	_int atlasRow = atlasIdx / 6;
-//
-//	//float cellW = 1.f / iMaxCol; // 로컬 좌표 기준
-//	//float cellH = 1.f / iMaxRow;
-//
-//	//_int col = i % iMaxCol;
-//	//_int row = i / iMaxCol;
-//
-//	//float posX = -0.5f + cellW * (col + 0.5f);
-//	//float posY = 0.5f - cellH * (row + 0.5f);
-//
-//	inst.vUVAtlasSize = { 1.f, 1.f, scaleX, scaleY };
-//	//inst.vUVAtlasOffset = { 0.f, 0.f, posX, posY };
-//	inst.vUVAtlasOffset = { 0.f, 0.f, 0.f, 0.f };
-//
-//	inst.vAtlasIndex = {
-//		static_cast<_float>(atlasCol),
-//		static_cast<_float>(atlasRow),
-//		0.f, 0.f
-//	};
-//
-//	m_ButtonInstances.push_back(inst);
-//}
-//
-//m_pUIButtonsBufferCom->Update_Instance(m_ButtonInstances);
-#pragma endregion

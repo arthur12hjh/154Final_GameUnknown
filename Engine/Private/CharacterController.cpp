@@ -59,6 +59,14 @@ void CCharacterController::Set_Riding(_bool isRiding, CTransform* pTransform,  C
 	m_pRidingTargetTransform = pTransform;
 }
 
+_float CCharacterController::Get_Radius()
+{
+	if (CCT_SHAPE::CAPSULE != m_eShape)
+		return -1.f;
+
+	return static_cast<PxCapsuleController*>(m_pController)->getRadius();
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;
@@ -202,8 +210,8 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-	CCTDesc.contactOffset = 0.2f;                // 충돌 감지 오프셋
-	CCTDesc.stepOffset = 0.7f;                // 계단 올라갈 수 있는 높이
+	CCTDesc.contactOffset = 0.4f;                // 충돌 감지 오프셋
+	CCTDesc.stepOffset = pDesc->fStepOffset;                // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;
 	CCTDesc.scaleCoeff = 0.9f;

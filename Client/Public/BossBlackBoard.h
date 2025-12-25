@@ -82,8 +82,8 @@ public:
 	_bool								IsCurrentPhaseLastAttackAction();
 	_bool								IsPhaseLastAttack() { return m_bIsPhaseLastAttack; }
 
-	void								EnterExcution(_bool bIsExcution);
-	_bool								bIsExcution() { return m_bIsExcution; }
+	void								EnterExcution(NAYITBA_EXECUTION_TYPE eExcution);
+	_bool								bIsExcution();
 	// 이걸로 공격 가능체크하고
 	// 가능하면 True를 반환.
 	_bool								IsAttackEnable();
@@ -110,7 +110,7 @@ protected :
 	Default_Damage_Desc					m_pHit_Data = { nullptr };
 
 	_bool								m_bIsPhaseLastAttack = { false };
-	_bool								m_bIsExcution = { false };
+	NAYITBA_EXECUTION_TYPE						m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
 	_bool								m_bIsParryAttack = { false };
 
 	_float								m_fTargetDistance = {};

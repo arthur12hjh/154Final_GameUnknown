@@ -55,6 +55,17 @@ void CUICostumePuzzleAnswer::Late_Update(_float fTimeDelta)
 
 	if (!m_isAnswer && Check_Answer())
 	{
+		_bool bActive = Check_Answer();
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("Costume_Puzzle_Unlock");
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &bActive;
+		__super::Trigger_Event(TEXT("Costume_Puzzle_Unlock"), &Arg);
+	}
+
+	if (m_isSolved)
+	{
+		m_isSolved = false;
 		static_cast<CUIPopup*>(m_pParent)->Close_Popup();
 	}
 }
@@ -107,6 +118,9 @@ HRESULT CUICostumePuzzleAnswer::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_UI_Instance_Buffer"),
 		TEXT("Com_UI_InstanceBuffer_Icons"), reinterpret_cast<CComponent**>(&m_pUIIconsBufferCom), &UIIconsDesc)))
 		return E_FAIL;
+
+	/*if (FAILED(SetUp_Icons()))
+		return E_FAIL;*/
 
 	/* Com_Texture_UI_Popup_Inner_Frame */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
@@ -286,11 +300,6 @@ _bool CUICostumePuzzleAnswer::Check_Answer()
 
 		__super::Trigger_Event(TEXT("Get_Costume_Puzzle_Unlock"), &Arg);
 
-		/*CUIPopup* pPopup = static_cast<CUIPopup*>(m_pParent);
-
-		if (pPopup)
-			pPopup->Close_Popup();*/
-
 		return true;
 	}
 
@@ -331,86 +340,3 @@ void CUICostumePuzzleAnswer::Free()
 	Safe_Release(m_pUIIconsBufferCom);
 	Safe_Release(m_pSuitIconsTextureCom);
 }
-
-#pragma region 백업
-//m_IconInstances.clear();
-	//m_IconInstances.reserve(6);
-
-	//// 이미지 사이즈 x,y
-	//_float2 fImage_Size = { 1536.f, 768.f };
-
-	//// 이미지 몇열 몇행
-	//_uint iCountX = 6;
-	//_uint iCountY = 3;
-
-	//// 이미지 1장당 사이즈
-	//_float iImageX = 256.f;
-	//_float iImageY = 256.f;
-
-	//for (size_t i = 0; i < m_SelectedIndices.size(); ++i)
-	//{
-	//	// 이미지 중 몇번째 이미지를 할건지
-	//	_uint iframeX = m_SelectedIndices[i] % iCountX;
-	//	_uint iframeY = m_SelectedIndices[i] / iCountX;
-
-	//	// 이미지 시작 UV
-	//	_float2 UVStart{};
-	//	UVStart.x = iframeX * iImageX / fImage_Size.x;
-	//	UVStart.y = iframeY * iImageY / fImage_Size.y;
-
-	//	_float ScaleX = iImageX / fImage_Size.x;
-
-	//	_float startX = -(ScaleX * 0.75f * (m_SelectedIndices.size() - 1)) * 0.5f;
-	//	_float posX = startX + (ScaleX * 0.75f) * i;
-
-	//	VTX_INSTANCE_DESC inst{};
-	//	inst.vUVAtlasSize = _float4{ UVStart.x, UVStart.y, 1.f, 1.f };
-	//	inst.vAtlasIndex = _float4{ (_float)iframeX, (_float)iframeY, 0.f, 0.f };
-	//	inst.vUVAtlasOffset = _float4(0.f, 0.f, posX, 0.f);
-
-	//	m_IconInstances.push_back(inst);
-	//}
-
-	//m_pUIIconsBufferCom->Update_Instance(m_IconInstances);
-
-	//_float2 fImage_Size = { 1536.f, 768.f };
-
-	//// 이미지 몇열 몇행
-	//_uint iCountX = 6;
-	//_uint iCountY = 3;
-
-	//// 이미지 1장당 사이즈
-	//_float iImageX = 256.f;
-	//_float iImageY = 256.f;
-
-	//_int iconCount = m_SelectedIndices.size();
-	//_float baseWidth = m_tUIDesc.fSizeX; // 부모 UI 폭
-	//_float iconWidth = baseWidth / iconCount;
-	//_float scaleX = iconWidth / baseWidth;   // UI 기준 단위
-	//_float startX = -(scaleX * (iconCount - 1)) * 0.5f;
-
-	//for (_int i = 0; i < iconCount; ++i)
-	//{
-	//	VTX_INSTANCE_DESC inst{};
-
-	//	_int col = m_SelectedIndices[i] % 6;
-	//	_int row = m_SelectedIndices[i] / 6;
-
-	//	_float2 UVStart{};
-	//	UVStart.x = col * iImageX / fImage_Size.x;
-	//	UVStart.y = row * iImageY / fImage_Size.y;
-
-	//	inst.vUVAtlasSize = { UVStart.x, UVStart.y, scaleX, 0.75f };
-	//	inst.vUVAtlasOffset = { 0.f, 0.f, startX + scaleX * i, 0.f };
-
-	//	inst.vAtlasIndex = {
-	//		static_cast<_float>(col),
-	//		static_cast<_float>(row),
-	//		0.f, 0.f
-	//	};
-
-	//	m_IconInstances.push_back(inst);
-	//}
-
-	//m_pUIIconsBufferCom->Update_Instance(m_IconInstances);
-#pragma endregion

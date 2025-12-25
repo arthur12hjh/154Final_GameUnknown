@@ -55,6 +55,9 @@ private:
 	
 	_float3						m_vPivot = { 1.5f, 4.f, 0.f };
 
+private:
+	void			Transition_Camera(_float fTimeDelta);
+
 public:
 	static CCamera_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

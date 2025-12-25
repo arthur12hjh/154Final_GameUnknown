@@ -9,7 +9,8 @@ texture2D g_DiffuseTexture_Green;
 
 texture2D g_ORMTexture;
 texture2D g_MaskTexture;
-
+//지우지마세요
+texture2D g_NormalTexture;
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -75,14 +76,14 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vSourDiffuse = g_DiffuseTexture[0].Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 50.f);
+    vector vSourDiffuse = g_DiffuseTexture[0].Sample(DefaultSampler, In.vTexcoord * 50.f);
     //vector vDestDiffuse = g_DiffuseTexture[1].Sample(DefaultSampler, In.vTexcoord * 30.f);
     //vector vMask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord);
     
     Out.vDiffuse = vSourDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    Out.vORM = g_ORMTexture.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord);
+    Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }
@@ -91,16 +92,16 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = g_DiffuseTexture_Base.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 50.f);
-    vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 50.f);
-    vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(AnisoTropy_BLUR_Sampler, In.vTexcoord * 50.f);
+    vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
     
     float2 vMaskUV;
     const float fTexelSize = 2048.f;
     vMaskUV.x = In.vWorldPos.x / fTexelSize;
     vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
     
-    vector vMask = g_MaskTexture.SampleLevel(AnisoTropy_BLUR_Sampler, clamp(vMaskUV, 0.f, 1.f), 0);
+    vector vMask = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0);
     
     vector vResult = lerp(vDiffuse, vDiffuse_Red, vMask.r);
     
@@ -117,9 +118,9 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     //    Out.vDiffuse = vDiffuse;
     //}
     
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_TerrainNormal(g_NormalTexture, In.vTexcoord * 50.f, In.vNormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
-    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vORM = float4(1.f, 0.8f, 0.f, 0.f);
     
     return Out;
 }
@@ -145,8 +146,4 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DESERT_TERRAIN();
     }
-
-    
-
- 
 }

@@ -35,6 +35,7 @@ public:
 		class CCTBehaviorCallback* pBehaviorCallback = { nullptr };
 		class CCTQueryFilterCallback* pQueryFilterCallback = { nullptr };
 
+		_float			fStepOffset = { 0.7f };
 		PxUserData		tUserData = {};
 		// 자신의 충돌쌍
 		PxU32 iCollisionGroup = { PHYSX_CCT };
@@ -59,6 +60,8 @@ public:
 
 	void		  Set_Position(_vector vPosition);
 	void		  Set_CCTCollision(_bool bFlag) { m_tUserData.isCollisionCCTToCCT = bFlag; }
+	//Capsule일때만 작동.
+	_float		  Get_Radius();
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

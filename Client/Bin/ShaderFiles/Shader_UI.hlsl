@@ -1458,6 +1458,21 @@ PS_OUT PS_COSTUME_BUTTONS(PS_IN In)
 
 /*------------------[E_COSTUME_BUTTONS]----------------*/
 
+/*------------------[S_UNLOCK_FX]----------------*/
+
+PS_OUT PS_UNLOCK_FX(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float4 Unlock = g_Texture0.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vColor = Unlock * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_UNLOCK_FX]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1730,5 +1745,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_COSTUME_BUTTONS();
+    }
+
+    pass UNLOCK_FX // 26
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_UNLOCK_FX();
     }
 }

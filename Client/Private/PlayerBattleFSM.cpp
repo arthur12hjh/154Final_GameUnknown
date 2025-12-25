@@ -10,7 +10,7 @@
 #include "Player_BattleEvadeState.h"
 #include "Player_HitState.h"
 #include "Player_VendingInteractionState.h"
-#include "Player_BetaChargingSlahsState.h"
+#include "Player_BetaChargingSlahState.h"
 #include "Player_BattleLandingState.h"
 #include "Player_DrawHairpin.h"
 #include "Player_SheatheHairpin.h"

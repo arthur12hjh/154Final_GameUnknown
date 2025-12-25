@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "Interaction_Component.h"
-#include "UIBase.h"
+
 
 CProb_Interaction::CProb_Interaction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CActor(pDevice, pContext),

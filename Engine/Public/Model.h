@@ -76,6 +76,10 @@ public:
 	const _uint Get_NumMaterials() const { return m_Materials.size(); }
 	// </end>
 
+	// <애니메이션 함수들>
+	vector<class CAnimation*>* Get_Animations();
+	// </end>
+
 	// <Bone 정보 받는 함수들>
 	vector<class CBone*>* Get_Bones();
 	_int Get_BoneIndex(const _char* pBoneName) const;

@@ -45,6 +45,7 @@ private:
 	_float m_fAmount{ 0.f };
 
 	_bool m_isOpen{ false };
+	_bool m_isClosing{ false };
 
 public:
 	static CUIPopup* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

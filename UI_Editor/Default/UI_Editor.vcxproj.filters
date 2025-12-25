@@ -418,15 +418,6 @@
     <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp">
       <Filter>999. CPP From Client\03. Player\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp">
-      <Filter>999. CPP From Client\03. Player\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\SpriteUVEffect.cpp">
-      <Filter>999. CPP From Client\03. Player\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Client\Private\PointParticle.cpp">
-      <Filter>999. CPP From Client\03. Player\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\TrailData.cpp">
       <Filter>999. CPP From Client\03. Player\Effect</Filter>
     </ClCompile>
@@ -560,6 +551,51 @@
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UICostumePuzzleHint.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\MeshParticle.cpp">
+      <Filter>999. CPP From Client\03. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BattleSprintLandingState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BlinkAttackState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_BlinkState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_CorpseInteractionState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_DoorInteractionState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_GigasExecutionState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_LockonJustEvadeState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_RepulseState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\RimLight.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\BossController.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\BossBlackBoard.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\ScarletBlackBoard.cpp">
+      <Filter>999. CPP From Client\04. Naytiba</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIUnlockFX.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>

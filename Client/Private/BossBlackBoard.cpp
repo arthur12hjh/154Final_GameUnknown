@@ -152,6 +152,9 @@ void CBossBlackBoard::SetPhaseLastAttack(_bool bIsFlag)
 
     if (bIsFlag)
     {
+        if(8 == m_BossDefualtInfo->iMonsetID)
+            static_cast<CNayitba*>(m_pOwner)->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
+
         m_bIsPhaseLastAttack = bIsFlag;
         m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack = false;
     }
@@ -170,13 +173,21 @@ _bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
     return   m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack;
 }
 
-void CBossBlackBoard::EnterExcution(_bool bIsExcution)
+void CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 {
-    m_bIsExcution = bIsExcution;
-    if (m_bIsExcution)
+    m_eExcution = eExcution;
+    if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
     {
-        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(false);
+        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
     }
+}
+
+_bool CBossBlackBoard::bIsExcution()
+{
+    if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
+        return true;
+
+    return false;
 }
 
 _bool CBossBlackBoard::IsAttackEnable()

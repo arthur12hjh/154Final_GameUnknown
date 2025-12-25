@@ -292,8 +292,6 @@ void CGameInstance::Kill_Objects()
 
 void CGameInstance::Clear_Resources(_uint iLevelIndex, _bool bIsClearPrototype)
 {
-
-
 	if(bIsClearPrototype)
 		m_pPrototype_Manager->Clear(iLevelIndex);
 
@@ -544,6 +542,11 @@ HRESULT CGameInstance::Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc)
 void* CGameInstance::Get_Cascade_Desc()
 {
 	return m_pRenderer->Get_Cascade_Desc();
+}
+
+HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
+{
+	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
 }
 
 #ifdef _DEBUG

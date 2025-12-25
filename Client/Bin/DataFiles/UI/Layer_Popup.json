@@ -2,6 +2,52 @@
     {
         "Children": [
             {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 150.0,
+                        "fSizeY": 150.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 110,
+                        "iDrawType": 2,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Costume_Button_Click",
+                                "szPrefabTag": "Active_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "Costume_Button_Click_FX": [
+                                {
+                                    "szActionTag": "Costume_Button_Click_FX",
+                                    "szArg": "Costume_Button_Click_FX",
+                                    "szSubscribeEventTags": [
+                                        "Costume_Button_Click"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Popup",
+                        "szProtoTag": "Prototype_GameObject_UI_InteractionFX",
+                        "szUIID": "UI_Costume_Button_FX_3-1",
+                        "szUITag": "UI_Costume_Button_FX"
+                    }
+                ],
                 "fAlpha": 1.0,
                 "fOffsetX": 0.0,
                 "fOffsetY": 90.0,
@@ -22,6 +68,13 @@
                             "szArg": "Input_Answer",
                             "szTypeTag": "ActionEvent"
                         }
+                    ],
+                    "Costume_Button_Click": [
+                        {
+                            "szActionTag": "Costume_Button_Click",
+                            "szArg": "Costume_Button_Click",
+                            "szTypeTag": "ActionEvent"
+                        }
                     ]
                 },
                 "szLayerTag": "Layer_Popup",
@@ -30,6 +83,39 @@
                 "szUITag": "UI_CostumePuzzleButtons"
             },
             {
+                "Children": [
+                    {
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 175.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 150.0,
+                        "fSizeY": 150.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 110,
+                        "iDrawType": 2,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szEvents": {
+                            "Unlock_FX": [
+                                {
+                                    "szActionTag": "Costume_Puzzle_Unlock",
+                                    "szArg": "Costume_Puzzle_Unlock",
+                                    "szSubscribeEventTags": [
+                                        "Costume_Puzzle_Unlock"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Popup",
+                        "szProtoTag": "Prototype_GameObject_UI_UnlockFX",
+                        "szUIID": "UI_Costume_Puzzle_Unlock_FX_3-2",
+                        "szUITag": "UI_Costume_Puzzle_Unlock_FX"
+                    }
+                ],
                 "fAlpha": 1.0,
                 "fOffsetX": 0.0,
                 "fOffsetY": -90.0,
@@ -51,6 +137,13 @@
                             "szSubscribeEventTags": [
                                 "Input_Answer"
                             ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Costume_Puzzle_Unlock": [
+                        {
+                            "szActionTag": "Costume_Puzzle_Unlock",
+                            "szArg": "Costume_Puzzle_Unlock",
                             "szTypeTag": "ActionEvent"
                         }
                     ],

@@ -19,6 +19,7 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     m_eState = PLAYER_STATE::BLINK_ATTACK;
     m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_E", false, 1.4f, 0.12f, false, -1.f, 0.f, true, false);
+    m_pPlayer->SetSkillDataID(2000);
 
     CTransform* pTargetTransform = m_pGameManager->Get_TargetTransform();
 
@@ -28,8 +29,8 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     //락온 중이니까 lock은 계속 들어가지.
     m_Desc->pPlayerTransform->Set_State(STATE::POSITION, 
-        vTargetPos - vTargetLook * 5.f);
-    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos - vTargetLook * 5.f, XMVectorGetY(vPlayerPos) + 1.f));
+        XMVectorSetY(vTargetPos - vTargetLook * 0.1f, XMVectorGetY(vPlayerPos)));
+    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos - vTargetLook * 0.1f, XMVectorGetY(vPlayerPos)));
 
     m_Desc->pPlayerTransform->LookAt(XMVectorSetY(vTargetPos, 
         XMVectorGetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION))));
@@ -52,6 +53,7 @@ _float CPlayer_BlinkAttackState::End()
     m_Desc->isInvincible = false;
     m_Desc->isLockChangable = true;
     m_Desc->isLookFixed = false;
+    m_pPlayer->SetSkillDataID(-1);
 
     return m_fNextBlendRatio;
 }
