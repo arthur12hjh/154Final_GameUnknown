@@ -56,7 +56,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 
 	if (true == m_pLoader->isFinished()
 		&& !m_bLevelTransitioning
-		&& (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1)))
+		/*&& (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))*/)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
