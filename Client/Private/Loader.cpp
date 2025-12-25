@@ -74,7 +74,6 @@
 #include "CinematicModel_Eve.h"
 #include "CinematicModel_Scarlet.h"
 
-
 #pragma endregion
 
 #pragma region Client Component
