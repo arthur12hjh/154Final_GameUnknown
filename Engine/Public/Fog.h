@@ -4,6 +4,13 @@
 
 NS_BEGIN(Engine)
 
+/*
+거리기반 안개, 
+실제 볼륨이 존재하는 3D 텍스쳐 기반 노이즈안개
+
+2개 다 기능으로 제공할 것.
+*/
+
 class CFog final : public CDeferred
 {
 private:

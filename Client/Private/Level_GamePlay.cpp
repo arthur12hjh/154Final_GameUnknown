@@ -43,8 +43,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;*/
+	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrain"))))
  		return E_FAIL;
@@ -52,8 +52,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -212,7 +212,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}
 
-	InteractionDesc.iInteractionID = 2;
+	/*InteractionDesc.iInteractionID = 2;
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
 	for (size_t i = 0; i < 5; i++)
 	{
@@ -236,7 +236,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Interaction_NonAnim"),
 			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Pallet02");
 	for (size_t i = 0; i < 5; i++)
@@ -343,9 +343,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//		return E_FAIL;
 	//}
 
-	CNayitba::NAYITBA_DESC Desc = {};
+	/*CNayitba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
-	Desc.vScale = { 1.f, 1.f, 1.f };
+	Desc.vScale = { 1.f, 1.f, 1.f };*/
 
 	//Desc.iMonsterID = 1;
 	//Desc.vPosition = { 62.f, 1.f, 62.f };
@@ -415,17 +415,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	Desc.iMonsterID = 8;
+	/*Desc.iMonsterID = 8;
 	Desc.vPosition = { 1000.f, 1.f, 1000.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	CNpc::NPC_DESC NpcDesc= {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
 	NpcDesc.iNpcID = 1;
-	NpcDesc.vPosition = { 10.f, 1.f, 10.f };
+	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;

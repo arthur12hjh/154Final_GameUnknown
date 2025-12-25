@@ -144,7 +144,7 @@ void CMonsterMimesisController::Damage(void* pArg)
 				}
 				else
 				{
-					if (false == pNayitba->bIsHitReaction())
+					if (false == pNayitba->bIsParryHitReaction())
 						bIsHitAble = false;
 				}
 			}

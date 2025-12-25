@@ -8,11 +8,10 @@ NS_BEGIN(Engine)
 class CGameInstance;
 class CTransform;
 class CShader;
+class CReserveDeferred;
 NS_END
 
 NS_BEGIN(Client)
-
-/* 이름은 락온인데 일단은 플레이어 FSM 3개 바꿔주는 녀석임.. */
 
 class CShaderManager : public CBase
 {
@@ -31,9 +30,14 @@ public:
 	void Clear(LEVEL eLevelID);
 	HRESULT Bind_CamInfo(LEVEL eLevelID);
 
+	HRESULT Add_ReserveDeferred(const _wstring& strReserveDeferredTag, class CReserveDeferred* pReserveDeferred = nullptr);
+	void Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag);
+	void Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
+
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
-	map<_wstring, class CShader*>*	m_Shaders;
+	map<_wstring, class CShader*>* m_Shaders = {};
+	map<_wstring, class CReserveDeferred*> m_ReserveDeferredShaders = {};
 
 public:
 	static CShaderManager* Create();

@@ -458,6 +458,7 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     ////이미시브 샘플링.
     Out.vBackBuffer += Calc_Blur(g_EmissiveFinalTexture, In.vTexcoord);
 
+    //블룸 먼저 들어가고, 디스토션이 들어가는 상황.
     //블룸 샘플링
     Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
     //디스토션 샘플링.

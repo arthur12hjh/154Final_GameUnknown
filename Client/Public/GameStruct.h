@@ -209,12 +209,14 @@ namespace Client
 
 	// Skill Type
 	enum class SKILL_TYPE {
-		DEFAULT_SKILL,			// Default Attack
-		INTERACTION_SKILL,		// Interaction Skill
-		BETA_SKILL,				// Beta Skill
-		ALPHA_SKILL,			// Alpha Skill
-		MIMESIS_SKILL,			// Mimesis Skill
-		SECOND_PHASE_SKILL,		// Seconde Phase Skill
+		DEFAULT_SKILL,	
+		INTERACTION_SKILL,
+		BETA_SKILL,		
+		ALPHA_SKILL,	
+		MIMESIS_SKILL,	
+		SECOND_PHASE_SKILL,
+		BLINK_SKILL,			
+		REPULSE_SKILL,
 		END
 	};
 
@@ -255,7 +257,7 @@ namespace Client
 		// Skill Hit Box Size
 		_float3						vHitBoxExtents;				// 스킬 히트박스 크기
 		_uint						iMaxComboCount;
-
+		_uint						iMaxRepulseCount;
 
 		// Attack Dir
 		ATTACK_DIRECTION			eATK_Direction;				// 공격 방향 UP DOWN LEFT RIGHT
@@ -397,7 +399,7 @@ namespace Client
 	}DEFAULT_DAMAGE_DESC;
 
 	//인터랙션 타입.
-	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, LIFT_CONTROLLER, CORPSE, END };
+	enum class INTERACTION_TYPE { ITEM, SUPPLY_BOX, VENDING_MACINE, CHAIR, DOOR, LIFT_CONTROLLER, CORPSE, NPC, END };
 	//인터랙션 상태(상호작용 중, 닿았는지 등)
 	enum class INTERACTION_STATE {
 		DEFAULT,	// 그냥 아무것도 안하고 아무일도 없을때 나올 녀석
@@ -427,6 +429,7 @@ namespace Client
 	{
 		_wstring szScriptTag{};
 		_wstring szAnimTag{};
+		_wstring szSpeaker{};
 		_bool bCanControl{ false };
 		_float2 vInitOffset{ 0.f, 0.f };
 		vector<SCRIPT_DATA> Scripts;
@@ -531,9 +534,18 @@ namespace Client
 
 		_float3						vExtents;
 		_uint						iTeamIndex;
+		_uint						iInteractionID;
+
+		vector<_wstring>			szScriptTags{};
 	}NPC_DATA_DESC;
 
 	//  LINK_ATTACK -> 그로기 상태에서 들어가는값
 	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
 	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, EXECUTION_ATTACK, END};
+
+	typedef struct tagColorChange
+	{
+		_float4 vColor;
+		_float  fIntensity;
+	} COLORCHANGE_DEFERRED_DESC;
 }

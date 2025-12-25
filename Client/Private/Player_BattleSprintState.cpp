@@ -167,7 +167,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     if (false == isWalking)
-        m_tNextState.eNextState = PLAYER_STATE::WALK_END;
+        m_tNextState.eNextState = PLAYER_STATE::SPRINT_END;
 
     // (1) 크게 회전(턴 애니 재생 중)에는 이동 적용하지 않음
     if (false == m_isTurning || true == m_isMovable)

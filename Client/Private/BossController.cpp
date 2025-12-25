@@ -119,32 +119,44 @@ void CBossController::Damage(void* pArg)
                     // 여기서 그로기 타임 주고 설정
                     // 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
                     // 원작은 뒤로 물러나면서 들어가는거 같음
-                    bIsHitAble = false;
-                    m_pBlackBoard->EnterGroggy();
-                    pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                    if (false == bIsLastAttack() || false == bIsEntranceAttack())
+                    {
+                        bIsHitAble = false;
+                        m_pBlackBoard->EnterGroggy();
+                        pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                    }
                 }
                 else
                 {
-                    if (false == pNayitba->bIsHitReaction())
+                    if (false == pNayitba->bIsParryHitReaction())
                         bIsHitAble = false;
                 }
             }
             else
             {
-                if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
+                if (SKILL_TYPE::REPULSE_SKILL != pDamageSKillDesc->eSkillType)
                 {
-                    if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                    if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
                     {
-                        bIsHitAble = false;
+                        if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                        {
+                            bIsHitAble = false;
+                        }
+                    }
+
+                    if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+                    {
+                        if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
+                        {
+                            bIsHitAble = false;
+                        }
                     }
                 }
-
-                if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+                else
                 {
-                    if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
-                    {
+                    // 여기서 리펄스 공격에서 마지막 리펄스인지를 확인한다.
+                    if(false == pNayitba->bIsRepulseHitReaction())
                         bIsHitAble = false;
-                    }
                 }
             }
         }
@@ -158,7 +170,6 @@ void CBossController::Damage(void* pArg)
             }
         }
           
-
         if (bIsHitAble)
         {
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
@@ -169,6 +180,13 @@ void CBossController::Damage(void* pArg)
 
 void CBossController::ActionSuccess(void* pArg)
 {
+    // pArg에 들어온 Interaction 타입을 통해서
+    // 잡기인지 특정 패턴 성공해서 진입한건지 확인 그다음 컷씬이든 
+    // 행동 진행
+    m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK);
+
+
+
 }
 
 _bool CBossController::bIsLastAttack()

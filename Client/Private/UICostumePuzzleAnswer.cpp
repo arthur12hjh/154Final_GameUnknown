@@ -55,6 +55,17 @@ void CUICostumePuzzleAnswer::Late_Update(_float fTimeDelta)
 
 	if (!m_isAnswer && Check_Answer())
 	{
+		_bool bActive = Check_Answer();
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("Costume_Puzzle_Unlock");
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &bActive;
+		__super::Trigger_Event(TEXT("Costume_Puzzle_Unlock"), &Arg);
+	}
+
+	if (m_isSolved)
+	{
+		m_isSolved = false;
 		static_cast<CUIPopup*>(m_pParent)->Close_Popup();
 	}
 }
@@ -288,11 +299,6 @@ _bool CUICostumePuzzleAnswer::Check_Answer()
 		Arg.pData = &m_isAnswer;
 
 		__super::Trigger_Event(TEXT("Get_Costume_Puzzle_Unlock"), &Arg);
-
-		/*CUIPopup* pPopup = static_cast<CUIPopup*>(m_pParent);
-
-		if (pPopup)
-			pPopup->Close_Popup();*/
 
 		return true;
 	}

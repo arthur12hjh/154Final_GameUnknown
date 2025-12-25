@@ -12,7 +12,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Effect.h"
 #include "Notify.h"
 #include "AttackHitBox.h"
@@ -22,8 +22,6 @@
 
 #include "PlayerFSM.h"
 #include "PlayerState.h"
-
- 
 #include "Prob_Interaction.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -197,7 +195,7 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
-	Update_TestSkillInput(fTimeDelta);
+	Update_ReactionSkillInput(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -337,14 +335,32 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
+	}
 }
 
-void CPlayer::Update_TestSkillInput(_float fTimeDelta)
+void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
+	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -358,8 +374,30 @@ void CPlayer::Update_TestSkillInput(_float fTimeDelta)
 
 			m_pFSM->Handle_Transition(Desc);
 		}
-
 	}
+
+	/* 실제 로직 */
+	//if (true == m_PlayerDesc.HasTarget)
+	//{
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::REPULSE;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -593,14 +631,14 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
 
-		const INTERACTION_DATA* pInteractionData = pInteractionObject->Get_InterDesc();
-		INTERACTION_STATE InteractionState = pInteractionObject->Get_InterState();
+ 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
 
 		switch (InteractionState)
 		{
@@ -644,6 +682,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
@@ -655,13 +698,12 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 	}
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
-		if (0.f < pInteractionObject->Get_InterDesc()->fInteractionTime)
-			pInteractionObject->Reset_Interaction();
+		if (0.f < pInteractionCom->Get_InterDesc()->fInteractionTime)
+			pInteractionCom->Reset_Interaction();
 	}
 }
 
@@ -748,7 +790,6 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
 
 	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 

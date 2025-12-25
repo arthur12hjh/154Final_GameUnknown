@@ -22,6 +22,7 @@
 #include "MotionBlur.h"
 #include "SSAO.h"
 #include "Emissive.h"
+#include "ReserveDeferred.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -239,6 +240,17 @@ void CRenderer::Update_Shadow(_float fTimeDelta)
 HRESULT CRenderer::Ready_RenderTargets()
 {
 	/* 후처리 쉐이딩을 위한 렌더타겟들을 준비. */
+
+	for (_uint i = 0; i < 8; ++i)
+	{
+		/* Target_ClientDeferred0~7까지 생성. */
+		if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ClientDeferred") + to_wstring(i), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+			return E_FAIL;
+		/* MRT_ClientDeferred0~7까지 생성. */
+		if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_ClientDeferred") + to_wstring(i), TEXT("Target_ClientDeferred") + to_wstring(i))))
+			return E_FAIL;
+	}
+
 	/* Target_Scene */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Scene"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
@@ -376,6 +388,14 @@ void CRenderer::Set_DoFInfo(_float fFocusDistance)
 	m_pDepthofField->Set_DoFInfo(fFocusDistance);
 }
 
+HRESULT CRenderer::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
+{
+	m_ClientShaderReserves.push_back(pReserveDeferred);
+	Safe_AddRef(pReserveDeferred);
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObject)
 {
 	if (nullptr == pRenderObject)
@@ -412,7 +432,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 void CRenderer::Render()
 {
 	Update_Occlusion_Visibility();
-	Bind_WVP_Matrices();
+	Bind_PreValues();
 
 	Render_Priority();
 	Render_Shadow();
@@ -746,8 +766,8 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pStaticShadow->Bind_Shader_Resource(m_pShader, "g_StaticLightProjMatrix", D3DTS::PROJ)))
 		return;
-	//if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
-	//	return;
+	if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
+		return;
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
@@ -956,9 +976,48 @@ void CRenderer::ToneMapping()
 }
 
 void CRenderer::Render_BackBuffer()
-{	
-	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
-		return;
+{
+	//클라단에서 예약한 셰이더 처리
+	_uint iCount = { 0 };
+	_wstring strRTTag = {};
+
+	for (auto& ReserveObject : m_ClientShaderReserves)
+	{
+		//MRT 자동으로 세팅해주고.
+		if (iCount >= 8)
+			return;
+
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_ClientDeferred") + to_wstring(iCount))))
+			return;
+
+		if (iCount == 0)
+			strRTTag = TEXT("Target_ToneMapping");
+		else
+			strRTTag = TEXT("Target_ClientDeferred") + to_wstring(iCount - 1);
+
+		ReserveObject->Bind_Resources(strRTTag);
+		ReserveObject->Render(m_pVIBuffer);
+
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return;
+	
+		iCount++;
+		Safe_Release(ReserveObject);
+	}
+
+	m_ClientShaderReserves.clear();
+
+	// 최종 백버퍼 합성과정. 여긴 신경 쓰지마
+	if (0 == iCount)
+	{
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+			return;
+	}
+	else
+	{
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ClientDeferred") + to_wstring(iCount - 1), m_pShader, "g_ScreenTexture")))
+			return;
+	}
 
 	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
 	m_pVIBuffer->Bind_Resources();
@@ -1051,9 +1110,7 @@ HRESULT CRenderer::Add_PhysxGeometry(CGameObject* pGameObject, PxRigidActor* pAc
 
 	return m_pColliderRenderer->Add_PhysxGeometry(pActor, pShape);
 }
-
 #endif
-
 
 #ifdef _DEBUG
 void CRenderer::Set_DebugColliderVisible(_bool isVisible)
@@ -1062,7 +1119,7 @@ void CRenderer::Set_DebugColliderVisible(_bool isVisible)
 }
 #endif
 
-HRESULT CRenderer::Bind_WVP_Matrices()
+HRESULT CRenderer::Bind_PreValues()
 {
 	CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
 	m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));

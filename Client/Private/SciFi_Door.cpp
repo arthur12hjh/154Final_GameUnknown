@@ -3,7 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 
 #include "UIHUD.h"
 #include "UIScript.h"
@@ -37,7 +37,8 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-	m_eInterState = INTERACTION_STATE::DEFAULT;
+	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(pDesc->iInteractionID));
+	m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
 	m_pModelCom->Set_AnimationIndex(0, false);
 	m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -67,7 +68,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
 	{
-		if (INTERACTION_STATE::ACTIVE == m_eInterState && m_bUnlocked && m_bCanlock)
+		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
 			if (m_pModelCom->Play_Animation(fTimeDelta))
 			{
@@ -89,10 +90,10 @@ void CSciFi_Door::Update(_float fTimeDelta)
 				break;
 				}
 
-				m_eInterState = INTERACTION_STATE::DEFAULT;
+				m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 			}
 		}
-		else if (INTERACTION_STATE::ACTIVE == m_eInterState && (!m_bUnlocked || !m_bCanlock))
+		else if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && (!m_bUnlocked || !m_bCanlock))
 		{
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
@@ -103,8 +104,9 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			}
 
 			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
-				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close")))
-				m_eInterState = INTERACTION_STATE::DEFAULT; 
+				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close"))
+				&& !dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")))->Get_Has_Script_Desc())
+				m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 
 			Safe_Release(pHUD);
 		}
@@ -113,16 +115,16 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
 			if (PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode || PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
 			{
-				if (INTERACTION_STATE::LOCK == m_eInterState)
+				if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
 				{
 					// 나중에 여기서 조건 체크하세요
-					m_eInterState = INTERACTION_STATE::DEFAULT;
+					m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 				}
 			}
 			else
 			{
-				if (INTERACTION_STATE::LOCK != m_eInterState)
-					m_eInterState = INTERACTION_STATE::LOCK;
+				if (INTERACTION_STATE::LOCK != m_pInteractionCom->Get_InterState())
+					m_pInteractionCom->Set_InterState(INTERACTION_STATE::LOCK);
 			}
 
 			m_pModelCom->Play_Animation(0.f);
@@ -135,7 +137,7 @@ void CSciFi_Door::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		if (INTERACTION_STATE::ACTIVE > m_eInterState)
+		if (INTERACTION_STATE::ACTIVE > m_pInteractionCom->Get_InterState())
 			m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -192,9 +194,10 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
 	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
+	
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
 	m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
@@ -274,20 +277,20 @@ HRESULT CSciFi_Door::Bind_ShaderResources()
 void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
-	if (!IsInteractionEnable())
-		m_fInteractionDuration += fTimeDelta;
+	if (!m_pInteractionCom->IsInteractionEnable())
+		m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
-	if (INTERACTION_STATE::DEFAULT == m_eInterState)
+	if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
 	{
-		if (IsInteractionEnable())
+		if (m_pInteractionCom->IsInteractionEnable())
 		{
-			m_eInterState = INTERACTION_STATE::CONTACT;
+			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_eInterState)
+	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
 	{
-		m_eInterState = INTERACTION_STATE::ACTIVE;
-		m_fInteractionDuration = 0.f;
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
 
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 

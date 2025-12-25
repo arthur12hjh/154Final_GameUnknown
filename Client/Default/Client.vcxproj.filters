@@ -919,6 +919,24 @@
     <Filter Include="03.Effects\Particle\MeshParticle">
       <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. ReserveDeferred">
+      <UniqueIdentifier>{82b0837e-9118-478f-878d-65733b5e58d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred\ShaderFiles">
+      <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack">
+      <UniqueIdentifier>{8093c9e1-07f8-4c0b-9854-5288c2311060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
+      <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
+      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\InteractionUIBinder">
+      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1747,9 +1765,6 @@
     <ClInclude Include="..\public\Task_ScarletDead.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Task_ScarletAttack.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UIScript.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClInclude>
@@ -1848,6 +1863,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\UICostumePuzzleHint.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ColorChange.h">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_ScarletAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIUnlockFX.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InteractionUIBinder.h">
+      <Filter>05.Component\InteractionUIBinder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2650,9 +2680,6 @@
     <ClCompile Include="..\private\Task_ScarletDead.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UIScript.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIScript</Filter>
     </ClCompile>
@@ -2746,6 +2773,21 @@
     <ClCompile Include="..\Private\UICostumePuzzleHint.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Hint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ColorChange.cpp">
+      <Filter>07. ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_ScarletAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIUnlockFX.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp">
+      <Filter>05.Component\InteractionUIBinder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
@@ -2804,6 +2846,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModelParticle.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl">
+      <Filter>07. ReserveDeferred\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

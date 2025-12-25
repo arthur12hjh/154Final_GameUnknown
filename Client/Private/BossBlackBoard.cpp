@@ -53,6 +53,9 @@ void CBossBlackBoard::Set_BossPhase(BOSS_PAHSE ePhase)
 
 void CBossBlackBoard::Set_PlayCutScene()
 {
+    auto pOwner = static_cast<CNayitba*>(m_pOwner);
+    pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
+
     m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second.bIsCutScene = true;
 }
 
@@ -152,9 +155,12 @@ void CBossBlackBoard::SetPhaseLastAttack(_bool bIsFlag)
 
     if (bIsFlag)
     {
+        auto pOwner = static_cast<CNayitba*>(m_pOwner);
         if(8 == m_BossDefualtInfo->iMonsetID)
-            static_cast<CNayitba*>(m_pOwner)->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
+            pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
+        pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
 
+        Reset_State();
         m_bIsPhaseLastAttack = bIsFlag;
         m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack = false;
     }
@@ -224,7 +230,6 @@ void CBossBlackBoard::Reset_State()
 {
     m_pAttack_Skill = nullptr;
     m_bIsHit = false;
-
 }
 
 void CBossBlackBoard::Free()

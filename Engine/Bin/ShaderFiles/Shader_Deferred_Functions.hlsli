@@ -16,7 +16,7 @@ inline float BayerDither(float2 pixelPos)
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
     /*
-    float fSum = 0.0f;
+        float fSum = 0.0f;
     
     float2 vTexcoord;
     
@@ -50,7 +50,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     fSum /= 9.0f;
     return lerp(1.0f, 0.6f, fSum);
     */
-    
+   
     float2 vTexcoord;
     
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
@@ -74,8 +74,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
 
 inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
 { 
-/*
-        float2 vTexcoord;
+    float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
@@ -86,7 +85,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
         return 1.0f;
     
     //_uint2 m_vStaticShadowMapSize = { 16384, 8192 };
-    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f); // 그림자맵 해상도에 맞게 조정
+    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f) * 2.f; // 그림자맵 해상도에 맞게 조정
 
     // PCF 3x3 샘플
     for (int x = -1; x <= 1; ++x)
@@ -94,18 +93,18 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
         for (int y = -1; y <= 1; ++y)
         {
             float2 vOffset = float2(x, y) * fTexelSize;
-            vector vShadowDepth = ShadowTexure.SampleLevel(ClampSampler, float2(vTexcoord + vOffset), 0);
+            vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float2(vTexcoord + vOffset));
             fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
         }
     }
     
     fSum /= 9.0f; // 평균 (3x3)
     return lerp(1.0f, 0.6f, fSum); // 그림자 강도 적용
-    */
+    
     
     //################################# NONE PCF
-    
-    float2 vTexcoord;
+    /*
+        float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
@@ -117,7 +116,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float2(vTexcoord));
     
     return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.6f : 1.f;
-    
+    */
 }
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)

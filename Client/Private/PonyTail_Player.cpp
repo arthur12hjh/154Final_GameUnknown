@@ -76,25 +76,25 @@ void CPonyTail_Player::Update(_float fTimeDelta)
 	//	_float fMaxDepenetrationVelocity;
 	//} JOINT_CHAIN_DESC;
 	//플래그 제어용 테스트 디버거. 곧 지울게요
-//#ifdef _DEBUG
-//	ImGui::Begin("PONYTAIL_DESC");
-//
-//	ImGui::DragFloat("Root Hair AngularDamping", &m_tRootDesc->fAngularDampimg, 0.3f, 0.1f, 10.f);
-//	ImGui::DragFloat("Root Hair LinearDamping", &m_tRootDesc->fLinearDamping, 0.01f, 0.01f, 1.f);
-//	//ImGui::DragFloat("Root Hair MaxAngularVelocity", &m_tRootDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
-//	//ImGui::DragFloat("Root Hair DepenetrationVelocity", &m_tRootDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
-//
-//	ImGui::DragFloat("Link Hair AngularDamping", &m_tLinkDesc->fAngularDampimg, 0.01f, 0.f, 1.f);
-//	ImGui::DragFloat("Link Hair LinearDamping", &m_tLinkDesc->fLinearDamping, 0.01f, 0.f, 1.f);
-//	//ImGui::DragFloat("LinkLink Hair MaxAngularVelocity", &m_tLinkDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
-//	//ImGui::DragFloat("Link Hair DepenetrationVelocity", &m_tLinkDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
-//
-//
-//	ImGui::End();
-//	
-//	
-//	m_pJointChain->Update(fTimeDelta);
-//#endif
+	//#ifdef _DEBUG
+	//	ImGui::Begin("PONYTAIL_DESC");
+	//
+	//	ImGui::DragFloat("Root Hair AngularDamping", &m_tRootDesc->fAngularDampimg, 0.3f, 0.1f, 10.f);
+	//	ImGui::DragFloat("Root Hair LinearDamping", &m_tRootDesc->fLinearDamping, 0.01f, 0.01f, 1.f);
+	//	//ImGui::DragFloat("Root Hair MaxAngularVelocity", &m_tRootDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
+	//	//ImGui::DragFloat("Root Hair DepenetrationVelocity", &m_tRootDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
+	//
+	//	ImGui::DragFloat("Link Hair AngularDamping", &m_tLinkDesc->fAngularDampimg, 0.01f, 0.f, 1.f);
+	//	ImGui::DragFloat("Link Hair LinearDamping", &m_tLinkDesc->fLinearDamping, 0.01f, 0.f, 1.f);
+	//	//ImGui::DragFloat("LinkLink Hair MaxAngularVelocity", &m_tLinkDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
+	//	//ImGui::DragFloat("Link Hair DepenetrationVelocity", &m_tLinkDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
+	//
+	//
+	//	ImGui::End();
+	//	
+	//	
+	//	m_pJointChain->Update(fTimeDelta);
+	//#endif
 }
 
 void CPonyTail_Player::Late_Update(_float fTimeDelta)
@@ -118,8 +118,6 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 
 HRESULT CPonyTail_Player::Render()
 {
-	Sync_BonesByJoint();
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -152,6 +150,8 @@ HRESULT CPonyTail_Player::Render()
 
 HRESULT CPonyTail_Player::Render_Shadow()
 {
+	Sync_BonesByJoint();
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 

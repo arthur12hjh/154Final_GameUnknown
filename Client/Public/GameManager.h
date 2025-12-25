@@ -9,6 +9,7 @@ class CGameInstance;
 class CGameObject;
 class CTexture;
 class CEventHandle;
+class CReserveDeferred;
 NS_END
 
 NS_BEGIN(Client)
@@ -74,6 +75,10 @@ public :
 	HRESULT		Add_Shader(LEVEL eLevelID, const _wstring& strShaderTag, class CShader* pShader);
 	class CShader* Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag);
 	HRESULT Bind_CamInfo(LEVEL eLevelID);
+	HRESULT Add_ReserveDeferred(const _wstring& strReserveDeferredTag, class CReserveDeferred* pReserveDeferred = nullptr);
+	void	Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag);
+	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
+
 #pragma endregion
 
 #pragma region LOCKON

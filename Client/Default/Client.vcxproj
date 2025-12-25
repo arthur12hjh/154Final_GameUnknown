@@ -174,6 +174,7 @@
     <ClInclude Include="..\Public\CinematicObject.h" />
     <ClInclude Include="..\Public\Cinematic_Manager.h" />
     <ClInclude Include="..\Public\Clinet_ColorPallet.h" />
+    <ClInclude Include="..\Public\ColorChange.h" />
     <ClInclude Include="..\Public\Deco.h" />
     <ClInclude Include="..\public\Deco_CheckAlive.h" />
     <ClInclude Include="..\public\AttackHitBox.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\Public\InteractionUIBinder.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Level_Scarlet.h" />
@@ -386,6 +388,7 @@
     <ClInclude Include="..\public\Task_ScarletAttack.h" />
     <ClInclude Include="..\public\Task_ScarletDead.h" />
     <ClInclude Include="..\public\Task_ScarletMove.h" />
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h" />
     <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
@@ -451,6 +454,7 @@
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\Public\UIUnlockFX.h" />
     <ClInclude Include="..\Public\UIWorldWrapper.h" />
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
@@ -479,6 +483,7 @@
     <ClCompile Include="..\Private\CinematicModel_Scarlet.cpp" />
     <ClCompile Include="..\Private\CinematicObject.cpp" />
     <ClCompile Include="..\Private\Cinematic_Manager.cpp" />
+    <ClCompile Include="..\Private\ColorChange.cpp" />
     <ClCompile Include="..\Private\Deco.cpp" />
     <ClCompile Include="..\private\Deco_CheckAlive.cpp" />
     <ClCompile Include="..\private\AttackHitBox.cpp" />
@@ -498,6 +503,7 @@
     <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\private\Level_Scarlet.cpp" />
@@ -707,6 +713,7 @@
     <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
     <ClCompile Include="..\private\Task_ScarletDead.cpp" />
     <ClCompile Include="..\private\Task_ScarletMove.cpp" />
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp" />
     <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
@@ -771,6 +778,7 @@
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIBossStaminaFX.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\Private\UIUnlockFX.cpp" />
     <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
@@ -786,6 +794,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Spread.hlsl" />

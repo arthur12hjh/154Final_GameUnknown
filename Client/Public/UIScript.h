@@ -28,10 +28,12 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	HRESULT RenderText();
+	HRESULT RenderSpeaker();
+	HRESULT RenderScript();
 
 	void Begin_Script(const SCRIPT_DESC* Scripts) {
 		m_pScriptDesc = Scripts;
+		m_bHasScript = true;
 		m_tUIDesc.fAlpha = 1.f;
 		m_iScriptIdx = 0;
 		m_eVisibility = VISIBILITY::VISIBLE;
@@ -39,10 +41,13 @@ public:
 
 	void End_Script() {
 		m_pScriptDesc = nullptr;
+		m_bHasScript = false;
 		m_tUIDesc.fAlpha = 0.f;
 		m_iScriptIdx = 0;
 		m_eVisibility = VISIBILITY::HIDDEN;
 	}
+
+	_bool Get_Has_Script_Desc() const { return m_bHasScript; }
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -55,6 +60,7 @@ private:
 
 	_float m_fTimeAcc{ 0.f };
 	_uint m_iScriptIdx = 0;
+	_bool m_bHasScript = false;
 
 	SCRIPT_ANIM_DESC m_tScriptAnimDesc{};
 
@@ -70,7 +76,3 @@ public:
 };
 
 NS_END
-
-/*
-문 열려고 시도 -> 비밀번호 입력 -> "아.. 비밀번호 필요하네?" -> 시체 뒤져서 비밀번호 얻기
-*/

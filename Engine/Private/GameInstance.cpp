@@ -30,8 +30,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
+
 mt19937 CGameInstance::m_RandomDevice(random_device{}());
-uniform_real_distribution<_float> CGameInstance::m_distribution(0.f, 1.f);
+uniform_real_distribution<float> CGameInstance::m_distribution(0.f, 1.f);
 
 CGameInstance::CGameInstance()
 {
@@ -542,6 +543,11 @@ HRESULT CGameInstance::Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc)
 void* CGameInstance::Get_Cascade_Desc()
 {
 	return m_pRenderer->Get_Cascade_Desc();
+}
+
+HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
+{
+	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
 }
 
 #ifdef _DEBUG

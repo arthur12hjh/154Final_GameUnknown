@@ -54,6 +54,9 @@ void CUICostumePuzzleButtons::Late_Update(_float fTimeDelta)
 	
 	if (FAILED(SetUp_Buttons()))
 		return;
+
+	for(auto& pChild : m_Children)
+		Update_Children(pChild);
 }
 
 HRESULT CUICostumePuzzleButtons::Render()
@@ -166,13 +169,19 @@ void CUICostumePuzzleButtons::CallbackEvent(void* pArg)
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
 	
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 	
-	Safe_Release(pHUD);
+	Safe_Release(pHUD);*/
+
+	if (arg->szActionTag == TEXT("Get_Costume_Puzzle_Unlock"))
+	{
+		if (arg->Type == UI_EVENT_ARG_DESC::ARG_TYPE::BOOL)
+			m_bCanInput = !*static_cast<_bool*>(arg->pData);
+	}
 }
 
 HRESULT CUICostumePuzzleButtons::Render_Buttons()
@@ -224,8 +233,6 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 			m_tUIDesc.fY + m_tUIDesc.fOffsetY + (vUISize.y * (i / 4)) - (fUIHeight * 0.5f)
 		};
 
-		int a = 0;
-
 		if (MouseEnter(vUIPos, vUISize))
 		{
 			m_eBtnState = BTN_STATE::HOVER;
@@ -233,9 +240,26 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
 			{
 				UI_EVENT_ARG_DESC Arg{};
+				Arg.szActionTag = TEXT("Input_Answer");
 				Arg.Type = UI_EVENT_ARG_DESC::INT;
 				Arg.pData = &m_Buttons[i];
 				__super::Trigger_Event(TEXT("Input_Answer"), &Arg);
+
+				for (auto& pChild : m_Children)
+				{
+					if (pChild->Get_UIBase_Desc().szUITag == TEXT("UI_Costume_Button_FX"))
+					{
+						pChild->Set_Position((vUISize.x * 1.5f * (i % 4)) - (fUIWidth * 0.5f), (vUISize.y * (i / 4)) - (fUIHeight * 0.5f));
+						//pChild->SetVisibility(VISIBILITY::VISIBLE);
+
+						_bool bActive = true;
+						UI_EVENT_ARG_DESC Arg2{};
+						Arg2.szActionTag = TEXT("Costume_Button_Click");
+						Arg2.Type = UI_EVENT_ARG_DESC::BOOL;
+						Arg2.pData = &bActive;
+						__super::Trigger_Event(TEXT("Costume_Button_Click"), &Arg2);
+					}
+				}
 			}
 		}
 		else
@@ -288,6 +312,9 @@ HRESULT CUICostumePuzzleButtons::Bind_ButtonsResources()
 
 _bool CUICostumePuzzleButtons::MouseEnter(_float2 vPos, _float2 vSize)
 {
+	if (!m_bCanInput)
+		return false;
+
 	POINT MousePoint = m_pGameInstance->GetMousePoint();
 
 	_float4 fRect = {

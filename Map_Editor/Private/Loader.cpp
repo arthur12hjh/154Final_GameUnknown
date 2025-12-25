@@ -261,7 +261,7 @@ HRESULT CLoader::Loading_For_Village()
 	m_strMessage = TEXT("모델를(을) 로딩 중 입니다.");
 	/* For.Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height3.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/Height2.bmp")))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_VIBuffer_Cube */
@@ -2692,6 +2692,377 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Desert_Deco_Boxes(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
+
+	/* For.Prototype_Component_Model_Box_1A */
+	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_1A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_1A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_1B
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_1B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_1B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_2C
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_2C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_2C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_4A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_4A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_4A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_5A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_5A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_5A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_6A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_6A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_6A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_11A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_11A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_11A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_13A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_13A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_13A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_14A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_14A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_14A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_16A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_16A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_16A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_16B
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_16B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_16B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_19A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_19A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_19A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20B
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20C
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20D
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20D");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20D.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20E
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20E");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20E.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_20F
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_20F");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_20F.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_21A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_21A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_21A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_21B
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_21B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_21B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// BOX_26A
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Box_26A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Box_26A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	// ITEM_BOX
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Item_Box");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Box/Item_Box.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Desert_Deco_Duct(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
+
+	/* For.Prototype_Component_Model_Duct_1A */
+	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1D */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1D");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1D.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1E */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1E");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1E.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1G */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1G");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1G.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_1H */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_1H");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_1H.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_3A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_3A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_3A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_3B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_3B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_3B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_3C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_3C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_3C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_4A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_4A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_4A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_4B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_4B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_4B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_4C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_4C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_4C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_6A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_6A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_6A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_8A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_8A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_8A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_9A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_9A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_9A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_9B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_9B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_9B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_9C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_9C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_9C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_9D */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_9D");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_9D.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_10A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_10A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_10A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Duct_13A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Duct_13A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Duct/Duct_13A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Desert_Deco_Garden_And_Poster(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
+
+	/* For.Prototype_Component_Model_Garden_1A */
+	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Garden_1A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Garden/Garden_1A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Garden_1B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Garden_1B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Garden/Garden_1B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Garden_1C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Garden_1C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Garden/Garden_1C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	// --- Restroom Group ---
+	/* For.Prototype_Component_Model_Restroom_4A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Restroom_4A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Restroom/Restroom_4A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	// --- Poster Group ---
+	/* For.Prototype_Component_Model_Poster_1A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_1A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_1A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_2A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_2A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_2A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_2B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_2B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_2B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_3A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_3A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_3A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_3B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_3B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_3B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_4A */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4A");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_4A.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_4B */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4B");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_4B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_4C */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4C");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_4C.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Poster_4E */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_4E");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_4E.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype) return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
