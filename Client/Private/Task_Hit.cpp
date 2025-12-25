@@ -71,6 +71,7 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 			}
 		}
 
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		return NODE_STATE::COMPLETE;
 	}
 	else if (false == m_pBlackBoard->bIsExcution())

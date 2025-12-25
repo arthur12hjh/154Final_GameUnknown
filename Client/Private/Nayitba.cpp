@@ -220,13 +220,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 
 HRESULT CNayitba::ActionSuccess(void* pArg)
 {
-	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
-	if (nullptr == pPartBody)
-		return false;
-
-	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-	pNaytibaPartBody->SetPart_BodyColor(false);
-
+	ResetBodyColor();
 	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
@@ -309,12 +303,7 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 void CNayitba::PlayDeadEffect()
 {
 	m_pDropCom->ItemDrop(1);
-	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
-	if (nullptr == pPartBody)
-		return;
-
-	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-	pNaytibaPartBody->Play_DeadEffect();
+	m_pPartBody->Play_DeadEffect();
 }
 
 void CNayitba::Attack_Interaction(void* pArg)
@@ -443,12 +432,7 @@ _bool CNayitba::bIsRepulseHitReaction()
 	
 	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
 	{
-		auto pPartBody = Find_PartObject(TEXT("Part_Body"));
-		if (nullptr == pPartBody)
-			return false;
-
-		auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-		pNaytibaPartBody->SetPart_BodyColor(false);
+		ResetBodyColor();
 		return true;
 	}
 
@@ -657,6 +641,12 @@ HRESULT CNayitba::ADD_PartObjects()
 	if(FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"), TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
 
+	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
+	if (nullptr == pPartBody)
+		return E_FAIL;
+
+	m_pPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
+
 	Import_ModelPtr();
 
 	if (strcmp("None", m_pInitMonsterInfo->szLeftWeaponPrototypeName))
@@ -708,6 +698,14 @@ void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 	{
 		VisibleStatusUI(0.f);
 	}
+}
+
+void CNayitba::ResetBodyColor()
+{
+	if (false == m_bIsActive)
+		m_bIsActive = true;
+
+	m_pPartBody->SetPart_BodyColor(false);
 }
 
 void CNayitba::VisibleStatusUI(_float fTimeDelta)
@@ -780,13 +778,12 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 		_bool bIsScarletParry = false;
 		if (8 == m_pInitMonsterInfo->iMonsetID)
 		{
-			_bool bIsLastAttack = false;
-			_bool bIsEntranceAttack = false;
-
 			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
 			auto pBossController = static_cast<CBossController*>(m_pAIController);
 			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+			{
 				bIsScarletParry = true;
+			}
 		}
 
 		if (bIsScarletParry)
@@ -801,10 +798,21 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 		{
 			if (0 < m_MonsterInfo.iCurrentStamina)
 				m_MonsterInfo.iCurrentStamina--;
+
+			if(0 == m_MonsterInfo.iCurrentStamina)
+				ResetBodyColor();
 		}
 	}
 	else
 	{
+		if (8 == m_pInitMonsterInfo->iMonsetID)
+		{
+			// 홍련일때는 라스트 기믹에서만 패링했을때 방어력이 까인다
+			auto pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLastAttack() || pBossController->bIsEntranceAttack())
+				return false;
+		}
+
 		switch (m_pInitMonsterInfo->eAI_Type)
 		{
 		case AI_TYPE::DEFENSIVE: // 방어형
@@ -1019,19 +1027,13 @@ void CNayitba::Change_Color(const AnimNotify* pNotify)
 	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
 	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
 	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
-
-	auto pPartBody = Find_PartObject(TEXT("Part_Body"));
-	if (nullptr == pPartBody)
-		return;
-
 	if (false == pNotify->iNumData01)
 	{
 		if (false == m_bIsActive)
 			m_bIsActive = true;
 	}
 
-	auto pNaytibaPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-	pNaytibaPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
+	m_pPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
 }
 
 CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

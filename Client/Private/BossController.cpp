@@ -119,9 +119,12 @@ void CBossController::Damage(void* pArg)
                     // 여기서 그로기 타임 주고 설정
                     // 그로기 들어가기전에 패링 히트 애니메이션 재생후에 들어감
                     // 원작은 뒤로 물러나면서 들어가는거 같음
-                    bIsHitAble = false;
-                    m_pBlackBoard->EnterGroggy();
-                    pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                    if (false == bIsLastAttack() || false == bIsEntranceAttack())
+                    {
+                        bIsHitAble = false;
+                        m_pBlackBoard->EnterGroggy();
+                        pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                    }
                 }
                 else
                 {

@@ -50,12 +50,12 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 
 	m_pTarget = m_pBlackBoard->GetTarget();
 	m_pBlackBoard->SetTargetDistacne();
-	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
 		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState ||
 		CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == ePreState)
 	{
 		ResetAttackTask(false);
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 		return NODE_STATE::RUNNING;
 	}
 
@@ -130,6 +130,7 @@ void CTask_ScarletAttack::SelectAttackData()
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
+	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -141,12 +142,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				m_pSkillData.push(m_pGameManager->Find_SkillData(42));
-				SelectAttackData();
-			/*	if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+	/*			m_pSkillData.push(m_pGameManager->Find_SkillData(42));
+				SelectAttackData();*/
+				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
-					NormalAttackPattern();*/
+					NormalAttackPattern();
 			}
 			else
 			{
