@@ -19,6 +19,7 @@
 #include "UIScript.h"
 
 #include "SpriteParticle.h"
+#include "Effect.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -61,10 +62,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
-	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -430,6 +431,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;
 
+
+	CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
+	ChargeDesc.fRotationPerSec = 1.f;
+	ChargeDesc.fSpeedPerSec = 1.f;
+	ChargeDesc.vPos = XMVectorSet(1000.f, 1.f, 1000.f, 1);
+	ChargeDesc.fRot = _float3(0, 0, 0);
+	ChargeDesc.fSize = 1.f;
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ChargeDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }

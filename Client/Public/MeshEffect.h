@@ -57,6 +57,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
+	void    End();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CModel* m_pModelCom = { nullptr };
@@ -68,6 +69,7 @@ private:
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 	RENDER			m_eRender;
+	_bool			m_bisEnd = {};
 
 private:
 	HRESULT							Ready_Components();

@@ -44,7 +44,6 @@ HRESULT CBullet_Rock::Initialize(void* pArg)
 	EffectDesc.iFloor = 0;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-	Safe_AddRef(m_pEffect);
 	return S_OK;
 }
 
@@ -257,7 +256,6 @@ void CBullet_Rock::Free()
 	__super::Free();
 	if (nullptr != m_pEffect) {
 		m_pEffect->End();
-		Safe_Release(m_pEffect);
 	}
 	
 }

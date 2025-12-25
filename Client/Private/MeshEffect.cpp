@@ -54,7 +54,7 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
-
+	m_bisEnd = false;
 
 
 	ID3D11Buffer* pBuffer = nullptr;
@@ -101,6 +101,9 @@ void CMeshEffect::Update(_float fTimeDelta)
 		m_isDead = true;
 		return;
 	}
+	if (m_bisEnd) {
+		m_tData.fColor.w = Lerp(m_tData.fColor.w , 0.f, m_tData.fEndTime - m_fTime);
+	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
@@ -131,6 +134,12 @@ HRESULT CMeshEffect::Render()
 	}
 	m_iRenderCount++;
 	return S_OK;
+}
+
+void CMeshEffect::End()
+{
+	m_tData.fEndTime = m_fTime + 1.f;
+	m_bisEnd = true;
 }
 
 HRESULT CMeshEffect::Ready_Components()

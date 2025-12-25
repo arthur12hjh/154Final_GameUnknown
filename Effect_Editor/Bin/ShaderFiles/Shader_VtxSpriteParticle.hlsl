@@ -1647,6 +1647,115 @@ PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
     return Out;
 }
 
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_CROSS_BLEND(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = pow(g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord) * saturate((In.vLifeTime.y - In.vLifeTime.x) * g_fDissolveUVSpeed.x), 5);
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.r += maxColor;
+    //Out.vDiffuse.g += maxColor;
+    //Out.vDiffuse.b += maxColor;
+    //Out.vDiffuse.rgb *= maxColor * 0.2;
+    //Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    //float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    //
+    //float weight = saturate(exp(-linearDepth * 20));
+    //Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    //Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    return Out;
+}
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_CROSS_GLOW(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = pow(g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3), 5);
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    Out.vDiffuse.a = maxColor;
+    //if (0.1 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = pow(g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3), 5);
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.a = maxColor;
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
 BlendState BS_Dust
 {
     BlendEnable[0] = true;
@@ -1933,5 +2042,35 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_NOISE_DISTORTION();
+    }
+    // idx 26
+    pass CROSS_Blend
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_CROSS_BLEND();
+    }
+    // idx 27
+    pass Cross_Glow
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_CROSS_GLOW();
+    }
+    // idx 28
+    pass Cross_Glow_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_CROSS_GLOW_BLOOM();
     }
 }

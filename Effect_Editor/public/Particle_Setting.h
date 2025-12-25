@@ -89,10 +89,13 @@ private:
 private:
     void    Add_Particle();
     void    Delete_Particle();
+    void    Copy_Particle();
     void    Add_SpriteParticle();
     void    Delete_SpriteParticle();
+    void    Copy_SpriteParticle();
     void    Add_MeshEffect();
     void    Delete_MeshEffect();
+    void    Copy_MeshEffect();
     void    Add_TrailEffectData();
     void    Delete_TrailEffectData();
 public:

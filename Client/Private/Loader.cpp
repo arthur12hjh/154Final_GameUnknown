@@ -513,21 +513,21 @@ HRESULT CLoader::Loading_For_GamePlay()
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
 
-	// 크리스마스
-	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
-		return E_FAIL;
-
-	//// 오피스 스타일
+	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
 	//	szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 	//	return E_FAIL;
-	//
-	//dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(2, TEXTURE_TYPE::ORSS,
-	//	"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
-	//	"g_ORSSTexture", TRUE);
+
+	// 오피스 스타일
+	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		return E_FAIL;
+	
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(2, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
+		"g_ORSSTexture", TRUE);
 
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 

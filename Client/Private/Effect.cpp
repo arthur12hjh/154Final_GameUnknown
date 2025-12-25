@@ -507,6 +507,8 @@ void CEffect::End(_bool bisRelease)
         m_pParentWorldMat = nullptr;
     }
 
+    for (auto pMesh : m_pMeshEffects)
+        pMesh->End();
     for (auto pSpriteParticle : m_pSpriteParticles)
         pSpriteParticle->End();
     for (auto pMeshParticle : m_pMeshParticles)

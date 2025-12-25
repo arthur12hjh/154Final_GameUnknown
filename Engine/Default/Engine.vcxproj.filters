@@ -80,7 +80,7 @@
       <Filter>01.Utility\03.Components\VIBuffer\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PipeLine.h">
-      <Filter>01.Utility\06.PipeLine</Filter>
+      <Filter>01.Utility\03.Components\06.PipeLine</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera.h">
       <Filter>01.Utility\12.CameraManager\Camera</Filter>
@@ -452,7 +452,7 @@
       <Filter>01.Utility\03.Components\VIBuffer\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PipeLine.cpp">
-      <Filter>01.Utility\06.PipeLine</Filter>
+      <Filter>01.Utility\03.Components\06.PipeLine</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera.cpp">
       <Filter>01.Utility\12.CameraManager\Camera</Filter>
@@ -770,9 +770,6 @@
     </Filter>
     <Filter Include="01.Utility\01.Levels\Manager">
       <UniqueIdentifier>{5551b45b-b6f2-4aae-b287-d99e83f12793}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\06.PipeLine">
-      <UniqueIdentifier>{00bb1f39-0400-4781-b607-94cd184f43ca}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\07.Lights">
       <UniqueIdentifier>{5b406faa-f75b-4ab9-bd6c-8a033359432f}</UniqueIdentifier>
@@ -1187,6 +1184,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile">
       <UniqueIdentifier>{f17e8010-0159-438e-b71e-89b32bc1c84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\06.PipeLine">
+      <UniqueIdentifier>{00bb1f39-0400-4781-b607-94cd184f43ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

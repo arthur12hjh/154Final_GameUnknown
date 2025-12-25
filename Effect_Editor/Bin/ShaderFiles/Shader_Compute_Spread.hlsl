@@ -1292,13 +1292,13 @@ void Tornado(uint3 Gid : SV_GroupID,
                 }
                 else
                 {
-                
+                    float defaultAngle = radians(vfRotation.w);
                     float angle = float(DTid.x + 1) / viLoopAndCount.y * -vfCircle.y;
-                    float4 vRight = float4(float3(1, 0, 0) * sin(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x)), 0);
-                    float4 vUp = float4(float3(0, 0, 1) * cos(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x)), 0);
+                    float4 vRight = float4(float3(1, 0, 0) * sin(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - defaultAngle), 0);
+                    float4 vUp = float4(float3(0, 0, 1) * cos(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - defaultAngle), 0);
                     g_Out[DTid.x].vfStart = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
-                    vRight = float4(float3(1, 0, 0) * sin(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - angle), 0);
-                    vUp = float4(float3(0, 0, 1) * cos(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - angle), 0);
+                    vRight = float4(float3(1, 0, 0) * sin(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - defaultAngle - angle), 0);
+                    vUp = float4(float3(0, 0, 1) * cos(float(DTid.x) / viLoopAndCount.y * radians(vfCircle.x) - defaultAngle - angle), 0);
                     g_Out[DTid.x].vTranslation = Input[DTid.x].vfRoot + vRight * vfisSphere.y + vUp * vfisSphere.y;
                 
                     vDir = normalize(float4(g_Out[DTid.x].vTranslation.xyz - g_Out[DTid.x].vfStart.xyz, 0));
@@ -1751,7 +1751,7 @@ void Converge(uint3 Gid : SV_GroupID,
                     {
                         vDir = normalize(float4(Input[DTid.x].vTranslation.xyz - g_Out[DTid.x].vfStart.xyz, 0));
                     }
-                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * vfTimeDelta.x;
+                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x  + (vDir * Input[DTid.x].vfSpeed.x * fGravity + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y))) * vfTimeDelta.x * length(Input[DTid.x].WorldMat._11_12_13) * (length(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz) / length(Input[DTid.x].WorldMat._11_12_13));
                 }
                 break;
         }
