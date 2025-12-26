@@ -262,24 +262,17 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	{
 		if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
 		{
-			if (m_vAttackTime.y <= m_vAttackTime.x)
+			if (m_vAttackTime.y <= m_vAttackTime.x && fDistance <= m_pOwnerData->fAttackRange * 7.f)
 			{
-				if (fDistance <= m_pOwnerData->fAttackRange)
-				{
-					CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-					AttackStateDesc.pTarget = pTarget;
-					AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+				AttackStateDesc.pTarget = pTarget;
+				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 
-					CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
-					if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
-						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
-					else
-						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-				}
+				CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
+				if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
 				else
-				{
-					MoveAction(true);
-				}
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}
 			else
 			{

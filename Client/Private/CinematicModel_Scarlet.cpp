@@ -13,6 +13,11 @@
 #include "Effect.h"
 #include "Notify.h"
 
+#include "StringHelper.h"
+#include "NayitbaPartBody.h"
+#include "NaytibaLeftWeaponPart.h"
+#include "NaytibaRightWeaponPart.h"
+
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
@@ -126,11 +131,14 @@ void CCinematicModel_Scarlet::Update(_float fTimeDelta)
 
 	switch (m_iCinematicCode)
 	{
-	case 0: // 고릴라 만남 시네마틱
-		Play_Cinematic_GorillaMeet(fTimeDelta);
+	case 20: // 홍련 전투 조우
+		Play_Cinematic_Scarlet_Battle_Enter(fTimeDelta);
 		break;
-	case 1: // 고릴라 처형 시네마틱
-		Play_Cinematic_GorillaFinish(fTimeDelta);
+	case 21: // 홍련 전투 페이즈 전환
+		Play_Cinematic_Scarlet_Battle_PhaseChange(fTimeDelta);
+		break;
+	case 22: // 홍련 전투 마무리
+		Play_Cinematic_Scarlet_Battle_Finish(fTimeDelta);
 		break;
 	}
 
@@ -184,11 +192,14 @@ HRESULT CCinematicModel_Scarlet::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 
 	switch (m_iCinematicCode)
 	{
-	case 0: // 고릴라 만남 시네마틱
-		Initialize_Cinematic_GorillaMeet();
+	case 20: // 홍련 전투 조우
+		Initialize_Cinematic_Scarlet_Battle_Enter();
 		break;
-	case 1: // 고릴라 처형 시네마틱
-		Initialize_Cinematic_GorillaFinish();
+	case 21: // 홍련 전투 페이즈 전환
+		Initialize_Cinematic_Scarlet_Battle_PhaseChange();
+		break;
+	case 22: // 홍련 전투 마무리
+		Initialize_Cinematic_Scarlet_Battle_Finish();
 		break;
 	}
 
@@ -211,132 +222,198 @@ HRESULT CCinematicModel_Scarlet::Ready_Components()
 
 HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 {
-	CBody_Player::BODY_PLAYER_DESC BodyDesc{};
+	CNayitbaPartBody::NAYITBA_PART_BODY_DESC BodyDesc = { };
 	BodyDesc.pParentTransform = m_pTransformCom;
-
-	/* Part_Body */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_Player"),
-		TEXT("Part_Body"), &BodyDesc)))
+	BodyDesc.vScale = { 1.f, 1.f, 1.f };
+	BodyDesc.szBodyModel = TEXT("Prototype_Component_Model_Scarlet_Body");
+	BodyDesc.fSpeedPerSec = 5.f;
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"), TEXT("Part_Body"), &BodyDesc)))
 		return E_FAIL;
-	// 바디가 생성 되자마자 세팅.
-	// 이래야 다른 파트오브젝트에서 바디를 참조 가능하지 ㅇㅇ
+
 	Import_ModelPtr();
+
+	CNaytibaLeftWeaponPart::WEAPON_DESC LWeaponDesc = { };
+	LWeaponDesc.pParentTransform = m_pTransformCom;
+	LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Weapon");
+	LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+	//LWeaponDesc.vRotation = {(90.f), (-90.f), (0.f), 1.f};
+	//LWeaponDesc.vRotation = {XMConvertToRadians(90.f), XMConvertToRadians(-90.f), XMConvertToRadians(0.f), 1.f};;
+	swprintf_s(LWeaponDesc.szWeaponModelPrototype, 256, TEXT("Prototype_Component_Model_Scarlet_Weapon"));
+	LWeaponDesc.fSpeedPerSec = 5.f;
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
+		return E_FAIL;
+
+	CNaytibaRightWeaponPart::WEAPON_DESC RWeaponDesc = { };
+	RWeaponDesc.pParentTransform = m_pTransformCom;
+	RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_AssistWeapon");
+	RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+	//RWeaponDesc.vRotation = { (90.f), (-81.5f), (0.f), 1.f };
+	//RWeaponDesc.vRotation = { XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f), 1.f };
+	swprintf_s(RWeaponDesc.szWeaponModelPrototype, 256, TEXT("Prototype_Component_Model_Scarlet_Scabbard"));
+	RWeaponDesc.fSpeedPerSec = 5.f;
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
+		return E_FAIL;
+
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
-	CBody_Player* pBody = dynamic_cast<CBody_Player*>(Find_PartObject(TEXT("Part_Body")));
-
-	CWeapon::WEAPON_DESC	WeaponDesc{};
-	WeaponDesc.pParent = this;
-	WeaponDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
-	WeaponDesc.pParentTransform = m_pTransformCom;
-
-	/* Part_Weapon */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Weapon"),
-		TEXT("Part_Weapon"), &WeaponDesc)))
-		return E_FAIL;
-
-	m_pWeapon = static_cast<CWeapon*>(Find_PartObject(TEXT("Part_Weapon")));
-
-
-	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
-	FaceDesc.pParentTransform = m_pTransformCom;
-	FaceDesc.pBodyPtr = pBody;
-
-	/* Part_Face */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Face_Player"),
-		TEXT("Part_Face"), &FaceDesc)))
-		return E_FAIL;
-
-	CHair_Player::HAIR_PLAYER_DESC HairDesc{};
-	HairDesc.pParentTransform = m_pTransformCom;
-	HairDesc.pBodyPtr = pBody;
-
-	/* Part_Hair */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hair_Player"),
-		TEXT("Part_Hair"), &HairDesc)))
-		return E_FAIL;
-
-	CPonyTail_Player::PONYTAIL_PLAYER_DESC PonyTailDesc{};
-	PonyTailDesc.pParentTransform = m_pTransformCom;
-	PonyTailDesc.pBodyPtr = pBody;
-
-	/* Part_PonyTail */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
-		TEXT("Part_PonyTail"), &PonyTailDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_GorillaMeet()
+HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Enter()
 {
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_EVE_01", FALSE, 1.f);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(760.197f, 2.022f, 700.319f, 1.f));
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_01", FALSE, 1.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(258.315f, 21.822f, 331.387f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(258.315f, 21.822f, 332.387f, 1.f));
 
 	return S_OK;
 }
 
-HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_GorillaFinish()
+HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_PhaseChange()
 {
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("Scarlet_Gorilla_Finish01_v05_w01_export_fixB", FALSE, 1.5f);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(742.f, 2.8678f, 597.f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(742.f, 2.8678f, 608.6966f, 1.f));
+	//m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f, 0.12f, false, -1.f, 30.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
 
 	return S_OK;
 }
 
-HRESULT CCinematicModel_Scarlet::Play_Cinematic_GorillaMeet(_float fTimeDelta)
+HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Finish()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_Scarlet_01", FALSE, 2.f, 0.f, FALSE, 1400.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (m_iAnimationSequence == 1)
+	{
+		_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
+
+		if (iCurrentKeyFrameIndex > 1129
+			&& iCurrentKeyFrameIndex <= 1169)
+		{
+			_float fRatio = (iCurrentKeyFrameIndex - 1129) / 40;
+			_vector vPosition = XMVectorLerp(XMVectorSet(257.977f, 4.039f, 256.289f, 1.f), XMVectorSet(257.977f, 8.f, 256.289f, 1.f), fRatio);
+
+			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+		}
+	}
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 2)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_03", FALSE, 1.f, 0.f, FALSE);	
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(257.977f, 4.039f, 256.289f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(257.977f, 4.039f, 255.289f, 1.f));
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta)
+{
+	/*
+		34.5초 술 건네기
+		45초 마시기
+		48초 다마심
+		56초 엔딩
+	*/
+
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{	
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 4)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI02", FALSE, 3.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI03", FALSE, 3.f, 0.12f, FALSE, 850.f);
+		}
+		else if (m_iAnimationSequence == 3)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI04", FALSE, 2.f, 0.12f, FALSE, -1.f, 243.f);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 230.907f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(251.874f, 8.f, 233.907f, 1.f));
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
 	if (isFinished)
 	{
-		m_fMoveTime = 0.f;
-		m_bIsActive = FALSE;
-		m_iCinematicCode = -1;
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 3)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Scarlet_ANI01", FALSE, 2.f, 0.f, FALSE);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(248.529f, 8.f, 219.061f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(248.529f, 8.f, 219.061f, 1.f));
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Scarlet_ANI02", FALSE, 2.f, 0.f, FALSE);
+		}
+
 	}
 
 	return S_OK;
 }
 
-HRESULT CCinematicModel_Scarlet::Play_Cinematic_GorillaFinish(_float fTimeDelta)
+void CCinematicModel_Scarlet::Reset_CinematicChanges()
 {
-	//static _bool isSkipped = FALSE;
-	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
-
-
-	_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
-
-	if (iCurrentKeyFrameIndex >= 600
-		&& iCurrentKeyFrameIndex <= 675)
+	if (m_bIsPrevActivated == TRUE
+		&& m_bIsActive == FALSE)
 	{
-		m_fMoveTime += fTimeDelta;
-
-		_float fRatio = Clamp(m_fMoveTime / 1.f, 0.f, 1.f);
-		_vector vPosition = XMVectorLerp(XMVectorSet(742.f, 2.8678f, 597.f, 1.f), XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f), fRatio);
-
-		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
-	}
-	else if (iCurrentKeyFrameIndex > 675)
-		m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(767.79528f, 2.8678f, 552.14572f, 1.f));
-
-	if (isFinished)
-	{
-		m_fMoveTime = 0.f;
-		//isSkipped = FALSE;
-		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
+		m_pGameInstance->Active_DoF(false, 0.f);
 	}
 
-	return S_OK;
+	m_bIsPrevActivated = m_bIsActive;
 }
 
 CCinematicModel_Scarlet* CCinematicModel_Scarlet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

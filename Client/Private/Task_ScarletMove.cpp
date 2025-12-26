@@ -87,8 +87,8 @@ CBehaviorNode::NODE_STATE CTask_ScarletMove::Update(_float fTimeDelta)
 
 		if (0.99f > fScalar)
 			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 3.0f);
-		/*else
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);*/
+		else
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
 
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);

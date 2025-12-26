@@ -1,0 +1,62 @@
+[
+    {
+        "CinematicNodeTrackList": [
+            {
+                "eState": 7,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 21,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 21,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
+            },
+            {
+                "eState": 4,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
+            },
+            {
+                "eState": 4,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Monster"
+            },
+            {
+                "eState": 2,
+                "fTrackPosition": 56.0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
+            },
+            {
+                "eState": 6,
+                "fTrackPosition": 56.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 7,
+                "fTrackPosition": 56.400001525878906,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 2,
+                "fTrackPosition": 56.400001525878906,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Monster"
+            }
+        ],
+        "iCinematicID": 142,
+        "szCinematicName": "ScarletBattlePhaseChange01"
+    }
+]

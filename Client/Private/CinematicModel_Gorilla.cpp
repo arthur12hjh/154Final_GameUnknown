@@ -88,6 +88,8 @@ HRESULT CCinematicModel_Gorilla::Initialize(void* pArg)
 
 void CCinematicModel_Gorilla::Priority_Update(_float fTimeDelta)
 {
+	Reset_CinematicChanges();
+
 	if (m_bIsActive == FALSE)
 		return;
 
@@ -129,6 +131,7 @@ void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
 	__super::Late_Update(fTimeDelta);
+
 }
 
 HRESULT CCinematicModel_Gorilla::Render()
@@ -325,6 +328,19 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 	}
 
 	return S_OK;
+}
+
+void CCinematicModel_Gorilla::Reset_CinematicChanges()
+{
+	if (m_bIsPrevActivated == TRUE
+		&& m_bIsActive == FALSE)
+	{
+		m_iCinematicCode = -1;
+		m_pGameInstance->Active_DoF(false, 0.f);
+	}
+
+	m_bIsPrevActivated = m_bIsActive;
+
 }
 
 CCinematicModel_Gorilla* CCinematicModel_Gorilla::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

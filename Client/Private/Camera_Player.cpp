@@ -35,7 +35,7 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     
     m_fRotateX = 0.f;
     m_fRotateY = 90.f;
-
+    m_bIsPositionInitialized = FALSE;
     m_fDistance = 8.f;
 
     if (FAILED(__super::Initialize(pArg)))
@@ -51,6 +51,23 @@ HRESULT CCamera_Player::Initialize(void* pArg)
 
 void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
+    if (m_bIsPositionInitialized == FALSE)
+    {
+        Set_CameraDestination();
+
+		m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(reinterpret_cast<const _float4*>(&m_BeforeMatrix.m[3])));
+
+        __super::Bind_Matrices(fTimeDelta);
+        m_bIsPositionInitialized = TRUE;
+        return;
+    }
+
+    if (false == m_pGameInstance->IsMainCamera(this))
+    {
+        Set_CameraDestination();
+        return;
+    }
+
 
     /*
     1. �÷��̾� � ���� ������ Pivot Position�� ���صΰ�,
@@ -58,8 +75,7 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     3. ī�޶�� View Point�κ��� ���� �Ÿ���ŭ �Ÿ��� �ΰ� �ٶ󺼰ž�.
     4. View Point�� Pitch�� XM_PIDIV2�� ������� ���� �־����Ŷ�, ī�޶� ���� �̿� ���߾� �÷��̾ ��������ž�
     */
-
-    if (!m_bIsTransition)
+    if(!m_bIsTransition)
     {
         _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
         _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
@@ -113,21 +129,14 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
         m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
 
         //memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
-        memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
-    }
-
-    if (false == m_pGameInstance->IsMainCamera(this))
-        return;
-
-    if (m_bIsTransition)
-    {
-		Transition_Camera(fTimeDelta);
-
-        return;
+        
+        __super::Bind_Matrices(fTimeDelta);
     }
     else
     {
-        __super::Bind_Matrices(fTimeDelta);
+        //m_bIsTransition = FALSE;
+        Transition_Camera(fTimeDelta);
+        return;
     }
 }
 
@@ -172,6 +181,76 @@ void CCamera_Player::Transition_Camera(_float fTimeDelta)
     {
         m_bIsTransition = FALSE;
     }
+}
+
+void CCamera_Player::Set_CameraDestination()
+{
+    // 1. Player WorldMatrix를 받는다.
+    // 2. _vector vPosition을 만들어서, 플레이어 WorldMatrix에서 PlayerLook방향으로 뺀만큼 뽑아온다.
+    // 3. 
+    _matrix PlayerWorldMatrix = XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr());
+
+
+    // 1) ���� ���� (Yaw / Pitch �и�)
+    _vector vPlayerLook = XMVector3Normalize(PlayerWorldMatrix.r[2]);
+
+    m_fYaw = atan2f(
+        XMVectorGetX(vPlayerLook),
+        XMVectorGetZ(vPlayerLook)
+    );
+
+    m_fPitch = 0.f; // 컷신 종료 기본값
+
+    // ��� �ִ밢��  
+    _float fPitchLimit = XM_PIDIV2 - 0.2f;
+    if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
+    if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
+
+    _float3 vViewPoint = {};
+
+    float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+    fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
+    vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
+
+    // ī�޶�� ViewPoint �Ÿ�.
+    _float fCamDist = m_fDistance;
+
+    // �÷��̾� ��ġ �޾ƿ���.
+    _float3 vPlayerPos = {};
+    if (nullptr == m_pPlayerTransform)
+        return;
+
+    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
+    // �ǹ� ��ġ�� �޾ƿ´�.
+    _float3 vPivotPos = {};
+    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+    vPivotPos.x += fPitchRatio * -1.6f;
+    vPivotPos.y += fPitchRatio * 2.f;
+
+    XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vPlayerLook * 0.3f);
+
+    if (fPitchRatio > 0.5)
+        fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
+
+    _float3 vCamPos = {};
+    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vPlayerLook * (fCamDist));
+
+    _vector		vLook = XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f) - XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f);
+
+    if (XMVector3Equal(vLook, XMVectorZero()))
+        return;
+
+    _vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+    _vector		vUp = XMVector3Cross(vLook, vRight);
+
+    XMStoreFloat4x4(
+        &m_BeforeMatrix,
+        XMMatrixSet(
+            XMVectorGetX(vRight), XMVectorGetY(vRight), XMVectorGetZ(vRight), 0.f,
+            XMVectorGetX(vUp), XMVectorGetY(vUp), XMVectorGetZ(vUp), 0.f,
+            XMVectorGetX(vLook), XMVectorGetY(vLook), XMVectorGetZ(vLook), 0.f,
+            vCamPos.x, vCamPos.y, vCamPos.z, 1.f));
 }
 
 CCamera_Player* CCamera_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
