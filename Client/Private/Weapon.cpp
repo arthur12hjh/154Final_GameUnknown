@@ -109,6 +109,7 @@ void CWeapon::Update(_float fTimeDelta)
 	//	m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &desc));
 	//	m_pCharge->Play(4.f);
 	//}
+
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_P))
 	//	m_vRotationQuaternion.x += fTimeDelta * 30.f;
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_O))

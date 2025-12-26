@@ -74,15 +74,14 @@
 #include "CinematicModel_Eve.h"
 #include "CinematicModel_Scarlet.h"
 
-
 #pragma endregion
 
 #pragma region Client Component
-#include "Interaction_Component.h"
 #include "TargetComponent.h"
 #include "DropComponent.h"
 #include "AISenceComponent.h"
 #include "RimLight.h"
+#include "InteractionUIBinder.h"
 #pragma endregion
 
 #pragma region Prob
@@ -665,6 +664,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CCinematicModel_Eve::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_CinematicModel_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Scarlet"),
+		CCinematicModel_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion
 
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
@@ -708,7 +712,7 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<string> szPartModelFilePathList;
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test03.binx",
+		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test04.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
@@ -2435,9 +2439,9 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
 
-	/* For.Prototype_Component_Interaction */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Interaction");
-	pProtoDesc.pPrototype = CInteraction_Component::Create(m_pDevice, m_pContext);
+	/* For.Prototype_Component_InteractionUIBinder */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_InteractionUIBinder");
+	pProtoDesc.pPrototype = CInteractionUIBinder::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

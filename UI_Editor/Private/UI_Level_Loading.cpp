@@ -14,6 +14,7 @@
 #include "UIImage.h"
 #include "UIText.h"
 #include "UILoadingBlur.h"
+#include "UILoadingBlock.h"
 #include "UIScript.h"
 
 CUI_Level_Loading::CUI_Level_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
@@ -51,11 +52,11 @@ void CUI_Level_Loading::Update(_float fTimeDelta)
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
 
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_0"));
+		/*dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_0"));
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_1"));
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_2"));
+		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("Loading_Block_2"));*/
 		
-		CUIBase* pUI = dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"));
+		/*CUIBase* pUI = dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"));
 
 		if (!pUI)
 			return;
@@ -65,7 +66,7 @@ void CUI_Level_Loading::Update(_float fTimeDelta)
 		auto Children = pUI->Get_Children();
 
 		for (auto& pChild : *Children)
-			dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"))->Update_Children(pChild);
+			dynamic_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("LoadingBlocks"))->Update_Children(pChild);*/
 
 		m_bLevelTransitioning = true;
 	}
@@ -139,6 +140,10 @@ HRESULT CUI_Level_Loading::Ready_Prototypes()
 		CUILoadingBlur::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_Loading_Block"),
+		CUILoadingBlock::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_GameObject_UI_Script"),
 		CUIScript::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -175,9 +180,9 @@ HRESULT CUI_Level_Loading::Ready_Layer_BackGround()
 
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
 
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_0"), TEXT("Loading_BeapBeap"));
+	/*pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_0"), TEXT("Loading_BeapBeap"));
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_1"), TEXT("Loading_BeapBeap"), 0.3f);
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_2"), TEXT("Loading_BeapBeap"), 0.6f);
+	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_2"), TEXT("Loading_BeapBeap"), 0.6f);*/
 
 	return S_OK;
 }

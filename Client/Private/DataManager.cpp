@@ -27,6 +27,7 @@ HRESULT CDataManager::Initalize()
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNpcData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadTransportData(pArg); });
 
     return S_OK;
 }
@@ -240,7 +241,23 @@ void CDataManager::Save_CinematicData()
     }
 }
 
+void CDataManager::EnableTransport(_uint iAreaID)
+{
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return;
 
+    iter->second.bIsEnableMove = true;
+}
+
+const TRANSPORT_DESC* CDataManager::Find_TransportData(_uint iAreaID)
+{
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return nullptr;
+
+    return &iter->second;
+}
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
 {
@@ -312,7 +329,7 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
     size_t iMaxSize = NpcDataList.size();
-    for (auto i = 6; i < iMaxSize;)
+    for (auto i = 9; i < iMaxSize;)
     {
         NPC_DATA_DESC pNpcDesc = {};
         pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
@@ -326,6 +343,20 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
         pNpcDesc.vExtents.z = (_float)atof(NpcDataList[i++].c_str());
 
         pNpcDesc.iTeamIndex = atoi(NpcDataList[i++].c_str());
+        pNpcDesc.iInteractionID = atoi(NpcDataList[i++].c_str());
+
+        _int iScriptCount = atoi(NpcDataList[i++].c_str());
+
+        for (auto j = 0; j < iScriptCount; ++j)
+        {
+            char szText[MAX_PATH]{};
+            strcpy_s(szText, NpcDataList[i++].c_str());
+
+            WCHAR szWText[MAX_PATH]{};
+            CStringHelper::ConvertUTFToWide(szText, szWText);
+            pNpcDesc.szScriptTags.push_back(szWText);
+        }
+
         m_pNpcDatas.emplace(pNpcDesc.iNpcID, pNpcDesc);
     }
 
@@ -424,6 +455,14 @@ HRESULT CDataManager::LoadScriptData(void* pArg)
         if (Value.contains("bCanControl"))
             ScriptDesc.bCanControl = Value["bCanControl"];
 
+        if (Value.contains("szSpeaker"))
+        {
+            //string szSpeaker = Value["szSpeaker"];
+            //WCHAR szText[MAX_PATH]{};
+            //CStringHelper::ConvertUTFToWide(szSpeaker.c_str(), szText);
+            ScriptDesc.szSpeaker = UTF8ToWString(Value["szSpeaker"]);
+        }
+
         if (Value.contains("vInitOffset"))
         {
             ScriptDesc.vInitOffset.x = Value["vInitOffset"][0];
@@ -444,7 +483,7 @@ HRESULT CDataManager::LoadSkillData()
     CStringHelper::CSVRead("../../Client/Bin/DataFiles/SkillData/SkillData.csv", SkillDataList);
     size_t iMaxSize = SkillDataList.size();
 
-    for (auto i = 11; i < iMaxSize;)
+    for (auto i = 12; i < iMaxSize;)
     {
         CHARACTER_SKILL_DESC SkillDesc = {};
         SkillDesc.iSkillID = atoi(SkillDataList[i++].c_str());
@@ -458,6 +497,7 @@ HRESULT CDataManager::LoadSkillData()
         SkillDesc.vHitBoxExtents.y = static_cast<_float>(atof(SkillDataList[i++].c_str()));
         SkillDesc.vHitBoxExtents.z = static_cast<_float>(atof(SkillDataList[i++].c_str()));
         SkillDesc.iMaxComboCount = atoi(SkillDataList[i++].c_str());
+        SkillDesc.iMaxRepulseCount = atoi(SkillDataList[i++].c_str());
 
         SkillDesc.eATK_Direction = ATTACK_DIRECTION(atoi(SkillDataList[i++].c_str()));
         SkillDesc.eSkillType = SKILL_TYPE(atoi(SkillDataList[i++].c_str()));
@@ -745,10 +785,7 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-   
     _finddatai64_t  fd;
-
-
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -807,6 +844,31 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         Safe_Delete_Array(pFileName);
     }
 
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadTransportData(void* pArg)
+{
+    vector<string> TransportDatas;
+    TransportDatas.reserve(1000);
+
+    CStringHelper::CSVRead("../../Client/Bin/DataFiles/TransportData/TransportData.csv", TransportDatas);
+    size_t iMaxSize = TransportDatas.size();
+
+    for (auto i = 4; i < iMaxSize;)
+    {
+        TRANSPORT_DESC TransportData = {};
+        TransportData.iTeleportID = atoi(TransportDatas[i++].c_str());
+        strcpy_s(TransportData.szAreaName, TransportDatas[i++].c_str());
+
+        TransportData.vTransportpoint.x = atoi(TransportDatas[i++].c_str());
+        TransportData.vTransportpoint.y = atoi(TransportDatas[i++].c_str());
+        TransportData.vTransportpoint.z = atoi(TransportDatas[i++].c_str());
+        TransportData.bIsEnableMove = atoi(TransportDatas[i++].c_str());
+
+        m_Transports.emplace(TransportData.iTeleportID, TransportData);
+    }
 
     return S_OK;
 }

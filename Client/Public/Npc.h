@@ -5,13 +5,13 @@ NS_BEGIN(Engine)
 class CCollider;
 class CGameObject;
 class CCharacterController;
-class CInteraction_Component;
 class CAIController;
 class CRigidBody;
 NS_END
 
 NS_BEGIN(Client)
 struct Npc_Data_Desc;
+class CInteractionUIBinder;
 
 class CNpc final : public CCharacter
 {
@@ -40,7 +40,7 @@ public:
 private:
 	const Npc_Data_Desc*		m_NpcDesc = {};
 
-	CInteraction_Component*		m_pInteractionCom = { nullptr };
+	CInteractionUIBinder*		m_pInteractionCom = { nullptr };
 	CAIController*				m_pAIController = { nullptr };
 
 private :

@@ -468,6 +468,7 @@ namespace Engine
 		float*    fFogPowerMin;
 		float*	  fFogPowerMax;
 		float*	  fSkyboxFogPower;
+		unsigned int* iShaderPassIdx;
 	} FOG_DESC;
 
 	typedef struct tagDoFInfo {

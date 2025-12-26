@@ -33,15 +33,14 @@ public :
 
 	void									Save_CameraAnimationData();
 	void									Save_CinematicData();
-
+	
+	void									EnableTransport(_uint iAreaID);
+	const TRANSPORT_DESC*					Find_TransportData(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*		Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*				Get_CinematicDataMap();
 
 private:
-	// 캐릭터 구조체는 이거 하나만있으도 될거같아서 픽스
-	// map<_uint, CHARACTER_NETWORK_DESC>			m_pTextures = {};
-	
 	//스킬 데이터
 	map<_uint, CHARACTER_SKILL_DESC>					m_pSkillDatas = {};
 
@@ -67,7 +66,10 @@ private:
 	map<_uint, CINEMATIC_DESC>							m_CinematicDatas = {};
 
 	// 대화 스크립트 데이터
-	unordered_map<_wstring, SCRIPT_DESC>					m_ScriptDatas = {};
+	unordered_map<_wstring, SCRIPT_DESC>				m_ScriptDatas = {};
+
+	// 캐릭터 이동 위치 데이터
+	unordered_map<_uint, TRANSPORT_DESC>				m_Transports = {};
 
 private:
 	HRESULT									LoadNaytibaData(void* pArg);
@@ -78,6 +80,7 @@ private:
 	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
 	HRESULT									LoadCameraAnimationData(void* pArg = nullptr);
 	HRESULT									LoadCinematicData(void* pArg = nullptr);
+	HRESULT									LoadTransportData(void* pArg = nullptr);
 	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
 
 	// 한글 때문에 만듦

@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "UIBase.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "UIScript.h"
 #include "UIHUD.h"
 
@@ -62,9 +62,9 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 {
     if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        if (m_eInterState == INTERACTION_STATE::ACTIVE)
+        if (m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
         {
-            if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+            if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
             {
                 CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
@@ -76,7 +76,7 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
 
                 if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzleHintPopup"))
                     && pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzleHintPopup"))->IsAnimFinished(TEXT("Popup_Close")))
-                    m_eInterState = INTERACTION_STATE::DEFAULT;
+                    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
             
                 Safe_Release(pHUD);
             }
@@ -133,9 +133,10 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     InteractionDesc.EndCallBackFunc = [&]() { End_OverlapCallBack(); };
     InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
+    m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(Desc.iInteractionID));
     m_pInteractionCom->SetOwner(this);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
@@ -237,32 +238,28 @@ HRESULT CStaticInteraction::Begin_OverlapCallBack()
 {
     __super::Begin_OverlapCallBack();
 
-    // END일 땐 다시 안 보이게
-    if (m_eInterState != INTERACTION_STATE::END)
-        m_eInterState = INTERACTION_STATE::DEFAULT;
-
     return S_OK;
 }
 
 void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
     // 여기서 플레이어 상태 처리 및 Lock 상태 관리
-    if (!IsInteractionEnable())
-        m_fInteractionDuration += fTimeDelta;
+    if (!m_pInteractionCom->IsInteractionEnable())
+        m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
-    if (INTERACTION_STATE::DEFAULT == m_eInterState)
+    if (INTERACTION_STATE::DEFAULT == m_pInteractionCom->Get_InterState())
     {
-        if (IsInteractionEnable())
+        if (m_pInteractionCom->IsInteractionEnable())
         {
-            m_eInterState = INTERACTION_STATE::CONTACT;
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
         }
     }
-    else if (INTERACTION_STATE::CONTACT == m_eInterState)
+    else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
     {
-        m_eInterState = INTERACTION_STATE::ACTIVE;
-        m_fInteractionDuration = 0.f;
+        m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+        m_pInteractionCom->Set_Duration(0.f);
 
-        if (m_InteractionDesc->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
+        if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
         {
             CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 

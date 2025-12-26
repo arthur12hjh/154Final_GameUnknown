@@ -21,6 +21,7 @@
 #include "Task_ScarletDead.h"
 #include "Task_ScarletMove.h"
 #include "Task_ScarletAttack.h"
+#include "Task_Scarlet_InteractionAttack.h"
 #include "Task_CutScene.h"
 
 #include "Task_Groggy.h"
@@ -88,6 +89,7 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
         return E_FAIL;
     pAttackSelect->Bind_BehaviorNode(CDeco_AttackDelay::Create(this));
     pAttackSelect->Bind_BehaviorNode(CTask_ScarletAttack::Create(this));
+    pAttackSelect->Bind_BehaviorNode(CTask_Scarlet_InteractionAttack::Create(this));
 
     auto pBattleSelect = CSelectNode::Create(this);
     if (nullptr == pBattleSelect)

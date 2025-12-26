@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\EffectSRV.h" />
     <ClInclude Include="..\public\InstanceModel.h" />
     <ClInclude Include="..\public\Instance_Desert.h" />
+    <ClInclude Include="..\Public\InteractionUIBinder.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
     <ClInclude Include="..\public\Item.h" />
     <ClInclude Include="..\public\Level_Scarlet.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="..\Public\Player_CorpseInteractionState.h" />
     <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Hairpin_Player.h" />
+    <ClInclude Include="..\Public\Player_GrabState.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
@@ -387,6 +389,7 @@
     <ClInclude Include="..\public\Task_ScarletAttack.h" />
     <ClInclude Include="..\public\Task_ScarletDead.h" />
     <ClInclude Include="..\public\Task_ScarletMove.h" />
+    <ClInclude Include="..\public\Task_Scarlet_InteractionAttack.h" />
     <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
@@ -423,6 +426,7 @@
     <ClInclude Include="..\Public\UICostumePuzzleHint.h" />
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInstanceBuffer.h" />
+    <ClInclude Include="..\Public\UILoadingBlock.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -501,6 +505,7 @@
     <ClCompile Include="..\private\EffectSRV.cpp" />
     <ClCompile Include="..\private\InstanceModel.cpp" />
     <ClCompile Include="..\private\Instance_Desert.cpp" />
+    <ClCompile Include="..\Private\InteractionUIBinder.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
     <ClCompile Include="..\private\Level_Scarlet.cpp" />
@@ -548,6 +553,7 @@
     <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Hairpin_Player.cpp" />
+    <ClCompile Include="..\Private\Player_GrabState.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
@@ -710,6 +716,7 @@
     <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
     <ClCompile Include="..\private\Task_ScarletDead.cpp" />
     <ClCompile Include="..\private\Task_ScarletMove.cpp" />
+    <ClCompile Include="..\private\Task_Scarlet_InteractionAttack.cpp" />
     <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
@@ -745,6 +752,7 @@
     <ClCompile Include="..\Private\UICostumePuzzleHint.cpp" />
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
+    <ClCompile Include="..\Private\UILoadingBlock.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />

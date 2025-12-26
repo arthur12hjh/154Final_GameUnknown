@@ -21,6 +21,9 @@ void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 	m_eState = PLAYER_STATE::BLINK_START;
 	m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_S", false, 1.2f);
 	
+	m_pGameInstance->Active_RadialBlur(2.f, 6, 0.3f);
+	m_pGameInstance->Active_DoF(true, 0.3f);
+	m_pGameInstance->SetGameSpeed(0.4f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BlinkState::Update(_float fTimeDelta)

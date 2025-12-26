@@ -40,8 +40,8 @@ HRESULT CLevel_Scarlet::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	//m_pGameInstance->ADD_DelayFunction(TEXT("Effect_Create"), 10.f, [&]()
 	//	{
@@ -270,45 +270,15 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	//for (size_t i = 0; i < 1; i++)
-	//{
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Monster"),
-	//		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
-	//		return E_FAIL;
-	//}
-
 	CNayitba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	Desc.iMonsterID = 1;
-	Desc.vPosition = { 180.f, 1.f, 220.f };
+	Desc.iMonsterID = 8;
+	Desc.vPosition = { 217.f, 52.f, 200.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
 		return E_FAIL;
-
-
-	//Desc.iMonsterID = 3;
-	//Desc.vPosition = { 15.f, 1.f, 15.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
-	//	return E_FAIL;
-
-	/*Desc.iMonsterID = 4;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
-		return E_FAIL;
-	Desc.iMonsterID = 5;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
-		return E_FAIL;*/
-
-
-		//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_GameObject_Test_InstanceModel"),
-		//		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
-		//		return E_FAIL;
 
 	return S_OK;
 }

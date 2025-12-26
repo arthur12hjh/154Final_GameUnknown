@@ -53,6 +53,9 @@ public :
 	const SCRIPT_DESC*				Get_ScriptData(const _wstring& szScriptTag);
 	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
+	void							EnableTransport(_uint iAreaID);
+	const TRANSPORT_DESC*			Find_TransportData(_uint iAreaID);
+
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
 
@@ -104,32 +107,32 @@ public:
 #pragma endregion
 
 #pragma region CINEMATIC_MANAGER
-	HRESULT						Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc = nullptr);
-	HRESULT						Load_Level_CinematicObjectData(const _char* szFilePath);
-	_bool						Is_CinematicPlaying();
+	HRESULT											Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc = nullptr);
+	HRESULT											Load_Level_CinematicObjectData(const _char* szFilePath);
+	_bool											Is_CinematicPlaying();
 #pragma endregion
-
 
 	void											Release_GameMgr();
 
 private :
-	ID3D11Device*			m_pDevice = { nullptr };
-	ID3D11DeviceContext*	m_pContext = { nullptr };
-	CGameInstance*			m_pGameInstance = { nullptr };
+	ID3D11Device*									m_pDevice = { nullptr };
+	ID3D11DeviceContext*							m_pContext = { nullptr };
+	CGameInstance*									m_pGameInstance = { nullptr };
 
-	CDataManager*			m_pDataManager = { nullptr };
-	CQuestManager*			m_pQuestManager = { nullptr };
-	CLockonManager*			m_pLockonManager = { nullptr };
-	CShaderManager*			m_pShaderManager = { nullptr };
-	CPoolingManager*		m_pPoolingManager = { nullptr };
-	CCinematicManager*		m_pCinematicManager = { nullptr };
+	CDataManager*									m_pDataManager = { nullptr };
+	CQuestManager*									m_pQuestManager = { nullptr };
+	CLockonManager*									m_pLockonManager = { nullptr };
+	CShaderManager*									m_pShaderManager = { nullptr };
+	CPoolingManager*								m_pPoolingManager = { nullptr };
+	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
-	class CPlayer*			m_pPlayer = { nullptr };
+	class CPlayer*									m_pPlayer = { nullptr };
+
 private :
-	HRESULT						Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 public:
-	virtual void				Free() override;
+	virtual void			Free() override;
 
 };
 NS_END
