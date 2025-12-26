@@ -28,6 +28,7 @@ private:
 	_char   m_szAnimName[256] = {};
 	//≈∏∞Ÿ ∫ª ¿Ã∏ß
 	_char   m_szTargetBoneName[256] = {};
+	_bool	m_isStandUp = { false };
 
 public:
 	static	CPlayer_GrabState* Create(void* pArg);
