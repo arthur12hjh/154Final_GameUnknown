@@ -85,7 +85,10 @@ namespace Client
 		// 시체
 		CORPSE_INTERACTION,
 
-		HIT, BETA_CHARGINGSLASH, BETA_TRIPLET,
+		//피격 & 그랩
+		HIT, GRAB,
+		
+		BETA_CHARGINGSLASH, BETA_TRIPLET,
 
 		PARRY, PARRY_SUCCESS, PARRY_END, PARRY_GUARD,
 
@@ -191,7 +194,9 @@ namespace Client
 
 		bool   isLinkAttackAvailable = { true };
 		class CNayitba* pLinkAttackTarget = { nullptr };
-
+		const _float4x4* pGrabBone = { nullptr };
+		class CGameObject* pGrabAttackter = { nullptr };
+		bool isGrabbed = { false };
 		// 골드
 		int iOwnGold{ 0 };
 	}PLAYER_DESC;
@@ -210,7 +215,7 @@ namespace Client
 	// Skill Type
 	enum class SKILL_TYPE {
 		DEFAULT_SKILL,	
-		INTERACTION_SKILL,
+		INTERACTION_SKILL, // 무조건 그랩이라고 보면 된다.
 		BETA_SKILL,		
 		ALPHA_SKILL,	
 		MIMESIS_SKILL,	
@@ -539,8 +544,8 @@ namespace Client
 		vector<_wstring>			szScriptTags{};
 	}NPC_DATA_DESC;
 
-	//  LINK_ATTACK -> 그로기 상태에서 들어가는값
-	// LINK_ATTACK2 -> 처형 상태에서 들어가는값
+	// LINK_ATTACK -> 그로기 상태에서 들어가는값
+	// EXECUTION_ATTACK -> 처형 상태에서 들어가는값
 	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, EXECUTION_ATTACK, END};
 
 	typedef struct TransportDesc

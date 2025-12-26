@@ -28,6 +28,8 @@ public:
 	void*	Get_HDR_Desc();
 	void*	Get_Cascade_Desc();
 
+
+	void	Set_Fog_Desc(void* pArg);
 public:
 	HRESULT	Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
 	HRESULT	Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
