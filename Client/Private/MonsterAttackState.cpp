@@ -217,7 +217,6 @@ void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 
 void CMonsterAttackState::BanaclePattern(_float fTimeDelta)
 {
-
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_float fSpeed = m_fMoveSpeed;

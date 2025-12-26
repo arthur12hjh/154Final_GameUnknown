@@ -55,7 +55,6 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ���� �ε��� �����ϱ����� �����带 �����Ѵ�. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;

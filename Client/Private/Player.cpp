@@ -270,6 +270,9 @@ HRESULT CPlayer::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
+	if (nullptr == pSkillDesc)
+		return E_FAIL;
+
 	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
 	{
 		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);

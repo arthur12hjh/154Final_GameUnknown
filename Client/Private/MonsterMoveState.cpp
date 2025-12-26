@@ -261,7 +261,6 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
 
     pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, m_pInitOwnerInfo->fLerpRatio);
     pEntity->Play_Animation(fTimeDelta);
-
     if (pEntity->IsAnmiationFinished())
     {
         if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytibaState)

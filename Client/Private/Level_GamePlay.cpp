@@ -64,7 +64,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
-	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -826,7 +826,6 @@ HRESULT CLevel_GamePlay::Load_Light_Data()
 	return S_OK;
 }
 
-
 CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
 	CLevel_GamePlay* pInstance = new CLevel_GamePlay(pDevice, pContext, eLevelID);
@@ -839,10 +838,6 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 	return pInstance;
 }
-
-
-
-
 
 void CLevel_GamePlay::Free()
 {

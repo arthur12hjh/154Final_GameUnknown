@@ -7,6 +7,7 @@ using namespace DirectX;
 
 namespace Engine
 {
+	
 	template <typename T>
 	T Clamp(const T& value, const T& min, const T& max)
 	{
@@ -61,7 +62,5 @@ namespace Engine
 	{
 		return XMConvertToDegrees(acosf(XMVectorGetX(XMVector3Dot(vSrc, vDest))));
 	}
-	
-	// 스플라인 곡선
 }
 #endif // Engine_Typedef_h__
