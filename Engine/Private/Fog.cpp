@@ -19,6 +19,27 @@ void* CFog::Get_Desc()
 	return &m_Desc;
 }
 
+void CFog::Set_Desc(void* pArg)
+{
+	m_vFogColor = { 1.0f, 0.89f, 0.70f, 1.f };
+	m_fFogStart = { 0.f };
+	m_fFogEnd = { 500.f };
+	m_fFogPowerMin = { 0.5f };
+	m_fFogPowerMax = { 1.f };
+	m_fSkyBoxFogPower = { 0.77f };
+	m_iShaderPassIdx = { 0 };
+
+	FOG_DESC* pDesc = static_cast<FOG_DESC*>(pArg);
+
+	m_vFogColor = *pDesc->vFogColor;
+	m_fFogStart = *pDesc->fFogStart;
+	m_fFogEnd = *pDesc->fFogEnd;
+	m_fFogPowerMin = *pDesc->fFogPowerMin;
+	m_fFogPowerMax = *pDesc->fFogPowerMax;
+	m_fSkyBoxFogPower = *pDesc->fSkyboxFogPower;
+	m_iShaderPassIdx = *pDesc->iShaderPassIdx;
+}
+
 HRESULT CFog::Initialize()
 {
 	/* 셰이더 파일 로딩 */
@@ -26,12 +47,17 @@ HRESULT CFog::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	m_pNoiseTextureCom = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/3DPerlinNoise.dds"), 1);
+
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* Target_Fog. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Fog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
 		return E_FAIL;
 	/* MRT_Fog */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))
+		return E_FAIL;
+
+	if(FAILED(m_pNoiseTextureCom->Bind_ShaderResource(m_pShader, "g_PerlinNoiseTexture", 0)))
 		return E_FAIL;
 
 	return S_OK;
@@ -55,6 +81,8 @@ HRESULT CFog::Render(CVIBuffer_Rect* pVIBuffer)
 	CAMERA_INFO 	CamInfo = m_pGameInstance->Get_CurrentCamInfo();
 	m_pShader->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float));
 
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float3))))
+		return E_FAIL; 
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogStart", &m_fFogStart, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_RawValue("g_fFogEnd", &m_fFogEnd, sizeof(_float))))
@@ -66,7 +94,8 @@ HRESULT CFog::Render(CVIBuffer_Rect* pVIBuffer)
 	if (FAILED(m_pShader->Bind_RawValue("g_fSkyBoxFogPower", &m_fSkyBoxFogPower, sizeof(_float))))
 		return E_FAIL;
 
-	m_pShader->Begin(0);
+	// 상황따라 갈아끼울 수 있게.
+	m_pShader->Begin(m_iShaderPassIdx);
 	pVIBuffer->Bind_Resources();
 	pVIBuffer->Render();
 
@@ -118,4 +147,6 @@ CFog* CFog::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 void CFog::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pNoiseTextureCom);
 }

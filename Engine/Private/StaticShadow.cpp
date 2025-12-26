@@ -108,10 +108,10 @@ HRESULT CStaticShadow::Render(CVIBuffer_Rect* pVIBuffer)
 	}
 	m_StaticShadowObjects.clear();
 
-	m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
-
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
+
+	m_pGameInstance->Set_ScreenSize(vScreenSize.x, vScreenSize.y);
 
 #ifdef _DEBUG
 	m_pGameInstance->EndMarker(m_pContext);
