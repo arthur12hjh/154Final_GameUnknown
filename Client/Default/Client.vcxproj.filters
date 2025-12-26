@@ -937,6 +937,9 @@
     <Filter Include="05.Component\InteractionUIBinder">
       <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlock">
+      <UniqueIdentifier>{5ed4bcd1-5791-4af0-b31b-53c90fd8304b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1879,6 +1882,9 @@
     <ClInclude Include="..\Public\InteractionUIBinder.h">
       <Filter>05.Component\InteractionUIBinder</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UILoadingBlock.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2787,6 +2793,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\InteractionUIBinder.cpp">
       <Filter>05.Component\InteractionUIBinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UILoadingBlock.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

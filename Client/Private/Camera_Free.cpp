@@ -150,7 +150,6 @@ void CCamera_Free::Late_Update(_float fTimeDelta)
 
 HRESULT CCamera_Free::Render()
 {
-	
 	return S_OK;
 }
 

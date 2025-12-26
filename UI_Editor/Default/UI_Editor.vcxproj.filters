@@ -598,6 +598,12 @@
     <ClCompile Include="..\..\Client\Private\UIUnlockFX.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UILoadingBlock.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\InteractionUIBinder.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
