@@ -203,6 +203,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
-	
-	Safe_Release(m_pEffect);
+
+	m_pEffect->End();
 }

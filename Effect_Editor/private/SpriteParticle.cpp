@@ -209,7 +209,7 @@ void CSpriteParticle::Set_Replay(SPRITE_PARTICLE_DATA tData)
 	Desc.isLoop = tData.bisLoop;
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
-
+	m_pComputeShader->Reset();
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
 	m_bisLoop = tData.bisLoop;
@@ -505,6 +505,7 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fEndTime;
 	m_CBData.fTimeDelta.w = 0;
+	m_CBData.vRotation.x = -1.f;
 	m_CBData.vRotation.w = m_tData.fCircleSpeed;
 
 	D3D11_BUFFER_DESC BufferDesc = {};

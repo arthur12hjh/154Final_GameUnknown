@@ -29,8 +29,8 @@ HRESULT CTrailEffect::Initialize(void* pArg)
 		return E_FAIL;
 
 	CTrail::TRAILHIGHLOW TrailDesc{};
-	TrailDesc.vHigh = { 0.f, 1.f, 0.f,0.f };
-	TrailDesc.vLow = { 0.f, -1.f, 0.f,0.f };
+	TrailDesc.vHigh = { 0.f, 2.f, 0.f,0.f };
+	TrailDesc.vLow = { 0.f, -2.f, 0.f,0.f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
 		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), &TrailDesc)))

@@ -23,6 +23,8 @@ HRESULT CTrailData::Initialize_Prototype()
 HRESULT CTrailData::Initialize(void* pArg)
 {
 	m_pTrail = static_cast<CTrailEffect*>(pArg);
+	m_pContext->OMGetRenderTargets(1, nullptr, &m_pOriginalDSV);
+	m_pOriginalDSV->GetResource(&m_resourse);
 	return S_OK;
 }
 
@@ -166,6 +168,41 @@ HRESULT CTrailData::Bind_Texture(CShader* pShader)
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(pShader, "g_DissolveTexture", 0)))
 		return E_FAIL;
 
+
+	if (RENDER::BLUR == m_eRender) {
+		ID3D11Texture2D* pDepthTexture = nullptr;
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		texDesc.Width = 1600;
+		texDesc.Height = 900;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = 0;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, nullptr, &pDepthTexture)))
+			return E_FAIL;
+
+		m_pContext->CopyResource(pDepthTexture, m_resourse);
+
+		Safe_Release(m_pRSV);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		if (FAILED(m_pDevice->CreateShaderResourceView(pDepthTexture, &srvDesc, &m_pRSV)))
+			return E_FAIL;
+		Safe_Release(pDepthTexture);
+		pShader->Bind_SRV("g_DepthTexture", m_pRSV);
+	}
+
 	if (FAILED(pShader->Begin(m_tData.iBegin + m_iRenderCount)))
 		return E_FAIL;
 	return S_OK;
@@ -202,4 +239,8 @@ void CTrailData::Free()
 	__super::Free();
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
+
+	Safe_Release(m_pOriginalDSV);
+	Safe_Release(m_resourse);
+	Safe_Release(m_pRSV);
 }

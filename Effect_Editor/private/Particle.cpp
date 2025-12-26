@@ -144,7 +144,7 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 		m_pShaderCom = pShader;
 	}
 	CComputeShader* pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
-	if (nullptr != pShader) {
+	if (nullptr != pComputeShader) {
 		Safe_Release(m_pComputeShader);
 		m_pComputeShader = pComputeShader;
 	}
@@ -238,6 +238,7 @@ void CParticle::Set_Replay(PARTICLE_DATA tData)
 	Set_Model(sztPrototype);
 	m_pVIBufferCom->Set_Model(m_pModelCom);
 	Safe_AddRef(m_pModelCom);
+	m_pComputeShader->Reset();
 
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;

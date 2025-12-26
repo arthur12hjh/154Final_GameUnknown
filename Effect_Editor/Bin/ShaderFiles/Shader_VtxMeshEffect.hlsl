@@ -564,21 +564,19 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_NONLIGHT(PS_IN In)
     
     float2 MaskTexcoord;
     float2 DiffuseTexcoord;
-    float fSize = pow(lerp(1, 1.5, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x - 1)), 2);
     
     float4 vColor = g_vColor;
-    if (1 > g_fTime * g_fMaskUVSpeed.x)
+    if (1 > 1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)
     {
+        float fSize = lerp(3, 1, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)));
         MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * fSize;
         DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x * fSize;
     }
     else
     {
-        float fSpeedTime = g_fTime * g_fMaskUVSpeed.x - 1;
-        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + 1 + (g_fTime * g_fMaskUVSpeed.x - 1) * (1 - saturate(fSpeedTime * 0.25)) * 0.8) * g_fMaskUVSize.x) % 1;
+        float fSpeedTime = g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x;
+        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + (g_fTime * g_fMaskUVSpeed.x) * (1 - saturate(fSpeedTime * 0.25))) * g_fMaskUVSize.x) ;
         DiffuseTexcoord.x = ((In.vTexcoord.x + g_fDiffuseUV.x + 1 + (g_fTime * g_fDiffuseUVSpeed.x - 1)) * g_fDiffuseUVSize.x) % 1;
-        //MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + 1) * g_fMaskUVSize.x * (fSize * g_fTime * g_fMaskUVSpeed.x);
-        //DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + 1) * g_fDiffuseUVSize.x * (fSize * g_fTime * g_fDiffuseUVSpeed.x);
         vColor.a *= saturate((2 - pow(g_fTime * g_fMaskUVSpeed.x * 0.8, 1.5)));
     }
     if (0 > MaskTexcoord.x)
@@ -597,8 +595,11 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_NONLIGHT(PS_IN In)
     }
     if (0 > MaskTexcoord.y)
         discard;
+    //if (MaskTexcoord.x > 1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x || MaskTexcoord.x < g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)
+    //    discard;
+    MaskTexcoord.x = fmod(MaskTexcoord.x, 1);
     Out.vColor.a *= max(g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y * 2)).r, 0.2);
-    Out.vColor.a *= g_MaskTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
+    Out.vColor.a *= g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r;
     Out.vColor.a *= saturate(g_fTime * 2);
     if (0 >= Out.vColor.a)
         discard;
@@ -723,8 +724,10 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP(PS_IN In)
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
-    float fSize = lerp(1, 2, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x - 1));
+    float fSize = pow(lerp(1, 2, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) - 1)), 2);
+    
     float4 vColor = g_vColor;
+    vColor.a *= lerp(1, 0, (g_fTime * g_fMaskUVSpeed.x) * 0.4);
     if (1 > g_fTime * g_fMaskUVSpeed.x)
     {
         MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * fSize;
@@ -732,9 +735,10 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP(PS_IN In)
     }
     else
     {
-        MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + 1) * g_fMaskUVSize.x * (fSize * g_fTime * g_fMaskUVSpeed.x);
-        DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x * fSize;
-        vColor.a *= 2 - pow(g_fTime * g_fMaskUVSpeed.x, 1.5);
+        float fSpeedTime = g_fTime * g_fMaskUVSpeed.x - 1;
+        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + 1 + (g_fTime * g_fMaskUVSpeed.x - 1) * (1 - saturate(fSpeedTime * 0.25)) * 0.65) * g_fMaskUVSize.x) % 1;
+        DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + 1) * g_fDiffuseUVSize.x * fSize;
+        vColor.rgb = saturate(lerp(vColor.rgb, float3(1, 1, 1), (g_fTime * g_fMaskUVSpeed.x - 1) * 0.2));
     }
     Out.vColor = vColor;
     if (0.5 > In.vTexcoord.y)
@@ -748,8 +752,14 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP(PS_IN In)
         MaskTexcoord.y = ((1 - In.vTexcoord.y) + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y;
         DiffuseTexcoord.y = ((1 - In.vTexcoord.y) + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y;
     }
+    //if (MaskTexcoord.x > g_fTime * g_fMaskUVSpeed.x || MaskTexcoord.x < g_fTime * g_fMaskUVSpeed.x - 1)
+    //    discard;
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    if (0 > MaskTexcoord.x || 1 < MaskTexcoord.x)
+        discard;
     Out.vColor.rgb *= max(g_DiffuseTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)), 0.2);
-    Out.vColor.a *= g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r * 1.5;
+    Out.vColor.a *= g_MaskTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r * 1.5;
     Out.vColor.a *= saturate(g_fTime * 2);
     if (0 >= Out.vColor.a)
         discard;
@@ -760,13 +770,15 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP_BLOOM(PS_IN In)
 {
     PS_NONLIGHT_OUT Out;
     
-    float2 MaskTexcoord;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord;
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
-    float fSize = pow(lerp(1, 2, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x - 1)), 2);
+    float fSize = pow(lerp(1, 2, abs((1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) - 1)), 2);
     
+    MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * fSize, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float4 vColor = g_vColor;
+    vColor.a *= lerp(1, 0, (g_fTime * g_fMaskUVSpeed.x) * 0.4);
     if (1 > g_fTime * g_fMaskUVSpeed.x)
     {
         MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * fSize;
@@ -774,9 +786,10 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP_BLOOM(PS_IN In)
     }
     else
     {
-        MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + 1) * g_fMaskUVSize.x * (fSize * g_fTime * g_fMaskUVSpeed.x);
-        DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + 1) * g_fDiffuseUVSpeed.x * (fSize * g_fTime * g_fDiffuseUVSpeed.x);
-        vColor.a *= 2 - pow(g_fTime * g_fMaskUVSpeed.x, 1.5);
+        float fSpeedTime = g_fTime * g_fMaskUVSpeed.x - 1;
+        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + 1 + (g_fTime * g_fMaskUVSpeed.x - 1) * (1 - saturate(fSpeedTime * 0.25)) * 0.65) * g_fMaskUVSize.x) % 1;
+        DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + 1) * g_fDiffuseUVSize.x * fSize;
+        vColor.rgb = saturate(lerp(vColor.rgb, float3(1, 1, 1), (g_fTime * g_fMaskUVSpeed.x - 1) * 0.2));
     }
     Out.vColor = vColor;
     if (0.5 > In.vTexcoord.y)
@@ -790,8 +803,15 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP_BLOOM(PS_IN In)
         MaskTexcoord.y = ((1 - In.vTexcoord.y) + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y;
         DiffuseTexcoord.y = ((1 - In.vTexcoord.y) + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y;
     }
+    //if (MaskTexcoord.x > g_fTime * g_fMaskUVSpeed.x || MaskTexcoord.x < g_fTime * g_fMaskUVSpeed.x - 1)
+    //    discard;
+    //MaskTexcoord.x = fmod(MaskTexcoord.x, 1);
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    if (0 > MaskTexcoord.x || 1 < MaskTexcoord.x)
+        discard;
     Out.vColor.rgb *= max(g_DiffuseTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)), 0.2);
-    Out.vColor.a *= g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r * 10;
+    Out.vColor.a *= g_MaskTexture.Sample(DefaultSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2)).r * 10;
     Out.vColor.a *= saturate(g_fTime * 2);
     if (0 >= Out.vColor.a)
         discard;

@@ -2232,7 +2232,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
                 if (ImGui::TreeNode("Size Diagram")) {
-                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tParticleData.fSizeDiagrams.size() - 1);
                     if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
                         _float time = 1.f / 100;
                         _float fMax = 5;

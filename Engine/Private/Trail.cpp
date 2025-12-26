@@ -234,7 +234,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		if (1 < fLength)
 			iNum = fLength;
 		for (int i = 0; i < 4 * iNum; ++i) {
-			fValue = (_float)i / ((4 * iNum) - 1);
+			fValue = (_float)i / ((4 * iNum));
 			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
 			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
 			m_iNumPresent += 2;

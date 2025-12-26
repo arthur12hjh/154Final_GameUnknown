@@ -200,26 +200,29 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vRight = float4(normalize(cross(g_Out[DTid.x].WorldMat._21_22_23, g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
     
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         
         if (!bisStart)
         {
@@ -409,26 +412,30 @@ void CS(uint3 Gid : SV_GroupID,
     
         g_Out[DTid.x].vRight = float4(normalize(cross(float3(0, 1, 0), g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
+        
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         
         if(!bisStart)
         {
@@ -984,26 +991,30 @@ void Spectrum(uint3 Gid : SV_GroupID,
     
         g_Out[DTid.x].vRight = float4(normalize(cross(float3(0, 1, 0), g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
+        
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
     
         g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
         if ((2 == viLoopAndCount.x || 3 == viLoopAndCount.x || 4 == viLoopAndCount.x) && g_Out[DTid.x].vLifeTime.x >= g_Out[DTid.x].vLifeTime.y)
@@ -1188,26 +1199,29 @@ void Tornado(uint3 Gid : SV_GroupID,
         }
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
         
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         if (!bisStart)
         {
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
@@ -1387,7 +1401,7 @@ void Tornado(uint3 Gid : SV_GroupID,
  + (-2 * pow(t, 3) + 3 * pow(t, 2)) * vfGravity.z
                         + (pow(t, 3) - pow(t, 2)) * tan(radians(vfGravity.w)) * 100;
     
-        g_Out[DTid.x].vTranslation += normalize(g_WorldMatrix._21_22_23_24) * fGravity * vfTimeDelta.x;
+        g_Out[DTid.x].vTranslation.xyz += normalize(g_WorldMatrix._12_22_32) * fGravity * vfTimeDelta.x;
         if (bisStart && Input[DTid.x].vfSpeed.x != 0)
         {
             g_Out[DTid.x].vLook = float4(normalize(g_Out[DTid.x].vTranslation.xyz - g_Out[DTid.x].vfStart.xyz) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
@@ -1407,26 +1421,29 @@ void Tornado(uint3 Gid : SV_GroupID,
         }
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
         
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         
         if (!bisStart)
         {
@@ -1781,6 +1798,7 @@ void Converge(uint3 Gid : SV_GroupID,
                         + (pow(t, 3) - pow(t, 2)) * tan(radians(vfGravity.w)) * 100;
         
         float4 vDir = normalize(float4(vfPivot.xyz - Input[DTid.x].vTranslation.xyz, 0));
+        float fLengt = length(vfPivot.xyz - Input[DTid.x].vTranslation.xyz);
         if (0 >= length((vfPivot.xyz - Input[DTid.x].vTranslation.xyz)))
         {
             vDir = 0;
@@ -1883,7 +1901,8 @@ void Converge(uint3 Gid : SV_GroupID,
                 }
                 else
                 {
-                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y))) * vfTimeDelta.x;
+                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity * saturate(fLengt * 0.2) + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y) * saturate(fLengt * 0.2)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y) * saturate(fLengt * 0.2))) * vfTimeDelta.x;
+
                 }
                 break;
             case 1:
@@ -1923,6 +1942,31 @@ void Converge(uint3 Gid : SV_GroupID,
     
         g_Out[DTid.x].vRight = float4(normalize(cross(float3(0, 1, 0), g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
+        
+        
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
+        
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
+        
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
+        
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
+        
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
+        
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * saturate(fLengt * 3);
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * saturate(fLengt * 3);
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * saturate(fLengt * 3);
+        }
         
         if (!bisStart)
         {
@@ -2130,26 +2174,29 @@ void Rect(uint3 Gid : SV_GroupID,
         }
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
         
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = RotateAxisAngle(right, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
-        up = RotateAxisAngle(up, look, vfRotation.z + Random(DTid.x, radians(0), radians(360)));
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         
         if (!bisStart)
         {
@@ -2337,26 +2384,30 @@ void Rect(uint3 Gid : SV_GroupID,
     
         g_Out[DTid.x].vRight = float4(normalize(cross(float3(0, 1, 0), g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
         g_Out[DTid.x].vUp = float4(normalize(cross(g_Out[DTid.x].vLook.xyz, g_Out[DTid.x].vRight.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
-        float3 right = g_Out[DTid.x].vRight.xyz;
-        float3 up = g_Out[DTid.x].vUp.xyz;
-        float3 look = g_Out[DTid.x].vLook.xyz;
         
-        up = RotateAxisAngle(up, right, vfRotation.x);
-        look = RotateAxisAngle(look, right, vfRotation.x);
+        if (-1 != vfRotation.x)
+        {
+            float3 right = g_Out[DTid.x].vRight.xyz;
+            float3 up = g_Out[DTid.x].vUp.xyz;
+            float3 look = g_Out[DTid.x].vLook.xyz;
         
-        right = RotateAxisAngle(right, up, vfRotation.y);
-        look = RotateAxisAngle(look, up, vfRotation.y);
+            up = RotateAxisAngle(up, right, vfRotation.x);
+            look = RotateAxisAngle(look, right, vfRotation.x);
         
-        right = RotateAxisAngle(right, look, vfRotation.z);
-        up = RotateAxisAngle(up, look, vfRotation.z);
+            right = RotateAxisAngle(right, up, vfRotation.y);
+            look = RotateAxisAngle(look, up, vfRotation.y);
         
-        right = normalize(right);
-        up = normalize(up);
-        look = normalize(look);
+            right = RotateAxisAngle(right, look, vfRotation.z);
+            up = RotateAxisAngle(up, look, vfRotation.z);
         
-        g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
-        g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13);
+            right = normalize(right);
+            up = normalize(up);
+            look = normalize(look);
+        
+            g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+            g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
+        }
         
         if (!bisStart)
         {

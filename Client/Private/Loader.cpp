@@ -1442,9 +1442,15 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	
+	///* For.Prototype_Component_TrailEffect_Default_Slash */
+	//PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
+	//PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");
+	//Desc->pAddObejct.push_back(PrototypeDesc);
+
+
 	/* For.Prototype_Component_TrailEffect_Default_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
-	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Default_Slash.binx");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Scarlet_Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 

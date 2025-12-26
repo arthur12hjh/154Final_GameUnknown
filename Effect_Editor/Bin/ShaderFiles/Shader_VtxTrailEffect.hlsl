@@ -18,6 +18,7 @@ float2 g_fDissolveUVSize = float2(1, 1);
 float g_fFar;
 
 texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
+texture2D g_DepthTexture;
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -91,7 +92,7 @@ PS_NONLIGHT_OUT PS_SPECTRUM(PS_IN In)
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     Out.vDiffuse = g_vColor;
-    if (0.2 > (1 - abs(MaskTexcoord.x)) * (1 - abs(1 - MaskTexcoord.y * 2)))
+    if (0 >= (1 - abs(MaskTexcoord.x)) * (1 - abs(1 - MaskTexcoord.y * 2)))
         discard;
     Out.vDiffuse.a *= 1 - MaskTexcoord.x;
     return Out;
@@ -178,13 +179,16 @@ PS_NONLIGHT_OUT PS_SLASH_PATTERN_BLOOM(PS_IN In)
 }
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
-PS_NONLIGHT_OUT PS_BLUR_SLASH(PS_IN In)
+PS_NONLIGHT_OUT PS_BLUR(PS_IN In)
 {
     PS_NONLIGHT_OUT Out;
+    float2 uv = In.vPosition.xy / float2(1600, 900);
+    if (In.vProjPos.z / In.vProjPos.w > g_DepthTexture.Sample(DefaultSampler, uv * 2).r)
+        discard;
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     Out.vDiffuse = g_vColor;
-    Out.vDiffuse *= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r;
-    if (0 > Out.vDiffuse.a)
+    Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r;
+    if (0 >= Out.vDiffuse.a)
         discard;
     float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
     
@@ -195,8 +199,49 @@ PS_NONLIGHT_OUT PS_BLUR_SLASH(PS_IN In)
     return Out;
 }
 
+PS_NONLIGHT_OUT PS_SCARLET_SLASH_NOISE(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    
+    float2 MaskTexcoord = float2(1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x / 180) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 uv = In.vTexcoord;
+    
+    float dist = distance(uv, float2(0.5, 0.5));
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, DissolveTexcoord).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0) * 0.4;
+    
+    float2 uvDistorted = uv + distort;
+    
+    float4 col = g_DissolveTexture.Sample(MirrorSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, MaskTexcoord).r;
+    
+    col.r *= mask;
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= col.r;
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = max(Out.vDiffuse.a * 5, 0.2);
+    //Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    
+    
+    //float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    //Out.vDiffuse = g_vColor;
+    //Out.vDiffuse *= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r;
+    //if (0.8 > Out.vDiffuse.a)
+    //    discard;
+    //Out.vDiffuse.a = 1;
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
+    // idx 0
     pass Distortion
     {
         SetRasterizerState(RS_Cull_None);
@@ -206,6 +251,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION();
     }
+    // idx 1
     pass Spectrum
     {
         SetRasterizerState(RS_Cull_None);
@@ -215,6 +261,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SPECTRUM();
     }
+    // idx 2
     pass Slash
     {
         SetRasterizerState(RS_Cull_None);
@@ -224,6 +271,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH();
     }
+    // idx 3
     pass Slash_Bloom
     {
         SetRasterizerState(RS_Cull_None);
@@ -233,6 +281,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH_BLOOM();
     }
+    // idx 4
     pass Slash_Pattern
     {
         SetRasterizerState(RS_Cull_None);
@@ -242,6 +291,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH_PATTERN();
     }
+    // idx 5
     pass Slash_Pattern_Bloom
     {
         SetRasterizerState(RS_Cull_None);
@@ -251,14 +301,24 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH_PATTERN_BLOOM();
     }
-    pass Slash_Blur
+    // idx 6
+    pass Blur
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_BLUR_SLASH();
+        PixelShader = compile ps_5_0 PS_BLUR();
     }
-
+    // idx 7
+    pass Scarlet_Slash_Noise
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCARLET_SLASH_NOISE();
+    }
 }

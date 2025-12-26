@@ -46,6 +46,9 @@ public:
 	// 동시에 사용가능한 리소스 버퍼 8개 입니다.
 	HRESULT									Bind_OutputBuffer(_uint iBufferNum, _uint* iOutputIndex);
 
+	// 툴에서 바로 새로고침하려고 만드는 리셋
+	HRESULT									Reset();
+
 private:
 	ID3D11ComputeShader*					m_pComputeShaderCom = nullptr;
 	vector<ID3D11Buffer*>					m_pCBuffer = {};
