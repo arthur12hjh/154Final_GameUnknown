@@ -59,14 +59,12 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
-		return E_FAIL;
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
-	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
-
+	
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
 	pHitBoxDesc.vScale = { 1.f, 1.f, 1.f };
@@ -509,8 +507,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 {
-	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
-
 	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
 	pTriggerBoxDesc.iTriggerCode = 124;
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
@@ -823,6 +819,9 @@ HRESULT CLevel_GamePlay::Load_Level_CinematicObjectData(const _char* szFilePath)
 
 	CGameManager::GetInstance()->Load_Level_CinematicObjectData(szFilePath);
 
+
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -60,6 +60,8 @@ public:
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
 	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
+	void									SetActive(_bool bIsActive) override;
+	void									SetActive() override;
 	void									SetActiveMonster(_bool bIsFlag);
 
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);

@@ -10,6 +10,7 @@
 #include "Camera_Free.h"
 #include "Player.h"
 #include "UIHUD.h"
+#include "TriggerBox.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -54,9 +55,10 @@ HRESULT CLevel_Scarlet::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Map_Data();
+	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
+		return E_FAIL;
 
-	CGameManager::GetInstance()->Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Scarlet.json");
+	Load_Map_Data();
 
 	auto pGameCharacter = CGameManager::GetInstance()->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -336,6 +338,26 @@ HRESULT CLevel_Scarlet::Ready_Layer_UI(const _wstring& strLayerTag)
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_Scarlet::Ready_Layer_Trigger(const _wstring& strLayerTag)
+{
+	CGameManager::GetInstance()->Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Scarlet.json");
+
+	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
+	pTriggerBoxDesc.iTriggerCode = 141;
+	pTriggerBoxDesc.eColType = COLLIDER::OBB;
+	pTriggerBoxDesc.vScale = { 4.f, 4.f, 4.f };
+	pTriggerBoxDesc.vRotation = { 0.f, 0.f, 0.f };
+	pTriggerBoxDesc.vPosition = { 263.371f, 11.581f, 175.926f };
+	pTriggerBoxDesc.fDelayTime = -1.f;
+
+	//  시네마틱용 트리거
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
 
 	return S_OK;

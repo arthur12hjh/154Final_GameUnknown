@@ -310,6 +310,10 @@ _bool CGameManager::Is_CinematicPlaying()
 {
     return m_pCinematicManager->Is_CinematicPlaying();
 }
+HRESULT CGameManager::Skip_Cinematic()
+{
+    return m_pCinematicManager->Skip_Cinematic();
+}
 #pragma endregion
 
 void CGameManager::Release_GameMgr()
