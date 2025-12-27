@@ -14,8 +14,8 @@
 
 #ifdef _DEBUG
 #include "ImGuiMain.h"
-
 #endif
+
 #include "Model.h"
 #include "CharacterController.h"
 #include "TestEveHead.h"
@@ -27,6 +27,8 @@
 #include "UIInstanceBuffer.h"
 
 #include "ColorChange.h"
+
+#include "VelocityExample.h"
 
 CMainApp::CMainApp()	
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -257,9 +259,16 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCharacterController::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-#ifdef _DEBUG
+	/* For.Prototype_GameObject_VelocityExample */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_VelocityExample"),
+		CVelocityExample::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-#endif
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_Snow"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow.png"), 1))))
+		return E_FAIL;
+
+
 	_fmatrix HeadPreWorlMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_TestEveHead"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/MS_EVE_HEAD/Eve_Face.fbx", HeadPreWorlMatrix))))
