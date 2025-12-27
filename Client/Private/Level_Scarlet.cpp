@@ -411,7 +411,7 @@ HRESULT CLevel_Scarlet::Load_Map_Data()
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
 
-	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
+	//if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ifs.close();
 

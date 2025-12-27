@@ -28,7 +28,6 @@ public:
 
 private:
 	class CCollider* m_pCollider = { nullptr };
-	CModel* m_pColModelCom = { nullptr };
 	CRigidBody* m_pRigidBody = { nullptr };
 
 private:

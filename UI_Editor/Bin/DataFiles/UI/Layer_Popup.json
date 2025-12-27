@@ -257,5 +257,101 @@
         "szProtoTag": "Prototype_GameObject_UI_Popup",
         "szUIID": "UI_CostumePuzzleHintPopup_2",
         "szUITag": "UI_CostumePuzzleHintPopup"
+    },
+    {
+        "Children": [
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 500.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 270.0,
+                "fSizeY": 510.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 100,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "Set_Texture_Index": [
+                        {
+                            "szActionTag": "Set_Texture_Index",
+                            "szArg": "Set_Texture_Index",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Popup",
+                "szProtoTag": "Prototype_GameObject_UI_Map_Selector",
+                "szUIID": "UI_Map_Selector_3-1",
+                "szUITag": "UI_Map_Selector"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Map_Thumbnails",
+                    "szTextureComTag": "Com_Texture_UI_Map_Thumbnail"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -160.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 900.0,
+                "fSizeY": 510.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 100,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "Get_Texture_Index": [
+                        {
+                            "szActionTag": "Get_Texture_Index",
+                            "szArg": "Get_Texture_Index",
+                            "szSubscribeEventTags": [
+                                "Set_Texture_Index"
+                            ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Popup",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "UI_Map_Thumbnail_3-2",
+                "szUITag": "UI_Map_Thumbnail"
+            }
+        ],
+        "fAlpha": 0.0,
+        "fOffsetX": 1460.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1460.0,
+        "fSizeY": 650.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 100,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 1,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Popup_Open",
+                "szPrefabTag": "Popup_Open2"
+            },
+            {
+                "szAnimTag": "Popup_Close",
+                "szPrefabTag": "Popup_Close2"
+            }
+        ],
+        "szLayerTag": "Layer_Popup",
+        "szProtoTag": "Prototype_GameObject_UI_Popup",
+        "szUIID": "UI_Map_Selector_Popup_3",
+        "szUITag": "UI_Map_Selector_Popup"
     }
 ]

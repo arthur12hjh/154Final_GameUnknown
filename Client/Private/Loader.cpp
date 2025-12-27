@@ -220,6 +220,7 @@
 #include "UICostumePuzzleAnswer.h"
 #include "UICostumePuzzleButtons.h"
 #include "UICostumePuzzleHint.h"
+#include "UIMapSelector.h"
 
 #pragma endregion
 
@@ -6906,7 +6907,7 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 
 	/* For.Prototype_Component_UI_Texture_PopupBG */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_PopupBG");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6953,6 +6954,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Map_Thumbnails */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Map_Thumbnails");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_UI_Popup */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Popup");
 	pProtoDesc.pPrototype = CUIPopup::Create(m_pDevice, m_pContext);
@@ -6977,6 +6985,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint");
 	pProtoDesc.pPrototype = CUICostumePuzzleHint::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Map_Selector */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Map_Selector");
+	pProtoDesc.pPrototype = CUIMapSelector::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

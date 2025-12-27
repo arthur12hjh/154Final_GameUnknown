@@ -213,14 +213,14 @@ HRESULT CUIAnimManager::Delete_Prefab(_wstring szAnimTag)
 	return S_OK;
 }
 
-void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag, _float fDelay)
+void CUIAnimManager::Anim_Play(CUIBase* pUI, _wstring szAnimTag, _wstring szPrefabTag, _float fDelay)
 {
-	auto AnimDesc = m_AnimDatas.find(szAnimTag);
+	auto AnimDesc = m_AnimDatas.find(szPrefabTag);
 
 	if (AnimDesc == m_AnimDatas.end())
 		return;
 
-	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second, fDelay);
+	auto pAnimInstance = CUIAnimInstance::Create(pUI, &AnimDesc->second, szAnimTag, fDelay);
 	m_AnimInstances.push_back(pAnimInstance);
 }
 

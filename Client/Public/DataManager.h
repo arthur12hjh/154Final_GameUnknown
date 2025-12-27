@@ -11,34 +11,35 @@ private:
 	CDataManager();
 	virtual ~CDataManager() = default;
 
-	HRESULT									Initalize();
+	HRESULT												Initalize();
 
 public :
-	const CHARACTER_SKILL_DESC*				Find_SkillData(_uint iSkillID);
-	const NAYTIBA_NETWORK_DESC*				Find_NaytibaData(_uint iID);
+	const CHARACTER_SKILL_DESC*							Find_SkillData(_uint iSkillID);
+	const NAYTIBA_NETWORK_DESC*							Find_NaytibaData(_uint iID);
 	
-	const BETA_SKILL_DESC*					Find_BetaSkillData(_uint iSkillID);
-	const NPC_DATA_DESC*					Find_NpcData(_uint iSkillID);
-	map<_uint, BETA_SKILL_DESC>*			Get_AllBetaSkillDesc();
+	const BETA_SKILL_DESC*								Find_BetaSkillData(_uint iSkillID);
+	const NPC_DATA_DESC*								Find_NpcData(_uint iSkillID);
+	map<_uint, BETA_SKILL_DESC>*						Get_AllBetaSkillDesc();
 
-	const INTERACTION_DATA*					Get_InteractionData(_uint iID);
+	const INTERACTION_DATA*								Get_InteractionData(_uint iID);
 
-	const SCRIPT_DESC*						Get_ScriptData(const _wstring& szScriptTag);
+	const SCRIPT_DESC*									Get_ScriptData(const _wstring& szScriptTag);
 
-	const vector<ANIM_NOTIFY>*				Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const vector<ANIM_NOTIFY>*							Find_AnimationNotifyData(const _wstring& szAnimationTag);
 
-	const CAMERA_ANIMATION_DATA*			Find_CameraAnimationData(_uint iCameraAnimationData);
+	const CAMERA_ANIMATION_DATA*						Find_CameraAnimationData(_uint iCameraAnimationData);
 
-	const CINEMATIC_DESC*					Find_CinematicData(_uint iCinematicDataID);
+	const CINEMATIC_DESC*								Find_CinematicData(_uint iCinematicDataID);
 
-	void									Save_CameraAnimationData();
-	void									Save_CinematicData();
+	void												Save_CameraAnimationData();
+	void												Save_CinematicData();
 	
-	void									EnableTransport(_uint iAreaID);
-	const TRANSPORT_DESC*					Find_TransportData(_uint iAreaID);
+	void												EnableTransport(_uint iAreaID);
+	const vector<TRANSPORT_DESC>*						Find_TransportData();
+	const TRANSPORT_DESC*								Find_TransportData(_uint iAreaID);
 
-	map<_uint, CAMERA_ANIMATION_DATA>*		Get_CameraAnimationMap();
-	map<_uint, CINEMATIC_DESC>*				Get_CinematicDataMap();
+	map<_uint, CAMERA_ANIMATION_DATA>*					Get_CameraAnimationMap();
+	map<_uint, CINEMATIC_DESC>*							Get_CinematicDataMap();
 
 private:
 	//스킬 데이터
@@ -69,26 +70,26 @@ private:
 	unordered_map<_wstring, SCRIPT_DESC>				m_ScriptDatas = {};
 
 	// 캐릭터 이동 위치 데이터
-	unordered_map<_uint, TRANSPORT_DESC>				m_Transports = {};
+	vector<TRANSPORT_DESC>								m_Transports = {};
 
 private:
-	HRESULT									LoadNaytibaData(void* pArg);
-	HRESULT									LoadNpcData(void* pArg);
-	HRESULT									LoadInteractionData(void* pArg);
-	HRESULT									LoadScriptData(void* pArg);
-	HRESULT									LoadSkillData();
-	HRESULT									LoadAnimNotifyData(void* pArg = nullptr);
-	HRESULT									LoadCameraAnimationData(void* pArg = nullptr);
-	HRESULT									LoadCinematicData(void* pArg = nullptr);
-	HRESULT									LoadTransportData(void* pArg = nullptr);
-	HRESULT									AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
+	HRESULT												LoadNaytibaData(void* pArg);
+	HRESULT												LoadNpcData(void* pArg);
+	HRESULT												LoadInteractionData(void* pArg);
+	HRESULT												LoadScriptData(void* pArg);
+	HRESULT												LoadSkillData();
+	HRESULT												LoadAnimNotifyData(void* pArg = nullptr);
+	HRESULT												LoadCameraAnimationData(void* pArg = nullptr);
+	HRESULT												LoadCinematicData(void* pArg = nullptr);
+	HRESULT												LoadTransportData(void* pArg = nullptr);
+	HRESULT												AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
 
 	// 한글 때문에 만듦
-	_wstring								UTF8ToWString(const string& str);
+	_wstring											UTF8ToWString(const string& str);
 
 public:
-	static CDataManager*					Create();
-	virtual void							Free() override;
+	static CDataManager*								Create();
+	virtual void										Free() override;
 
 };
 NS_END

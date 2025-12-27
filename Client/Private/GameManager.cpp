@@ -140,6 +140,11 @@ void CGameManager::EnableTransport(_uint iAreaID)
 {
     m_pDataManager->EnableTransport(iAreaID);
 }
+ 
+const vector<TRANSPORT_DESC>* CGameManager::Find_TransportData()
+{
+    return  m_pDataManager->Find_TransportData();
+}
 
 const TRANSPORT_DESC* CGameManager::Find_TransportData(_uint iAreaID)
 {

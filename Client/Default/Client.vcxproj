@@ -427,6 +427,7 @@
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInstanceBuffer.h" />
     <ClInclude Include="..\Public\UILoadingBlock.h" />
+    <ClInclude Include="..\Public\UIMapSelector.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -755,6 +756,7 @@
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\Private\UILoadingBlock.cpp" />
+    <ClCompile Include="..\Private\UIMapSelector.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />

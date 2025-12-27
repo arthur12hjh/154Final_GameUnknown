@@ -114,5 +114,6 @@ void CVirtual_Wall::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pRigidBody);
     Safe_Release(m_pCollider);
 }
