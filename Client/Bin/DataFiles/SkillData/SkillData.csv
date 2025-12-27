@@ -35,8 +35,8 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 39,M_Scarlet_BlinkShot2,None,None,20,4,"1, 1, 2",0,0,1,5,136
 40,M_Scarlet_GroggyCounter,None,None,20,4,"1, 1, 2",0,0,1,5,136
 41,M_Scarlet_CounterMoveAttack,None,None,20,4,"1, 1, 2",0,0,1,5,136
-42,M_Scarlet_LinkBreakChanceAttack,None,None,0,4,"1, 1, 2",0,0,1,1,136
-43,M_Scarlet_LinkBreakChanceAttackHit,Hit_Scarlet_LinkBreakChanceAttackHit,SC_LinkTarget,20,4,"1, 1, 2",0,0,1,4,136
+42,M_Scarlet_LinkBreakChanceAttack,Hit_Scarlet_LinkBreakChanceAttackHit,SC_LinkTarget,0,4,"1, 1, 2",0,0,1,1,136
+43,M_Scarlet_LinkBreakChanceAttackHit,None,None,20,4,"1, 1, 2",0,0,1,4,136
 44,M_Scarlet_AirDashSpaceCut,None,None,20,4,"1, 1, 2",0,0,1,5,136
 45,M_Scarlet_BlinkCombo1,None,None,20,4,"1, 1, 2",0,0,1,5,136
 46,M_Scarlet_BlinkCombo2,None,None,20,4,"1, 1, 2",0,0,1,4,136

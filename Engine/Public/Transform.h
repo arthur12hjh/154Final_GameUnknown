@@ -21,22 +21,21 @@ private:
 
 public:
 	_vector Get_State(STATE eState) const {
-		return XMLoadFloat4(reinterpret_cast<const _float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]));		
+		return XMLoadFloat4(reinterpret_cast<const _float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]));
 	}
 
 	_float3	Get_Delta() const { return m_vDelta; }
-	_float3 Get_Scale() const ;
+	_float3 Get_Scale() const;
 
 	const _float4x4* Get_WorldMatrixPtr() const {
 		return &m_WorldMatrix;
 	}
 
 	void					Set_State(STATE eState, _vector vState);
-
 	void					Set_Scale(_vector vScale);
 	void					Set_Rotation(_vector vRotation, _bool bIsQuaternion = false);
 	void					Set_Scale(_float fX, _float fY, _float fZ);
-
+	void					Set_WorldMatrix(_fmatrix NewWorldMatrix) { XMStoreFloat4x4(&m_WorldMatrix, NewWorldMatrix); }
 	/* 현재는 가장 업데이트가 늦게 도는 Physx Manager Update 단에서 돌고 있음. */
 	void					Update_PreWorldMatrix();
 public:

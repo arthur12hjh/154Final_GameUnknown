@@ -241,6 +241,7 @@
     <ClInclude Include="..\Public\Player_CorpseInteractionState.h" />
     <ClInclude Include="..\Public\Player_DrawHairpin.h" />
     <ClInclude Include="..\Public\Hairpin_Player.h" />
+    <ClInclude Include="..\Public\Player_GrabState.h" />
     <ClInclude Include="..\Public\Player_HitState.h" />
     <ClInclude Include="..\Public\Player_IdleLandingState.h" />
     <ClInclude Include="..\Public\Player_IdleState.h" />
@@ -460,6 +461,7 @@
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
+    <ClInclude Include="..\Public\VelocityExample.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -552,6 +554,7 @@
     <ClCompile Include="..\Private\Player_CorpseInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\Private\Hairpin_Player.cpp" />
+    <ClCompile Include="..\Private\Player_GrabState.cpp" />
     <ClCompile Include="..\Private\Player_HitState.cpp" />
     <ClCompile Include="..\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\Private\Player_IdleState.cpp" />
@@ -785,6 +788,7 @@
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\Private\VelocityExample.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

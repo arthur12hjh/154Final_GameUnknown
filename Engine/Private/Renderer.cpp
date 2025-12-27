@@ -523,6 +523,11 @@ void* CRenderer::Get_HDR_Desc()
 	return &m_HDRDesc;
 }
 
+void CRenderer::Set_Fog_Desc(void* pArg)
+{
+	m_pFog->Set_Desc(pArg);
+}
+
 HRESULT CRenderer::Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
 	return m_pCascadeShadow->Ready_Shadow_Light(Desc);
@@ -884,7 +889,6 @@ void CRenderer::Render_Deferred()
 	hr = m_pDistortion->Render(m_pVIBuffer);
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
-
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 

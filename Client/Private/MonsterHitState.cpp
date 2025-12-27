@@ -90,7 +90,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     {
         szAnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
         szAnimationName += "_ShieldParry";
-        pEntity->Set_Animation(szAnimationName.c_str(), false, 0.3f, 0.08f, true, 4.f, 0.f);
+        pEntity->Set_Animation(szAnimationName.c_str(), false, 0.3f, 0.08f, true, 2.f, 0.f);
     }
     
  

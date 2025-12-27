@@ -29,6 +29,7 @@
 #include "Player_LockonSprintState.h"
 #include "Player_LockonSprintEndState.h"
 #include "Player_HitState.h"
+#include "Player_GrabState.h"
 //¹«±â ³Ö/»Ì
 #include "Player_DrawHairpin.h"
 #include "Player_SheatheHairpin.h"
@@ -236,6 +237,9 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 
 	case PLAYER_STATE::HIT:
 		return CPlayer_HitState::Create(tDesc.pArg);
+		break;
+	case PLAYER_STATE::GRAB:
+		return CPlayer_GrabState::Create(tDesc.pArg);
 		break;
 
 	case PLAYER_STATE::BETA_CHARGINGSLASH:
@@ -468,10 +472,10 @@ void CPlayerFSM::Evaluate_ModeTransitions(_float fTimeDelta, PLAYER_TRANSITION_D
 		{
 			m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 
-			PLAYER_TRANSITION_DESC t{};
-			t.eNextState = m_pCurrentState->Get_State();
+			PLAYER_TRANSITION_DESC Desc{};
+			Desc.eNextState = m_pCurrentState->Get_State();
 
-			CPlayerState* pNext = Create_State(t);
+			CPlayerState* pNext = Create_State(Desc);
 			if (pNext)
 				Change_State(pNext);
 		}

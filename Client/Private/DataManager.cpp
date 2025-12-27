@@ -27,6 +27,7 @@ HRESULT CDataManager::Initalize()
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadInteractionData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNpcData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadTransportData(pArg); });
 
     return S_OK;
 }
@@ -240,7 +241,23 @@ void CDataManager::Save_CinematicData()
     }
 }
 
+void CDataManager::EnableTransport(_uint iAreaID)
+{
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return;
 
+    iter->second.bIsEnableMove = true;
+}
+
+const TRANSPORT_DESC* CDataManager::Find_TransportData(_uint iAreaID)
+{
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return nullptr;
+
+    return &iter->second;
+}
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
 {
@@ -768,10 +785,7 @@ HRESULT CDataManager::LoadCameraAnimationData(void* pArg)
 
 HRESULT CDataManager::LoadCinematicData(void* pArg)
 {
-   
     _finddatai64_t  fd;
-
-
     intptr_t handle = _findfirst64("../Bin/DataFiles/CinematicData/*.json*", &fd);
 
     if (handle == -1)
@@ -830,6 +844,31 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
         Safe_Delete_Array(pFileName);
     }
 
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadTransportData(void* pArg)
+{
+    vector<string> TransportDatas;
+    TransportDatas.reserve(1000);
+
+    CStringHelper::CSVRead("../../Client/Bin/DataFiles/TransportData/TransportData.csv", TransportDatas);
+    size_t iMaxSize = TransportDatas.size();
+
+    for (auto i = 4; i < iMaxSize;)
+    {
+        TRANSPORT_DESC TransportData = {};
+        TransportData.iTeleportID = atoi(TransportDatas[i++].c_str());
+        strcpy_s(TransportData.szAreaName, TransportDatas[i++].c_str());
+
+        TransportData.vTransportpoint.x = atoi(TransportDatas[i++].c_str());
+        TransportData.vTransportpoint.y = atoi(TransportDatas[i++].c_str());
+        TransportData.vTransportpoint.z = atoi(TransportDatas[i++].c_str());
+        TransportData.bIsEnableMove = atoi(TransportDatas[i++].c_str());
+
+        m_Transports.emplace(TransportData.iTeleportID, TransportData);
+    }
 
     return S_OK;
 }
