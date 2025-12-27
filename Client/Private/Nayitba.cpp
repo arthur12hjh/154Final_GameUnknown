@@ -611,7 +611,12 @@ HRESULT CNayitba::ADD_Components()
 			return E_FAIL;
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-		SenceComDesc.fAiSearchRadius = 60.f;
+		if (AI_TYPE::PASSIVE == m_pInitMonsterInfo->eAI_Type && 9 != m_pInitMonsterInfo->iMonsetID)
+		{
+			SenceComDesc.fAiSearchRadius = 60.f;
+		}
+		else
+			SenceComDesc.fAiSearchRadius = 360.f;
 		SenceComDesc.fAiTargetSearchDistance = 10.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 

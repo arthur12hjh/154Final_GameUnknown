@@ -87,6 +87,7 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	}
 	else
 	{
+		m_fPlayRatio = 2.f;
 		if (m_bIsPattern)
 		{
 			switch (m_StaticMonsterData->iMonsetID)
@@ -115,7 +116,7 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 			}
 		}
 
-		m_fPlayRatio = 2.f;
+		
 		pEntity->Set_Animation(m_pSkillData->szAnimationName, false, 1.f, m_StaticMonsterData->fLerpRatio);
 	}
 
@@ -528,7 +529,17 @@ void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_bool bMoveAction = false;
 
-	if (742 == m_pSkillData->iSkillID)
+	if (741 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 40
+		if (0.5f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.5f;
+			m_fPlayRatio = 1.f;
+			bMoveAction = true;
+		}
+	}
+	else if (742 == m_pSkillData->iSkillID)
 	{
 		// 0 ~ 40
 		if (0.34f >= fAnimPlayRatio)
