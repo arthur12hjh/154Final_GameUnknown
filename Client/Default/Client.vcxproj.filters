@@ -928,6 +928,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
       <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
+      <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1864,6 +1867,9 @@
     <ClInclude Include="..\Public\UIUnlockFX.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Virtual_Wall.h">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2766,6 +2772,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIUnlockFX.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Virtual_Wall.cpp">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
