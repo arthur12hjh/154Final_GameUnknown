@@ -213,7 +213,7 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 	_float fUIWidth = vUISize.x * 1.5f * (ATLAS_COL - 1);
 	_float fUIHeight = vUISize.y * (ATLAS_ROW - 1);
 
-	_float2 vScale = _float2{ 56.f / m_tUIDesc.fSizeX, 56.f / m_tUIDesc.fSizeY };
+	_float2 vScale = _float2{ vUISize.x / m_tUIDesc.fSizeX, vUISize.y / m_tUIDesc.fSizeY };
 	_float fWidth = vScale.x * 1.5f * (ATLAS_COL - 1);
 	_float fHeight = vScale.y * (ATLAS_ROW - 1);
 

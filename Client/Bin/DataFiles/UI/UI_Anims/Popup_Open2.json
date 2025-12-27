@@ -1,6 +1,21 @@
 {
     "Tracks": [
         {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                1460.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
             "szTrackTag": "Alpha",
             "vEndParam": [
                 1.0,
@@ -16,9 +31,9 @@
             ]
         }
     ],
-    "fDuration": 0.2,
+    "fDuration": 0.5,
     "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": true,
-    "szAnimTag": "FadeIn_3"
+    "szAnimTag": "Popup_Open"
 }

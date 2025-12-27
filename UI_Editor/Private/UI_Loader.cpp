@@ -46,6 +46,7 @@
 #include "UICostumePuzzleAnswer.h"
 #include "UICostumePuzzleButtons.h"
 #include "UICostumePuzzleHint.h"
+#include "UIMapSelector.h"
 
 #pragma endregion
 
@@ -675,11 +676,11 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	// ÆË¾÷
 	/* For.Prototype_Component_UI_Texture_PopupBG */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
-		TEXT("Com_Texture_UI_PopupBG"), TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1);
+		TEXT("Com_Texture_UI_PopupBG"), TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_Popup_Inner_Frame */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
@@ -729,6 +730,22 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock"),
 		TEXT("Com_Texture_UI_Puzzle_Unlock"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2);
 
+	/* For.Prototype_Component_UI_Texture_Map_Thumbnails */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Map_Thumbnails"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Map_Thumbnails"),
+		TEXT("Com_Texture_UI_Map_Thumbnail"), TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3);
+	
+	/* For.Prototype_Component_UI_Texture_ItemIcons */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.png"), 3))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
+		TEXT("Com_Texture_UI_ItemIcons"), TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.png"), 3);
+
 	/*=================================================================================================================*/
 
 	/* For.Prototype_GameObject_UI_Popup */
@@ -749,6 +766,11 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint"),
 		CUICostumePuzzleHint::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Map_Selector */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Map_Selector"),
+		CUIMapSelector::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_UI_UnlockFX */

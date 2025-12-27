@@ -676,21 +676,10 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 
 			}
 			case INTERACTION_TYPE::ITEM:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::DOOR:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::LIFT_CONTROLLER:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::NPC:
+			case INTERACTION_TYPE::VENDING_MACINE:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;

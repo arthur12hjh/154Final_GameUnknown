@@ -17,6 +17,7 @@
 #include "TriggerBox.h"
 #include "UIHUD.h"
 #include "UIScript.h"
+#include "ChangeLevelEvent.h"
 
 #include "SpriteParticle.h"
 
@@ -61,10 +62,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Trigger(TEXT("Layer_Trigger"))))
 		return E_FAIL;
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
-	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
-	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -76,6 +77,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	auto pGameCharacter = pGameManager->GetGameCharacter();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
 	Safe_Release(pGameCharacter);
+
+	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) {
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+		});
+	m_pGameInstance->Bind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
 
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
@@ -110,7 +118,24 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		m_bChangeLevel = true;
+		//m_bChangeLevel = true;
+		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
+			return;
+	}
+
+	if (m_bChangeLevel && !m_bLevelTransitioning)
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));
+		m_bLevelTransitioning = true;
+	}
+
+	if (m_bLevelTransitioning && m_bChangeLevel
+		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro")))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 	}
@@ -849,6 +874,10 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 void CLevel_GamePlay::Free()
 {
 	m_pGameInstance->SetInteractionBaseObject(nullptr);
+
+	m_pGameInstance->UnBind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+
+	Safe_Release(m_pLevelChangeEvent);
 
 	__super::Free();
 }
