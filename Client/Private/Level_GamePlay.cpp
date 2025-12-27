@@ -64,7 +64,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	auto pGameManager = CGameManager::GetInstance();
@@ -118,11 +118,12 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
 	{
-		//m_bChangeLevel = true;
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
 
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
+
+		return;
 	}
 
 	if (m_bChangeLevel && !m_bLevelTransitioning)
@@ -138,6 +139,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
+
+		return;
 	}
 }
 
