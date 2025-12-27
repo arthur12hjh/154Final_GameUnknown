@@ -838,39 +838,6 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Weapon\Right">
       <UniqueIdentifier>{d7e8c404-b1b6-483f-a653-a780c3b13e15}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM">
-      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State">
-      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead">
-      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit">
-      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle">
-      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack">
-      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move">
-      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation">
-      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction">
-      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy">
-      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\AI\Npc">
       <UniqueIdentifier>{98dc5280-3b7f-4af0-ac9d-ea077927f2a2}</UniqueIdentifier>
     </Filter>
@@ -940,8 +907,47 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlock">
       <UniqueIdentifier>{5ed4bcd1-5791-4af0-b31b-53c90fd8304b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM">
+      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State">
+      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Dead">
+      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Hit">
+      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Idle">
+      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Move">
+      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Translation">
+      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\SuccessAction">
+      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
+      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+	</Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
       <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample">
+      <UniqueIdentifier>{496a1f2a-adf0-4e5e-9607-ae80b22e1d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
+      <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1348,22 +1354,22 @@
       <Filter>01.Levels\ChangeLevelEvent</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterAttackState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterDeadState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Dead</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterHitState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterMoveState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterIdleState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterFSM.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Nayitba.h">
       <Filter>02.GameObjects\Character\AI\Naytiba</Filter>
@@ -1414,7 +1420,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterStateMimesis.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Mimesis</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MonsterMimesisController.h">
       <Filter>02.GameObjects\Character\AI\Controller\Monster\Mimesis</Filter>
@@ -1423,7 +1429,7 @@
       <Filter>02.GameObjects\Character\AI\Controller\Monster\Patrol</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterTranslationState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Translation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BossController.h">
       <Filter>02.GameObjects\Character\AI\Controller\Boss</Filter>
@@ -1450,7 +1456,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterSuccessActionState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\SuccessAction</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIHPBar.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIHPBar</Filter>
@@ -1643,7 +1649,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina\UIMonsterStaminaFX</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MonsterGroggyState.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Task_Groggy.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
@@ -1890,6 +1896,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_GrabState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VelocityExample.h">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2277,19 +2286,19 @@
       <Filter>02.GameObjects\TestModel\TestHead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterAttackState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Attack</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterDeadState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Dead</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Dead</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterHitState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Hit</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterMoveState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Move</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterIdleState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Idle</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\NayitbaPartBody.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody</Filter>
@@ -2340,7 +2349,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterStateMimesis.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Mimesis</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Mimesis</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterMimesisController.cpp">
       <Filter>02.GameObjects\Character\AI\Controller\Monster\Mimesis</Filter>
@@ -2349,10 +2358,10 @@
       <Filter>02.GameObjects\Character\AI\Controller\Monster\Patrol</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MonsterFSM.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterTranslationState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Translation</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Translation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_BattleEvadeState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\02. Battle\Evade</Filter>
@@ -2376,7 +2385,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\03. Lockon</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterSuccessActionState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\SuccessAction</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\SuccessAction</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
       <Filter>02.GameObjects\Character</Filter>
@@ -2561,7 +2570,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UIMonsterStamina\UIMonsterStaminaFX</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MonsterGroggyState.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\FSM\State\Groggy</Filter>
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Task_Groggy.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Groggy</Filter>
@@ -2805,6 +2814,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_GrabState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VelocityExample.cpp">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

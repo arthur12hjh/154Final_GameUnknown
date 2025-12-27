@@ -51,7 +51,6 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
 	m_vAttackTime.y = 0.8f;
 	m_vDelayTime.y = 0.5f;
-	//AttackCompleted(0.f);
 	m_bIsMimesis = true;
 
 	return S_OK;
@@ -250,13 +249,13 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_bIsMimesis)
 	{
-		if (fDistance <= m_pOwnerData->fAttackRange)
-		{
+		//if (fDistance <= m_pOwnerData->fAttackRange)
+		//{
 			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 			AttackStateDesc.pTarget = pTarget;
 			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-		}
+		//}
 	}
 	else
 	{
@@ -276,7 +275,8 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 			}
 			else
 			{
-				MoveAction(true);
+				if(0 != m_pOwnerData->fMoveSpeed)
+					MoveAction(true);
 			}
 		}
 	}
@@ -290,7 +290,8 @@ void CMonsterMimesisController::Default_Action(_float fTimeDelta)
 	}
 	else
 	{
-		MoveAction(false);
+		if (0 != m_pOwnerData->fMoveSpeed)
+			MoveAction(true);
 	}
 }
 

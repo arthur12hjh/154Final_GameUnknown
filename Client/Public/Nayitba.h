@@ -54,16 +54,17 @@ public:
 	void									Excution();
 	CGameObject*							GetTarget();
 
-	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
-	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
-	
 	//몬스터의 현재 데이터를 반환
 	const NAYTIBA_DESC&						GetMonsterData() { return m_MonsterInfo; }
 	
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
 	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
-	
+	void									SetActiveMonster(_bool bIsFlag);
+
+	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
+	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
+
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);

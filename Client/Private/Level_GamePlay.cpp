@@ -320,6 +320,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 {	
+	//테스트용
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_VelocityExample"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
@@ -364,27 +369,27 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		}
 	}*/
 
-	Desc.iMonsterID = 3;
-	{
-		for (_uint i = 0; i < 10; ++i)
-		{
-			Desc.vPosition = { 15.f * i, 1.f, 105.f };
-			if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-				return E_FAIL;
-		}
-	}
+	//Desc.iMonsterID = 3;
+	//{
+	//	for (_uint i = 0; i < 10; ++i)
+	//	{
+	//		Desc.vPosition = { 15.f * i, 1.f, 105.f };
+	//		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//			return E_FAIL;
+	//	}
+	//}
 	
-	/*Desc.iMonsterID = 4;
+	Desc.iMonsterID = 9;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
-	Desc.bIsSuperMonster = true;
+	Desc.bIsSuperMonster = false;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
 
-	Desc.iMonsterID = 5;
-	Desc.bIsSuperMonster = true;
+	/*Desc.iMonsterID = 10;
+	Desc.bIsSuperMonster = false;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
@@ -474,6 +479,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 {
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+
 	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
 	pTriggerBoxDesc.iTriggerCode = 124;
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
@@ -482,7 +489,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
 	pTriggerBoxDesc.fDelayTime = -1.f;
 
-	//  시네마틱 테스트용 트리거
+	//  시네마틱용 트리거
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
@@ -826,7 +833,6 @@ HRESULT CLevel_GamePlay::Load_Light_Data()
 	return S_OK;
 }
 
-
 CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
 	CLevel_GamePlay* pInstance = new CLevel_GamePlay(pDevice, pContext, eLevelID);
@@ -839,10 +845,6 @@ CLevel_GamePlay* CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 	return pInstance;
 }
-
-
-
-
 
 void CLevel_GamePlay::Free()
 {
