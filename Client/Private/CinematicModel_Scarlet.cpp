@@ -365,7 +365,7 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_PhaseChange(_floa
 		}
 		else if (m_iAnimationSequence == 3)
 		{
-			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI04", FALSE, 2.f, 0.12f, FALSE, -1.f, 243.f);
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI04", FALSE, 2.f, 0.12f, FALSE, -1.f, 213.f);
 			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 230.907f, 1.f));
 			m_pTransformCom->LookAt(XMVectorSet(251.874f, 8.f, 233.907f, 1.f));
 		}
@@ -391,8 +391,8 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Finish(_float fTi
 		else if (m_iAnimationSequence == 1)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Scarlet_ANI01", FALSE, 2.f, 0.f, FALSE);
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(248.529f, 8.f, 219.061f, 1.f));
-			m_pTransformCom->LookAt(XMVectorSet(248.529f, 8.f, 219.061f, 1.f));
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(248.529f, 8.f, 235.061f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(248.529f, 8.f, 234.061f, 1.f));
 		}
 		else if (m_iAnimationSequence == 2)
 		{
