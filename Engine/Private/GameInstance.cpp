@@ -605,7 +605,10 @@ void* CGameInstance::Get_HDR_Desc()
 	return m_pRenderer->Get_HDR_Desc();
 }
 
-
+void CGameInstance::Set_Fog_Desc(void* pArg)
+{
+	m_pRenderer->Set_Fog_Desc(pArg);
+}
 
 void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
 {

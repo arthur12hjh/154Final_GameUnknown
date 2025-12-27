@@ -45,7 +45,7 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
     //대상이 죽었다면. 
     if (nullptr != m_pTarget && 0.f >= m_pTarget->GetMonsterData().iCurrentHealth)
     {
-        //m_pTarget = nullptr;
+        m_pTarget = nullptr;
         m_fLockonTimer = 0.f;
 
         return false;
