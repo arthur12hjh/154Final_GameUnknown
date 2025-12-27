@@ -23,13 +23,11 @@ void CMonsterStateMimesis::Start(void* pArg, CState* pPreState)
 {
 	auto pEntity = static_cast<CNayitba*>(m_pOwner);
 	auto pOwnerStaticInfo = pEntity->GetStaticMonsterData();
+	m_szAnimationName = pOwnerStaticInfo->szAnimationName;
+	m_szAnimationName += "_Stanby_01";
 
-	string szAnimationName = pOwnerStaticInfo->szAnimationName;
-
-	szAnimationName += "_Stanby_01";
-	m_iMimesisIndex = 1;
-	
-	pEntity->Set_Animation(szAnimationName.c_str());
+	//SettingMimesisPos(pEntity->GetStaticMonsterData()->iMonsetID);
+	pEntity->Set_Animation(m_szAnimationName.c_str(), true);
 }
 
 void CMonsterStateMimesis::Update(_float fTimeDelta)
@@ -41,6 +39,23 @@ void CMonsterStateMimesis::Update(_float fTimeDelta)
 void CMonsterStateMimesis::End()
 {
 
+}
+
+void CMonsterStateMimesis::SettingMimesisPos(_uint iMonsterID)
+{
+	switch (iMonsterID)
+	{
+	/*case 4 : case 5 :
+	
+		break;*/
+	case 9 :
+		m_szAnimationName = "M_Tentacle_Summoned";
+		break;
+
+	default :
+		m_szAnimationName += "_Stanby_01";
+		break;
+	}
 }
 
 CMonsterStateMimesis* CMonsterStateMimesis::Create(void* pArg)

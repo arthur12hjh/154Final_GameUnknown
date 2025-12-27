@@ -25,6 +25,9 @@ public:
 private :
 	_uint										m_iMimesisIndex = {};
 
+private :
+	void										SettingMimesisPos(_uint iMonsterID);
+
 public:
 	static	CMonsterStateMimesis*				Create(void* pArg);
 	virtual	void								Free() override;

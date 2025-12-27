@@ -51,7 +51,6 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
 	m_vAttackTime.y = 0.8f;
 	m_vDelayTime.y = 0.5f;
-	//AttackCompleted(0.f);
 	m_bIsMimesis = true;
 
 	return S_OK;
@@ -276,7 +275,8 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 			}
 			else
 			{
-				MoveAction(true);
+				if(0 != m_pOwnerData->fMoveSpeed)
+					MoveAction(true);
 			}
 		}
 	}
@@ -290,7 +290,8 @@ void CMonsterMimesisController::Default_Action(_float fTimeDelta)
 	}
 	else
 	{
-		MoveAction(false);
+		if (0 != m_pOwnerData->fMoveSpeed)
+			MoveAction(true);
 	}
 }
 

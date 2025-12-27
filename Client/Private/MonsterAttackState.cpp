@@ -50,7 +50,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 
 	_vector vOwnerPos = {};
 	if (bIsRandomAttack)
-		m_pSkillData = pEntity->GetSkillData(false);
+		m_pSkillData = pEntity->FindSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
 
 	ReadySetting();
 	pEntity->SetAttackData(m_pSkillData);
@@ -79,8 +79,11 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 		m_fPlayRatio = 1.f;
 
 		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 2.f));
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), m_fMoveSpeed * 2.5f);
-		pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, m_StaticMonsterData->fLerpRatio);
+		if (0 != pEntity->GetStaticMonsterData()->fMoveSpeed)
+		{
+			m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), m_fMoveSpeed * 2.5f);
+			pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, m_StaticMonsterData->fLerpRatio);
+		}
 	}
 	else
 	{
@@ -105,6 +108,9 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 				break;
 			case 7:
 				Minion11Pattern(fTimeDelta);
+				break;
+			case 9:
+				TentaclePattern(fTimeDelta);
 				break;
 			}
 		}
@@ -141,6 +147,7 @@ void CMonsterAttackState::ReadySetting()
 	case 5:
 	case 6:
 	case 7:
+	case 9:
 	{
 		_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 		_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -512,6 +519,36 @@ void CMonsterAttackState::Minion11Pattern(_float fTimeDelta)
 
 	if (bMoveAction)
 		LerpMoveAction(fTimeDelta, fSpeed);
+}
+
+void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
+{
+	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	_bool bMoveAction = false;
+
+	if (742 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 40
+		if (0.34f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.34f;
+			bMoveAction = true;
+		}
+	}
+	else if (743 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 40
+		if (0.17f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.17f;
+			bMoveAction = true;
+		}
+	}
+
+	if (bMoveAction)
+		LerpMoveAction(fTimeDelta, 0.f);
 }
 
 void CMonsterAttackState::SearchTargetDistance()
