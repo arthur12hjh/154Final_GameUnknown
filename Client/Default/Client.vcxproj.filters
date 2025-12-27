@@ -939,6 +939,7 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+	</Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
       <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
     </Filter>
