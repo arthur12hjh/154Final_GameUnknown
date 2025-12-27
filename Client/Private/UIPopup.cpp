@@ -2,7 +2,10 @@
 #include "UIPopup.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "UIHUD.h"
+
+#include "Player.h"
 
 CUIPopup::CUIPopup(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -61,6 +64,18 @@ void CUIPopup::Late_Update(_float fTimeDelta)
 		m_pGameInstance->SetGamePause(false);
 		g_bIsMouseLock = true;
 
+		auto pPlayer = m_pGameManager->GetGameCharacter();
+
+		if (!pPlayer)
+		{
+			Safe_Release(pPlayer);
+			return;
+		}
+
+		auto PlayerDesc = dynamic_cast<CPlayer*>(pPlayer)->Get_Desc();
+
+		PlayerDesc->pPlayerController->Set_Active(true);
+
 		m_eVisibility = VISIBILITY::HIDDEN;
 
 		for (auto& pChild : m_Children)
@@ -68,6 +83,13 @@ void CUIPopup::Late_Update(_float fTimeDelta)
 
 		m_isOpen = false;
 		m_isClosing = false;
+
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &m_isLevelChange;
+		__super::Trigger_Event(TEXT("Change_Map"), &Arg);
+
+		Safe_Release(pPlayer);
 	}
 
 	if (!m_isOpen)
@@ -149,7 +171,12 @@ HRESULT CUIPopup::Bind_ShaderResources()
 			return E_FAIL;
 	}*/
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
+	_int iTextureIndex = 0;
+
+	if (m_tUIDesc.fSizeX >= 1000.f)
+		iTextureIndex = 1;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", iTextureIndex)))
 		return E_FAIL;
 
 	/*_float2 vPos = { m_tUIDesc.fX, m_tUIDesc.fY };
@@ -217,9 +244,10 @@ void CUIPopup::Open_Popup()
 		Update_Children(pChild);
 	
 	m_isOpen = true;
+	m_isClosing = false;
 }
 
-void CUIPopup::Close_Popup()
+void CUIPopup::Close_Popup(_bool isLevelChange)
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Close"));
@@ -230,6 +258,7 @@ void CUIPopup::Close_Popup()
 	Safe_Release(pHUD);
 
 	m_isClosing = true;
+	m_isLevelChange = isLevelChange;
 
 	//m_eVisibility = VISIBILITY::HIDDEN;
 	//m_tUIDesc.fAlpha = 0.f;

@@ -7,12 +7,13 @@ CUIAnimInstance::CUIAnimInstance()
 {
 }
 
-HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc, _float fDelay)
+HRESULT CUIAnimInstance::Initialize(CUIBase* pUI, void* Desc, _wstring szAnimTag, _float fDelay)
 {
 	m_pTargetUI = pUI;
 	m_pTargetUI->Set_Anim_Playing(true);
 	m_tUIAnimDesc = *static_cast<UI_ANIM_DESC*>(Desc);
-	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
+	m_pTargetUI->SetAnimFinish(szAnimTag, false);
+	m_szAnimTag = szAnimTag;
 	m_fDelayTime = fDelay;
 
 	return S_OK;
@@ -31,12 +32,12 @@ _bool CUIAnimInstance::Update(_float fTimeDelta)
 	{
 		if (pAnimFinish == false)
 		{
-			m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, false);
+			m_pTargetUI->SetAnimFinish(m_szAnimTag, false);
 			return false;
 		}
 	}
 
-	m_pTargetUI->SetAnimFinish(m_tUIAnimDesc.szAnimTag, true);
+	m_pTargetUI->SetAnimFinish(m_szAnimTag, true);
 
 	return true;
 }
@@ -229,11 +230,11 @@ void CUIAnimInstance::Stop_Anim()
 	m_fTimeStack = 0.f;
 }
 
-CUIAnimInstance* CUIAnimInstance::Create(CUIBase* pUI, void* Desc, _float fDelay)
+CUIAnimInstance* CUIAnimInstance::Create(CUIBase* pUI, void* Desc, _wstring szAnimTag, _float fDelay)
 {
 	CUIAnimInstance* pInstance = new CUIAnimInstance();
 
-	if (FAILED(pInstance->Initialize(pUI, Desc, fDelay)))
+	if (FAILED(pInstance->Initialize(pUI, Desc, szAnimTag, fDelay)))
 	{
 		MSG_BOX("Failed to Created : CUIAnimInstance");
 		Safe_Release(pInstance);

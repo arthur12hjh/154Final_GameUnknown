@@ -1,0 +1,24 @@
+{
+    "TransportData": {
+        "0": {
+            "szAreaName": "황무지",
+            "vPoint": {
+                "x": 10.0,
+                "y": 10.0,
+                "z": 10.0
+            },
+            "bEnable": true,
+            "eTargetLevel": 3
+        },
+        "1": {
+            "szAreaName": "월하곡",
+            "vPoint": {
+                "x": 263.675,
+                "y": 5.0,
+                "z": 118.837
+            },
+            "bEnable": true,
+            "eTargetLevel": 4
+        }
+    }
+}

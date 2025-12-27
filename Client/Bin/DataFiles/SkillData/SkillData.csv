@@ -63,7 +63,7 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 533,M_StatueB_RushSlash,None,None,15,15,"1,1,2",1,0,4,0,9
 534,M_StatueB_SlashDouble,None,None,16,6,"1,1,2",2,0,4,0,9
 535,M_StatueB_SlashTriple,None,None,17,6,"1,1,2",3,0,4,0,9
-536,M_StatueB_StanbyToAttack_01,None,None,18,10,"1,1,2",1,0,4,4,9
+536,M_StatueB_StanbyToAttack_01,None,None,18,7,"1,1,2",1,0,4,4,9
 541,M_BarnacleA_PunchAttack,None,None,15,7,"1,1,2",1,0,4,0,1
 542,M_BarnacleA_TraceAttack,None,None,15,7,"1,1,2",1,0,4,0,10
 543,M_BarnacleA_ComboAttack,None,None,16,7,"1,1,2",3,0,4,0,9
@@ -73,6 +73,9 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 633,M_SunFlower_Spit,None,None,20,7,"1,1,2",1,0,4,0,11
 731,M_Antlion_PawAttack,None,None,21,7,"1,1,7",1,0,0,0,11
 732,M_AntlionC_SwingTriple,None,None,22,7,"1,1,7",3,0,0,0,11
+741,M_Tentacle_Summoned,None,None,22,14,"1,1,7",3,0,0,4,11
+742,M_Tentacle_Swing,None,None,22,14,"1,1,7",3,0,0,0,11
+743,M_Tentacle_Stamp,None,None,22,14,"1,1,7",3,0,0,0,11
 1000,Player_Light_Attack_Root1,None,None,100,3,"2,2,2",0,0,0,0,0
 1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,0,1,0,0
 1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,0,1,0,0

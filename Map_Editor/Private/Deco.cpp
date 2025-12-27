@@ -50,22 +50,20 @@ void CDeco::Priority_Update(_float fTimeDelta)
 
 void CDeco::Update(_float fTimeDelta)
 {
-   
+    _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+    m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
 void CDeco::Late_Update(_float fTimeDelta)
 {
-    _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    m_pCullingCollider->UpdateColiision(worldMatrix);
-
-    if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    /*if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
         return;
-    }
+    }*/
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);

@@ -1552,6 +1552,235 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 #pragma endregion
 
+#pragma region Xion_Building
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_3A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_3A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_4A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_4A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_5A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_5A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_6A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_6A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_8:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_8");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_9A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_9A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING_17:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building_17");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1B");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1C:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1C");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1D:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1D");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1E:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1E");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING4_1F:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building4_1F");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING5_4:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building5_4");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING5_callD4:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building5_callD4");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_BUILDING5_callD5:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Building5_callD5");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STORE_3:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Store_3");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STORE_4:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Store_4");
+					break;
+#pragma endregion
+#pragma region Stair
+				case DESESRT_RUIN_OBJECT::STAIR_1A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_1A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STAIR_1B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_1B");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STAIR_1C:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_1C");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STAIR_2A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_2A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STAIR_3A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_3A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::STAIR_3B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Stair_3B");
+					break;
+#pragma endregion
+#pragma region Xion_Wall
+				case DESESRT_RUIN_OBJECT::XION_WALL_1C:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1C");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1D:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1D");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1Db:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1Db");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1G:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1G");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1I:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1I");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1K:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1K");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1Q:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1Q");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1R:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1R");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1S:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1S");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_1T:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_1T");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_2A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_2A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_2B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_2B");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_4H:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_4H");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_5A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_5A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_8A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_8A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_9A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_9A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_9B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_9B");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_10A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_10A");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_10B:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_10B");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_10C:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_10C");
+					break;
+
+				case DESESRT_RUIN_OBJECT::XION_WALL_10D:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_10D");
+					break;
+#pragma endregion
+
 #pragma region Monster
 				case DESESRT_RUIN_OBJECT::GORILLA:
 					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
@@ -3455,7 +3684,8 @@ HRESULT CMapTool_Desert::Render()
 		_int nSelectedDecos = -1;
 		_int nSelectedDuct = -1;
 		_int nSelectedXionBuilding = -1;
-
+		_int nSelectedStair = -1;
+		_int nSelectedXionWall = -1;
 		const _char* xionBoxNames[] = { "BOX_1A","BOX_1B", "BOX_2C", "BOX_4A", "BOX_5A", "BOX_6A", "BOX_11A", "BOX_13A", "BOX_14A", "BOX_16A", "BOX_16B", "BOX_19A", "BOX_20A",
 										"BOX_20B", "BOX_20C", "BOX_20D", "BOX_20E", "BOX_20F", "BOX_21A", "BOX_21B", "BOX_26A", "ITEM_BOX" };
 
@@ -3465,6 +3695,10 @@ HRESULT CMapTool_Desert::Render()
 		const _char* xionBuildingNames[] = { "XION_BUILDING_3A", "XION_BUILDING_4A", "XION_BUILDING_5A", "XION_BUILDING_6A", "XION_BUILDING_8","XION_BUILDING_9A",
 											 "XION_BUILDING_17", "XION_BUILDING4_1A", "XION_BUILDING4_1B", "XION_BUILDING4_1C", "XION_BUILDING4_1D", "XION_BUILDING4_1E",
 											 "XION_BUILDING4_1F", "XION_BUILDING5_4", "XION_BUILDING5_callD4", "XION_BUILDING5_callD5", "STORE_3", "STORE_4" };
+		const _char* stairNames[] = { "STAIR_1A", "STAIR_1B", "STAIR_1C", "STAIR_2A", "STAIR_3A", "STAIR_3B" };
+		const _char* xionWallNames[] = { "XION_WALL_1C", "XION_WALL_1D", "XION_WALL_1Db", "XION_WALL_1G", "XION_WALL_1I", "XION_WALL_1K", "XION_WALL_1Q", "XION_WALL_1R", "XION_WALL_1S", 
+										 "XION_WALL_1T", "XION_WALL_2A", "XION_WALL_2B", "XION_WALL_4H", "XION_WALL_5A", "XION_WALL_8A", "XION_WALL_9A", 
+										 "XION_WALL_9B", "XION_WALL_10A","XION_WALL_10B", "XION_WALL_10C", "XION_WALL_10D" };
 
 		if (ImGui::CollapsingHeader("Xion_Boxes"))
 		{
@@ -3562,7 +3796,7 @@ HRESULT CMapTool_Desert::Render()
 		}
 		if (ImGui::CollapsingHeader("Xion_Deco"))
 		{
-			if (ImGui::ListBox("##Xion_Deco", &nSelectedDuct, xionDecoNames, IM_ARRAYSIZE(xionDecoNames), 7))
+			if (ImGui::ListBox("##Xion_Deco", &nSelectedDecos, xionDecoNames, IM_ARRAYSIZE(xionDecoNames), 7))
 			{
 				if (nSelectedDecos == 0)
 				{
@@ -3729,6 +3963,238 @@ HRESULT CMapTool_Desert::Render()
 				if (nSelectedXionBuilding == 0)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_3A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_4A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_5A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_6A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_8;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_9A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING_17;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 8)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 9)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1C;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 10)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1D;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 11)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1E;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 12)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING4_1F;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 13)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING5_4;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 14)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING5_callD4;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 15)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_BUILDING5_callD5;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 16)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STORE_3;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionBuilding == 17)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STORE_4;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Stair"))
+		{
+			if (ImGui::ListBox("##Stair", &nSelectedStair, stairNames, IM_ARRAYSIZE(stairNames), 7))
+			{
+				if (nSelectedStair == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_1A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedStair == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_1B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedStair == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_1C;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedStair == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_2A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedStair == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_3A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedStair == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::STAIR_3B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+			}
+		}
+		if (ImGui::CollapsingHeader("Xion_Wall"))
+		{
+			if (ImGui::ListBox("##Xion_Wall", &nSelectedXionWall, xionWallNames, IM_ARRAYSIZE(xionWallNames), 7))
+			{
+				if (nSelectedXionWall == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1C;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1D;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1Db;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1G;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1I;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1K;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1Q;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 7)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1R;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 8)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1S;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 9)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_1T;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 10)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_2A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 11)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_2B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 12)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_4H;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 13)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_5A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 14)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_8A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 15)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_9A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 16)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_9B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 17)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_10A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 18)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_10B;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 19)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_10C;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedXionWall == 20)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::XION_WALL_10D;
 					m_CurrentLayerName = TEXT("Layer_Architecture");
 				}
 			}

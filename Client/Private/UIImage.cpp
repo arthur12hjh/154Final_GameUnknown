@@ -126,13 +126,21 @@ void CUIImage::CallbackEvent(void* pArg)
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
 	
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	if (arg->szActionTag == TEXT("Set_Texture_Index"))
+	{
+		_uint iTextureIndex = *static_cast<_uint*>(arg->pData);
+		Set_Texture_Index(iTextureIndex);
+	}
+	else
+	{
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 	
-	Safe_Release(pHUD);
+		Safe_Release(pHUD);
+	}
 }
 
 CUIImage* CUIImage::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
