@@ -940,6 +940,9 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
 	</Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
+      <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
       <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
     </Filter>
@@ -1894,6 +1897,9 @@
     <ClInclude Include="..\Public\UILoadingBlock.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIMapSelector.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIMapSelector</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_GrabState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
     </ClInclude>
@@ -2811,6 +2817,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UILoadingBlock.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIMapSelector.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIMapSelector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_GrabState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>

@@ -54,6 +54,7 @@ public :
 	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
 	void							EnableTransport(_uint iAreaID);
+	const vector<TRANSPORT_DESC>*	Find_TransportData();
 	const TRANSPORT_DESC*			Find_TransportData(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();

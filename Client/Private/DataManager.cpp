@@ -243,20 +243,17 @@ void CDataManager::Save_CinematicData()
 
 void CDataManager::EnableTransport(_uint iAreaID)
 {
-    auto iter = m_Transports.find(iAreaID);
-    if (iter == m_Transports.end())
-        return;
+    m_Transports[iAreaID].bIsEnableMove = true;
+}
 
-    iter->second.bIsEnableMove = true;
+const vector<TRANSPORT_DESC>* CDataManager::Find_TransportData()
+{
+    return &m_Transports;
 }
 
 const TRANSPORT_DESC* CDataManager::Find_TransportData(_uint iAreaID)
 {
-    auto iter = m_Transports.find(iAreaID);
-    if (iter == m_Transports.end())
-        return nullptr;
-
-    return &iter->second;
+    return &m_Transports[iAreaID];
 }
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
@@ -380,12 +377,8 @@ HRESULT CDataManager::LoadInteractionData(void* pArg)
         desc.iID = id;
 
         // 문자열 변환
-        {
-            string name = jInfo["Name"];
-            string text = jInfo["Text"];
-            desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
-            desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
-        }
+        desc.szObjectTag = UTF8ToWString(jInfo["Name"]);
+        desc.szInteractionText = UTF8ToWString(jInfo["Text"]);
 
         desc.fInteractionTime = jInfo["CoolTime"];
 
@@ -849,25 +842,34 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
 }
 
 HRESULT CDataManager::LoadTransportData(void* pArg)
-{
-    vector<string> TransportDatas;
-    TransportDatas.reserve(1000);
+{ 
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json Datas{};
 
-    CStringHelper::CSVRead("../../Client/Bin/DataFiles/TransportData/TransportData.csv", TransportDatas);
-    size_t iMaxSize = TransportDatas.size();
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/TransportData/TransportData.json", Datas);
 
-    for (auto i = 4; i < iMaxSize;)
+    for (auto& iter : Datas["TransportData"].items())
     {
-        TRANSPORT_DESC TransportData = {};
-        TransportData.iTeleportID = atoi(TransportDatas[i++].c_str());
-        strcpy_s(TransportData.szAreaName, TransportDatas[i++].c_str());
+        _uint id = stoi(iter.key());
 
-        TransportData.vTransportpoint.x = atoi(TransportDatas[i++].c_str());
-        TransportData.vTransportpoint.y = atoi(TransportDatas[i++].c_str());
-        TransportData.vTransportpoint.z = atoi(TransportDatas[i++].c_str());
-        TransportData.bIsEnableMove = atoi(TransportDatas[i++].c_str());
+        auto& jInfo = iter.value();
 
-        m_Transports.emplace(TransportData.iTeleportID, TransportData);
+        TRANSPORT_DESC desc{};
+        desc.iTeleportID = id;
+
+        // 문자열 변환
+        
+        desc.szAreaName = UTF8ToWString(jInfo["szAreaName"]);
+    
+        // Pivot
+        desc.vTransportpoint.x = jInfo["vPoint"]["x"];
+        desc.vTransportpoint.y = jInfo["vPoint"]["y"];
+        desc.vTransportpoint.z = jInfo["vPoint"]["z"];
+
+		desc.bIsEnableMove = jInfo["bEnable"];
+		desc.eTargetLevel = jInfo["eTargetLevel"];
+
+        m_Transports.push_back(desc);
     }
 
     return S_OK;

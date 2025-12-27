@@ -558,10 +558,11 @@ namespace Client
 	typedef struct TransportDesc
 	{
 		_uint					iTeleportID;
-		char					szAreaName[MAX_PATH];
+		_wstring				szAreaName;
 
 		_float3					vTransportpoint;
 		_bool					bIsEnableMove;
+		_uint					eTargetLevel;
 	} TRANSPORT_DESC;
 
 	typedef struct MotionTimeDesc

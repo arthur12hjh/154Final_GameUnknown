@@ -53,6 +53,7 @@ public:
 							_bool bBillboard = true);
 
 	void Return_WorldUI(CUIBase*& pUI);
+	void Reset_AllWorldUI_State();
 
 	// Interaction UI
 	/*HRESULT Add_InteractionUI(_int iIdx);
