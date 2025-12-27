@@ -943,6 +943,12 @@
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
       <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample">
+      <UniqueIdentifier>{496a1f2a-adf0-4e5e-9607-ae80b22e1d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
+      <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1891,6 +1897,9 @@
     <ClInclude Include="..\Public\Player_GrabState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VelocityExample.h">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2805,6 +2814,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_GrabState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VelocityExample.cpp">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
