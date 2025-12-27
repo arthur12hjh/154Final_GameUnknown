@@ -113,6 +113,7 @@
 #include "StoneLantern1.h"
 #include "StoneLantern2.h"
 #include "StoneTile.h"
+#include "Virtual_Wall.h"
 
 // Environment
 #include "Reed.h"
@@ -489,6 +490,20 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Rock5");
 	pProtoDesc.pPrototype = CVIBuffer_Instance_Model::Create(m_pDevice, m_pContext, &Rock5Desc);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Moon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
+	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -2253,8 +2268,6 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-
-
 	/* For.Prototype_GameObject_Stone2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone2");
 	pProtoDesc.pPrototype = CStone2::Create(m_pDevice, m_pContext);
@@ -2349,6 +2362,13 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_GameObject_StoneLantern2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_StoneLantern2");
 	pProtoDesc.pPrototype = CStoneLantern2::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Virtual_Wall */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Virtual_Wall");
+	pProtoDesc.pPrototype = CVirtual_Wall::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -5535,20 +5555,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA_Col(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = {};
-
-	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Moon */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
-	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Canyon_1A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));

@@ -176,6 +176,10 @@ HRESULT CTerrain_Desert::Ready_Components()
 		TEXT("Com_Texture_Green"), reinterpret_cast<CComponent**>(&m_pTextureCom_Green))))
 		return E_FAIL;
 
+	/* Com_NormalTexture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Normal"),
+		TEXT("Com_NormalTexture"), reinterpret_cast<CComponent**>(&m_pNormalTextureCom))))
+
 	/* Com_ORM */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_ORM_Texture_Terrain_Desert"),
 		TEXT("Com_ORM"), reinterpret_cast<CComponent**>(&m_pORMTextureCom))))
@@ -284,9 +288,10 @@ void CTerrain_Desert::Free()
 	Safe_Release(m_pTextureCom_Red);
 	Safe_Release(m_pTextureCom_Green);
 	Safe_Release(m_pMaskCom);
+	Safe_Release(m_pNormalTextureCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pORMTextureCom);
-	Safe_Release(m_pORMTextureCom_Red);
-	Safe_Release(m_pORMTextureCom_Green);
+	//Safe_Release(m_pORMTextureCom_Red);
+	//Safe_Release(m_pORMTextureCom_Green);
 
 }

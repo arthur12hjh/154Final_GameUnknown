@@ -463,6 +463,7 @@
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
     <ClInclude Include="..\Public\VelocityExample.h" />
+    <ClInclude Include="..\public\Virtual_Wall.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -791,6 +792,7 @@
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
     <ClCompile Include="..\Private\VelocityExample.cpp" />
+    <ClCompile Include="..\private\Virtual_Wall.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

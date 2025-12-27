@@ -952,6 +952,9 @@
     <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
       <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
+      <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1906,6 +1909,9 @@
     <ClInclude Include="..\Public\VelocityExample.h">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Virtual_Wall.h">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2826,6 +2832,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\VelocityExample.cpp">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Virtual_Wall.cpp">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

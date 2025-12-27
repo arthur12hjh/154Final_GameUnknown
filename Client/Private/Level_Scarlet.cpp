@@ -249,6 +249,10 @@ HRESULT CLevel_Scarlet::Ready_Layer_Sky(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
+		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -339,7 +343,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Load_Map_Data()
 {
-	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData3.bin", std::ios::binary);
+	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData4.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
@@ -406,6 +410,8 @@ HRESULT CLevel_Scarlet::Load_Map_Data()
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
+
+	//if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ifs.close();
 

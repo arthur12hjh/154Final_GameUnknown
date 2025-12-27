@@ -62,9 +62,9 @@ void CCanyon::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
-	
+	// 나는 맵의 신이다.
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
@@ -175,7 +175,7 @@ void CCanyon::SetCullingCollider(_uint iObjectID)
 		break;
 	case 12:
 		// Size Y: 3, Center Y: 3 * 0.72 = 2.16
-		pCullingCollider->SetCollision({ 0.f, 2.16f, 0.f }, {}, { 4, 3, 4 });
+		pCullingCollider->SetCollision({ 0.f, 3.f, 0.f }, {}, { 4, 3, 4 });
 		break;
 	case 17:
 		// Size Y: 7, Center Y: 7 * 0.72 = 5.04
