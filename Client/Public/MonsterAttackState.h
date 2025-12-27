@@ -61,9 +61,10 @@ private :
 	void										SunFlowerPattern(_float fTimeDelta);
 	void										Minion11Pattern(_float fTimeDelta);
 	void										TentaclePattern(_float fTimeDelta);
+	void										DroidTurretPattern(_float fTimeDelta);
 
 	void										SearchTargetDistance();
-	void										LerpMoveAction(_float fTimeDelta, _float fSpeed);
+	void										LerpMoveAction(_float fTimeDelta, _float fSpeed, DIRECTION eType = DIRECTION::FRONT);
 	_vector										LerpRotation(_float fRatio, _float fSpeed = 1.f);
 
 

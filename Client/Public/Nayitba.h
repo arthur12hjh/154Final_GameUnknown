@@ -79,7 +79,9 @@ public:
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
+
 	virtual void							Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+	virtual void							Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 
 private:
 	CAISenceComponent*						m_pAISenceCom = { nullptr };

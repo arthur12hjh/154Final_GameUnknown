@@ -43,6 +43,7 @@
 
 #pragma region Bullet
 #include "Bullet_Rock.h"
+#include "Bullet_Droid.h"
 #include "Bullet_Scarlet.h"
 #pragma endregion
 
@@ -1084,8 +1085,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Bullet_Droid */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Bullet_Droid");
+	pProtoDesc.pPrototype = CBullet_Droid::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
 
-
+	Desc->pAddObejct.push_back(pProtoDesc);
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Test_InstanceModel");
 	pProtoDesc.pPrototype = CInstance_Model::Create(m_pDevice, m_pContext);

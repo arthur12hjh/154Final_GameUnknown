@@ -57,6 +57,9 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     //    m_fDeadTime += fTimeDelta * 5.f;
     //}
 
+    if (m_bIsEnableCollider)
+        m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pColliderSocket) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
+
     if (m_isDeadEffect)
     {
         CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
@@ -137,6 +140,10 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
             TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
         }
     }
+
+    if (m_bIsEnableCollider)
+        m_pGameInstance->ADD_Collider(m_pColliderCom);
+
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -370,6 +377,17 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
     }
 }
 
+void CNayitbaPartBody::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+    auto pComponents = Find_Component(strColliderTag);
+    if (nullptr == pComponents)
+        return;
+
+    m_bIsEnableCollider = NotifyRef.iNumData01;
+    if (false == m_bIsEnableCollider)
+        static_cast<CCollider*>(pComponents)->ResetCollision();
+}
+
 void CNayitbaPartBody::Play_DeadEffect()
 {
     if (false == m_isDeadEffect)
@@ -429,15 +447,24 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
         TEXT("Com_RimLight"), reinterpret_cast<CComponent**>(&m_pRimLight), &m_MonsterLimLightDesc)))
         return E_FAIL;
 
-    ///* Com_Collider_Sphere */
-    //CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+    auto pNaytiba = static_cast<CNayitba*>(m_pParent);
+    auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
+    if (pNaytibaInitData)
+    {
+        if (10 == pNaytibaInitData->iMonsetID)
+        {
+            /* Com_Collider_Sphere */
+            COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
+            OBBDesc.vSize = { 0.3f, 4.f, 0.3f };
+            OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
-    //SphereDesc.fRadius = 0.5f;
-    //SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+                TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+                return E_FAIL;
 
-    //if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-    //	TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-    //	return E_FAIL;
+            m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
+        }
+    }
 
     return S_OK;
 }

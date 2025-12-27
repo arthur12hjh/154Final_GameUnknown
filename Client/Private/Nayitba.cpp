@@ -488,6 +488,15 @@ void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectT
 	}
 }
 
+void CNayitba::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+	auto pPartObject = Find_PartObject(strPartTag);
+	if (nullptr == pPartObject)
+		return;
+
+	pPartObject->Activate_PartObject_Collider(strColliderTag, NotifyRef);
+}
+
 HRESULT CNayitba::Ready_CharacterData()
 {
 	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
@@ -666,6 +675,7 @@ HRESULT CNayitba::ADD_PartObjects()
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szModelPrototype, ModelProtoType);
 
 	CNayitbaPartBody::NAYITBA_PART_BODY_DESC BodyDesc = { };
+	BodyDesc.pParent = this;
 	BodyDesc.pParentTransform = m_pTransformCom;
 	BodyDesc.vScale = { 1.f, 1.f, 1.f };
 	BodyDesc.szBodyModel = ModelProtoType;
@@ -999,7 +1009,24 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
 	pBulletDesc.iBulletType = pNotify->iNumData04;
-	XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
+
+	_bool bTraceBullet = true;
+	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
+	_vector vTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
+	_vector vLook = m_pTransformCom->Get_State(STATE::LOOK);
+
+	 _float fRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, XMVector3Normalize(vTargetPos - vOwnerPos))));
+	 if (0 < XMVectorGetX(XMVector3Dot(vOwnerPos, vTargetPos)))
+	 {
+		 if (fRadian <= XMConvertToRadians(pNotify->fNumData01))
+		 {
+			XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
+			bTraceBullet = false;
+		 }
+	 }
+
+	 if (bTraceBullet)
+		 XMStoreFloat3(&pBulletDesc.vTargetPoint, vOwnerPos + vLook * 20.f);
 
 	m_pBulletList.clear();
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);

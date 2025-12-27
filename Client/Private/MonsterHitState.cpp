@@ -67,8 +67,15 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
             else
                 szAnimationName += "_Bw";
 
-            XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
-            m_fImpactForce = 3.f;
+            if (0 != pEntity->GetStaticMonsterData()->fMoveSpeed)
+            {
+                XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+                m_fImpactForce = 3.f;
+            }
+            else
+            {
+                m_fImpactForce = 0.f;
+            }
 
             /*if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
             {

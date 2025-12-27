@@ -76,6 +76,10 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 741,M_Tentacle_Summoned,None,None,22,14,"1,1,7",3,0,0,4,11
 742,M_Tentacle_Swing,None,None,22,14,"1,1,7",3,0,0,0,11
 743,M_Tentacle_Stamp,None,None,22,14,"1,1,7",3,0,0,0,11
+751,M_DroidTurret_Shot,None,None,22,30,"1,1,7",3,0,0,0,11
+752,M_DroidTurret_ShotDebuff,None,None,22,30,"1,1,7",3,0,0,0,11
+753,M_DroidTurret_ShotDozen,None,None,22,30,"1,1,7",3,0,0,0,11
+754,M_DroidTurret_Laser,None,None,22,30,"1,1,7",3,0,0,0,11
 1000,Player_Light_Attack_Root1,None,None,100,3,"2,2,2",0,0,0,0,0
 1001,Player_Light_Attack_Root2,None,None,30,3,"2,2,2",0,0,1,0,0
 1002,Player_Light_Attack_Root3,None,None,30,3,"2,2,2",0,0,1,0,0

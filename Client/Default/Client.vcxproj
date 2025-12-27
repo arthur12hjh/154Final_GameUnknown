@@ -160,6 +160,7 @@
     <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
+    <ClInclude Include="..\public\Bullet_Droid.h" />
     <ClInclude Include="..\public\Bullet_Rock.h" />
     <ClInclude Include="..\public\Bullet_Scarlet.h" />
     <ClInclude Include="..\Public\CameraActionInserter.h" />
@@ -473,6 +474,7 @@
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
+    <ClCompile Include="..\private\Bullet_Droid.cpp" />
     <ClCompile Include="..\private\Bullet_Rock.cpp" />
     <ClCompile Include="..\private\Bullet_Scarlet.cpp" />
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
