@@ -88,7 +88,7 @@ private:
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
 	HRESULT Load_Light_Data();
 
-	void	Setting_Secret_Corpse();
+	//void	Setting_Secret_Corpse();
 
 	_float	m_fTime = 10;
 	_bool m_isOverlay{ true };
