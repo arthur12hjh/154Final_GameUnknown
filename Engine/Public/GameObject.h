@@ -52,11 +52,11 @@ public:
 		m_eVisibility = eVisiblility;
 	}
 
-	void SetActive(_bool bIsActive) {
+	virtual void SetActive(_bool bIsActive) {
 		m_bIsActive = bIsActive;
 	}
 
-	void SetActive() {
+	virtual void SetActive() {
 		m_bIsActive = !m_bIsActive;
 	}
 

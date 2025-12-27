@@ -34,7 +34,7 @@ public:
 	HRESULT Create_Prefab(_wstring szAnimTag);
 	HRESULT Delete_Prefab(_wstring szAnimTag);
 
-	void Anim_Play(CUIBase* pUI, _wstring szAnimTag, _float fDelay = 0.f);
+	void Anim_Play(CUIBase* pUI, _wstring szAnimTag, _wstring szPrefabTag, _float fDelay = 0.f);
 	void Anim_Stop(CUIBase* pUI);
 	_bool Check_Anim_Finish(CUIBase* pUI, _wstring szAnimTag);
 	void Clear_AnimInstances();

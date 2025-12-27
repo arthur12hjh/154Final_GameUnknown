@@ -939,6 +939,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
+      <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
       <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
@@ -951,6 +954,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Droid">
       <UniqueIdentifier>{69218c18-b67a-4d5c-8849-034308270384}</UniqueIdentifier>
+   </Filter>
+    <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
+      <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1897,6 +1903,9 @@
     <ClInclude Include="..\Public\UILoadingBlock.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIMapSelector.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIMapSelector</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player_GrabState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
     </ClInclude>
@@ -1905,6 +1914,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Bullet_Droid.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Virtual_Wall.h">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2818,6 +2830,9 @@
     <ClCompile Include="..\Private\UILoadingBlock.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UIMapSelector.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIMapSelector</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Player_GrabState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
     </ClCompile>
@@ -2826,6 +2841,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Droid.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Virtual_Wall.cpp">
+      <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

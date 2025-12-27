@@ -428,6 +428,7 @@
     <ClInclude Include="..\Public\UIGetterQueue.h" />
     <ClInclude Include="..\Public\UIInstanceBuffer.h" />
     <ClInclude Include="..\Public\UILoadingBlock.h" />
+    <ClInclude Include="..\Public\UIMapSelector.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -463,6 +464,7 @@
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
     <ClInclude Include="..\Public\VelocityExample.h" />
+    <ClInclude Include="..\public\Virtual_Wall.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -756,6 +758,7 @@
     <ClCompile Include="..\Private\UIGetterQueue.cpp" />
     <ClCompile Include="..\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\Private\UILoadingBlock.cpp" />
+    <ClCompile Include="..\Private\UIMapSelector.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
@@ -791,6 +794,7 @@
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
     <ClCompile Include="..\Private\VelocityExample.cpp" />
+    <ClCompile Include="..\private\Virtual_Wall.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

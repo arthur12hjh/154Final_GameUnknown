@@ -12,7 +12,7 @@ class ENGINE_DLL CModel final : public CComponent
 public:
 	typedef struct ComputeBoneInfo
 	{
-		_int		iParentIndex;
+		_int		iParentIndex;	
 		_int3		_padding;
 	}COMPUTE_BONEINFO;
 

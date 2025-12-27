@@ -1491,14 +1491,6 @@ PS_OUT PS_LOADING_BLOCK(PS_IN In)
     
     float2 uv = In.vTexcoord;
     
-    //float2 ScaleUV = uv;
-    //ScaleUV -= 0.5f;
-    //ScaleUV /= g_fScale;
-    //ScaleUV += 0.5f;
-    
-    //float4 Block = g_Texture0.Sample(ClampSampler, ScaleUV);
-    //Out.vColor = Block;
-    
     float4 result = float4(0, 0, 0, 0);
 
     // °¡·Î 3Ä­
@@ -1541,6 +1533,8 @@ PS_OUT PS_LOADING_BLOCK(PS_IN In)
         // --- 4. »ùÇÃ¸µ ---
         float4 col = g_Texture0.Sample(ClampSampler, scaledUV);
 
+        col.rgb *= scale;
+        
         // ¾ËÆÄ ±â¹Ý ´©Àû (°ãÃÄµµ ±ú²ý)
         result.rgb = lerp(result.rgb, col.rgb, col.a);
         result.a = max(result.a, col.a);
@@ -1552,6 +1546,26 @@ PS_OUT PS_LOADING_BLOCK(PS_IN In)
 }
 
 /*------------------[E_LOADING_BLOCK]----------------*/
+
+/*------------------[S_MAP_SELECTOR]----------------*/
+
+PS_OUT PS_MAP_SELECTOR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 BG = g_Texture0.Sample(DefaultSampler, uv);
+    
+    if(In.vAtlasIndex.w == 99.f)
+        BG *= 0.f;
+    
+    Out.vColor = BG;
+    
+    return Out;
+}
+
+/*------------------[E_MAP_SELECTOR]----------------*/
 
 technique11 DefaultTechnique
 {
@@ -1845,5 +1859,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LOADING_BLOCK();
+    }
+
+    pass MAP_SELECTOR // 28
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAP_SELECTOR();
     }
 }

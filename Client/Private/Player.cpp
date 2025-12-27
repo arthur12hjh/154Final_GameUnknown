@@ -676,21 +676,10 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 
 			}
 			case INTERACTION_TYPE::ITEM:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::DOOR:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::LIFT_CONTROLLER:
-			{
-				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
-				break;
-			}
 			case INTERACTION_TYPE::NPC:
+			case INTERACTION_TYPE::VENDING_MACINE:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
@@ -732,8 +721,6 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			m_PlayerDesc.fPotionCoolDown = 0.f;
 			m_PlayerDesc.iCurrentHealth += m_PlayerDesc.iMaxHealth / 2.f;
 			
-
-
 			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 			EffectDesc.fRotationPerSec = 1.f;
 			EffectDesc.fSpeedPerSec = 1.f;

@@ -410,6 +410,18 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 	return pSkill;
 }
 
+void CNayitba::SetActive(_bool bIsActive)
+{
+	m_bIsActive = bIsActive;
+	SetActiveMonster(bIsActive);
+}
+
+void CNayitba::SetActive()
+{
+	m_bIsActive = !m_bIsActive;
+	SetActiveMonster(m_bIsActive);
+}
+
 void CNayitba::SetActiveMonster(_bool bIsFlag)
 {
 	if (bIsFlag)

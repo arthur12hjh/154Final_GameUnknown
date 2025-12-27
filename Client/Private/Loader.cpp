@@ -114,6 +114,7 @@
 #include "StoneLantern1.h"
 #include "StoneLantern2.h"
 #include "StoneTile.h"
+#include "Virtual_Wall.h"
 
 // Environment
 #include "Reed.h"
@@ -220,6 +221,7 @@
 #include "UICostumePuzzleAnswer.h"
 #include "UICostumePuzzleButtons.h"
 #include "UICostumePuzzleHint.h"
+#include "UIMapSelector.h"
 
 #pragma endregion
 
@@ -493,6 +495,20 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Moon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
+	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	return S_OK;
 }
 
@@ -512,7 +528,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.fbx");
 
 	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
@@ -2258,8 +2274,6 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-
-
 	/* For.Prototype_GameObject_Stone2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone2");
 	pProtoDesc.pPrototype = CStone2::Create(m_pDevice, m_pContext);
@@ -2354,6 +2368,13 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 	/* For.Prototype_GameObject_StoneLantern2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_StoneLantern2");
 	pProtoDesc.pPrototype = CStoneLantern2::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Virtual_Wall */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Virtual_Wall");
+	pProtoDesc.pPrototype = CVirtual_Wall::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -5541,20 +5562,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA_Col(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = {};
 
-	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Moon */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
-	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
 	/* For.Prototype_Component_Model_Canyon_1A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_1A_COL");
@@ -6906,7 +6913,7 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 
 	/* For.Prototype_Component_UI_Texture_PopupBG */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_PopupBG");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -6953,6 +6960,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Map_Thumbnails */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Map_Thumbnails");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_UI_Popup */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Popup");
 	pProtoDesc.pPrototype = CUIPopup::Create(m_pDevice, m_pContext);
@@ -6977,6 +6991,13 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 	/* For.Prototype_GameObject_UI_Costume_Puzzle_Hint */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Costume_Puzzle_Hint");
 	pProtoDesc.pPrototype = CUICostumePuzzleHint::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_Map_Selector */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Map_Selector");
+	pProtoDesc.pPrototype = CUIMapSelector::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
