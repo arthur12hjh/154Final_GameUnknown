@@ -64,10 +64,9 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
 
     if (false == m_pGameInstance->IsMainCamera(this))
     {
-        Set_CameraDestination();
+        //Set_CameraDestination();
         return;
     }
-
 
     /*
     1. �÷��̾� � ���� ������ Pivot Position�� ���صΰ�,
@@ -135,6 +134,9 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     else
     {
         //m_bIsTransition = FALSE;
+
+        Set_CameraDestination();
+
         Transition_Camera(fTimeDelta);
         return;
     }
