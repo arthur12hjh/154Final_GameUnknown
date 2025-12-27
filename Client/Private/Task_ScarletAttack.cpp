@@ -31,25 +31,31 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 
 CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 {
+	_bool bIsTaskFinished = false;
 	CBossBlackBoard::BOSS_STATE eCurState = m_pBlackBoard->GetCurState();
 	CBossBlackBoard::BOSS_STATE ePreState = m_pBlackBoard->GetPreState();
 
 	if (CBossBlackBoard::BOSS_STATE::HIT == eCurState ||
-		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState)
+		CBossBlackBoard::BOSS_STATE::GROGGY == eCurState ||
+		CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == eCurState)
 	{
-		ResetAttackTask();
+		if (CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK != eCurState)
+			ResetAttackTask();
+		else
+			ResetAttackTask(false);
+		
 		m_pBlackBoard->AccAttackDelay(fTimeDelta);
 		return NODE_STATE::FAIL;
 	}
 
-	// �ϴ� ���⼭ ������ ���ݿ����� �̵� ó��
 	m_pTarget = m_pBlackBoard->GetTarget();
 	m_pBlackBoard->SetTargetDistacne();
-	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 	if (CBossBlackBoard::BOSS_STATE::HIT == ePreState ||
-		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+		CBossBlackBoard::BOSS_STATE::GROGGY == ePreState ||
+		CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == ePreState)
 	{
 		ResetAttackTask(false);
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
 		return NODE_STATE::RUNNING;
 	}
 
@@ -59,37 +65,150 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 			return NODE_STATE::FAIL;
 	}
 
-	m_fAnimationSpeed = 2.f;
-	AttackActionAmount(fTimeDelta);
+	ActionAmount(fTimeDelta);
 	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
 	if (bIsFinished)
 	{
 		if (m_pSkillData.empty())
 		{
+			m_fMaxDelayTime = 3.5f;
+		
 			if (10.f > m_pBlackBoard->GetTargetDistance())
 			{
-				BackStepPattern();
+				if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
+				{
+					_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+					if (30.f > fRandom)
+					{
+						BackStepPattern();
+					}
+					else
+					{
+						m_fMaxDelayTime = 1.7f;
+						bIsTaskFinished = true;
+					}
+				}
+				else
+				{
+					
+					bIsTaskFinished = true;
+				}
 			}
 			else
-			{
-				Compute_AttackCoolTime();
-				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
-				m_pBlackBoard->SetAttackData(nullptr);
+				bIsTaskFinished = true;
 
-				if (m_pBlackBoard->IsPhaseLastAttack())
-					m_pBlackBoard->SetPhaseLastAttack(false);
-
-				if (m_pBlackBoard->bIsEnableEntarnceAttack())
-					m_pBlackBoard->SetEntarnceAttack(false);
-
-				return NODE_STATE::COMPLETE;
-			}
+			Clear_ScarletAttackTask();
 		}
 		else
 			SelectAttackData();
 	}
 
+	if (bIsTaskFinished)
+	{
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
+		m_pBlackBoard->SetAttackData(nullptr);
+		Compute_AttackCoolTime();
+
+		return NODE_STATE::COMPLETE;
+	}
+
 	return NODE_STATE::RUNNING;
+}
+
+void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
+{
+	if (m_TimeLineDatas.empty())
+		return;
+
+	auto& pDesc = m_TimeLineDatas.front();
+	_float	fAnimationRatio = m_pOwner->Get_AnimationRatio();
+
+	if (fAnimationRatio >= pDesc.EndTime)
+	{
+		m_TimeLineDatas.pop();
+		if (m_TimeLineDatas.empty())
+			return;
+
+		pDesc = m_TimeLineDatas.front();
+	}
+
+	if (pDesc.BeginTime <= fAnimationRatio &&  fAnimationRatio <= pDesc.EndTime)
+	{
+		if (false == pDesc.bIsEnter)
+		{
+			_vector vOwnerPos{}, vTargetPos{};
+			vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+			vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+
+			switch (pDesc.eDirection)
+			{
+			case DIRECTION::LEFT:
+				XMStoreFloat3(&m_vDir, -1.f * m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+				m_bIsLookAtPoint = false;
+				break;
+
+			case DIRECTION::RIGHT:
+				XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::RIGHT));
+				m_bIsLookAtPoint = false;
+				break;
+
+			case DIRECTION::RIGHT_BACK:
+			{
+				_vector vRight = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
+				_vector vFront = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+				XMStoreFloat3(&m_vDir, vRight + -1.f * vFront);
+				m_bIsLookAtPoint = false;
+			}
+			break;
+
+			case DIRECTION::LEFT_BACK:
+			{
+				_vector vRight = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
+				_vector vFront = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
+				XMStoreFloat3(&m_vDir, -1.f * (vRight + vFront));
+				m_bIsLookAtPoint = false;
+			}
+			break;
+			case DIRECTION::BACK:
+			{
+				_vector vTempOwnerPos = vOwnerPos;
+				_vector vTempTargetPost = vTargetPos;
+				vTempOwnerPos.m128_f32[1] = vTempTargetPost.m128_f32[1] = 0.f;
+				XMStoreFloat3(&m_vDir, -1 * XMVector3Normalize(vTempTargetPost - vTempOwnerPos));
+				m_bIsLookAtPoint = false;
+			}
+			break;
+			case DIRECTION::FRONT:
+			{
+				_vector vTempOwnerPos = vOwnerPos;
+				_vector vTempTargetPost = vTargetPos;
+				vTempOwnerPos.m128_f32[1] = vTempTargetPost.m128_f32[1] = 0.f;
+				XMStoreFloat3(&m_vDir, XMVector3Normalize(vTempTargetPost - vTempOwnerPos));
+				m_bIsLookAtPoint = true;
+			}
+			break;
+			}
+
+			if (pDesc.bIsTarget)
+			{
+				_vector vPoint = XMLoadFloat3(&m_vDir) * pDesc.fRange + vTargetPos;
+				XMStoreFloat3(&m_fAttackMovePoint, vPoint);
+			}
+			else
+			{
+				_vector vPoint = XMLoadFloat3(&m_vDir) * pDesc.fRange + vOwnerPos;
+				XMStoreFloat3(&m_fAttackMovePoint, vPoint);
+			}
+			
+			m_fLerpSpeed = pDesc.fSpeed;
+			m_fAnimationSpeed = pDesc.fAnimationSpeed;
+			pDesc.bIsEnter = true;
+		}
+	
+		// 여기서 특정 스킬 행동 초기화해야하면 하자
+		CancelSkillData();
+		AttackLerpMove(fTimeDelta);
+	}
 }
 
 void CTask_ScarletAttack::SelectAttackData()
@@ -100,12 +219,18 @@ void CTask_ScarletAttack::SelectAttackData()
 	auto pSkillData = m_pSkillData.front();
 	m_pSkillData.pop();
 
+	SelectAttackMoveData(pSkillData->iSkillID);
 	m_pBlackBoard->SetAttackData(pSkillData);
+
 	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.f, true);
 }
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
+	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(26));
+	//SelectAttackData();
+
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -117,16 +242,10 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 			if (false == m_pBlackBoard->IsParryAttack())
 			{
-				//m_pSkillData.push(m_pGameManager->Find_SkillData(28));
-				//SelectAttackData();
 				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
 					NormalAttackPattern();
-			}
-			else
-			{
-				LinkAttackPattern();
 			}
 		}
 	}
@@ -149,25 +268,24 @@ void CTask_ScarletAttack::NormalAttackPattern()
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	auto pSkill_Data = m_pOwner->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL));
 
-	if (22 == pSkill_Data->iSkillID)
+	switch(pSkill_Data->iSkillID)
 	{
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange)
-			bIsSelectAttack = false;
-	}
-	else if (27 == pSkill_Data->iSkillID || 30 == pSkill_Data->iSkillID)
-	{
+	case 27 : case 30:
 		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
-			bIsSelectAttack = false;
-	}
-	else if (23 == pSkill_Data->iSkillID)
-	{
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.3f)
 			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
-	}
-	else if (25 == pSkill_Data->iSkillID || 26 == pSkill_Data->iSkillID)
-	{
-		if (fDistance < m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 2.f)
+		break;
+	case 25: case 26:
+		if (fDistance <= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 4.f)
 			bIsSelectAttack = false;
+		break;
+
+	case 45: case 46: case 52:
+		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
+			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
+		break;
+	case 23:
+		m_pSkillData.push(m_pGameManager->Find_SkillData(22));
+		break;
 	}
 	
 	if (bIsSelectAttack)
@@ -177,11 +295,6 @@ void CTask_ScarletAttack::NormalAttackPattern()
 	}
 	else
 		NormalAttackPattern();
-}
-
-void CTask_ScarletAttack::LinkAttackPattern()
-{
-	
 }
 
 void CTask_ScarletAttack::EntranceAttack()
@@ -212,6 +325,18 @@ void CTask_ScarletAttack::BackStepPattern()
 		m_pSkillData.push(m_pGameManager->Find_SkillData(28));
 
 	SelectAttackData();
+}
+
+void CTask_ScarletAttack::CancelSkillData()
+{
+	_float fDistance = m_pBlackBoard->GetTargetDistance();
+	auto pSkillData = m_pOwner->GetSkillData();
+
+	if (22 == pSkillData->iSkillID)
+	{
+		if(5.f >= fDistance)
+			SelectAttackData();
+	}
 }
 
 void CTask_ScarletAttack::SecondPhaseNormalAttack()
@@ -258,794 +383,761 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 	SelectAttackData();
 }
 
-_bool CTask_ScarletAttack::AttackActionAmount(_float fTimeDelta)
+void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 {
-	auto pNaytibaStaticData = m_pOwner->GetStaticMonsterData();
-	if (nullptr == pNaytibaStaticData)
-		return false;
+	MOTION_TIME_DESC Desc = {};
 
-	_bool  bIsMove{ false }, bIsLerpMove{ false };
+	while (!m_TimeLineDatas.empty())
+		m_TimeLineDatas.pop();
 
-	_vector vOwnerPos{}, vTempOwnerPos{};
-	vTempOwnerPos = vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-
-	_vector vTargetPos{}, vTempTargetPos{};
-	vTargetPos = vTempTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
-
-	vOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
-	_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
-	_vector vReverseDir = -1 * vDir;
-
-	m_bIsLookAtPoint = true;
-	auto pAttackData = m_pBlackBoard->GetAttackData();
-	_float fSpeed = m_pBlackBoard->GetBossDefaultInfo()->fMoveSpeed;
-
-	if (pAttackData)
+	switch (iID)
 	{
-		_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
-		switch (pAttackData->iSkillID)
-		{
-		case 20:  // AirDashCut
-		{
-			// Length : 468
-			// Move Frame : 66 ~ 86
-			if (0.14f <= fAnimationRatio && 0.183f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.183f;
-				m_fLerpSpeed = 5.f;
+	case 20:
+#pragma region AIR_DASH_CUT_MOTION
+	{
+		Desc.BeginTime = 0.14f;
+		Desc.EndTime = 0.183f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 1.5f;
 
-				if (0.155f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				bIsLerpMove = true;
-			}
-			if (0.224f <= fAnimationRatio && 0.262f >= fAnimationRatio)
-			{
-				// Move Frame : 105 ~ 123
-				m_fMoveAnimMaxRatio = 0.262f;
-				m_fLerpSpeed = 10.f;
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
 
-				if (0.239f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f);
+		Desc.BeginTime = 0.224f;
+		Desc.EndTime = 0.28f;
+		Desc.fRange = 20.f;
+		Desc.fSpeed = 10.f;
+		Desc.fAnimationSpeed = 1.5f;
 
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.318f <= fAnimationRatio && 0.34f >= fAnimationRatio)
-			{
-				// Move Frame : 149 ~ 158
-				m_fMoveAnimMaxRatio = 0.35f;
-				m_fLerpSpeed = 5.f;
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
 
-				if(0.325f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 30.f);
+		Desc.BeginTime = 0.33f;
+		Desc.EndTime = 0.4f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 10.f;
+		Desc.fAnimationSpeed = 1.5f;
 
-				bIsLerpMove = true;
-			}
-			if (0.35f <= fAnimationRatio && 0.5f >= fAnimationRatio)
-			{
-				LookAtPoint(fTimeDelta);
-				m_fLerpSpeed = 5.f;
-				// Move Frame : 224 ~ 234
-				if (0.46f < fAnimationRatio)
-				{
-					m_fMoveAnimMaxRatio = 0.5f;
-					
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
 
-					if (0.475f > fAnimationRatio)
-						XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-					bIsLerpMove = true;
-				}
-					
-			}
-		}
-		break;
-		case 21 :  //Attack Approach
-		{
-			// Length : 228
-			// Move Frame : 21 ~ 50
-			if (0.1f <= fAnimationRatio && 0.3f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.2f;
+		Desc.BeginTime = 0.45f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 1.5f;
 
-				if (0.175f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				m_fAnimationSpeed = 3.f;
-				bIsLerpMove = true;
-			}
-			if (0.46f <= fAnimationRatio && 0.5f >= fAnimationRatio)
-			{
-				// Move Frame : 105 ~ 116
-				m_fMoveAnimMaxRatio = 0.5f;
-				m_fLerpSpeed = 7.f;
-				m_fAnimationSpeed = 1.5f;
-
-				if (0.475f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + vDir * 2.f);
-
-				bIsLerpMove = true;
-			}
-		}
-			break;
-		case 22:  //Swing Combo 1
-		{
-			// Length : 48
-			m_fMoveAnimMaxRatio = 1.f;
-			XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK) * 3.f);
-			bIsMove = true;
-
-			if (7.f > m_pBlackBoard->GetTargetDistance())
-			{
-				SelectAttackData();
-				bIsMove = false;
-			}
-		}
-		break;
-		case 23:  //Swing Combo 2
-		{
-			// Length : 252
-			// Move Frame :  0 ~ 67
-			if (0.26f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.26f;
-
-				if (0.05f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 24:  // Swing
-		{
-			// 25(Swing Fast), 26(Swing Triple) ������ ���Ÿ� �����̴�.
-			// 
-			// Length : 72
-			// Move Frame :  0 ~ 40
-			if (0.55f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.55f;
-				if (0.05f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f));
-
-				m_fLerpSpeed = 5.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 27: // Air Spin
-		{
-			// Length : 447
-			// Move Frame :  72 ~ 104
-			if (0.15f <= fAnimationRatio && 0.23f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.23f;
-				if (0.17f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-			if (0.36f <= fAnimationRatio && 0.39f >= fAnimationRatio) // Move Frame : 161 ~ 172
-			{
-				m_fMoveAnimMaxRatio = 0.39f;
-				if (0.375f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 28 : // MoveBackShot2
-		{
-			// Length : 315
-			// Move Frame : 0 ~ 90
-			if (0.28f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.28f;
-				m_fLerpSpeed = 5.f;
-				if (0.1f > fAnimationRatio)
-				{
-					_vector vDir = XMVector3Normalize(m_pOwner->GetTransform()->Get_State(STATE::LOOK)) * -10.f;
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + vDir));
-				}
-
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 29: // Jump Stamp Slash
-		{
-			// Length : 390
-			// Move Frame : 0 ~ 90
-			if (0.09f <= fAnimationRatio && 0.16f >= fAnimationRatio)
-			{
-				// Move Frame : 37 ~ 63
-				m_fMoveAnimMaxRatio = 0.16f;
-				m_fLerpSpeed = 5.f;
-
-				if (0.15f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
-				m_fAnimationSpeed = 3.f;
-				bIsLerpMove = true;
-			}
-			if (0.24f <= fAnimationRatio && 0.3f >= fAnimationRatio) // Back Step
-			{
-				// Move Frame : 97 ~ 120
-				m_fMoveAnimMaxRatio = 0.3f;
-				m_fLerpSpeed = 7.f;
-				m_bIsLookAtPoint = false;
-
-				if (0.255f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -10.f));
-				
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.41f <= fAnimationRatio && 0.45f >= fAnimationRatio)
-			{
-				// Move Frame : 160 ~ 178
-				// Move Frame : 0 ~ 90
-				m_fMoveAnimMaxRatio = 0.45f;
-				m_fLerpSpeed = 5.f;
-
-				if (0.415f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
-				bIsLerpMove = true;
-			}
-			if (0.65f <= fAnimationRatio && 0.74f >= fAnimationRatio)
-			{
-				// Move Frame : 255 ~ 290
-				m_fMoveAnimMaxRatio = 0.74f;
-				m_fLerpSpeed = 7.f;
-
-				if (0.665f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 30 : // Kick Stamp
-		{
-			// Length : 252
-			// Move Frame : 63 ~ 83
-			if (0.25f <= fAnimationRatio && 0.32f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.32f;
-				XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-				bIsMove = true;
-			}
-			if (0.57f <= fAnimationRatio && 0.61f >= fAnimationRatio)
-			{
-				// Move Frame : 144 ~ 154
-				m_fMoveAnimMaxRatio = 0.61f;
-
-				if (0.585f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 31: // ParryRangeDash
-		{
-			// Length : 192
-			// Move Frame : 10 ~ 40
-			if (0.05f <= fAnimationRatio && 0.2f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.2f;
-				m_fLerpSpeed = 7.f;
-				if (0.08f > fAnimationRatio)
-				{
-					_vector vRight = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + vRight * -10.f);
-				}
-					
-				bIsLerpMove = true;
-			}
-			if (0.3f <= fAnimationRatio && 0.41f >= fAnimationRatio)
-			{
-				// Move Frame : 60 ~ 80
-				m_fMoveAnimMaxRatio = 0.41f;
-				m_fLerpSpeed = 7.f;
-				if (0.35f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 32: // BackDashSpaceCut
-		{
-			// Length : 480
-			// Move Frame : 85 ~ 125
-			if (0.17f <= fAnimationRatio && 0.26f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.26f;
-
-				if (0.18f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir * 4.f);
-				bIsLerpMove = true;
-			}
-			if (0.28f <= fAnimationRatio && 0.3f >= fAnimationRatio)
-			{
-				// Move Frame : 135 ~ 147
-				m_fMoveAnimMaxRatio = 0.3f;
-				XMStoreFloat3(&m_vDir, m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-				bIsMove = true;
-			}
-			if (0.44f <= fAnimationRatio && 0.47f >= fAnimationRatio)
-			{
-				// Move Frame : 256 ~ 265
-				m_fMoveAnimMaxRatio = 0.47f;
-				m_fLerpSpeed = 7.f;
-
-				if (0.45f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -13.f));
-
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.53f <= fAnimationRatio && 0.55f >= fAnimationRatio)
-			{
-				// Move Frame : 256 ~ 265
-				m_fMoveAnimMaxRatio = 0.55f;
-				m_fLerpSpeed = 5.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-
-				if (0.545f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, (vTempTargetPos + vReverseDir));
-			}
-		}
-		break;
-		case 33: // BlinkCut
-		{
-			// Length : 150
-			// Move Frame : 42 ~ 66
-			if (0.28f <= fAnimationRatio && 0.44f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.44f;
-
-				if (0.295f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 34: // PhaseChagne1L_Attack1
-		{
-			// Length : 63
-			// Move Frame : 18 ~ 40
-			if (0.28f <= fAnimationRatio && 0.63f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.63f;
-
-				if (0.295f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 35: // PhaseChagne1L_Attack2
-		{
-			// Length : 87
-			// Move Frame : 0 ~ 40
-			if (0.46f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.46f;
-
-				if (0.15f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 36: // PhaseChagne1L_Attack3
-		{
-			// Length : 117
-			// Move Frame : 18 ~ 40
-			if (0.15f <= fAnimationRatio && 0.34f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.34f;
-
-				if (0.165f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 37: // PhaseChagne1L_Attack4
-		{
-			// Length : 153
-			// Move Frame : 0 ~ 20
-			if (0.13f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.13;
-
-				if (0.05f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 38: // BlinkShot1
-		{
-			// Length : 78
-			// Move Frame : 60 ~ 78
-			if (0.76f <= fAnimationRatio && 1.f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 1.f;
-				if (0.79f > fAnimationRatio)
-				{
-					_vector vRight = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
-					_vector vLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-					_vector vPointDir = vLook + vRight;
-
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + vPointDir * -10.f );
-				}
-				m_fLerpSpeed = 10.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 41: // CounterMoveAttack
-		{
-			// Length : 129
-			// Move Frame : 0 ~ 20
-			if (0.15f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.15f;
-				m_fLerpSpeed = 2.f;
-				if (0.1f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * -4.f);
-				
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.46f <= fAnimationRatio && 0.55f >= fAnimationRatio)
-			{
-				// Move Frame : 60 ~ 70
-				m_fMoveAnimMaxRatio = 0.55f;
-				m_fLerpSpeed = 5.f;
-				if (0.49f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * 2.f);
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 42: // LinkBreakChanceAttack
-		{
-			// Length : 282
-			// Move Frame : 80 ~ 100
-			if (0.28f <= fAnimationRatio && 0.35f >= fAnimationRatio)
-			{
-				// Move Frame : 60 ~ 70
-				m_fMoveAnimMaxRatio = 0.35f;
-				if (0.29f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir * 13.f);
-				m_fLerpSpeed = 7.f;
-
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 44: // AirDashSpaceCut
-		{
-			// Length : 489
-			// Move Frame : 60 ~ 85
-			if (0.16f <= fAnimationRatio && 0.173f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.173f;
-				if (0.16f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-			if (0.224f <= fAnimationRatio && 0.286f >= fAnimationRatio)
-			{
-				// Move Frame : 110 ~ 140
-				m_fMoveAnimMaxRatio = 0.286f;
-				if (0.286f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos * m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -20.f);
-
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-			if (0.53f <= fAnimationRatio && 0.556f >= fAnimationRatio)
-			{
-				// Move Frame : 260 ~ 272
-				m_fMoveAnimMaxRatio = 0.556f;
-				if (0.24f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 45: // AirDashSpaceCut
-		{
-			// Length : 489
-			// Move Frame : 67 ~ 85
-			if (0.137f <= fAnimationRatio && 0.173f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.173f;
-				if (0.14f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-			if (0.235f <= fAnimationRatio && 0.276f >= fAnimationRatio)
-			{
-				// Move Frame : 148 ~ 158
-				m_fMoveAnimMaxRatio = 0.276f;
-				if (0.24f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-
-				m_fLerpSpeed = 7.f;
-				bIsLerpMove = true;
-			}
-			if (0.525f <= fAnimationRatio && 0.55f >= fAnimationRatio)
-			{
-				// Move Frame : 217 ~ 235
-				m_fMoveAnimMaxRatio = 0.55f;
-				m_fLerpSpeed = 7.f;
-				if (0.53f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK));
-				
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 46: // AirDashSpaceCut
-		{
-			// Length : 489
-			// Move Frame : 67 ~ 85
-			if (0.137f <= fAnimationRatio && 0.173f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.173f;
-				if (0.14f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-			if (0.235f <= fAnimationRatio && 0.276f >= fAnimationRatio)
-			{
-				// Move Frame : 148 ~ 158
-				m_fMoveAnimMaxRatio = 0.276f;
-				if (0.24f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-
-				m_fLerpSpeed = 5.f;
-				bIsLerpMove = true;
-			}
-			if (0.525f <= fAnimationRatio && 0.55f >= fAnimationRatio)
-			{
-				// Move Frame : 217 ~ 235
-				m_fMoveAnimMaxRatio = 0.55f;
-				m_fLerpSpeed = 7.f;
-				if (0.53f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 48: // Move BackS
-		{
-			// Length : 54
-			// Move Frame : 17 ~ 45
-			if (0.15f <= fAnimationRatio && 0.83f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.83f;
-
-				if (0.18f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -30.f);
-				m_fLerpSpeed = 3.f;
-
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 49: // Move SideL
-		{
-			// Length : 54
-			// Move Frame : 5 ~ 45
-			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.83f;
-
-				if (0.14f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * -15.f);
-				m_fLerpSpeed = 2.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 50: // Move SideR
-		{
-			// Length : 54
-			// Move Frame : 5 ~ 45
-			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.83f;
-
-				if (0.14f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
-				m_fLerpSpeed = 2.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 51: // PhaseChange2_Attack
-		{
-			// Length : 132
-			// Move Frame : 5 ~ 45
-			if (0.092f <= fAnimationRatio && 0.83f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.83f;
-
-				if (0.14f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 15.f);
-				m_fLerpSpeed = 2.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 52: // Stinger
-		{
-			// Length : 255
-			// Move Frame : 0 ~ 36
-			if (0.14f >= fAnimationRatio)
-			{
-				// Move Frame : 47 ~ 97
-				m_fMoveAnimMaxRatio = 0.14f;
-
-				if (0.07f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 5.f);
-				m_fLerpSpeed = 3.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.18f <= fAnimationRatio && 0.38f >= fAnimationRatio)
-			{
-				// Move Frame : 47 ~ 97
-				m_fMoveAnimMaxRatio = 0.38f;
-
-				if (0.2f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 2.f;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 53: // AreaCombo
-		{
-			// Length : 591
-			// Move Frame : 130 ~ 156
-			if (0.22f <= fAnimationRatio && 0.26f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.26f;
-
-				if (0.235f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 2.f;
-				bIsLerpMove = true;
-			}
-			if (0.365f <= fAnimationRatio && 0.41f >= fAnimationRatio) // Back
-			{
-				// Move Frame : 216 ~ 245
-				m_fMoveAnimMaxRatio = 0.41f;
-
-				if (0.38f > fAnimationRatio)
-				{
-					_vector vRight = m_pOwner->GetTransform()->Get_State(STATE::RIGHT);
-					_vector vLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
-					_vector vMoveDir = vRight + (vLook * -1.f);
-
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + vMoveDir * 10.f);
-				}
-				m_fLerpSpeed = 2.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.46f <= fAnimationRatio && 0.5f >= fAnimationRatio)
-			{
-				// Move Frame : 272 ~ 300
-				m_fMoveAnimMaxRatio = 0.5f;
-
-				if (0.475f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempOwnerPos + m_pOwner->GetTransform()->Get_State(STATE::RIGHT) * 3.f);
-				m_fLerpSpeed = 2.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.52f <= fAnimationRatio && 0.62f >= fAnimationRatio)
-			{
-				// Move Frame : 310 ~ 324
-				m_fMoveAnimMaxRatio = 0.57f;
-
-				if (0.525f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 10.f);
-
-				m_bIsLookAtPoint = false;
-				m_fLerpSpeed = 10.f;
-				bIsLerpMove = true;
-				
-			}
-		}
-		break;
-		case 54: // AreaSlash
-		{
-			// Length : 147
-			// Move Frame : 5 ~ 45
-			if (0.25f <= fAnimationRatio && 0.34f >= fAnimationRatio)
-			{
-				// Move Frame : 310 ~ 324
-				m_fMoveAnimMaxRatio = 0.34f;
-
-				if (0.28f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 15.f);
-				m_fLerpSpeed = 7.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-		}
-		break;
-		case 55: // AreaSlash2
-		{
-			// Length : 354
-			// Move Frame : 27 ~ 50
-			if (0.076f <= fAnimationRatio && 0.14f >= fAnimationRatio)
-			{
-				m_fMoveAnimMaxRatio = 0.14f;
-
-				if (0.085f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vDir * 15.f);
-				m_fLerpSpeed = 7.f;
-				m_bIsLookAtPoint = false;
-				bIsLerpMove = true;
-			}
-			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
-			if (0.4f <= fAnimationRatio && 0.5f >= fAnimationRatio)
-			{
-				// Move Frame : 136 ~ 180
-				m_fMoveAnimMaxRatio = 0.5f;
-
-				if (0.43f > fAnimationRatio)
-					XMStoreFloat3(&m_fAttackMovePoint, vTempTargetPos + vReverseDir);
-				m_fLerpSpeed = 3.f;
-				bIsLerpMove = true;
-			}
-			if (0.6f <= fAnimationRatio && 0.73f >= fAnimationRatio)
-			{
-				// Move Frame : 215 ~ 250
-				m_fMoveAnimMaxRatio = 0.73f;
-				XMStoreFloat3(&m_vDir, vDir);
-				m_fLerpSpeed = 3.f;
-				bIsMove = true;
-			}
-		}
-		break;
-		}
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
 	}
+	break;
+#pragma endregion
+	
+	case 21 :
+#pragma region ATTACK_APPROACH
+	{
+		Desc.BeginTime = 0.1f;
+		Desc.EndTime = 0.3f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 3.f;
 
-	if (bIsLerpMove)
-		AttackLerpMove(fTimeDelta);
-	else if (bIsMove)
-		AttackADDMove(fTimeDelta, fSpeed);
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
 
-	return true;
+		Desc.BeginTime = 0.43f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 2.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 22: 
+#pragma region SWING COMBO1
+	{
+		Desc.BeginTime = 0.2f;
+		Desc.EndTime = 1.f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+	
+	case 23 :
+#pragma region SWING COMBO2
+	{
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.26f;
+		Desc.fRange = 3.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 24: 
+#pragma region SWING
+	{
+		// 25(Swing Fast), 26(Swing Triple) ������ ���Ÿ� �����̴�.
+		// 
+		// Length : 72
+		// Move Frame :  0 ~ 40
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+	
+	case 27:
+#pragma region AIR SPIN
+		Desc.BeginTime = 0.15f;
+		Desc.EndTime = 0.23f;
+		Desc.fRange = 5.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.36f;
+		Desc.EndTime = 0.39f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+#pragma endregion
+
+	case 28:
+#pragma region MOVE BACK SHOT2
+	{
+		Desc.BeginTime = 0.1f;
+		Desc.EndTime = 0.35f;
+		Desc.fRange = 20.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 29 :
+#pragma region JUMP STAMP SLASH
+		Desc.BeginTime = 0.09f;
+		Desc.EndTime = 0.16f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 3.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.24f;
+		Desc.EndTime = 0.3f;
+		Desc.fRange = 10.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.41f;
+		Desc.EndTime = 0.45f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.65f;
+		Desc.EndTime = 0.74f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+#pragma endregion
+
+	case 30:
+#pragma region KICK STAMP
+		Desc.BeginTime = 0.25f;
+		Desc.EndTime = 0.32f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.57f;
+		Desc.EndTime = 0.61f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+#pragma endregion
+
+	case 31:
+#pragma region PARRY RANGE DASH
+	{
+		Desc.BeginTime = 0.05f;
+		Desc.EndTime = 0.2f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::LEFT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.3f;
+		Desc.EndTime = 0.4f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+	
+	case 32:
+#pragma region BACK DASH SPACE CUT
+	{
+		Desc.BeginTime = 0.17f;
+		Desc.EndTime = 0.26f;
+		Desc.fRange = -4.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.28f;
+		Desc.EndTime = 0.3f;
+		Desc.fRange = 4.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.44f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 20.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 1.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.53f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 1.5f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 33:
+#pragma region BLINK CUT
+	{
+		Desc.BeginTime = 0.28f;
+		Desc.EndTime = 0.44f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 34:
+#pragma region PHASE CHANGE ATTACK 1
+	{
+		Desc.BeginTime = 0.28f;
+		Desc.EndTime = 0.63f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 35:
+#pragma region PHASE CHANGE ATTACK 2
+	{
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.46f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 36:
+#pragma region PHASE CHANGE ATTACK 3
+	{
+		Desc.BeginTime = 0.15f;
+		Desc.EndTime = 0.34f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 37:
+#pragma region PHASE CHANGE ATTACK 4
+	{
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.13f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.52f;
+		Desc.EndTime = 0.78f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 38 :
+#pragma region BLINK SHOT1
+	{
+		Desc.BeginTime = 0.76f;
+		Desc.EndTime = 1.f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 10.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::LEFT_BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 41:
+#pragma region COUNTER MOVE ATTACK
+	{
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.3f;
+		Desc.fRange = 6.f;
+		Desc.fSpeed = 4.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::LEFT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.46f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 3.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 42:
+#pragma region LINK BREAK CHANCE ATTACK
+	{
+		Desc.BeginTime = 0.28f;
+		Desc.EndTime = 0.35f;
+		Desc.fRange = 5.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+
+#pragma endregion
+
+	case 44:
+#pragma region AIR DASH SAPCE CUT
+	{
+		Desc.BeginTime = 0.14f;
+		Desc.EndTime = 0.18f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.2f;
+		Desc.EndTime = 0.3f;
+		Desc.fRange = 20.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.53f;
+		Desc.EndTime = 0.6f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 45:
+#pragma region BLINK COMBO 1
+	{
+		Desc.BeginTime = 0.137f;
+		Desc.EndTime = 0.17f;
+		Desc.fRange = 2.f;
+		Desc.fSpeed = 4.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.235f;
+		Desc.EndTime = 0.276f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.525f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 46:
+#pragma region BLINK COMBO 2
+	{
+		Desc.BeginTime = 0.137f;
+		Desc.EndTime = 0.173f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.235f;
+		Desc.EndTime = 0.276f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.525f;
+		Desc.EndTime = 0.55f;
+		Desc.fRange = 5.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 48:
+#pragma region MOVE BACK
+	{
+		Desc.BeginTime = 0.15f;
+		Desc.EndTime = 0.83f;
+		Desc.fRange = 30.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 49:
+#pragma region MOVE SIDE LEFT
+	{
+		Desc.BeginTime = 0.092f;
+		Desc.EndTime = 0.83f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::LEFT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 50:
+#pragma region MOVE SIDE RIGHT
+	{
+		Desc.BeginTime = 0.092f;
+		Desc.EndTime = 0.83f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::RIGHT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 51:
+#pragma region PHASE CHANGE2 ATTACK
+	{
+		Desc.BeginTime = 0.092f;
+		Desc.EndTime = 0.83f;
+		Desc.fRange = 20.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::RIGHT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 52:
+#pragma region STINGGER
+	{
+		Desc.BeginTime = 0.f;
+		Desc.EndTime = 0.14f;
+		Desc.fRange = 10.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::RIGHT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.18f;
+		Desc.EndTime = 0.38f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 53:
+#pragma region AREA COMBO
+	{
+		Desc.BeginTime = 0.22f;
+		Desc.EndTime = 0.26f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.365f;
+		Desc.EndTime = 0.41f;
+		Desc.fRange = 10.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::RIGHT_BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.46f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 5.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::RIGHT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.52f;
+		Desc.EndTime = 0.62f;
+		Desc.fRange = 12.f;
+		Desc.fSpeed = 10.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 54:
+#pragma region AREA SLASH
+	{
+		Desc.BeginTime = 0.25f;
+		Desc.EndTime = 0.34f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 55:
+#pragma region AREA SLASH 2
+	{
+		Desc.BeginTime = 0.076f;
+		Desc.EndTime = 0.14f;
+		Desc.fRange = 15.f;
+		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.4f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.6f;
+		Desc.EndTime = 0.73f;
+		Desc.fRange = 6.f;
+		Desc.fSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+	}
 }
 
 _bool CTask_ScarletAttack::Compute_AttackCoolTime(_bool bIsForce)
@@ -1063,30 +1155,10 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 	_float fRatio = Clamp<_float>(fTimeDelta * m_fLerpSpeed, 0.f, 1.f);
 	_vector vLerpPos = XMVectorLerp(vOwnerPos, XMLoadFloat3(&m_fAttackMovePoint), fRatio);
 
-	if (m_bIsLookAtPoint)
-		m_pOwner->GetTransform()->LookAt_Lerp(vLerpPos, fTimeDelta, m_fLerpSpeed);
-	else
-		LookAtPoint(fTimeDelta);
-
+	LookAtPoint(fTimeDelta);
 	if (fDistance <= 3.5f)
 		return;
 	m_pOwner->GetTransform()->Set_State(STATE::POSITION, vLerpPos);
-}
-
-void CTask_ScarletAttack::AttackADDMove(_float fTimeDelta, _float fSpeed)
-{
-	m_pBlackBoard->SetTargetDistacne();
-	_float fDistance = m_pBlackBoard->GetTargetDistance();
-	auto pSkill_Data = m_pBlackBoard->GetAttackData();
-	LookAtPoint(fTimeDelta);
-
-	if (nullptr == pSkill_Data || 3.f >= fDistance - pSkill_Data->fRange)
-		return;
-	
-	_float fAnimPlayRatio = m_pOwner->Get_AnimationRatio();
-	fSpeed = fSpeed * (fDistance / pSkill_Data->fRange) * (m_fMoveAnimMaxRatio / fAnimPlayRatio);
-	fSpeed = Clamp<_float>(fSpeed, 0.f, 10.f);
-	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vDir), fSpeed);
 }
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
@@ -1111,6 +1183,17 @@ void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)
 	while (!m_pSkillData.empty())
 		m_pSkillData.pop();
 
+	while (!m_TimeLineDatas.empty())
+		m_TimeLineDatas.pop();
+}
+
+void CTask_ScarletAttack::Clear_ScarletAttackTask()
+{
+	if (m_pBlackBoard->IsPhaseLastAttack())
+		m_pBlackBoard->SetPhaseLastAttack(false);
+
+	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		m_pBlackBoard->SetEntarnceAttack(false);
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)

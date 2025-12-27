@@ -29,8 +29,8 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     //락온 중이니까 lock은 계속 들어가지.
     m_Desc->pPlayerTransform->Set_State(STATE::POSITION, 
-        vTargetPos - vTargetLook * 5.f);
-    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos - vTargetLook * 5.f, XMVectorGetY(vPlayerPos) + 1.f));
+        XMVectorSetY(vTargetPos - vTargetLook * 0.1f, XMVectorGetY(vPlayerPos)));
+    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos - vTargetLook * 0.1f, XMVectorGetY(vPlayerPos)));
 
     m_Desc->pPlayerTransform->LookAt(XMVectorSetY(vTargetPos, 
         XMVectorGetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION))));
@@ -43,7 +43,11 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
     if (true == isAnimFinished)
+    {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
+        m_pGameInstance->Active_DoF(false, 0.2f);
+        m_pGameInstance->SetGameSpeed(1.f);
+    }
 
     return m_tNextState;
 }

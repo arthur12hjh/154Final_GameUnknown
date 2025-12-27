@@ -136,6 +136,16 @@ const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
     return m_pDataManager->Find_CinematicData(iCinematicIndex);
 }
 
+void CGameManager::EnableTransport(_uint iAreaID)
+{
+    m_pDataManager->EnableTransport(iAreaID);
+}
+
+const TRANSPORT_DESC* CGameManager::Find_TransportData(_uint iAreaID)
+{
+    return  m_pDataManager->Find_TransportData(iAreaID);
+}
+
 map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
 {
     return m_pDataManager->Get_CameraAnimationMap();

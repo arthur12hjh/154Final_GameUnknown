@@ -2,6 +2,10 @@
 #include "Client_Defines.h"
 #include "State.h"
 
+NS_BEGIN(Engine)
+class CGameObject;
+NS_END
+
 NS_BEGIN(Client)
 struct Naytiba_NetWork_Desc;
 struct Character_Skill_Desc;
@@ -24,16 +28,20 @@ public:
 	virtual		void							End();
 
 private :
-	Naytiba_NetWork_Desc*						m_pNaytibaData = { nullptr };
+	const Naytiba_NetWork_Desc*					m_pMonsterDefaultData = { nullptr };
 	const Character_Skill_Desc*					m_pLastHitSkill = { nullptr };
-	
-	DIRECTION									m_eDeadDir = {};
 
+	DIRECTION									m_eDeadDir = {};
+	_bool										m_bIsNoneDeadAnim = { true };
 	_bool										m_bIsDeadEffect = { false };
 	_float3										m_vImpactDir = {};
 
 	_float										m_fImpactForce = {};
 	_float2										m_fDeadEndTime = {};
+
+private :
+	void										SettingDefaultDeadAnim();
+	void										SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc);
 
 public:
 	static	CMonsterDeadState*					Create(void* pArg);

@@ -523,6 +523,11 @@ void* CRenderer::Get_HDR_Desc()
 	return &m_HDRDesc;
 }
 
+void CRenderer::Set_Fog_Desc(void* pArg)
+{
+	m_pFog->Set_Desc(pArg);
+}
+
 HRESULT CRenderer::Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
 	return m_pCascadeShadow->Ready_Shadow_Light(Desc);
@@ -766,8 +771,8 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pStaticShadow->Bind_Shader_Resource(m_pShader, "g_StaticLightProjMatrix", D3DTS::PROJ)))
 		return;
-	//if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
-	//	return;
+	if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
+		return;
 
 	if (false == m_isSSAO)
 		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
@@ -884,7 +889,6 @@ void CRenderer::Render_Deferred()
 	hr = m_pDistortion->Render(m_pVIBuffer);
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
-
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 

@@ -34,17 +34,25 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
 {
     m_fLockonTimer += fTimeDelta;
 
+    //락온 타이머 쿨이 돌지 않았거나, 플레이어의 Lock을 바꿀 수 없는 상황이라면
     if (m_fLockonTimer <= 1.5f || false == m_pPlayerDesc->isLockChangable)
         return false;
-
-    list<CGameObject*>* pTargets =
-        m_pGameInstance->GetAllObejctToLayer(
-            m_pGameInstance->GetCurrentLevelID(),
-            m_strMonsterLayerTag.c_str());
 
     // 기본값 초기화
     m_pPlayerDesc->HasTarget = false;
     m_pPlayerDesc->fCurrentMinDist = FLT_MAX;
+
+    //대상이 죽었다면. 
+    if (nullptr != m_pTarget && 0.f >= m_pTarget->GetMonsterData().iCurrentHealth)
+    {
+        m_pTarget = nullptr;
+        m_fLockonTimer = 0.f;
+
+        return false;
+    }
+
+    list<CGameObject*>* pTargets = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), m_strMonsterLayerTag.c_str());
+
 
     if (nullptr == pTargets || pTargets->empty())
     {

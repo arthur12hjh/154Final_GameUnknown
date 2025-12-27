@@ -70,6 +70,8 @@ float2 g_AtlasIndex = { 0.f, 0.f };
 
 float2 g_vWindowSize = { 1600.f, 900.f };
 
+float g_fTimeDelta = 0.f;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -1473,6 +1475,84 @@ PS_OUT PS_UNLOCK_FX(PS_IN In)
 
 /*------------------[E_UNLOCK_FX]----------------*/
 
+/*------------------[S_LOADING_BLOCK]----------------*/
+
+float2 ScaleUV_Centered(float2 uv, float scale)
+{
+    uv -= 0.5f;
+    uv /= scale;
+    uv += 0.5f;
+    return uv;
+}
+
+PS_OUT PS_LOADING_BLOCK(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    //float2 ScaleUV = uv;
+    //ScaleUV -= 0.5f;
+    //ScaleUV /= g_fScale;
+    //ScaleUV += 0.5f;
+    
+    //float4 Block = g_Texture0.Sample(ClampSampler, ScaleUV);
+    //Out.vColor = Block;
+    
+    float4 result = float4(0, 0, 0, 0);
+
+    // 가로 3칸
+    const int COUNT = 3;
+    
+    float gapPixel = 2.5f;
+    float gapUV = gapPixel / 60.f;
+
+    float blockUVWidth = (1.0f - gapUV * (COUNT - 1)) / COUNT;
+    
+    for (int i = 0; i < COUNT; ++i)
+    {
+         // --- 블록 시작 위치 ---
+        float startX = i * (blockUVWidth + gapUV);
+        float endX = startX + blockUVWidth;
+
+        // 범위 밖이면 스킵
+        if (uv.x < startX || uv.x > endX)
+            continue;
+        
+        // --- 1. 각 블록의 로컬 UV ---
+        float2 blockUV = 0.f;
+        blockUV.x = (uv.x - startX) / blockUVWidth;
+        blockUV.y = uv.y;
+
+        // 범위 밖이면 스킵
+        if (blockUV.x < 0.0f || blockUV.x > 1.0f)
+            continue;
+
+        // --- 2. 순차 애니메이션 (위상 차이) ---
+        float phase = g_fTimeDelta * 5.f - i * 0.7f;
+        //float pulse = abs(sin(phase)); // 0~1
+        float pulse = 0.5f + 0.5f * sin(phase);
+
+        float scale = lerp(1.0f, 0.f, pulse);
+
+        // --- 3. 중앙 기준 스케일 ---
+        float2 scaledUV = ScaleUV_Centered(blockUV, scale);
+
+        // --- 4. 샘플링 ---
+        float4 col = g_Texture0.Sample(ClampSampler, scaledUV);
+
+        // 알파 기반 누적 (겹쳐도 깨끗)
+        result.rgb = lerp(result.rgb, col.rgb, col.a);
+        result.a = max(result.a, col.a);
+    }
+
+    Out.vColor = result;
+    
+    return Out;
+}
+
+/*------------------[E_LOADING_BLOCK]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1755,5 +1835,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_UNLOCK_FX();
+    }
+
+    pass LOADING_BLOCK // 27
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LOADING_BLOCK();
     }
 }

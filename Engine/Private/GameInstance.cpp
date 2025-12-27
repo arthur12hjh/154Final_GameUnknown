@@ -30,8 +30,9 @@
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
+
 mt19937 CGameInstance::m_RandomDevice(random_device{}());
-uniform_real_distribution<_float> CGameInstance::m_distribution(0.f, 1.f);
+uniform_real_distribution<float> CGameInstance::m_distribution(0.f, 1.f);
 
 CGameInstance::CGameInstance()
 {
@@ -214,7 +215,6 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		m_fLoopTime[ENUM_CLASS(GAMELOOP_TYPE::UPDATE)] -= GetLoopDurationTime(GAMELOOP_TYPE::UPDATE);
 #else
 		m_pObject_Manager->Update(fGameSpeed);
-
 #endif
 	}
 
@@ -605,7 +605,10 @@ void* CGameInstance::Get_HDR_Desc()
 	return m_pRenderer->Get_HDR_Desc();
 }
 
-
+void CGameInstance::Set_Fog_Desc(void* pArg)
+{
+	m_pRenderer->Set_Fog_Desc(pArg);
+}
 
 void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
 {

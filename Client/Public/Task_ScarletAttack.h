@@ -5,12 +5,11 @@
 NS_BEGIN(Client)
 class CNayitba;
 class CScarletBlackBoard;
-class CGorillaBehaviorTree;
 class CGameManager;
 
 struct Character_Skill_Desc;
 
-class CTask_ScarletAttack : public CTask
+class CTask_ScarletAttack final : public CTask
 {
 protected:
 	CTask_ScarletAttack();
@@ -27,11 +26,9 @@ private:
 	CScarletBlackBoard*					m_pBlackBoard = { nullptr };
 	CGameManager*						m_pGameManager = { nullptr };
 	queue<const Character_Skill_Desc*>	m_pSkillData = { };
+	queue<MOTION_TIME_DESC>				m_TimeLineDatas = {};
 
 	CGameObject*						m_pTarget = { nullptr };
-	_int								m_PrePatternIndex = {};
-	_int								m_CurPatternIndex = {};
-
 	_float								m_fMaxDelayTime = {};
 	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
@@ -45,32 +42,32 @@ private:
 
 private:
 	// 보스 패턴에 대한 정보
+	void								ActionAmount(_float fTimeDelta);
+
 #pragma region Boss Pattern
 	void								SelectAttackData();
 	_bool								SelectPattern(_bool bIsRandom = true);
 
 	void								NormalAttackPattern();
-	void								LinkAttackPattern();
-
 	void								EntranceAttack();
 	void								BackStepPattern();
+	void								CancelSkillData();
 
 #pragma region Phase2
 	void								SecondPhaseNormalAttack();
 	void								SecondPhaseAttack();
 #pragma endregion
 
-
-	
 #pragma endregion
-	_bool								AttackActionAmount(_float fTimeDelta);
+	void								SelectAttackMoveData(_uint iID);
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
 
 	void								AttackLerpMove(_float fTimeDelta);
-	void								AttackADDMove(_float fTimeDelta, _float fSpeed);
 
 	void								LookAtPoint(_float fTimeDelta);
 	void								ResetAttackTask(_bool bIsCoolTime = true);
+	void								Clear_ScarletAttackTask();
+
 
 public:
 	static	CTask_ScarletAttack*		Create(CBehaviorTree* pOwnerTree);

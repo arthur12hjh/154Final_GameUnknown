@@ -38,11 +38,15 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 	wsprintf(szMessage, TEXT("%d 번째 컷씬 재생중입니다"), iCrrentPhaseIndex);
 	MSG_BOX_TEXT(szMessage);
 
+	auto ePreState = m_pBlackBoard->GetPreState();
+
 	// 대충 컷씬이 끝나면 여기서 End 함수를 호출해서 할거임 지금은 그냥 Idle로만 바꿀예정
 	m_pBlackBoard->Set_BossPhase(CScarletBlackBoard::BOSS_PAHSE(iCrrentPhaseIndex + 1));
-
 	m_pBlackBoard->SetCurState(CScarletBlackBoard::BOSS_STATE::IDLE);
 	m_pBlackBoard->SetEntarnceAttack(true);
+
+	if (CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+		m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 	m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
 	m_pBlackBoard->Reset_State();
 

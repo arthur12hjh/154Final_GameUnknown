@@ -59,6 +59,14 @@ void CCharacterController::Set_Riding(_bool isRiding, CTransform* pTransform,  C
 	m_pRidingTargetTransform = pTransform;
 }
 
+_float CCharacterController::Get_Radius()
+{
+	if (CCT_SHAPE::CAPSULE != m_eShape)
+		return -1.f;
+
+	return static_cast<PxCapsuleController*>(m_pController)->getRadius();
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;

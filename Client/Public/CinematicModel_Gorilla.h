@@ -40,6 +40,7 @@ private:
 	_float		m_fMoveTime = 0.f;
 	_int		m_iAnimationSequence = 0;
 
+	_bool		m_bIsPrevActivated = FALSE;
 
 private:
 	HRESULT Ready_Components();
@@ -51,6 +52,7 @@ private:
 	HRESULT Play_Cinematic_GorillaMeet(_float fTimeDelta);
 	HRESULT Play_Cinematic_GorillaFinish(_float fTimeDelta);
 
+	void Reset_CinematicChanges();
 
 public:
 	static CCinematicModel_Gorilla* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

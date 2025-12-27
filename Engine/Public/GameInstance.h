@@ -139,6 +139,8 @@ public:
 	void*  Get_Volumetric_Desc();
 	void*  Get_HDR_Desc();
 	
+	void	Set_Fog_Desc(void* pArg);
+
 	//RenderDoc 전용
 	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
 	//RenderDoc 전용

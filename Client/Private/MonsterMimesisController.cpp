@@ -51,7 +51,6 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	m_fAttackDelay = pDefaultData->fAttackCoolTime;
 	m_vAttackTime.y = 0.8f;
 	m_vDelayTime.y = 0.5f;
-	//AttackCompleted(0.f);
 	m_bIsMimesis = true;
 
 	return S_OK;
@@ -144,7 +143,7 @@ void CMonsterMimesisController::Damage(void* pArg)
 				}
 				else
 				{
-					if (false == pNayitba->bIsHitReaction())
+					if (false == pNayitba->bIsParryHitReaction())
 						bIsHitAble = false;
 				}
 			}
@@ -250,40 +249,34 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_bIsMimesis)
 	{
-		if (fDistance <= m_pOwnerData->fAttackRange)
-		{
+		//if (fDistance <= m_pOwnerData->fAttackRange)
+		//{
 			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 			AttackStateDesc.pTarget = pTarget;
 			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-		}
+		//}
 	}
 	else
 	{
 		if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
 		{
-			if (m_vAttackTime.y <= m_vAttackTime.x)
+			if (m_vAttackTime.y <= m_vAttackTime.x && fDistance <= m_pOwnerData->fAttackRange * 7.f)
 			{
-				if (fDistance <= m_pOwnerData->fAttackRange)
-				{
-					CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-					AttackStateDesc.pTarget = pTarget;
-					AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+				AttackStateDesc.pTarget = pTarget;
+				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 
-					CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
-					if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
-						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
-					else
-						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-				}
+				CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
+				if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
 				else
-				{
-					MoveAction(true);
-				}
+					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}
 			else
 			{
-				MoveAction(true);
+				if(0 != m_pOwnerData->fMoveSpeed)
+					MoveAction(true);
 			}
 		}
 	}
@@ -297,7 +290,8 @@ void CMonsterMimesisController::Default_Action(_float fTimeDelta)
 	}
 	else
 	{
-		MoveAction(false);
+		if (0 != m_pOwnerData->fMoveSpeed)
+			MoveAction(true);
 	}
 }
 

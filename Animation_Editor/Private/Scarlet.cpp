@@ -1,8 +1,3 @@
-#include "Scarlet.h"
-#include "Scarlet.h"
-#include "Scarlet.h"
-#include "Scarlet.h"
-#include "Scarlet.h"
 #include "pch.h"
 #include "Scarlet.h"
 

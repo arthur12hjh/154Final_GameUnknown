@@ -24,25 +24,35 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintEndState::Update(_float fTimeDelta)
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)
+        && 0.3f <= fAnimationRatio)
     {
         m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT)
+        && 0.3f <= fAnimationRatio)
+            m_tNextState.eNextState = PLAYER_STATE::SPRINT;
     }
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))
+        && 0.3f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1))
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_1)
+        && 0.3f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::BETA_TRIPLET;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2))
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_2)
+        && 0.3f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT)
+        && 0.3f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
     else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||
-        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+        m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E)
+        && 0.3f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::PARRY;
 
     else if (true == isAnimFinished)

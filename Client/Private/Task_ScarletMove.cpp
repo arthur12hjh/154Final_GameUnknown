@@ -62,24 +62,6 @@ CBehaviorNode::NODE_STATE CTask_ScarletMove::Update(_float fTimeDelta)
 
 		vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 		_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vTempOwnerPos));
-		/*if (fDistance > pNaytibaDefaultInfo->fAttackRange * 2.5f)
-		{
-			if (DIRECTION::FRONT != m_eDirection)
-				Refresh_MovePoint();
-		}*/
-
-		if (fDistance < pNaytibaDefaultInfo->fAttackRange * 0.7f)
-		{
-			if (DIRECTION::FRONT == m_eDirection)
-				Refresh_MovePoint();
-		}
-
-		if (fDistance >= pNaytibaDefaultInfo->fAttackRange)
-		{
-			if (DIRECTION::BACK == m_eDirection)
-				Refresh_MovePoint();
-		}
-
 		_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
 
 		_vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
@@ -87,8 +69,8 @@ CBehaviorNode::NODE_STATE CTask_ScarletMove::Update(_float fTimeDelta)
 
 		if (0.99f > fScalar)
 			m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 3.0f);
-		/*else
-			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);*/
+		else
+			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);
 
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
@@ -110,36 +92,19 @@ void CTask_ScarletMove::Refresh_MovePoint()
 	_float fATKRange = m_pBlackBoard->GetBossInfo()->fAttackRange;
 
 	m_szAnimationName = pNaytibaDefaultInfo->szAnimationName;
-	if (fDistance < fATKRange * 7.f)
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 0.5f;
+	if (40.f > fRandomIndex)
 	{
-		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 0.5f;
-		if (40.f > fRandomIndex)
-		{
-			m_eDirection = DIRECTION::LEFT;
-			m_szAnimationName += "_Caution_Lw";
-		}
-		else
-		{
-			m_eDirection = DIRECTION::RIGHT;
-			m_szAnimationName += "_Caution_Rw";
-		}
-		//else
-		//{
-		//	m_eDirection = DIRECTION::BACK;
-		//	m_szAnimationName += "_Caution_Bw";
-		//	m_pOwner->Set_Animation(m_szAnimationName.c_str());
-		//}
-		m_bIsCaution = true;
+		m_eDirection = DIRECTION::LEFT;
+		m_szAnimationName += "_Caution_Lw";
 	}
 	else
 	{
-		// 여기서 달리기 하자
-		m_szAnimationName += "_Run_L";
-		m_eDirection = DIRECTION::FRONT;
-		m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 2.f;
-		m_bIsCaution = false;
+		m_eDirection = DIRECTION::RIGHT;
+		m_szAnimationName += "_Caution_Rw";
 	}
+	m_bIsCaution = true;
 
 	m_pOwner->Set_Animation(m_szAnimationName.c_str(), true, 1.f, 0.f);
 }

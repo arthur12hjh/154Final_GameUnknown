@@ -169,13 +169,19 @@ void CUICostumePuzzleButtons::CallbackEvent(void* pArg)
 	auto* arg = static_cast<UI_EVENT_ARG_DESC*>(pArg);
 	if (!arg) return;
 	
-	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	/*CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(arg->szActionTag);
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 	
-	Safe_Release(pHUD);
+	Safe_Release(pHUD);*/
+
+	if (arg->szActionTag == TEXT("Get_Costume_Puzzle_Unlock"))
+	{
+		if (arg->Type == UI_EVENT_ARG_DESC::ARG_TYPE::BOOL)
+			m_bCanInput = !*static_cast<_bool*>(arg->pData);
+	}
 }
 
 HRESULT CUICostumePuzzleButtons::Render_Buttons()
@@ -306,6 +312,9 @@ HRESULT CUICostumePuzzleButtons::Bind_ButtonsResources()
 
 _bool CUICostumePuzzleButtons::MouseEnter(_float2 vPos, _float2 vSize)
 {
+	if (!m_bCanInput)
+		return false;
+
 	POINT MousePoint = m_pGameInstance->GetMousePoint();
 
 	_float4 fRect = {

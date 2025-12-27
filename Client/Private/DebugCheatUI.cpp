@@ -199,10 +199,17 @@ void CDebugCheatUI::DrawCameraDebug()
     if (nullptr != m_pSelectCamera)
     {
         _float3 vCamPosition = {};
+        _float3 vCamLook = {};
+        _float3 vCamLookPosition = {};
         XMStoreFloat3(&vCamPosition, m_pSelectCamera->GetTransform()->Get_State(STATE::POSITION));
+        XMStoreFloat3(&vCamLook, m_pSelectCamera->GetTransform()->Get_State(STATE::LOOK));
+		XMStoreFloat3(&vCamLookPosition, XMLoadFloat3(&vCamPosition) + XMLoadFloat3(&vCamLook) * 50.f);
+
 
         ImGui::Dummy(ImVec2(0.f, 5.f));
         ImGui::Text("Camera Position : %.3f , %.3f , %.3f", vCamPosition.x, vCamPosition.y, vCamPosition.z);
+        ImGui::Dummy(ImVec2(0.f, 5.f));
+        ImGui::Text("Camera Gara Look : %.3f , %.3f , %.3f", vCamLookPosition.x, vCamLookPosition.y, vCamLookPosition.z);
         ImGui::Dummy(ImVec2(0.f, 5.f));
     }
 

@@ -292,6 +292,8 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Minion11")) { iCurrentIndex = 8; }
 		if (ImGui::Selectable("Scarlet")) { iCurrentIndex = 9; }
 		if (ImGui::Selectable("Cinematic_Gorilla")) { iCurrentIndex = 10; }
+		if (ImGui::Selectable("Tentacle")) { iCurrentIndex = 11; }
+		if (ImGui::Selectable("DroidTurret")) { iCurrentIndex = 12; }
 		ImGui::EndPopup();
 	}
 
@@ -334,6 +336,12 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 10:
 			Create_Extra(TEXT("Prototype_Component_Model_Cinematic_Gorilla"));
+			break;
+		case 11:
+			Create_Extra(TEXT("Prototype_Component_Model_Tentacle"));
+			break;
+		case 12:
+			Create_Extra(TEXT("Prototype_Component_Model_TurretDroid"));
 			break;
 		}
 

@@ -4,7 +4,7 @@
 
 #include "JsonParser.h"
 #include "StringHelper.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 
 #include "UIBase.h"
 #include "UIAnimManager.h"
@@ -57,10 +57,11 @@ void CUIHUD::Update(_float fTimeDelta)
 				_float3 newPos{};
 				_float3 vPivot{ 0.f, 0.f, 0.f };
 
-				auto pOwner = static_cast<CProb_Interaction*>(Interactions[i]->GetOwner());
+				CInteractionUIBinder* pInteraction = dynamic_cast<CInteractionUIBinder*>(Interactions[i]);
+				CGameObject* pOwner = pInteraction->GetOwner();
 
-				if (pOwner->Get_InterDesc())
-					vPivot = pOwner->Get_InterDesc()->vUIPivot;
+				if (pInteraction->Get_InterDesc())
+					vPivot = pInteraction->Get_InterDesc()->vUIPivot;
 
 				if (dynamic_cast<CLift_Controller*>(pOwner)
 					&& dynamic_cast<CLift_Controller*>(pOwner)->Get_CombinedMatrix()

@@ -12,7 +12,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "Interaction_Component.h"
+#include "InteractionUIBinder.h"
 #include "Effect.h"
 #include "Notify.h"
 #include "AttackHitBox.h"
@@ -150,7 +150,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	SetVisibility(VISIBILITY::VISIBLE);
 
-
 	//
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	//EffectDesc.fRotationPerSec = 1.f;
@@ -195,11 +194,31 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_PotionUse(fTimeDelta);
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
-	Update_TestSkillInput(fTimeDelta);
+	Update_ReactionSkillInput(fTimeDelta);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
+
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	{
+		auto pTransportData = m_pGameManager->Find_TransportData(1);
+		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPos);
+		m_pCCT->Set_Position(vPos);
+	}
+
+	// [JU] Use_RushSkill 테스트(키보드 R키)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	{
+		auto pTransportData = m_pGameManager->Find_TransportData(2);
+		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPos);
+		m_pCCT->Set_Position(vPos);
+	}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -250,20 +269,9 @@ HRESULT CPlayer::Damaged(void* pArg)
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
-	if (SKILL_TYPE::INTERACTION_SKILL == pSkillDesc->eSkillType)
-	{
-		CCharacter* pCharacter = static_cast<CCharacter*>(pDamageDesc->pAttacker);
-
-		// 임시입니다 잡기 테스트용 나중에 넘겨받거나 넘겨줄데이터 생기면 말좀해주세요
-		// ㄴ 여기서 아마 상태 추가할거같긴 한데 몬스터 본이랑 몬스터 애니메이션 정보 연동해야 될 듯?
-		pCharacter->ActionSuccess(nullptr);
-	}
-	else
-	{
-		// Interaction 아니라면 따로 뻈음.
-		// 안에서 플레이어 모션 제어 중
-		Handle_Hit(pDamageDesc, pSkillDesc);
-	}
+	// Interaction 아니라면 따로 뻈음.
+	// 안에서 플레이어 모션 제어 중
+	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
 }
@@ -354,12 +362,13 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Update_TestSkillInput(_float fTimeDelta)
+void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
+	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -373,8 +382,30 @@ void CPlayer::Update_TestSkillInput(_float fTimeDelta)
 
 			m_pFSM->Handle_Transition(Desc);
 		}
-
 	}
+
+	/* 실제 로직 */
+	//if (true == m_PlayerDesc.HasTarget)
+	//{
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
+	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+	//	{
+	//		PLAYER_TRANSITION_DESC Desc;
+	//		Desc.eNextState = PLAYER_STATE::REPULSE;
+
+	//		m_pFSM->Handle_Transition(Desc);
+	//	}
+	//}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -608,14 +639,14 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
+		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
 
-		const INTERACTION_DATA* pInteractionData = pInteractionObject->Get_InterDesc();
-		INTERACTION_STATE InteractionState = pInteractionObject->Get_InterState();
+ 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
 
 		switch (InteractionState)
 		{
@@ -659,6 +690,11 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			}
 		}
 		// 끝났거나 잠겨있다면, 그냥 Break 처리.
@@ -670,13 +706,12 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 	}
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = (m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
-		if (0.f < pInteractionObject->Get_InterDesc()->fInteractionTime)
-			pInteractionObject->Reset_Interaction();
+		if (0.f < pInteractionCom->Get_InterDesc()->fInteractionTime)
+			pInteractionCom->Reset_Interaction();
 	}
 }
 
@@ -763,65 +798,82 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
 
 	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 
-	// 패리 성공. 만약 몬스터 팅겨나는거 제어하고 싶으면
-	// 이 분기문 안에서 Attacker 정보 있으니까 그걸로 제어하면 될듯
-	if (true == m_PlayerDesc.isJustParryable)
+	PLAYER_TRANSITION_DESC Desc{};
+	CHARACTER_SKILL_DESC SkillDescCopy{};
+	Default_Damage_Desc DamageDesc = {};
+	//만약 그랩스킬이라면
+	switch (pSkillDesc->eSkillType)
 	{
-		PLAYER_TRANSITION_DESC Desc{};
+	case SKILL_TYPE::INTERACTION_SKILL:
+
+		memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
+		
 		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
-		Desc.pArg = &HitDesc;
+		Desc.eNextState = PLAYER_STATE::GRAB;
+		Desc.pArg = &SkillDescCopy;
+
+		//공격한 녀석의 본 이름 & 객체 포인터 들고옴
+		m_PlayerDesc.pGrabBone = static_cast<CNayitba*>(pDamageDesc->pAttacker)->Get_BodyModelCom()
+			->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
+		m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
 
 		m_pFSM->Handle_Transition(Desc);
-
-		Default_Damage_Desc DamageDesc = {};
-		DamageDesc.pAttacker = this;
-
-		auto pNayitba = static_cast<CNayitba*>(pDamageDesc->pAttacker);
-		if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+		break;
+	default:
+		if (true == m_PlayerDesc.isJustParryable)
 		{
-			if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
-				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
-			else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+			Desc.isChangeMode = false;
+			Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
+			Desc.pArg = &HitDesc;
+
+			m_pFSM->Handle_Transition(Desc);
+			DamageDesc.pAttacker = this;
+
+			auto pNayitba = static_cast<CNayitba*>(pDamageDesc->pAttacker);
+			if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+			{
+				if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+				else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+			}
+			else
 				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+
+			pNayitba->Damaged(&DamageDesc);
+			//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 		}
-		else
-			DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
-
-		pNayitba->Damaged(&DamageDesc);
-		//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
-	}
-	// 가드만 성공
-	else if (true == m_PlayerDesc.isParryable)
-	{
-		PLAYER_TRANSITION_DESC Desc{};
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
-		Desc.pArg = &HitDesc;
-
-		m_pFSM->Handle_Transition(Desc);
-	}
-
-	else if (false == m_PlayerDesc.isSuperArmor)
-	{
-		PLAYER_TRANSITION_DESC Desc{};
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::HIT;
-		Desc.pArg = &HitDesc;
-
-		if (m_pWeapon)
+		// 가드만 성공
+		else if (true == m_PlayerDesc.isParryable)
 		{
-			m_iSkillID = -1;
-			m_pWeapon->EnableCollider(false);
+			Desc.isChangeMode = false;
+			Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
+			Desc.pArg = &HitDesc;
+
+			m_pFSM->Handle_Transition(Desc);
 		}
 
-		m_pFSM->Handle_Transition(Desc);
-		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+		else if (false == m_PlayerDesc.isSuperArmor)
+		{
+			Desc.isChangeMode = false;
+			Desc.eNextState = PLAYER_STATE::HIT;
+			Desc.pArg = &HitDesc;
+
+			if (m_pWeapon)
+			{
+				m_iSkillID = -1;
+				m_pWeapon->EnableCollider(false);
+			}
+
+			m_pFSM->Handle_Transition(Desc);
+			m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+		}
+		break;
 	}
+
 }
 
 void CPlayer::CreateHitBox(const AnimNotify* pNotify)

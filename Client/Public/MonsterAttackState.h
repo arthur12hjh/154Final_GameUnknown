@@ -40,6 +40,7 @@ private :
 
 	// 특정 몬스터의 행동에 대한 정의
 	_bool										m_bIsPattern = {};
+	_bool										m_bIsMoveAction = {};
 
 	_float3										m_vMoveDir = {};
 	_float										m_fDistance = {};
@@ -54,10 +55,12 @@ private :
 	void										ReadySetting();
 
 	void										BeholderPattern(_float fTimeDelta);
+	void										BanaclePattern(_float fTimeDelta);
 	void										StatueAPattern(_float fTimeDelta);
 	void										StatueBPattern(_float fTimeDelta);
 	void										SunFlowerPattern(_float fTimeDelta);
 	void										Minion11Pattern(_float fTimeDelta);
+	void										TentaclePattern(_float fTimeDelta);
 
 	void										SearchTargetDistance();
 	void										LerpMoveAction(_float fTimeDelta, _float fSpeed);
