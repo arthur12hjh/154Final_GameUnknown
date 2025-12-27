@@ -287,7 +287,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
 
 	CameraDesc.fSpeedPerSec = 15.f;
-	CameraDesc.fFov = XMConvertToRadians(60.0f);
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Player"), &CameraDesc);
@@ -320,6 +320,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 {	
+	//테스트용
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_VelocityExample"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		return E_FAIL;
+
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
@@ -474,6 +479,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 {
+	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+
 	CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
 	pTriggerBoxDesc.iTriggerCode = 124;
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
@@ -482,7 +489,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
 	pTriggerBoxDesc.fDelayTime = -1.f;
 
-	//  시네마틱 테스트용 트리거
+	//  시네마틱용 트리거
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;

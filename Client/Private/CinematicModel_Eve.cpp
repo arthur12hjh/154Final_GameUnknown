@@ -505,6 +505,24 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDe
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
+	if (m_fMoveTime >= 12.9f
+		&& m_fMoveTime <= 13.9f)
+	{
+		_float fRatio = Clamp((m_fMoveTime - 12.9f) / 1.f, 0.f, 1.f);
+		_vector vPosition = XMVectorLerp(XMVectorSet(251.874f, 8.f, 234.907f, 1.f), XMVectorSet(251.874f, 14.6f, 234.907f, 1.f), fRatio);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+	}
+
+	if (m_fMoveTime >= 19.7f
+		&& m_fMoveTime <= 20.3f)
+	{
+		_float fRatio = Clamp((m_fMoveTime - 19.7f) / 0.6f, 0.f, 1.f);
+		_vector vPosition = XMVectorLerp(XMVectorSet(251.874f, 14.6f, 234.907f, 1.f), XMVectorSet(251.874f, 8.f, 234.907f, 1.f), fRatio);
+
+		m_pTransformCom->Set_State(STATE::POSITION, vPosition);
+	}
+
 	if (isFinished)
 	{
 		++m_iAnimationSequence;
@@ -516,11 +534,14 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDe
 		else if (m_iAnimationSequence == 1)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani02", FALSE, 2.f, 0.f, FALSE);
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(249.289f, 8.f, 247.987f, 1.f));
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.289f, 8.f, 247.987f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(250.289f, 8.f, 247.987f, 1.f));
 		}
 		else if (m_iAnimationSequence == 2)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani03", FALSE, 2.f, 0.f, FALSE);
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.289f, 8.f, 247.987f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(252.289f, 8.f, 247.987f, 1.f));
 		}
 
 	}

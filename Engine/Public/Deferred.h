@@ -12,7 +12,7 @@ protected:
 
 public:
 	virtual void* Get_Desc() { return nullptr; }
-
+	virtual void Set_Desc(void* pArg) {};
 public:
 	virtual HRESULT Initialize() = 0;
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) = 0;

@@ -20,6 +20,7 @@ private:
 public:
 	_float4 Get_FogColor() { return m_vFogColor; }
 	virtual void* Get_Desc() override;
+	virtual void Set_Desc(void* pArg) override;
 
 public:
 	virtual HRESULT Initialize() override;
@@ -32,6 +33,7 @@ public:
 #endif
 
 private:
+	class CTexture* m_pNoiseTextureCom = { nullptr };
 	FOG_DESC m_Desc = {};
 	_float4 m_vFogColor = { 1.0f, 0.89f, 0.70f, 1.f };
 	_float  m_fFogStart = { 0.f};
@@ -39,7 +41,7 @@ private:
 	_float  m_fFogPowerMin = { 0.5f };
 	_float	m_fFogPowerMax = { 1.f };
 	_float  m_fSkyBoxFogPower = { 0.77f };
-
+	_uint   m_iShaderPassIdx = { 0 };
 public:
 	static CFog* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

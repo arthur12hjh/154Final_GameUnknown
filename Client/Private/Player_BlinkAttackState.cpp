@@ -43,7 +43,11 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
     if (true == isAnimFinished)
+    {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
+        m_pGameInstance->Active_DoF(false, 0.2f);
+        m_pGameInstance->SetGameSpeed(1.f);
+    }
 
     return m_tNextState;
 }

@@ -939,6 +939,14 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
+      <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample">
+      <UniqueIdentifier>{496a1f2a-adf0-4e5e-9607-ae80b22e1d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
+      <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1885,6 +1893,12 @@
     <ClInclude Include="..\Public\UILoadingBlock.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_GrabState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VelocityExample.h">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2796,6 +2810,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UILoadingBlock.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UILoadingBlock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_GrabState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VelocityExample.cpp">
+      <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

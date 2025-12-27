@@ -148,8 +148,58 @@ PS_OUT PS_DISTORTION(PS_IN In)
     return Out;
 }
 
+struct VS_OUT_MOTIONBLUR
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vDirection : TEXCOORD1;
+};
+
+struct PS_IN_MOTIONBLUR
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vDirection : TEXCOORD1;
+};
+
+struct PS_OUT_MOTIONBLUR
+{
+    float4 vDirection : SV_TARGET0;
+};
+
+VS_OUT_MOTIONBLUR VS_MAIN_VELOCITY(VS_IN In)
+{
+    VS_OUT_MOTIONBLUR Out;
+    
+    
+    /* In.vPosition * ¿ùµå * ºä * Åõ¿µ */    
+    //float4x4 == matrix
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vDirection = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vTexcoord = In.vTexcoord;
+    
+    return Out;
+}
+
+PS_OUT_MOTIONBLUR PS_MAIN_VELOCITY(PS_IN_MOTIONBLUR In)
+{
+    PS_OUT_MOTIONBLUR Out;
+
+    //¹Ù±ùÂÊÀ¸·Î »¸¾î³ª°¡´Â º§·Î½ÃÆ¼°¡ ÂïÈú °Í
+    Out.vDirection.xy = -1.f * (float2(0.5f, 0.5f) - In.vTexcoord) * 0.1f;
+    Out.vDirection.zw = float2(0.f, 0.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
+    // 0
     pass UI
     {
         SetRasterizerState(RS_Default);
@@ -159,8 +209,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
-  
+    // 1
     pass SoftEffect
     {
         SetRasterizerState(RS_Default);
@@ -170,7 +219,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SOFTEFFECT();
     }
-
+    // 2
     pass Blur
     {
         SetRasterizerState(RS_Default);
@@ -180,7 +229,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
+    // 3
     pass Distortion
     {
         SetRasterizerState(RS_Default);
@@ -189,5 +238,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION();
+    }
+    //4 
+    pass TestVelocity
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_DepthTest_ON_Write_OFF, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_VELOCITY();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_VELOCITY();
     }
 }
