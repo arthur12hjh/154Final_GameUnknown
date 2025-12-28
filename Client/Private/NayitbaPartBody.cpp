@@ -62,7 +62,7 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
     if (m_isDeadEffect)
     {
-        CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
+        CNaytiba* Naytiba = static_cast<CNaytiba*>(m_pParent);
         if (0 >= m_fDeadTime && m_bisSetDeadEffect) {
 
             if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
@@ -447,7 +447,7 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
         TEXT("Com_RimLight"), reinterpret_cast<CComponent**>(&m_pRimLight), &m_MonsterLimLightDesc)))
         return E_FAIL;
 
-    auto pNaytiba = static_cast<CNayitba*>(m_pParent);
+    auto pNaytiba = static_cast<CNaytiba*>(m_pParent);
     auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
     if (pNaytibaInitData)
     {
@@ -462,6 +462,12 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
                 TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
                 return E_FAIL;
 
+            m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+
+            m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
             m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
         }
     }
@@ -522,6 +528,19 @@ HRESULT CNayitbaPartBody::End_ShaderResources()
     if (FAILED(m_pShaderCom->Bind_RawValue("g_IsFade", &bIsFlag, sizeof(_bool))))
         return E_FAIL;
     return S_OK;
+}
+
+void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+    auto pCharacter = static_cast<CCharacter*>(pHitActor);
+
+    DEFAULT_DAMAGE_DESC DamageDesc = {};
+    DamageDesc.pAttacker = m_pParent;
+    DamageDesc.vHitDir = vHitDir;
+    DamageDesc.vHitPoint = vHitPoint;
+    DamageDesc.pSkillData = static_cast<CNaytiba*>(m_pParent)->GetSkillData();
+
+    pCharacter->Damaged(&DamageDesc);
 }
 
 CNayitbaPartBody* CNayitbaPartBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

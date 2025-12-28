@@ -157,6 +157,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
+    <ClInclude Include="..\public\BeatSaberFsm.h" />
+    <ClInclude Include="..\public\BeatSaber_IdleState.h" />
+    <ClInclude Include="..\public\BeatSaber_MoveState.h" />
     <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
@@ -204,6 +208,7 @@
     <ClInclude Include="..\Public\Lift_Platform.h" />
     <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
+    <ClInclude Include="..\public\BeatSaberCharacter.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
     <ClInclude Include="..\Public\MonsterDeadState.h" />
@@ -473,6 +478,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
+    <ClCompile Include="..\private\BeatSaberFsm.cpp" />
+    <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
+    <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
@@ -519,6 +528,7 @@
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
     <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
+    <ClCompile Include="..\private\BeatSaberCharacter.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
     <ClCompile Include="..\Private\MonsterDeadState.cpp" />

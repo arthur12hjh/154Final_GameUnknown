@@ -118,6 +118,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
 
+		CGameManager::GetInstance()->SavePlayerDesc();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 
@@ -133,8 +134,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning && m_bChangeLevel
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro")))
 	{
+		CGameManager::GetInstance()->SavePlayerDesc();
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 
@@ -376,7 +377,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//		return E_FAIL;
 	//}
 
-	CNayitba::NAYITBA_DESC Desc = {};
+	CNaytiba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
@@ -727,7 +728,7 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Format(std::ifstream& ifs, const _t
 		SAVEDMONSTERINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDMONSTERINFO));
 
-		CNayitba::NAYITBA_DESC Desc = {};
+		CNaytiba::NAYITBA_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		//Desc.vScale = { 1.f, 1.f, 1.f };

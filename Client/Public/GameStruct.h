@@ -18,7 +18,6 @@ namespace Client
 #define iFLAG_INTERPOLATION_NONE		0
 #define iFLAG_INTERPOLATION_LERP		(1 << 0)
 
-
 #define iFLAG_CAMERA_SOURCE_BONE        (1 << 0)
 #define iFLAG_CAMERA_SOURCE_WORLD       (1 << 1)
 #define iFLAG_CAMERA_SOURCE_TARGET      (1 << 2)
@@ -193,7 +192,7 @@ namespace Client
 		bool   isJustParryable = { false };
 
 		bool   isLinkAttackAvailable = { true };
-		class CNayitba* pLinkAttackTarget = { nullptr };
+		class CNaytiba* pLinkAttackTarget = { nullptr };
 		const _float4x4* pGrabBone = { nullptr };
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
@@ -584,4 +583,19 @@ namespace Client
 		_float4 vColor;
 		_float  fIntensity;
 	} COLORCHANGE_DEFERRED_DESC;
+
+	typedef	struct BeatSaberCharacterDesc
+	{
+		long long	iScore;
+
+		_int		iGameLife;
+		_int		iMaxGameLife;
+
+		_float		fCharacterSpeed;
+		// x : 캐릭터 최소 스피드
+		// y : 캐릭터 기본 스피드
+		// z : 캐릭터 최대 스피드
+		_float3		fBoundCharacterSpeed;
+		DIRECTION	eDirection;
+	}BEATSABER_CHARACTER_DESC;
 }

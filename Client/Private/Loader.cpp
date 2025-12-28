@@ -64,6 +64,8 @@
 #include "GorillaBehaviorTree.h"
 #include "ScarletBehaviorTree.h"
 
+
+
 #pragma endregion
 
 #pragma region CinematicModel
@@ -83,6 +85,12 @@
 #include "AISenceComponent.h"
 #include "RimLight.h"
 #include "InteractionUIBinder.h"
+#pragma endregion
+
+#pragma region BeatSaber_MiniGame
+#include "BeatSaberCharacter.h"
+#include "BeatSaberCharacterBody.h"
+#include "BeatSaberFsm.h"
 #pragma endregion
 
 #pragma region Prob
@@ -371,6 +379,23 @@ HRESULT CLoader::Loading()
 	}
 
 	break;
+	case LEVEL::BEATSABER_GAME:
+	{
+		m_strMessage = TEXT("Yeahs~  It Just Feeling Like Fudking Sex with My Sexy Girl!");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
+
+		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+			hr = Loading_For_BeatSaber();
+		else
+		{
+			while (m_pGameInstance->IsWorkThread());
+			m_strMessage = TEXT("Loading Complete");
+			m_isFinished = true;
+			hr = S_OK;
+		}
+	}
+
+	break;
 	}
 
 
@@ -640,7 +665,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma region Nayitba
 	/* For.Prototype_GameObject_Nayitba */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		CNayitba::Create(m_pDevice, m_pContext))))
+		CNaytiba::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Npc */
@@ -733,6 +758,23 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BeatSaber()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberCharacter"),
+		CBeatSaberCharacter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberCharacterBody"),
+		CBeatSaberCharacterBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_BeatSaberCharacterFsm"),
+		CBeatSaberFsm::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -2464,10 +2506,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	//if (nullptr == pProtoDesc.pPrototype)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
-
-
-	
-
 
 	return S_OK;
 }
@@ -6264,6 +6302,25 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bridge_14B_COL");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14B_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
+
+	_matrix PreTransformMatrix = {};
+
+	/* For.Prototype_Component_Model_Dororong */
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

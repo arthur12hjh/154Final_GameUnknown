@@ -15,7 +15,7 @@ class CDropComponent;
 
 struct Character_Skill_Desc;
 
-class CNayitba final : public CCharacter
+class CNaytiba final : public CCharacter
 {
 public :
 	typedef struct Nayitba_Desc : GAMEOBJECT_DESC
@@ -28,9 +28,9 @@ public :
 	}NAYITBA_DESC;
 
 private :
-	CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CNayitba(const CNayitba& Prototype);
-	virtual ~CNayitba() = default;
+	CNaytiba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CNaytiba(const CNaytiba& Prototype);
+	virtual ~CNaytiba() = default;
 
 public:
 	virtual HRESULT							Initialize_Prototype() override;
@@ -128,7 +128,7 @@ private :
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 	void									ResetBodyColor();
 
-	void									VisibleStatusUI(_float fTimeDelta);
+	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	
 #pragma region Notify Event
 	void									CreateHitBox(const AnimNotify* pNotify);
@@ -146,7 +146,7 @@ private :
 #pragma endregion
 
 public:
-	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static	CNaytiba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*			Clone(void* pArg) override;
 	virtual void					Free() override;
 };

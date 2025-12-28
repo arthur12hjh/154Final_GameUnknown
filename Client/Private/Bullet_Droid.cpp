@@ -65,13 +65,11 @@ void CBullet_Droid::Update(_float fTimeDelta)
 	{
 		m_fArcingTime.x += fTimeDelta * 5.f;
 		_vector vTargetPoint = BezierCurve(5, m_PointLists.data(), m_fArcingTime.x / m_fArcingTime.y);
-		m_pTransformCom->Set_State(STATE::POSITION, vTargetPoint);
-
-		if (m_fArcingTime.x >= m_fArcingTime.y)
-		{
+		m_pTransformCom->LookAt_Lerp(vTargetPoint + m_pTransformCom->Get_State(STATE::LOOK) * 5.f, fTimeDelta, 5.f);
 		
+		m_pTransformCom->Set_State(STATE::POSITION, vTargetPoint);
+		if (m_fArcingTime.x >= m_fArcingTime.y)
 			Set_Dead(true);
-		}
 	}
 	break;
 	}
@@ -112,7 +110,7 @@ void CBullet_Droid::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 	_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
 
 	_vector vCenterPos = (vTargetPoint + CombinedMatrix.r[3]) * 0.5f;
-	vCenterPos.m128_f32[1] += 10.f;
+	vCenterPos.m128_f32[1] += 30.f;
 	switch (m_eBulletType)
 	{
 	case BULLET_TYPE::PROJECTILE:

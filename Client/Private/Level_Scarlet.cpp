@@ -276,7 +276,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	CNayitba::NAYITBA_DESC Desc = {};
+	CNaytiba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 

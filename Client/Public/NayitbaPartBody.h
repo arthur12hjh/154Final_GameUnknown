@@ -78,6 +78,8 @@ private:
 	HRESULT												Bind_ShaderResources();
 	HRESULT												End_ShaderResources();
 
+	void												Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+
 public:
 	static		CNayitbaPartBody*						Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual		CGameObject*							Clone(void* pArg) override;

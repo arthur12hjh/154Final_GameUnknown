@@ -32,22 +32,22 @@
 #include "UIHUD.h"
 #include "UIBase.h"
 
-CNayitba::CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CNaytiba::CNaytiba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CCharacter(pDevice, pContext)
 {
 }
 
-CNayitba::CNayitba(const CNayitba& Prototype) :
+CNaytiba::CNaytiba(const CNaytiba& Prototype) :
 	CCharacter(Prototype)
 {
 }
 
-HRESULT CNayitba::Initialize_Prototype()
+HRESULT CNaytiba::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CNayitba::Initialize(void* pArg)
+HRESULT CNaytiba::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -82,7 +82,7 @@ HRESULT CNayitba::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CNayitba::Priority_Update(_float fTimeDelta)
+void CNaytiba::Priority_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
 		SetActiveMonster(true);
@@ -97,7 +97,7 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 	__super::Priority_Update(fTimeDelta);
 }
 
-void CNayitba::Update(_float fTimeDelta)
+void CNaytiba::Update(_float fTimeDelta)
 {
 	if (VISIBILITY::HIDDEN == m_eVisibility)
 		return;
@@ -143,7 +143,7 @@ void CNayitba::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 }
 
-void CNayitba::Late_Update(_float fTimeDelta)
+void CNaytiba::Late_Update(_float fTimeDelta)
 {
 	if (VISIBILITY::HIDDEN == m_eVisibility)
 		return;
@@ -182,7 +182,7 @@ void CNayitba::Late_Update(_float fTimeDelta)
 	}
 }
 
-HRESULT CNayitba::Render()
+HRESULT CNaytiba::Render()
 {
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject.second->Render();
@@ -190,7 +190,7 @@ HRESULT CNayitba::Render()
 	return S_OK;
 }
 
-HRESULT CNayitba::Render_Shadow()
+HRESULT CNaytiba::Render_Shadow()
 {
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject.second->Render_Shadow();
@@ -198,7 +198,7 @@ HRESULT CNayitba::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CNayitba::Damaged(void* pArg)
+HRESULT CNaytiba::Damaged(void* pArg)
 {
 	if (nullptr == pArg)
 		return E_FAIL;
@@ -231,7 +231,7 @@ HRESULT CNayitba::Damaged(void* pArg)
 	return S_OK;
 }
 
-HRESULT CNayitba::ActionSuccess(void* pArg)
+HRESULT CNaytiba::ActionSuccess(void* pArg)
 {
 	ResetBodyColor();
 	m_pAIController->ActionSuccess(pArg);
@@ -239,7 +239,7 @@ HRESULT CNayitba::ActionSuccess(void* pArg)
 	return S_OK;
 }
 
-HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
+HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 {
 	CNotify::NOTIFY_TYPE NotiType = CNotify::NOTIFY_TYPE(iNotiType);
 
@@ -271,7 +271,7 @@ HRESULT CNayitba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	return S_OK;
 }
 
-void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
+void CNaytiba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 {
 	switch (eRecoveryType)
 	{
@@ -313,13 +313,13 @@ void CNayitba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 	}
 }
 
-void CNayitba::PlayDeadEffect()
+void CNaytiba::PlayDeadEffect()
 {
 	m_pDropCom->ItemDrop(1);
 	m_pPartBody->Play_DeadEffect();
 }
 
-void CNayitba::Attack_Interaction(void* pArg)
+void CNaytiba::Attack_Interaction(void* pArg)
 {
 	ATK_INTERACTION_DESC* pATK_Interaction_Desc = static_cast<ATK_INTERACTION_DESC*>(pArg);
 
@@ -327,12 +327,12 @@ void CNayitba::Attack_Interaction(void* pArg)
 
 }
 
-_uint CNayitba::GetMonsterID()
+_uint CNaytiba::GetMonsterID()
 {
 	return m_iMonsterID;
 }
 
-void CNayitba::Excution()
+void CNaytiba::Excution()
 {
 	m_MonsterInfo.iCurrentHealth = 0.f;
 	m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
@@ -341,12 +341,12 @@ void CNayitba::Excution()
 
 }
 
-CGameObject* CNayitba::GetTarget()
+CGameObject* CNaytiba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
 }
 
-void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
+void CNaytiba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
 {
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
 	m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
@@ -370,7 +370,7 @@ void CNayitba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
 	}
 }
 
-const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)
+const CHARACTER_SKILL_DESC* CNaytiba::FindSkillData(_uint iTypeIndex, _uint iSkillIndex)
 {
 	if (0 > iSkillIndex || (_uint)m_MonsterInfo.iAttackList[iTypeIndex].size() <= iSkillIndex)
 		return nullptr;
@@ -378,7 +378,7 @@ const CHARACTER_SKILL_DESC* CNayitba::FindSkillData(_uint iTypeIndex, _uint iSki
 	return  m_MonsterInfo.iAttackList[iTypeIndex][iSkillIndex];
 }
 
-const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeIndex)
+const CHARACTER_SKILL_DESC* CNaytiba::GetSkillData(_bool bIsRandom, _uint iTypeIndex)
 {
 	const CHARACTER_SKILL_DESC* pSkill = { nullptr };
 	if(-1 == iTypeIndex)
@@ -410,19 +410,19 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 	return pSkill;
 }
 
-void CNayitba::SetActive(_bool bIsActive)
+void CNaytiba::SetActive(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
 	SetActiveMonster(bIsActive);
 }
 
-void CNayitba::SetActive()
+void CNaytiba::SetActive()
 {
 	m_bIsActive = !m_bIsActive;
 	SetActiveMonster(m_bIsActive);
 }
 
-void CNayitba::SetActiveMonster(_bool bIsFlag)
+void CNaytiba::SetActiveMonster(_bool bIsFlag)
 {
 	if (bIsFlag)
 	{
@@ -436,24 +436,24 @@ void CNayitba::SetActiveMonster(_bool bIsFlag)
 	}
 }
 
-void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
+void CNaytiba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
 	m_iComboCount = 0;
 	m_iRepulseCount = 0;
 }
 
-void CNayitba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
+void CNaytiba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
 	m_eExcution = eExcution;
 }
 
-void CNayitba::EnablePhysxController(_bool bEnable)
+void CNaytiba::EnablePhysxController(_bool bEnable)
 {
 	m_pCCT->Set_CCTCollision(bEnable);
 }
 
-_bool CNayitba::bIsParryHitReaction()
+_bool CNaytiba::bIsParryHitReaction()
 {
 	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxComboCount)
 		return false;
@@ -464,7 +464,7 @@ _bool CNayitba::bIsParryHitReaction()
 	return false;
 }
 
-_bool CNayitba::bIsRepulseHitReaction()
+_bool CNaytiba::bIsRepulseHitReaction()
 {
 	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxRepulseCount)
 		return false;
@@ -478,18 +478,18 @@ _bool CNayitba::bIsRepulseHitReaction()
 	return false;
 }
 
-NAYITBA_EXECUTION_TYPE CNayitba::bIsThesholdAction()
+NAYITBA_EXECUTION_TYPE CNaytiba::bIsThesholdAction()
 {
 	return m_eExcution;
 }
 
-CAIController* CNayitba::GetController()
+CAIController* CNaytiba::GetController()
 {
 	Safe_AddRef(m_pAIController);
 	return m_pAIController;
 }
 
-void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
+void CNaytiba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)
 {
 	if (strPartTag.empty())
 	{
@@ -500,7 +500,7 @@ void CNayitba::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectT
 	}
 }
 
-void CNayitba::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+void CNaytiba::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
 {
 	auto pPartObject = Find_PartObject(strPartTag);
 	if (nullptr == pPartObject)
@@ -509,7 +509,7 @@ void CNayitba::Activate_PartObject_Collider(const _wstring& strPartTag, const _w
 	pPartObject->Activate_PartObject_Collider(strColliderTag, NotifyRef);
 }
 
-HRESULT CNayitba::Ready_CharacterData()
+HRESULT CNaytiba::Ready_CharacterData()
 {
 	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
 	if (nullptr != pNayitbaInfo)
@@ -559,7 +559,7 @@ HRESULT CNayitba::Ready_CharacterData()
 	return S_OK;
 }
 
-HRESULT CNayitba::ADD_Components()
+HRESULT CNaytiba::ADD_Components()
 {
 	/* Com_Collider_AABB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
@@ -610,7 +610,7 @@ HRESULT CNayitba::ADD_Components()
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
 		SenceComDesc.fAiSearchRadius = 360.f;
-		SenceComDesc.fAiTargetSearchDistance = 20.f;
+		SenceComDesc.fAiTargetSearchDistance = 30.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 
 		/* Prototype_Component_TargetComponent */
@@ -638,7 +638,7 @@ HRESULT CNayitba::ADD_Components()
 		}
 		else
 			SenceComDesc.fAiSearchRadius = 360.f;
-		SenceComDesc.fAiTargetSearchDistance = 10.f;
+		SenceComDesc.fAiTargetSearchDistance = 20.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 
 		/* Prototype_Component_TargetComponent */
@@ -649,7 +649,6 @@ HRESULT CNayitba::ADD_Components()
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
 		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
-		
 	}
 
 	/* Com_CCT */
@@ -681,7 +680,7 @@ HRESULT CNayitba::ADD_Components()
 	return S_OK;
 }
 
-HRESULT CNayitba::ADD_PartObjects()
+HRESULT CNaytiba::ADD_PartObjects()
 {
 	WCHAR	ModelProtoType[MAX_PATH] = {};
 	CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szModelPrototype, ModelProtoType);
@@ -734,27 +733,32 @@ HRESULT CNayitba::ADD_PartObjects()
 	return S_OK;
 }
 
-void CNayitba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
+void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 {
 	m_MonsterInfo.eNaytibaState = eState;
 
-	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	if (NAYTIBA_STATE::BATTLE == eState)
 	{
-		m_pAISenceCom->Add_SenceTargetObject(pTarget);
+		if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+		{
+			m_pAISenceCom->Add_SenceTargetObject(pTarget);
 
-		CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-		if(pUIHUD)
-			pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
+			CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+			if (pUIHUD)
+				pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
-		Safe_Release(pUIHUD);
+			Safe_Release(pUIHUD);
+		}
+		else
+			VisibleStatusUI(0.f);
 	}
 	else
 	{
-		VisibleStatusUI(0.f);
+		VisibleStatusUI(0.f, true);
 	}
 }
 
-void CNayitba::ResetBodyColor()
+void CNaytiba::ResetBodyColor()
 {
 	if (false == m_bIsActive)
 		m_bIsActive = true;
@@ -762,9 +766,9 @@ void CNayitba::ResetBodyColor()
 	m_pPartBody->SetPart_BodyColor(false);
 }
 
-void CNayitba::VisibleStatusUI(_float fTimeDelta)
+void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)
 {
-	if (0 >= m_MonsterInfo.iCurrentHealth)
+	if (0 >= m_MonsterInfo.iCurrentHealth || bIsForce)
 	{
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
@@ -805,7 +809,7 @@ void CNayitba::VisibleStatusUI(_float fTimeDelta)
 	
 }
 
-_bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
+_bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 {
 	if (nullptr == pDamageDesc || nullptr == pDamageDesc->pSkillData)
 		return false;
@@ -885,7 +889,7 @@ _bool CNayitba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	return true;
 }
 
-_bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
+_bool CNaytiba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float fDamageReductionRate)
 {
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
@@ -939,7 +943,7 @@ _bool CNayitba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 	return true;
 }
 
-void CNayitba::CreateHitBox(const AnimNotify* pNotify)
+void CNaytiba::CreateHitBox(const AnimNotify* pNotify)
 {
 	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
 	HitBoxDesc.pAttacker = this;
@@ -984,7 +988,7 @@ void CNayitba::CreateHitBox(const AnimNotify* pNotify)
 	m_iComboCount++;
 }
 
-void CNayitba::SpawnObject(const AnimNotify* pNotify)
+void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 {
 	// 여기서 파트오브젝트로 만들고 파트오브젝트업데이트에서 소켓에 붙여서
 	// 랜더링하다가 특정 Shoot 함수가 들어오면 발사하자
@@ -1056,7 +1060,7 @@ void CNayitba::SpawnObject(const AnimNotify* pNotify)
 		
 }
 
-void CNayitba::ShootProjectile(const AnimNotify* pNotify)
+void CNaytiba::ShootProjectile(const AnimNotify* pNotify)
 {
 	// 여기서 소유하고 있는 Projectile을 모두 발사한다.
 	// pNotify->iNumData01; <- true : 활성화
@@ -1073,7 +1077,7 @@ void CNayitba::ShootProjectile(const AnimNotify* pNotify)
 	m_pBulletList.clear();
 }
 
-void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
+void CNaytiba::Attack_Interaction(const AnimNotify* pNotify)
 {
 	auto pTarget = m_pTargetCom->GetTarget();
 	if (nullptr == pTarget || nullptr == pNotify)
@@ -1093,7 +1097,7 @@ void CNayitba::Attack_Interaction(const AnimNotify* pNotify)
 	static_cast<CCharacter*>(pTarget)->Attack_Interaction(&ATK_InteractionDesc);
 }
 
-void CNayitba::Change_Color(const AnimNotify* pNotify)
+void CNaytiba::Change_Color(const AnimNotify* pNotify)
 {
 	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
 	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
@@ -1107,9 +1111,9 @@ void CNayitba::Change_Color(const AnimNotify* pNotify)
 	m_pPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
 }
 
-CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CNaytiba* CNaytiba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CNayitba* pNayitba = new CNayitba(pDevice, pContext);
+	CNaytiba* pNayitba = new CNaytiba(pDevice, pContext);
 	if (FAILED(pNayitba->Initialize_Prototype()))
 	{
 		Safe_Release(pNayitba);
@@ -1118,9 +1122,9 @@ CNayitba* CNayitba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pNayitba;
 }
 
-CGameObject* CNayitba::Clone(void* pArg)
+CGameObject* CNaytiba::Clone(void* pArg)
 {
-	CNayitba* pNayitba = new CNayitba(*this);
+	CNaytiba* pNayitba = new CNaytiba(*this);
 	if (FAILED(pNayitba->Initialize(pArg)))
 	{
 		Safe_Release(pNayitba);
@@ -1129,7 +1133,7 @@ CGameObject* CNayitba::Clone(void* pArg)
 	return pNayitba;
 }
 
-void CNayitba::Free()
+void CNaytiba::Free()
 {
 	__super::Free();
 

@@ -3,7 +3,7 @@
 #include "Task.h"
 
 NS_BEGIN(Client)
-class CNayitba;
+class CNaytiba;
 class CBossBlackBoard;
 
 struct Default_Damage_Desc;
@@ -22,7 +22,7 @@ public:
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
 private:
-	CNayitba*							m_pOwner = { nullptr };
+	CNaytiba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 
 	string								m_szAnimationName = {};

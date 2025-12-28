@@ -939,7 +939,7 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
       <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
     </Filter>
@@ -954,9 +954,27 @@
     </Filter>
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Droid">
       <UniqueIdentifier>{69218c18-b67a-4d5c-8849-034308270384}</UniqueIdentifier>
-   </Filter>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
       <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter">
+      <UniqueIdentifier>{29e914e0-158a-4a36-9ff2-5c9b2662015c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM">
+      <UniqueIdentifier>{5c3084bf-4167-490a-bdf7-9f0d48c53159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State">
+      <UniqueIdentifier>{b48a420e-3bbc-4c8a-b785-c09b14c8f0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle">
+      <UniqueIdentifier>{b3b90fc6-5fe8-449e-b7af-bdd641daebf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move">
+      <UniqueIdentifier>{74a24f55-00c4-464e-aa38-ee55979a1883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
+      <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1918,6 +1936,21 @@
     <ClInclude Include="..\public\Virtual_Wall.h">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacter.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberFsm.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_IdleState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_MoveState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacterBody.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2844,6 +2877,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Virtual_Wall.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacter.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberFsm.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_IdleState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_MoveState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacterBody.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

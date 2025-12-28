@@ -24,7 +24,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     // 대충 여기서 맞은 스킬따라서 분기
     // 뭐 기본스킬이면 맞았을때 공격아니면 피격모션 나오고 하는 등
     // 여기안에서 그로기 만들던가 하거나 아님 따로 상태주거나 이건
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 
     string   szAnimationName = "Result_Hit_Stand_Light";
     auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
@@ -106,7 +106,7 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
 void CMonsterHitState::Update(_float fTimeDelta)
 {
     //맞으면 여기서 들어온 스킬 따라서 분기해서 하기
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
     auto pAnimationRatio = pEntity->Get_AnimationRatio();
 
     if (0.5f >= pAnimationRatio)

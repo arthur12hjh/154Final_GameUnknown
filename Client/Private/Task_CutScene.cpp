@@ -14,7 +14,7 @@ HRESULT CTask_CutScene::Initialize_Prototype(CBehaviorTree* pOwnerTree)
     if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
         return E_FAIL;
 
-	m_pNaytiba = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+	m_pNaytiba = static_cast<CNaytiba*>(m_pOwnerTree->GetOwner());
 	auto pNaytibaInitData = m_pNaytiba->GetStaticMonsterData();
 
 	m_pBlackBoard = static_cast<CScarletBlackBoard*>(pOwnerTree->GetBlackBoard());

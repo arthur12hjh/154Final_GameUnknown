@@ -18,6 +18,7 @@ namespace Client
 		LOGO,
 		GAMEPLAY,
 		SCARLET,
+		BEATSABER_GAME,
 		LEVEL_PROB,
 		END };
 }
