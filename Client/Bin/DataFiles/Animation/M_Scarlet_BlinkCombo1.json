@@ -200,6 +200,726 @@
                     0.0,
                     0.0
                 ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 60,
+                "iNumData01": 4,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 60,
+                "iNumData01": 5,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 60,
+                "iNumData01": 6,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 115,
+                "iNumData01": 4,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 115,
+                "iNumData01": 5,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 115,
+                "iNumData01": 6,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 165,
+                "iNumData01": 4,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 165,
+                "iNumData01": 5,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 165,
+                "iNumData01": 6,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 4,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 5,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 6,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-L-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 185,
+                "iNumData01": 7,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 185,
+                "iNumData01": 8,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 185,
+                "iNumData01": 9,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Play_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 45.0,
+                "fNumData02": 0.3,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 7,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 27.0,
+                "fNumData02": 0.4,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 8,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.01,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 60.0,
+                "fNumData02": 0.2,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 220,
+                "iNumData01": 9,
+                "iNumData02": 2,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Stop_LineTrail",
+                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Active_SFX",
+                "szSocketTag": "Bip001-R-Toe0",
+                "vNotifyPosition": [
+                    0.1,
+                    -0.01,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.1,
+                    0.01,
+                    0.0
+                ]
             }
         ],
         "szAnimationTag": "M_Scarlet_BlinkCombo1"

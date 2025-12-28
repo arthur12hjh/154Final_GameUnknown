@@ -29,11 +29,22 @@ HRESULT CTrailEffect::Initialize(void* pArg)
 		return E_FAIL;
 
 	CTrail::TRAILHIGHLOW TrailDesc{};
-	TrailDesc.vHigh = { 0.f, 2.f, 0.f,0.f };
-	TrailDesc.vLow = { 0.f, -2.f, 0.f,0.f };
+	TrailDesc.vHigh = { -2.f, 0.f, 0.f,0.f };
+	TrailDesc.vLow = { 2.f, 0.f, 0.f,0.f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
 		TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), &TrailDesc)))
+		return E_FAIL;
+	TrailDesc.vHigh = { -2.f, -0.1f, 0.f,0.f };
+	TrailDesc.vLow = { -2.f, 0.1f, 0.f,0.f };
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
+		TEXT("Com_Trail1"), reinterpret_cast<CComponent**>(&m_pTrail2[0]), &TrailDesc)))
+		return E_FAIL;
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
+		TEXT("Com_Trail2"), reinterpret_cast<CComponent**>(&m_pTrail2[1]), &TrailDesc)))
+		return E_FAIL;
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::TOOL), TEXT("Prototype_Component_Trail"),
+		TEXT("Com_Trail3"), reinterpret_cast<CComponent**>(&m_pTrail2[2]), &TrailDesc)))
 		return E_FAIL;
 	Refresh();
 	return S_OK;
@@ -44,8 +55,23 @@ void CTrailEffect::Update(_float fTimeDelta)
 	m_fTime += fTimeDelta;
 	m_pTransformCom->Go_Straight(fTimeDelta * m_fSpeed);
 	m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta * m_fSpeed);
-
+	
 	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta, true);
+
+	_matrix mat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	mat.r[3] += m_pTransformCom->Get_State(STATE::UP) * sinf(m_fTime * 15.f) * 0.5f;
+	mat.r[3] += m_pTransformCom->Get_State(STATE::RIGHT) * cosf(m_fTime * 15.f) * 0.5f;
+	m_pTrail2[0]->Update_Trail(mat, fTimeDelta, true);
+
+	mat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	mat.r[3] += m_pTransformCom->Get_State(STATE::UP) * sinf(m_fTime * 9.f) * 0.7f;
+	mat.r[3] += m_pTransformCom->Get_State(STATE::RIGHT) * cosf(m_fTime * 9.f) * 0.7f;
+	m_pTrail2[1]->Update_Trail(mat, fTimeDelta, true);
+
+	mat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	mat.r[3] += m_pTransformCom->Get_State(STATE::UP) * sinf(m_fTime * 20.f) * 0.4f;
+	mat.r[3] += m_pTransformCom->Get_State(STATE::RIGHT) * cosf(m_fTime * 20.f) * 0.4f;
+	m_pTrail2[2]->Update_Trail(mat, fTimeDelta, true);
 }
 
 void CTrailEffect::Late_Update(_float fTimeDelta)
@@ -54,12 +80,20 @@ void CTrailEffect::Late_Update(_float fTimeDelta)
 
 HRESULT CTrailEffect::Render(CTrailData* pTrailData)
 {
-	if (FAILED(Bind_ShaderResources(pTrailData->Get_Data())))
-		return E_FAIL;
-	if (FAILED(pTrailData->Bind_Texture(m_pShaderCom)))
-		return E_FAIL;
-	if (FAILED(m_pTrail->Render()))
-		return E_FAIL;
+	if (nullptr != m_pShaderCom) {
+		if (FAILED(Bind_ShaderResources(pTrailData->Get_Data())))
+			return E_FAIL;
+		if (FAILED(pTrailData->Bind_Texture(m_pShaderCom)))
+			return E_FAIL;
+		//if (FAILED(m_pTrail->Render()))
+		//	return E_FAIL;
+		if (FAILED(m_pTrail2[0]->Render()))
+			return E_FAIL;
+		if (FAILED(m_pTrail2[1]->Render()))
+			return E_FAIL;
+		if (FAILED(m_pTrail2[2]->Render()))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 

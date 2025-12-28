@@ -1,11 +1,11 @@
-#include "Trail.h"
+#include "WaveTrail.h"
 
-CTrail::CTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWaveTrail::CWaveTrail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
 }
 
-CTrail::CTrail(const CTrail& Prototype)
+CWaveTrail::CWaveTrail(const CWaveTrail& Prototype)
 	: CComponent(Prototype),
 	m_pIB(Prototype.m_pIB),
 	m_iNumVertices(Prototype.m_iNumVertices),
@@ -15,10 +15,10 @@ CTrail::CTrail(const CTrail& Prototype)
 	Safe_AddRef(m_pIB);
 }
 
-HRESULT CTrail::Initialize_Prototype()
+HRESULT CWaveTrail::Initialize_Prototype()
 {
-	m_iNumPositions = 50;
-	m_iNumVertices = 250;
+	m_iNumPositions = 150;
+	m_iNumVertices = 750;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
@@ -62,7 +62,7 @@ HRESULT CTrail::Initialize_Prototype()
 
 	return S_OK;
 }
-void CTrail::Initialize_Trail()
+void CWaveTrail::Initialize_WaveTrail()
 {
 	m_iNumPresent = 0;
 	m_iNumPositionPresent = 0;
@@ -71,12 +71,14 @@ void CTrail::Initialize_Trail()
 	memset(m_pPostions, 0, sizeof(_vector) * m_iNumPositions);
 }
 
-void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail)
+void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeWaveTrail)
 {
 	m_fTime += fTimeDelta;
+	m_fCumulativeTime -= fTimeDelta * 5;
 	if (m_fTime < 0.015f)
 		return;
-	if (false == bMakeTrail) {
+	if (false == bMakeWaveTrail) {
+		m_fWaveTime += m_fTime;
 		_int index = m_fTime / 0.015f;
 		m_fTime -= index * 0.015f;
 		for (_int i = 0; i < index; ++i) {
@@ -109,7 +111,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 					vHighPositions[j] = m_pPostions[i - j * 2 + 1];
 					vLowPositions[j] = m_pPostions[i - j * 2];
 				}
-		
+
 				vHighPositions[0] = vHighPositions[1];
 				vLowPositions[0] = vLowPositions[1];
 			}
@@ -119,7 +121,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 					vLowPositions[j] = m_pPostions[i - j * 2];
 				}
 			}
-		
+
 			_float fLength = XMVectorGetX(XMVector3Length(vHighPositions[2] - vHighPositions[1]));
 			_int iNum = 1;
 			if (1 < fLength)
@@ -141,11 +143,20 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		if (iNumActivatedPairs >= 2) {
 			_uint iIndexLow;
 			_uint iIndexHigh;
+			_float fPosLengh = 0.f;
 			for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
 				_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
 				iIndexLow = iIndex;
 				iIndexHigh = iIndex + 1;
 
+				if (iIndexLow + 2 < m_iNumPresent) {
+					fPosLengh += XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition))) * 0.025f;
+					_vector		vLook = XMVector3Normalize(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition));
+					_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+					_vector		vUp = XMVector3Cross(vLook, vRight);
+					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh  * m_fSpeed) * m_fPow * (iIndex / (m_iNumPresent * 0.3f)));
+					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (iIndex / (m_iNumPresent * 0.3f)));
+				}
 				m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 				m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
 			}
@@ -161,6 +172,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		}
 		return;
 	}
+	m_fWaveTime = 0.f;
 	memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
 	memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
 
@@ -195,14 +207,14 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	_vector vHighPositions[4]{};
 	_vector vLowPositions[4]{};
 	_float fValue = {};
-		if (m_iNumPositionPresent + 2 >= m_iNumPositions) {
-			m_iNumPositionPresent -= 2;
-			memmove(m_pPostions, m_pPostions + 2, sizeof(_vector) * m_iNumPositionPresent);
-		}
+	if (m_iNumPositionPresent + 2 >= m_iNumPositions) {
+		m_iNumPositionPresent -= 2;
+		memmove(m_pPostions, m_pPostions + 2, sizeof(_vector) * m_iNumPositionPresent);
+	}
 
-		m_pPostions[m_iNumPositionPresent + 1] = XMLoadFloat4(&m_vPreHighPositions[2]);
-		m_pPostions[m_iNumPositionPresent] = XMLoadFloat4(&m_vPreLowPositions[2]);
-		m_iNumPositionPresent += 2;
+	m_pPostions[m_iNumPositionPresent + 1] = XMLoadFloat4(&m_vPreHighPositions[2]);
+	m_pPostions[m_iNumPositionPresent] = XMLoadFloat4(&m_vPreLowPositions[2]);
+	m_iNumPositionPresent += 2;
 
 	m_iNumPresent = 0;
 	memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
@@ -222,6 +234,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 			}
 			vHighPositions[0] = vHighPositions[1];
 			vLowPositions[0] = vLowPositions[1];
+			m_fCumulativeTime -= XMVectorGetX(XMVector3Length(vHighPositions[2] - vHighPositions[1])) * 0.025f * m_fSpeed;
 		}
 		else {
 			for (int j = 0; j < 4; ++j) {
@@ -249,10 +262,20 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	}
 	_uint iIndexLow;
 	_uint iIndexHigh;
+	_float fPow = min(m_iNumPresent * 0.002f, 1.f);
+	_float fPosLengh = 0.f;
 	for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
 		_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
 		iIndexLow = iIndex;
 		iIndexHigh = iIndex + 1;
+		if (iIndexLow + 2 < m_iNumPresent) {
+			fPosLengh += XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition))) * 0.025f;
+			_vector		vLook = XMVector3Normalize(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition));
+			_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+			_vector		vUp = XMVector3Cross(vLook, vRight);
+			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
+			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
+		}
 
 		m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 		m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
@@ -268,7 +291,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	m_pContext->Unmap(m_pVB, 0);
 }
 
-HRESULT CTrail::Render()
+HRESULT CWaveTrail::Render()
 {
 	if (m_iNumPresent < 4) { return S_OK; }
 
@@ -287,17 +310,19 @@ HRESULT CTrail::Render()
 	return S_OK;
 }
 
-_bool CTrail::IsRenderable()
+_bool CWaveTrail::IsRenderable()
 {
 	return (m_iNumPresent < 4);
 }
 
 
-HRESULT CTrail::Initialize(void* pArg)
+HRESULT CWaveTrail::Initialize(void* pArg)
 {
-	TRAILHIGHLOW* pDesc = static_cast<TRAILHIGHLOW*>(pArg);
+	WAVETRAILHIGHLOW* pDesc = static_cast<WAVETRAILHIGHLOW*>(pArg);
 	m_vHigh = pDesc->vHigh;
 	m_vLow = pDesc->vLow;
+	m_fPow = pDesc->fPow;
+	m_fSpeed = pDesc->fSpeed;
 
 #pragma region VTX_BUFFER
 	D3D11_BUFFER_DESC VBDesc{};
@@ -315,36 +340,36 @@ HRESULT CTrail::Initialize(void* pArg)
 	}
 #pragma endregion
 
-	Initialize_Trail();
+	Initialize_WaveTrail();
 	return S_OK;
 }
 
-CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWaveTrail* CWaveTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CTrail* pInstance = new CTrail(pDevice, pContext);
+	CWaveTrail* pInstance = new CWaveTrail(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CTrail");
+		MSG_BOX("Failed to Created : CWaveTrail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CTrail* CTrail::Clone(void* pArg)
+CWaveTrail* CWaveTrail::Clone(void* pArg)
 {
-	CTrail* pInstance = new CTrail(*this);
+	CWaveTrail* pInstance = new CWaveTrail(*this);
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CTrail");
+		MSG_BOX("Failed to Cloned : CWaveTrail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CTrail::Free()
+void CWaveTrail::Free()
 {
 	__super::Free();
 

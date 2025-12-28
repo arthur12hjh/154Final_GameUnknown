@@ -392,6 +392,9 @@
     <ClInclude Include="..\Public\ReserveDeferred.h">
       <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\WaveTrail.h">
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -753,6 +756,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ReserveDeferred.cpp">
       <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\WaveTrail.cpp">
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1196,6 +1202,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\ReserveDeferred">
       <UniqueIdentifier>{c0558339-073d-42f2-834c-125a12823cb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail\WaveTrail">
+      <UniqueIdentifier>{ec785dba-5c9d-4972-a727-1bd93ed5448d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

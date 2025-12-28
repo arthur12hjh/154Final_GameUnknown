@@ -214,19 +214,25 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 	EffectDesc.fRot = _float3(XMConvertToRadians(AnimNotify.vNotifyRotation.x), XMConvertToRadians(AnimNotify.vNotifyRotation.y), XMConvertToRadians(AnimNotify.vNotifyRotation.z));
 	EffectDesc.fSize = AnimNotify.vNotifyScale.x;
 
-	if (AnimNotify.iNumData01 == 1 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
-		_float4x4 matTransform;
+	_float4x4 matTransform;
+	if ((AnimNotify.iNumData01 == 1 || AnimNotify.iNumData01 == 4) && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
 		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
 		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
 	}
 	else if (AnimNotify.iNumData01 == 2 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
-		_float4x4 matTransform;
 		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
 		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + pWorldMatrix->_42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+	}
+	if (AnimNotify.iNumData01 == 3 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
+		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.fRot = _float3(0,0,0);
+		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
 	}
 
 	_TCHAR szEffectTag[MAX_PATH];
@@ -234,7 +240,26 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 
 	CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-
+	if (AnimNotify.iNumData01 == 3) {
+		_TCHAR szPartObjectName[MAX_PATH];
+		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg08.c_str(), szPartObjectName);
+		_matrix matDir = XMLoadFloat4x4(m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr());
+		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0]);
+		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1]);
+		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2]);
+		if (0 != AnimNotify.vNotifyRotation.x)
+			pEffect->GetTransform()->Turn(pEffect->GetTransform()->Get_State(STATE::UP), XMConvertToRadians(AnimNotify.vNotifyRotation.x));
+		if (0 != AnimNotify.vNotifyRotation.y)
+			pEffect->GetTransform()->Turn(pEffect->GetTransform()->Get_State(STATE::RIGHT), XMConvertToRadians(AnimNotify.vNotifyRotation.y));
+		if (0 != AnimNotify.vNotifyRotation.z)
+			pEffect->GetTransform()->Turn(pEffect->GetTransform()->Get_State(STATE::LOOK), XMConvertToRadians(AnimNotify.vNotifyRotation.z));
+	}
+	else if (AnimNotify.iNumData01 == 4) {
+		_matrix matDir = XMLoadFloat4x4(&matTransform);
+		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0]);
+		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1]);
+		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2]);
+	}
 	if (nullptr == pEffect)
 		return E_FAIL;
 

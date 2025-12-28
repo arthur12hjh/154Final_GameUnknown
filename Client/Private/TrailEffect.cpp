@@ -24,13 +24,23 @@ HRESULT CTrailEffect::Initialize(void* pArg)
 {
     if(nullptr == pArg)
         return E_FAIL;
-    if (FAILED(__super::Initialize(pArg)))
+    if (FAILED(__super::Initialize(nullptr)))
         return E_FAIL;
 
-    /* Com_Trail */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
-        TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
-        return E_FAIL;
+    
+    TRAIL_DATA* pDesc = static_cast<TRAIL_DATA*>(pArg);
+    if (pDesc->bisLine) {
+        /* Com_Trail */
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Line_Trail"),
+            TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pWaveTrail), pArg)))
+            return E_FAIL;
+    }
+    else {
+        /* Com_Trail */
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
+            TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
+            return E_FAIL;
+    }
 
     if (FAILED(Ready_Components(pArg)))
         return E_FAIL;
@@ -80,7 +90,10 @@ HRESULT CTrailEffect::Load_Binary(const _char* szFile)
 }
 void    CTrailEffect::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail) {
     m_fTime += fTimeDelta;
-    m_pTrail->Update_Trail(matCurrentWorld, fTimeDelta, bMakeTrail);
+    if(nullptr != m_pWaveTrail)
+        m_pWaveTrail->Update_WaveTrail(matCurrentWorld, fTimeDelta, bMakeTrail);
+    else
+        m_pTrail->Update_Trail(matCurrentWorld, fTimeDelta, bMakeTrail);
     for (auto pData : m_pTrailDatas) {
         pData->Add_RenderGroup();
     }
@@ -92,8 +105,14 @@ HRESULT CTrailEffect::Render(CTrailData* pTrailData)
         return E_FAIL;
     if (FAILED(pTrailData->Bind_Texture(m_pShaderCom)))
         return E_FAIL;
-    if (FAILED(m_pTrail->Render()))
-        return E_FAIL;
+    if (nullptr != m_pWaveTrail) {
+        if (FAILED(m_pWaveTrail->Render()))
+            return E_FAIL;
+    }
+    else {
+        if (FAILED(m_pTrail->Render()))
+            return E_FAIL;
+    }
     return S_OK;
 }
 
@@ -183,6 +202,7 @@ void CTrailEffect::Free()
     __super::Free();
     Safe_Release(m_pShaderCom);
     Safe_Release(m_pTrail);
+    Safe_Release(m_pWaveTrail);
     for (auto pTrailData : m_pTrailDatas) {
         Safe_Release(pTrailData);
     }

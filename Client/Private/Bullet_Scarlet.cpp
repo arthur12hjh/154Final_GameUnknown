@@ -85,7 +85,6 @@ void CBullet_Scarlet::Late_Update(_float fTimeDelta)
 	}
 	else
 	{
-		m_pEffect->Set_Dead(true);
 		Set_Dead(true);
 	}
 }
@@ -172,7 +171,6 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
-	m_pEffect->Set_Dead(true);
 	Set_Dead(true);
 }
 
@@ -203,6 +201,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
-
-	m_pEffect->End();
+	if (nullptr != m_pEffect)
+		m_pEffect->End(true);
 }

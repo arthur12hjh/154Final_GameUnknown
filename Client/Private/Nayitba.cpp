@@ -1026,7 +1026,7 @@ void CNayitba::Change_Color(const AnimNotify* pNotify)
 {
 	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
 	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
-	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
+	// pNotify->iNumData03 : 사라질지 말지
 	if (false == pNotify->iNumData01)
 	{
 		if (false == m_bIsActive)
