@@ -54,6 +54,7 @@ public :
 	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
 
 	void							EnableTransport(_uint iAreaID);
+	const vector<TRANSPORT_DESC>*	Find_TransportData();
 	const TRANSPORT_DESC*			Find_TransportData(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
@@ -110,6 +111,7 @@ public:
 	HRESULT											Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc = nullptr);
 	HRESULT											Load_Level_CinematicObjectData(const _char* szFilePath);
 	_bool											Is_CinematicPlaying();
+	HRESULT											Skip_Cinematic();
 #pragma endregion
 
 	void											Release_GameMgr();

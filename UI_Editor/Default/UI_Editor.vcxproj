@@ -213,6 +213,7 @@
     <ClCompile Include="..\..\Client\Private\Player_DrawHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_GigasExecutionState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_GigasLinkAttackState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_GrabState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_HitState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_IdleLandingState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_IdleState.cpp" />
@@ -278,6 +279,7 @@
     <ClCompile Include="..\..\Client\Private\UILoadingBlock.cpp" />
     <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\..\Client\Private\UILockOn.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIMapSelector.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPBar.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterHPFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterShield.cpp" />

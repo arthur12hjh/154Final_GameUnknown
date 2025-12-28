@@ -1004,7 +1004,7 @@ void CUIHUD::Anim_Play(_wstring szLayerTag, _wstring szUITag, _wstring szAnimTag
 	if (AnimTag == pUI->Get_UIBase_Desc().m_AnimTags.end())
 		return;
 
-	m_pUIAnimMgr->Anim_Play(pUI, AnimTag->second, fDelay);
+	m_pUIAnimMgr->Anim_Play(pUI, szAnimTag, AnimTag->second, fDelay);
 }
 
 void CUIHUD::Anim_Stop(_wstring szLayerTag, _wstring szUITag)
@@ -1174,6 +1174,15 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 	m_WorldUIs[szPoolTag].push_back(pUI);
 
 	pUI = nullptr;
+}
+
+void CUIHUD::Reset_AllWorldUI_State()
+{
+	for (auto& pUIs : m_RentWorldUIs)
+	{
+		for (auto& pUI : pUIs.second)
+			Return_WorldUI(pUI);
+	}
 }
 
 string CUIHUD::WStringToUTF8(const _wstring& wstr)

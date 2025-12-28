@@ -80,6 +80,23 @@ void CStaticInteraction::Late_Update(_float fTimeDelta)
             
                 Safe_Release(pHUD);
             }
+            
+            if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::VENDING_MACINE) // 자판기 상호작용 처리
+            {
+                CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+                if (!pHUD)
+                {
+                    Safe_Release(pHUD);
+                    return;
+                }
+
+                if (!pHUD->Check_isOpenPopup(TEXT("UI_Map_Selector_Popup"))
+                    && pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_Map_Selector_Popup"))->IsAnimFinished(TEXT("Popup_Close")))
+                    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+            
+                Safe_Release(pHUD);
+            }
         }
         m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
       
@@ -257,7 +274,7 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
     else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
     {
         m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
-        m_pInteractionCom->Set_Duration(0.f);
+        m_pInteractionCom->Set_Duration(0.f);    
 
         if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::CORPSE) // 시체 상호작용 처리
         {
@@ -284,7 +301,21 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
             }
             Safe_Release(pHUD);
         }
-    }
+        else if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::VENDING_MACINE) // 자판기 상호작용 처리
+        {
+            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            if (!pHUD)
+            {
+                Safe_Release(pHUD);
+                return;
+            }
+
+            pHUD->Open_Popup(TEXT("UI_Map_Selector_Popup"));
+
+            Safe_Release(pHUD);
+        }
+    }    
 }
 
 HRESULT CStaticInteraction::End_OverlapCallBack()

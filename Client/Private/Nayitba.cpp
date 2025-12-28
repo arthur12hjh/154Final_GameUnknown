@@ -67,6 +67,9 @@ HRESULT CNayitba::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+		SetActiveMonster(false);
+
 	// 아래 세개중에서 하나
 	// Bip001-Spine
 	// Bip001_Spine1
@@ -76,13 +79,17 @@ HRESULT CNayitba::Initialize(void* pArg)
 	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
-	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(196.f, 55.f, 243.f, 1.f));
-
 	return S_OK;
 }
 
 void CNayitba::Priority_Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_0))
+		SetActiveMonster(true);
+
+	if (VISIBILITY::HIDDEN == m_eVisibility)
+		return;
+
 	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 
 	m_pAIController->Priority_Update(fTimeDelta);
@@ -92,6 +99,9 @@ void CNayitba::Priority_Update(_float fTimeDelta)
 
 void CNayitba::Update(_float fTimeDelta)
 {
+	if (VISIBILITY::HIDDEN == m_eVisibility)
+		return;
+
 	if (NAYTIBA_STATE::BATTLE == m_MonsterInfo.eNaytibaState)
 	{
 		if (m_pAISenceCom->IsTagetEmpty())
@@ -135,6 +145,9 @@ void CNayitba::Update(_float fTimeDelta)
 
 void CNayitba::Late_Update(_float fTimeDelta)
 {
+	if (VISIBILITY::HIDDEN == m_eVisibility)
+		return;
+
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
@@ -397,6 +410,32 @@ const CHARACTER_SKILL_DESC* CNayitba::GetSkillData(_bool bIsRandom, _uint iTypeI
 	return pSkill;
 }
 
+void CNayitba::SetActive(_bool bIsActive)
+{
+	m_bIsActive = bIsActive;
+	SetActiveMonster(bIsActive);
+}
+
+void CNayitba::SetActive()
+{
+	m_bIsActive = !m_bIsActive;
+	SetActiveMonster(m_bIsActive);
+}
+
+void CNayitba::SetActiveMonster(_bool bIsFlag)
+{
+	if (bIsFlag)
+	{
+		m_pCCT->Set_Active(true);
+		m_eVisibility = VISIBILITY::VISIBLE;
+	}
+	else
+	{
+		m_pCCT->Set_Active(false);
+		m_eVisibility = VISIBILITY::HIDDEN;
+	}
+}
+
 void CNayitba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
@@ -584,7 +623,12 @@ HRESULT CNayitba::ADD_Components()
 			return E_FAIL;
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
-		SenceComDesc.fAiSearchRadius = 60.f;
+		if (AI_TYPE::PASSIVE == m_pInitMonsterInfo->eAI_Type && 9 != m_pInitMonsterInfo->iMonsetID)
+		{
+			SenceComDesc.fAiSearchRadius = 60.f;
+		}
+		else
+			SenceComDesc.fAiSearchRadius = 360.f;
 		SenceComDesc.fAiTargetSearchDistance = 10.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 

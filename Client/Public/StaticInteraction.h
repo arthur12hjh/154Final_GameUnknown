@@ -6,9 +6,9 @@ class CModel;
 NS_END
 
 NS_BEGIN(Client)
-class CStaticInteraction final : public CProb_Interaction
+class CStaticInteraction : public CProb_Interaction
 {
-private:
+protected:
 	CStaticInteraction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CStaticInteraction(const CStaticInteraction& Prototype);
 	virtual ~CStaticInteraction() = default;
@@ -23,10 +23,9 @@ public:
 
 	virtual HRESULT						Render() override;
 
-private:
+protected:
 	CModel*								m_pModelCom = { nullptr };
-
-	_bool								m_bHasHint{ true };
+	_bool								m_bHasHint = { false };
 
 private:
 	HRESULT								ADD_Components(const PROB_INTERACTION_DESC& Desc);

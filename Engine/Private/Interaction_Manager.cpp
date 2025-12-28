@@ -73,6 +73,9 @@ void CInteraction_Manager::Update()
 void CInteraction_Manager::SetInteractionBaseObject(CGameObject* pObject)
 {
     m_pBaseObject = pObject;
+
+    if (!m_pBaseObject)
+        m_pInteractionList.clear();
 }
 
 void CInteraction_Manager::ADD_Interaction(CInteraction_Component* pInteraction_Com)

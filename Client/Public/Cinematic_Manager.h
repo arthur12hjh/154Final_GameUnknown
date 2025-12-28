@@ -33,6 +33,7 @@ public:
 
 	HRESULT						Change_MainCamera();
 
+	HRESULT						Skip_Cinematic();
 	_bool						Is_CinematicPlaying() const { return m_bIsCinematicPlaying; }
 
 private:
@@ -52,11 +53,14 @@ private:
 	_uint						m_iCurrentCinematicNodeIndex = 0;
 	CINEMATIC_DESC*				m_pCurrentCinematicDesc = { nullptr };
 	_bool						m_bIsCinematicPlaying = false;
+	_bool						m_bIsCinematicSkip = false;
 	function<void()>			m_FinishedCinematic = {nullptr};
 
 
 private:
-	void Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
+	void						Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
+
+	HRESULT						Reset_Cinematic();
 
 public:
 	static CCinematicManager* Create();

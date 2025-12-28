@@ -295,6 +295,10 @@ void CMapTool::Update(_float fTimeDelta)
 				{
 					protoTag = TEXT("Prototype_GameObject_Moon"); layerTag = TEXT("Layer_Moon");
 				}
+				else if (m_eCurrentObject == ADD_OBJECT::VIRTUAL_WALL)
+				{
+					protoTag = TEXT("Prototype_GameObject_Virtual_Wall"); layerTag = TEXT("Layer_Virtual_Wall");
+				}
 				
 				if (m_eCurrentObject == ADD_OBJECT::TERRAIN_DECREASE_RECT)
 				{
@@ -400,19 +404,19 @@ void CMapTool::Update(_float fTimeDelta)
 
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
 				{
-					vPosition += pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+					vPosition += pTransform->Get_State(STATE::LOOK) * 1.0f * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
 				{
-					vPosition -= pTransform->Get_State(STATE::LOOK) * 3.0f * fTimeDelta;
+					vPosition -= pTransform->Get_State(STATE::LOOK) * 1.0f * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
 				{
-					vPosition -= pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+					vPosition -= pTransform->Get_State(STATE::RIGHT) * 1.0f * fTimeDelta;
 				}
 				if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
 				{
-					vPosition += pTransform->Get_State(STATE::RIGHT) * 3.0f * fTimeDelta;
+					vPosition += pTransform->Get_State(STATE::RIGHT) * 1.0f * fTimeDelta;
 				}
 
 				pTransform->Set_State(STATE::POSITION, vPosition);
@@ -717,7 +721,7 @@ HRESULT CMapTool::Render()
 		const _char* modelNames[] = { "Player" };
 
 		const _char* buildingNames[] = { "StoneTile", "Inscription_L", "Inscription_R", "TombStone", "TombStoneBase1", "TombStoneBase2", "Stair", "StoneWall1", "StoneWall2",
-										 "Stone1", "Stone2", "Stone3", "Stone4", "Giwajip", "StoneLantern1", "StoneLantern2", "Giwajip2" };
+										 "Stone1", "Stone2", "Stone3", "Stone4", "Giwajip", "StoneLantern1", "StoneLantern2", "Giwajip2", "Virtual_Wall"};
 
 		const _char* environmentNames[] = { "Bamboo", "Reed", "Rock1", "Rock2", "Rock3", "Rock4", "Rock5", "Rock6", "Rock7", "Rock8",
 											"CherryBlossom1", "CherryBlossom2", "CherryBlossom3", "CherryBlossom4", "GRASS", "DRYGRASS1", "DRYGRASS2", "DRYGRASS3", "Moon"};
@@ -822,6 +826,11 @@ HRESULT CMapTool::Render()
 				{
 					m_eCurrentObject = ADD_OBJECT::GIWAJIP2;
 					m_CurrentLayerName = TEXT("Layer_Giwajip2");
+				}
+				else if (nSelectedBuilding == 17)
+				{
+					m_eCurrentObject = ADD_OBJECT::VIRTUAL_WALL;
+					m_CurrentLayerName = TEXT("Layer_Virtual_Wall");
 				}
 
 			}
@@ -1392,6 +1401,7 @@ HRESULT CMapTool::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock13")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Moon")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ofs.close();
 
@@ -1502,12 +1512,12 @@ HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock2"), TEXT("Layer_Rock2")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock3"), TEXT("Layer_Rock3")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock4"), TEXT("Layer_Rock4")))) return S_OK;
-	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Prototype_Component_Model_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock5"), TEXT("Layer_Rock5")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock6"), TEXT("Layer_Rock6")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock7"), TEXT("Layer_Rock7")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Rock8"), TEXT("Layer_Rock8")))) return S_OK;
 
-	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Prototype_Component_Model_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Bamboo"), TEXT("Layer_Bamboo")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom1"), TEXT("Layer_CherryBlossom1")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom2"), TEXT("Layer_CherryBlossom2")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CherryBlossom3"), TEXT("Layer_CherryBlossom3")))) return S_OK;
@@ -1529,6 +1539,7 @@ HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Moon"), TEXT("Layer_Moon")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ifs.close();
 

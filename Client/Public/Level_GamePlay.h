@@ -7,6 +7,8 @@
 
 NS_BEGIN(Client)
 
+class CChangeLevelEvent;
+
 class CLevel_GamePlay final : public CLevel
 {
 public:
@@ -84,11 +86,16 @@ private:
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
-
 	HRESULT Load_Light_Data();
+
+	//void	Setting_Secret_Corpse();
+
 	_float	m_fTime = 10;
-	_bool m_bChangeLevel{ false };
 	_bool m_isOverlay{ true };
+
+	CChangeLevelEvent* m_pLevelChangeEvent{ nullptr };
+	_bool m_bChangeLevel{ false };
+	_bool m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

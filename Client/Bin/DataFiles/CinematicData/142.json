@@ -31,27 +31,82 @@
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Monster"
             },
+	{
+                "eState": 3,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 1411,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter01"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 5.0,
+                "iActiveIndex": 1412,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter02"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 8.0,
+                "iActiveIndex": 1413,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter03"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 13.5,
+                "iActiveIndex": 1414,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter04"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 18.0,
+                "iActiveIndex": 1415,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter05"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 28.0,
+                "iActiveIndex": 1416,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter06"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 35.7,
+                "iActiveIndex": 1417,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter07"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 41.0,
+                "iActiveIndex": 1418,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter08"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 47.9,
+                "iActiveIndex": 1419,
+                "szObjectTag": "ActionCamera_ScarletBattleEnter09"
+            },
             {
                 "eState": 2,
-                "fTrackPosition": 56.0,
+                "fTrackPosition": 57.0,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Player"
             },
             {
                 "eState": 6,
-                "fTrackPosition": 56.0,
+                "fTrackPosition": 57.0,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
+            
             {
                 "eState": 7,
-                "fTrackPosition": 56.400001525878906,
+                "fTrackPosition": 57.400001525878906,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
             {
                 "eState": 2,
-                "fTrackPosition": 56.400001525878906,
+                "fTrackPosition": 57.400001525878906,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Monster"
             }

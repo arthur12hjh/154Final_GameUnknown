@@ -1,0 +1,152 @@
+[
+    {
+        "BonePositionTrackList": [
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            -10.0,
+            -7.0,
+            -20.0
+                ]
+            },
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.5,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            -10.0,
+            -7.0,
+            -20.0
+                ]
+            },
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.8,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            -25.0,
+            -7.0,
+            -15.0
+                ]
+            },
+            {
+                "fTangentEnd": 1.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 2.7,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            -25.0,
+            -7.0,
+            -15.0
+                ]
+            }
+        ],
+       "BoneRotationTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            0.0,
+            0.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.5,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            0.0,
+            0.0
+                ]
+            }
+        ],
+        "FOVTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 5.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 5.0,
+                "fTangentStart": 5.0,
+                "fTrackPosition": 0.2,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    30.0,
+                    30.0,
+                    30.0
+                ]
+            },
+            {
+                "fTangentEnd": 5.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.5,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    45.0,
+                    45.0,
+                    45.0
+                ]
+            }
+        ],
+        "PivotTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            5.0,
+            0.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.5,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            5.0,
+            0.0
+                ]
+            }
+        ],
+        "fBaseFOV": 45.0,
+        "iCameraAnimationFlag": 0,
+        "iCameraAnimationID": 111,
+        "szCameraAnimationName": "P_Eve_Sword_Normal_MoveBackAttack_A",
+        "vBaseBonePosition": [
+            -5.0,
+            0.0,
+            -20.0
+        ],
+        "vBaseBoneRotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "vBaseCameraPivot": [
+            0.0,
+            5.0,
+            0.0
+        ]
+    }
+]

@@ -1,21 +1,19 @@
 #include "pch.h"
 #include "Bamboo.h"
-
 #include "GameInstance.h"
 
-CBamboo::CBamboo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	CGameObject(pDevice, pContext)
+CBamboo::CBamboo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject{ pDevice, pContext }
 {
 }
 
-CBamboo::CBamboo(const CBamboo& Prototype) :
-	CGameObject(Prototype)
+CBamboo::CBamboo(const CBamboo& Prototype)
+	: CGameObject{ Prototype }
 {
 }
 
 HRESULT CBamboo::Initialize_Prototype()
 {
-
 	return S_OK;
 }
 
@@ -40,6 +38,7 @@ void CBamboo::Update(_float fTimeDelta)
 
 void CBamboo::Late_Update(_float fTimeDelta)
 {
+
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
@@ -48,17 +47,21 @@ HRESULT CBamboo::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
@@ -75,7 +78,7 @@ HRESULT CBamboo::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Shader_Instance_Model"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -84,6 +87,7 @@ HRESULT CBamboo::Ready_Components()
 
 HRESULT CBamboo::Bind_ShaderResources()
 {
+	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
@@ -97,24 +101,28 @@ HRESULT CBamboo::Bind_ShaderResources()
 
 CBamboo* CBamboo::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBamboo* pInstanceModel = new CBamboo(pDevice, pContext);
-	if (FAILED(pInstanceModel->Initialize_Prototype()))
+	CBamboo* pInstance = new CBamboo(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Safe_Release(pInstanceModel);
-		MSG_BOX("Create Fail : Instance Model");
+		MSG_BOX("Failed to Created : pGraphic_Device");
+		Safe_Release(pInstance);
 	}
-	return pInstanceModel;
+
+	return pInstance;
 }
 
 CGameObject* CBamboo::Clone(void* pArg)
 {
-	CBamboo* pInstanceModel = new CBamboo(*this);
-	if (FAILED(pInstanceModel->Initialize(pArg)))
+	CBamboo* pInstance = new CBamboo(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		Safe_Release(pInstanceModel);
-		MSG_BOX("Clone Fail : Instance Model");
+		MSG_BOX("Failed to Cloned : CBamboo");
+		Safe_Release(pInstance);
 	}
-	return pInstanceModel;
+
+	return pInstance;
 }
 
 void CBamboo::Free()

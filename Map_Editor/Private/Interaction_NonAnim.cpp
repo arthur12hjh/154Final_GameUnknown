@@ -56,7 +56,7 @@ void CInteraction_NonAnim::Late_Update(_float fTimeDelta)
 	m_pCullingCollider->UpdateColiision(worldMatrix);
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);

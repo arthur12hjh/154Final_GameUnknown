@@ -11,6 +11,6 @@ for %%f in (%*) do (
     %TEXCONV% -w 512 -h 512 -m 1 -f BC7_UNORM %%f -o %OUTDIR% -y
 )
 
-ehco 변환 완료
+echo 변환 완료
 
 pause

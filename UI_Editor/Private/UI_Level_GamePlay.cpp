@@ -68,11 +68,11 @@ void CUI_Level_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_Map_Selector_Popup"));
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_Map_Selector_Popup"));
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
 	{
