@@ -939,7 +939,7 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
       <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
       <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
     </Filter>
@@ -954,6 +954,15 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
       <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
+      <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Weapon">
+      <UniqueIdentifier>{6cf015cb-cd48-454a-b148-d84f5f731c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
+      <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1726,9 +1735,6 @@
     <ClInclude Include="..\Public\LinkAttackTester.h">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Action.h">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClInclude>
@@ -1911,6 +1917,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Virtual_Wall.h">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2656,9 +2665,6 @@
     <ClCompile Include="..\Private\LinkAttackTester.cpp">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Action.cpp">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClCompile>
@@ -2835,6 +2841,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Virtual_Wall.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

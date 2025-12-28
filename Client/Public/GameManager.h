@@ -114,6 +114,12 @@ public:
 	HRESULT											Skip_Cinematic();
 #pragma endregion
 
+	// <    > 보이는 순간 private에 있는 m_pLinkAttackTester까지 걍 지워주세요
+	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
+	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
+	// </end>
+
+
 	void											Release_GameMgr();
 
 private :
@@ -129,6 +135,8 @@ private :
 	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
 	class CPlayer*									m_pPlayer = { nullptr };
+	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
+
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
