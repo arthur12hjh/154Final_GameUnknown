@@ -14,7 +14,7 @@ HRESULT CDeco_BossPhase::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
 
-	auto pNaytiba = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+	auto pNaytiba = static_cast<CNaytiba*>(m_pOwnerTree->GetOwner());
 	auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
 
 	m_iBossMaxHealth = pNaytibaInitData->iMaxHealth;

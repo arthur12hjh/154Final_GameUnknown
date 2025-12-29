@@ -21,7 +21,7 @@ HRESULT CMonsterDeadState::Initialize(void* pArg)
 
 void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
 	m_pMonsterDefaultData = pEntity->GetStaticMonsterData();
@@ -55,7 +55,7 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 
 void CMonsterDeadState::Update(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_bool bIsFinished = pEntity->Play_Animation(fTimeDelta);
 	if (0 == m_iSectionIndex)
 	{

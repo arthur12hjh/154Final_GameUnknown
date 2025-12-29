@@ -268,6 +268,7 @@
     <ClInclude Include="..\Public\TombStoneBase1.h" />
     <ClInclude Include="..\Public\TombStoneBase2.h" />
     <ClInclude Include="..\Public\Top_Roof.h" />
+    <ClInclude Include="..\public\Virtual_Wall.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Map_Editor.h" />
     <ClInclude Include="Resource.h" />
@@ -396,6 +397,7 @@
     <ClCompile Include="..\Private\TombStoneBase1.cpp" />
     <ClCompile Include="..\Private\TombStoneBase2.cpp" />
     <ClCompile Include="..\Private\Top_Roof.cpp" />
+    <ClCompile Include="..\private\Virtual_Wall.cpp" />
     <ClCompile Include="Map_Editor.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,7 @@ HRESULT CShaderDebugger::Initialize()
     m_pVolumetricDesc = static_cast<VOLUMETRIC_DESC*>(m_pGameInstance->Get_Volumetric_Desc());
     m_pHDRDesc = static_cast<HDR_DESC*>(m_pGameInstance->Get_HDR_Desc());
 	m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
+    m_pVolumeFogDesc = static_cast<VOLUMEFOG_DESC*>(m_pGameInstance->Get_VolumeFog_Desc());
 #endif
 
     return S_OK;
@@ -34,6 +35,7 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     _bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
 
     ImGui::Begin("Shader Debugger", &bIsOpen);
+    m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
 
     if (nullptr != m_pDirectionalLightDesc)
     {
@@ -45,9 +47,6 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
         ImGui::Separator();
     }
-    else
-        m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
-
     ImGui::Text("FOG INFO");
 
     ImGui::DragFloat("Fog Start", m_pFogDesc->fFogStart, 1.f, 0.0f, 1000.0f);
@@ -57,6 +56,25 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     ImGui::DragFloat("SkyBox Fog Power", m_pFogDesc->fSkyboxFogPower, 0.01f, 0.f, 1.0f);
     ImGui::ColorEdit4("Fog Color", &m_pFogDesc->vFogColor->x);
 
+
+    ImGui::Separator();
+
+    ImGui::Text("VOLUME FOG INFO");
+    
+    ImGui::Checkbox("ACTIVE", m_pVolumeFogDesc->pActive);
+    ImGui::DragFloat("AsymmetryG", &m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG, 0.01f, -1.f, 1.f);
+    ImGui::DragFloat("Fog Density", &m_pVolumeFogDesc->pInscatterDesc->Density, 0.01f, -1.f, 1.f);
+    ImGui::DragFloat("Light Intensity", &m_pVolumeFogDesc->pInscatterDesc->Intensity, 0.01f, -1.f, 1.f);
+    //float 4·Î ¹Ù²ã¾ßÇÔ
+
+    ImGui::DragFloat4("Noise Anchor", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->NoiseAnchor), 0.01f, -1.0f, 1.0f);
+    ImGui::DragFloat("Noise Contrast", &m_pVolumeFogDesc->pInscatterDesc->NoiseContrast, 0.001f, 0.f, 1.f);
+    ImGui::DragFloat("Noise Scale", &m_pVolumeFogDesc->pInscatterDesc->NoiseScale, 0.001f, 0.f, 1.f);
+    ImGui::DragFloat("Noise Strength", &m_pVolumeFogDesc->pInscatterDesc->NoiseStrength, 0.01f, 0.f, 2.f);
+    ImGui::DragFloat("Near Plane", &m_pVolumeFogDesc->pInscatterDesc->StartDistance, 0.1f, 0.f, 250.f);
+
+    ImGui::ColorEdit4("Light Color", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightColor));
+    ImGui::DragFloat4("Light Direction", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightDirection), 0.01f, -1.f, 1.f);
 
     ImGui::Separator();
 
@@ -72,8 +90,8 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::DragFloat("SSAO Bias Max", m_pSSAODesc->fBiasMax, 0.001f, 0.0f, 2.0f);
     ImGui::DragFloat("SSAO Bias Min", m_pSSAODesc->fBiasMin, 0.001f, 0.0f, 2.0f);
-    ImGui::DragFloat("SSAO Radius Max", m_pSSAODesc->fRadiusMax, 0.01f, 0.1f, 5.0f);
-    ImGui::DragFloat("SSAO Radius Min", m_pSSAODesc->fRadiusMin, 0.01f, 0.1f, 5.0f);
+    ImGui::DragFloat("SSAO Radius Max", m_pSSAODesc->fRadiusMax, 0.001f, 0.001f, 5.0f);
+    ImGui::DragFloat("SSAO Radius Min", m_pSSAODesc->fRadiusMin, 0.001f, 0.001f, 5.0f);
     ImGui::DragFloat("SSAO Intensity", m_pSSAODesc->fIntensity, 0.01f, 0.0f, 5.0f);
 
     ImGui::Separator();

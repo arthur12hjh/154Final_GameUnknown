@@ -7,6 +7,13 @@
         "vScale": [1.0, 1.0, 1.0]
     },
     {
+        "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet",
+        "eType": 0,
+        "vPosition": [760.197, 46.912, 700.319],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
         "szObjectTag": "Prototype_GameObject_CinematicModel_Eve",
         "eType": 0,
         "vPosition": [760.197, 46.912, 700.319],

@@ -3,6 +3,11 @@
 
 #include "Player.h"
 #include "GameInstance.h"
+#include "GameManager.h"
+
+#include "LinkAttackTester.h"
+#include "PartObject.h"
+
 
 CPlayer_TestState::CPlayer_TestState()
     : CPlayerState{}
@@ -18,8 +23,14 @@ HRESULT CPlayer_TestState::Initialize(void* pArg)
     SOCKETMATRIX_DESC* pSocketMatrixDesc = static_cast<SOCKETMATRIX_DESC*>(pArg);
 
     // 고릴라 TransformMatrix를 던져줘야함
-    m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
-    m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
+    //m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
+    //m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
+
+    m_pParentTransformMatrix =
+        CGameManager::GetInstance()->Get_LinkAttackTester()->GetTransform()->Get_WorldMatrixPtr();
+    m_pSocketMatrix =
+        static_cast<CModel*>(CGameManager::GetInstance()->Get_LinkAttackTester()->Get_PartObject(TEXT("Part_Body"))->Find_Component(TEXT("Com_Model")))->Get_BoneMatrixPtr("SC_LinkTarget");
+
 
     return S_OK;
 }
@@ -35,12 +46,12 @@ void CPlayer_TestState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::TEST_STATE;
 
     // 플레이어의 애니메이션을 변경해준다.
-    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_S", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
-    //m_pPlayer->AttachBone(Gorilla, "SC_LinkTarget");
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", FALSE, 1.f, 0.f);
+    //m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", FALSE, 1.f, 0.f);
 }
 
 //상태 업데이트 함수.
-// 1. 플레이어의 애니메이션을 재생하고 (이건 상황따라 안할떄도 드물게 있어.)
+// 1. 플레이어의 애니메이션을 재생하고 (이건 상황따라 안할 떄도 드물게 있어.)
 // 2. 입력에 따른 상태를 처리하고,
 // 3. 반환값에 따라 다음 상태로의 반환을 담당한다.
 
@@ -50,14 +61,14 @@ void CPlayer_TestState::Start(void* pArg, _float fBlendRatio)
 PLAYER_TRANSITION_DESC CPlayer_TestState::Update(_float fTimeDelta)
 {
     m_isEndList[m_iAnimationIndex] = m_pPlayer->Play_Animation(fTimeDelta);
-    if (true == m_isEndList[0])
-    {
-        m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
-        m_iAnimationIndex = 1;
-    }           
+    //if (true == m_isEndList[0])
+    //{
+    //    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    //    m_iAnimationIndex = 1;
+    //}           
 
     //애니 재생이 끝났다면, Idle로 전환하는 코드
-    if (true == m_isEndList[1])
+    if (true == m_isEndList[0])
     {
         m_tNextState.isChangeMode = true;
         m_tNextState.eMode = PLAYER_MODE::BATTLE;
@@ -69,7 +80,13 @@ PLAYER_TRANSITION_DESC CPlayer_TestState::Update(_float fTimeDelta)
     for (size_t i = 0; i < 3; i++)
         SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
-    _matrix CombinedMatrix = XMMatrixRotationY(XMConvertToRadians(90.f)) * XMMatrixRotationX(XMConvertToRadians(270.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
+    //_matrix CombinedMatrix = XMMatrixRotationY(XMConvertToRadians(90.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
+    
+    // 홍련 1페이즈 링크어택 | P_Eve_Sword_Normal_LinkAttack1_Scarlet
+    _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
+    
+    // 홍련 2페이즈 링크어택 카운터 | Hit_Scarlet_GroggyCounterTry
+    //_matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
     m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
     m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);

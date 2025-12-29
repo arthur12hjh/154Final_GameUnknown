@@ -294,6 +294,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Cinematic_Gorilla")) { iCurrentIndex = 10; }
 		if (ImGui::Selectable("Tentacle")) { iCurrentIndex = 11; }
 		if (ImGui::Selectable("DroidTurret")) { iCurrentIndex = 12; }
+		if (ImGui::Selectable("NPC05")) { iCurrentIndex = 13; }
 		ImGui::EndPopup();
 	}
 
@@ -342,6 +343,9 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 12:
 			Create_Extra(TEXT("Prototype_Component_Model_TurretDroid"));
+			break;
+		case 13:
+			Create_Extra(TEXT("Prototype_Component_Model_NPC05"));
 			break;
 		}
 

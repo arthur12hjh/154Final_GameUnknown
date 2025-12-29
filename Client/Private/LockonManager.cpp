@@ -62,11 +62,11 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
     }
 
     _float fMinDist = FLT_MAX;
-    CNayitba* pBest = nullptr;
+    CNaytiba* pBest = nullptr;
 
     for (auto& pObject : *pTargets)
     {
-        CNayitba* pTarget =  dynamic_cast<CNayitba*>(pObject);
+        CNaytiba* pTarget =  dynamic_cast<CNaytiba*>(pObject);
 
         if (nullptr == pTarget || 0.f >= pTarget->GetMonsterData().iCurrentHealth)
             continue; 
@@ -79,9 +79,9 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         if (fMinDist > fDist)
         {
             fMinDist = fDist;
-            pBest = static_cast<CNayitba*>(pTarget);
+            pBest = static_cast<CNaytiba*>(pTarget);
             m_fCurrentMinDist = fMinDist;
-            m_pTarget = static_cast<CNayitba*>(pTarget);
+            m_pTarget = static_cast<CNaytiba*>(pTarget);
 
             if(m_pTarget != pTarget)
                 m_fLockonTimer = 0.f;

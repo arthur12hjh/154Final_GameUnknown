@@ -43,6 +43,7 @@
 
 #pragma region Bullet
 #include "Bullet_Rock.h"
+#include "Bullet_Droid.h"
 #include "Bullet_Scarlet.h"
 #pragma endregion
 
@@ -63,6 +64,8 @@
 #include "GorillaBehaviorTree.h"
 #include "ScarletBehaviorTree.h"
 
+
+
 #pragma endregion
 
 #pragma region CinematicModel
@@ -82,6 +85,13 @@
 #include "AISenceComponent.h"
 #include "RimLight.h"
 #include "InteractionUIBinder.h"
+#pragma endregion
+
+#pragma region BeatSaber_MiniGame
+#include "BeatSaberCharacter.h"
+#include "BeatSaberCharacterBody.h"
+#include "BeatSaberFsm.h"
+#include "Note.h"
 #pragma endregion
 
 #pragma region Prob
@@ -113,6 +123,7 @@
 #include "StoneLantern1.h"
 #include "StoneLantern2.h"
 #include "StoneTile.h"
+#include "Virtual_Wall.h"
 
 // Environment
 #include "Reed.h"
@@ -369,6 +380,23 @@ HRESULT CLoader::Loading()
 	}
 
 	break;
+	case LEVEL::BEATSABER_GAME:
+	{
+		m_strMessage = TEXT("Dororong");
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
+
+		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+			hr = Loading_For_BeatSaber();
+		else
+		{
+			while (m_pGameInstance->IsWorkThread());
+			m_strMessage = TEXT("Loading Complete");
+			m_isFinished = true;
+			hr = S_OK;
+		}
+	}
+
+	break;
 	}
 
 
@@ -493,6 +521,20 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Moon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
+	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	return S_OK;
 }
 
@@ -512,7 +554,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.fbx");
 
 	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
@@ -579,8 +621,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	// 
 	// dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Change_BoneTag("Bip001-Head", szTargetTagList);
 
-	
-
 	/* For.Prototype_Component_Collider_OBB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		COBBCollider::Create(m_pDevice, m_pContext))))
@@ -624,7 +664,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma region Nayitba
 	/* For.Prototype_GameObject_Nayitba */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		CNayitba::Create(m_pDevice, m_pContext))))
+		CNaytiba::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Npc */
@@ -672,6 +712,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma endregion
 
+	/* For.Prototype_GameObject_LinkAttackTester */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
 		CBody_LinkAttackTester::Create(m_pDevice, m_pContext))))
@@ -717,7 +762,32 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
+	return S_OK;
+}
 
+HRESULT CLoader::Loading_For_BeatSaber()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberCharacter"),
+		CBeatSaberCharacter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberCharacterBody"),
+		CBeatSaberCharacterBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_BeatSaberCharacterFsm"),
+		CBeatSaberFsm::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
+		CNote::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	Sleep(1000.f);
+
+	while (m_pGameInstance->IsWorkThread());
+	m_strMessage = TEXT("Loading Complete");
+	m_isFinished = true;
 	return S_OK;
 }
 
@@ -1085,8 +1155,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Bullet_Droid */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Bullet_Droid");
+	pProtoDesc.pPrototype = CBullet_Droid::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
 
-
+	Desc->pAddObejct.push_back(pProtoDesc);
 	/* For.Prototype_GameObject_Test_InstanceModel */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Test_InstanceModel");
 	pProtoDesc.pPrototype = CInstance_Model::Create(m_pDevice, m_pContext);
@@ -2253,8 +2328,6 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-
-
 	/* For.Prototype_GameObject_Stone2 */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Stone2");
 	pProtoDesc.pPrototype = CStone2::Create(m_pDevice, m_pContext);
@@ -2353,6 +2426,13 @@ HRESULT CLoader::Loading_For_Map_Scarlet_Building(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_Virtual_Wall */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Virtual_Wall");
+	pProtoDesc.pPrototype = CVirtual_Wall::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;
@@ -2438,10 +2518,6 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	//if (nullptr == pProtoDesc.pPrototype)
 	//	return E_FAIL;
 	//Desc->pAddObejct.push_back(pProtoDesc);
-
-
-	
-
 
 	return S_OK;
 }
@@ -5536,20 +5612,6 @@ HRESULT CLoader::Loading_For_GamePlay_Map_DesertA_Col(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 	_matrix PreTransformMatrix = {};
 
-	PreTransformMatrix = XMMatrixScaling(1.f, 1.f, 1.f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Moon");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Moon2.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	/* For.Prototype_GameObject_Moon */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Moon");
-	pProtoDesc.pPrototype = CMoon::Create(m_pDevice, m_pContext);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
 	/* For.Prototype_Component_Model_Canyon_1A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Canyon_1A_COL");
@@ -6252,6 +6314,25 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bridge_14B_COL");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14B_COL.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
+
+	_matrix PreTransformMatrix = {};
+
+	/* For.Prototype_Component_Model_Dororong */
+	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

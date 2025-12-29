@@ -74,9 +74,9 @@ HRESULT CLevel_Village::Ready_Lights()
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+	LightDesc.vDiffuse = _float4(3.f, 3.f, 3.f, 3.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
@@ -125,7 +125,7 @@ HRESULT CLevel_Village::Ready_Layer_BackGround(const _wstring& strLayerTag)
 	return S_OK;
 
 }
-
+// ³»°¡ ¸ÊÀÇ ÇÏ´Ã¿¡ ¼­°Ú´Ù.
 HRESULT CLevel_Village::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_GameObject_Terrain"),

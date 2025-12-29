@@ -825,6 +825,37 @@ HRESULT CDataManager::LoadCinematicData(void* pArg)
 
                 CinematicNodeDesc.iActiveIndex = pCinematicNodeTrack["iActiveIndex"].get<_uint>();
 
+                if (pCinematicNodeTrack.contains("CinematicIndexDataList"))
+                {
+                    for (auto& pCinematicIndexData : pCinematicNodeTrack["CinematicIndexDataList"])
+                    {
+                        CINEMATIC_INDEX_DESC CinematicIndexDesc = {};
+
+                        CinematicIndexDesc.iActiveIndex = pCinematicIndexData["iActiveIndex"].get<_uint>();
+                        strcpy_s(CinematicIndexDesc.szObjectTag, pCinematicIndexData["szObjectTag"].get<string>().c_str());
+                        CinematicIndexDesc.vPosition = {
+                            pCinematicIndexData["vPosition"][0].get<_float>(),
+                            pCinematicIndexData["vPosition"][1].get<_float>(),
+                            pCinematicIndexData["vPosition"][2].get<_float>()
+                        };
+                        CinematicIndexDesc.vRotation = {
+                            pCinematicIndexData["vRotation"][0].get<_float>(),
+                            pCinematicIndexData["vRotation"][1].get<_float>(),
+                            pCinematicIndexData["vRotation"][2].get<_float>(),
+                            pCinematicIndexData["vRotation"][3].get<_float>()
+                        };
+                        CinematicIndexDesc.vScale = {
+                            pCinematicIndexData["vScale"][0].get<_float>(),
+                            pCinematicIndexData["vScale"][1].get<_float>(),
+                            pCinematicIndexData["vScale"][2].get<_float>()
+                        };
+
+                        CinematicIndexDesc.iInputInt = pCinematicIndexData["iInputInt"].get<_int>();
+                        CinematicIndexDesc.fInputFloat = pCinematicIndexData["fInputFloat"].get<_float>();
+
+                        CinematicNodeDesc.CinematicIndexDataList.push_back(CinematicIndexDesc);
+                    }
+                }
 
                 CinematicData.CinematicNodeTrackList.push_back(CinematicNodeDesc);
             }

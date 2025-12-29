@@ -52,6 +52,7 @@ private:
 	CTexture* m_pORMTextureCom_Red = { nullptr };
 	CTexture* m_pORMTextureCom_Green = { nullptr };
 	CTexture* m_pMaskCom = { nullptr };
+	CTexture* m_pNormalTextureCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 
 	class CMapTool_Desert* m_pMaptool = { nullptr };

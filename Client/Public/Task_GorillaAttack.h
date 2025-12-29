@@ -3,7 +3,7 @@
 #include "Task.h"
 
 NS_BEGIN(Client)
-class CNayitba;
+class CNaytiba;
 class CBossBlackBoard;
 class CGorillaBehaviorTree;
 class CGameManager;
@@ -23,7 +23,7 @@ public:
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
 private :
-	CNayitba*							m_pOwner = { nullptr };
+	CNaytiba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	CGameManager*						m_pGameManager = { nullptr };
 	queue<const Character_Skill_Desc*>	m_pSkillData = { };

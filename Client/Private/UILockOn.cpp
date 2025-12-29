@@ -46,7 +46,7 @@ void CUILockOn::Update(_float fTimeDelta)
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_L))
 		m_isFinisher = false;*/
 
-	auto pMonster = dynamic_cast<CNayitba*>(m_pParent);
+	auto pMonster = dynamic_cast<CNaytiba*>(m_pParent);
 	if (pMonster)
 	{
 		if (NAYITBA_EXECUTION_TYPE::END != pMonster->bIsThesholdAction())

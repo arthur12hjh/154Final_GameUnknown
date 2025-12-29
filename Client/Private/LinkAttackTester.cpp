@@ -37,13 +37,17 @@ HRESULT CLinkAttackTester::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(741.9f, 46.912f, 637.93f, 1.f));
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(1000.f, 0.f, 200.f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 201.f, 1.f));
 	m_pBodyModelCom = static_cast<CModel*>(m_pPart_Body->Find_Component(TEXT("Com_Model")));
 
-	m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
+	m_pBodyModelCom->Set_Animation("M_Scarlet_BattleIdle01", TRUE, 1.f, 0.12f);
 
 	m_pPlayer = m_pGameManager->GetGameCharacter();
+
+	CGameManager::GetInstance()->Set_LinkAttackTester(this);
+
+	m_bIsActive = TRUE;
 
 	return S_OK;
 }
@@ -55,13 +59,30 @@ void CLinkAttackTester::Priority_Update(_float fTimeDelta)
 
 void CLinkAttackTester::Update(_float fTimeDelta)
 {
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	{
+		m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 199.f, 1.f));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_C))
+	{
+		m_pTransformCom->LookAt(XMVectorSet(999.f, 0.f, 200.f, 1.f));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_V))
+	{
+		m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 201.f, 1.f));
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
+	{
+		m_pTransformCom->LookAt(XMVectorSet(1001.f, 0.f, 200.f, 1.f));
+	}
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
 	{
 		m_bIsActive = TRUE;
 		m_iAnimationSequence = 0;
 		m_fMoveTime = 0.f;
-		m_pBodyModelCom->Set_Animation("M_Gorilla_S12_Crush", FALSE, 1.f, 0.12f, TRUE, 37.f, 0.f, TRUE, TRUE);
-		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(760.197f, 46.912f, 700.319f, 1.f));      
+		m_pBodyModelCom->Set_Animation("Hit_Sword_Normal_LinkAttack1", FALSE, 1.f, 0.12f, TRUE);
+		//m_pBodyModelCom->Set_Animation("M_Scarlet_GroggyCounter", FALSE, 1.f, 0.12f, TRUE);
 	}
 
 	if (m_bIsActive)
@@ -69,39 +90,12 @@ void CLinkAttackTester::Update(_float fTimeDelta)
 		m_fMoveTime += fTimeDelta;
 		_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
-		if (m_fMoveTime > 1.2f && m_fMoveTime < 2.8f)
-		{
-			_float fRatio = (m_fMoveTime - 1.2f) / 1.6f;
-			_vector vPosition = XMVectorLerp(XMVectorSet(760.197f, 0.f, 700.319f, 1.f), XMVectorSet(741.9f, 0.f, 637.93f, 1.f), fRatio);
-			_float fHighestPoint = 60.f;
-			_float fTime = m_fMoveTime - 1.2f;
-
-			_float fPositionY = Lerp(46.912f, 0.5f, fRatio) + 4.f * fHighestPoint * fRatio * (1.f - fRatio);
-
-			vPosition = XMVectorSetY(vPosition, fPositionY);
-
-			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
-		}
-
 		if (isFinished)
 		{
-			++m_iAnimationSequence;
-			if (m_iAnimationSequence == 3)
-			{
-				m_bIsActive = FALSE;
-			}
-			else if (m_iAnimationSequence == 1)
-			{
-				m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_NA05_01", FALSE, 1.f, 0.12f, FALSE);
-			}
-			else if (m_iAnimationSequence == 2)
-			{
-				m_pBodyModelCom->Set_Animation("M_Gorilla_S20_ParryMode", FALSE, 1.f, 0.12f, FALSE, -1.f, 34.f, TRUE, TRUE);
-				//m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.f, 2.94f, 637.f, 1.f));
-			}
+			m_pBodyModelCom->Set_Animation("M_Scarlet_BattleIdle01", TRUE, 1.f, 0.12f);
+			m_bIsActive = FALSE;
 		}
 	}
-
 
 	__super::Update(fTimeDelta);
 }
@@ -123,8 +117,8 @@ void CLinkAttackTester::Late_Update(_float fTimeDelta)
 
 HRESULT CLinkAttackTester::Render()
 {
-
-
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
 
 	return S_OK;
 }

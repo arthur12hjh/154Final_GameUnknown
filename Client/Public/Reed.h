@@ -30,6 +30,7 @@ private:
 	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pMaskCom = { nullptr };
+	CTexture* m_pNormalTexture = { nullptr };
 	class CTerrain* m_pTerrain = { nullptr };
 
 private:

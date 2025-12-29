@@ -70,6 +70,7 @@ private:
 	HRESULT Ready_Layer_Camera(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Player(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Monster(const _wstring& strLayerTag);
+	HRESULT Ready_Layer_NPC(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const _wstring& strLayerTag);
 	HRESULT Ready_Layer_Trigger(const _wstring& strLayerTag);
 
@@ -88,7 +89,7 @@ private:
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
 	HRESULT Load_Light_Data();
 
-	void	Setting_Secret_Corpse();
+	//void	Setting_Secret_Corpse();
 
 	_float	m_fTime = 10;
 	_bool m_isOverlay{ true };

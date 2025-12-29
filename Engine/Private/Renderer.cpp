@@ -23,6 +23,7 @@
 #include "SSAO.h"
 #include "Emissive.h"
 #include "ReserveDeferred.h"
+#include "VolumeFog.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -142,6 +143,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pEmissive)
 		return E_FAIL;
 
+	m_pVolumeFog = CVolumeFog::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pVolumeFog)
+		return E_FAIL;
+	
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -230,6 +235,8 @@ void CRenderer::Update(_float fTimeDelta)
 
 	m_pRadialBlur->Update(fTimeDelta);
 	m_pDepthofField->Update(fTimeDelta);
+	m_pVolumeFog->Update(fTimeDelta);
+	m_pCascadeShadow->Update(fTimeDelta);
 }
 
 void CRenderer::Update_Shadow(_float fTimeDelta)
@@ -563,6 +570,11 @@ void* CRenderer::Get_Cascade_Desc()
 	return m_pCascadeShadow->Get_Desc();
 }
 
+void* CRenderer::Get_VolumeFog_Desc()
+{
+	return m_pVolumeFog->Get_Desc();
+}
+
 HRESULT CRenderer::Add_StaticShadowObject(CGameObject* pGameObject)
 {
 	return m_pStaticShadow->Add_RenderObject(pGameObject);
@@ -889,6 +901,8 @@ void CRenderer::Render_Deferred()
 	hr = m_pDistortion->Render(m_pVIBuffer);
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
+	hr = m_pVolumeFog->Render(m_pVIBuffer);
+
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 
@@ -917,7 +931,7 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pMetaball->Bind_RenderTarget(m_pShader, "g_MetaballTexture")))
 		return;
 
-	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
+	if (FAILED(m_pVolumeFog->Bind_RenderTarget(m_pShader, "g_VolumeFogTexture")))
 		return;
 
 	if (false == m_isBloom)
@@ -950,6 +964,8 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_ScreenDeferred()
 {
+	// 여러 문제떄문에.. 디스토션은 따로 분리.
+	m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 	// DOF 먼저 적용.
 	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
 	m_pMotionBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
@@ -1207,6 +1223,7 @@ void CRenderer::Free()
 	Safe_Release(m_pRS_OcclusionQuery);
 	Safe_Release(m_pStaticShadow);
 	Safe_Release(m_pCascadeShadow);
+	Safe_Release(m_pVolumeFog);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

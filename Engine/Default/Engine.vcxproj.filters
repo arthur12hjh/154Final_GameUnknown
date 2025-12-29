@@ -392,6 +392,9 @@
     <ClInclude Include="..\Public\ReserveDeferred.h">
       <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VolumeFog.h">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -753,6 +756,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ReserveDeferred.cpp">
       <Filter>01.Utility\05.Renderer\ReserveDeferred</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VolumeFog.cpp">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1197,6 +1203,15 @@
     <Filter Include="01.Utility\05.Renderer\ReserveDeferred">
       <UniqueIdentifier>{c0558339-073d-42f2-834c-125a12823cb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\VolumeFog">
+      <UniqueIdentifier>{0dce710c-ff0b-4a1d-a6ce-811d639241a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile">
+      <UniqueIdentifier>{0210d8a5-9948-41fc-8869-d08d2c762046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Distortion\ShaderFile">
+      <UniqueIdentifier>{48b7a659-f846-4219-a41f-8617c9a4b99c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1252,6 +1267,21 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\BlackBlend\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_VolumeFog.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_InScattering.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_AccumulateScattering.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_VolumetricCommon.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

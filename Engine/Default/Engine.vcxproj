@@ -296,6 +296,7 @@ popd</Command>
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
+    <ClInclude Include="..\Public\VolumeFog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\AIController.cpp" />
@@ -418,17 +419,22 @@ popd</Command>
     <ClCompile Include="..\private\VIBuffer_Rect.cpp" />
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
+    <ClCompile Include="..\Private\VolumeFog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_AccumulateScattering.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_CombinedMatrices.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_PlayAnimation.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_InScattering.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_VolumetricCommon.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />
@@ -436,6 +442,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_MotionBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_RadialBlur.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_SSAO.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_VolumeFog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_DepthOnly.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Physx_Debug.hlsl" />
   </ItemGroup>

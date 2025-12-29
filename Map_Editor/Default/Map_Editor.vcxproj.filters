@@ -79,9 +79,6 @@
     <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Stone">
       <UniqueIdentifier>{4edbe6c4-8b51-48c9-aec6-65e35d6d839c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\StoneWall">
-      <UniqueIdentifier>{1d7e768a-dc20-4dd4-b129-2277f8e213aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Stair">
       <UniqueIdentifier>{89e5b218-9dd6-4837-bdcb-9f3296d2f610}</UniqueIdentifier>
     </Filter>
@@ -229,6 +226,15 @@
     <Filter Include="02.GameObjects\Maps\SpawnBox\Player\Monster">
       <UniqueIdentifier>{5b856671-70c2-4f1c-92e6-3af682cdf7dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Wall">
+      <UniqueIdentifier>{bb392699-142b-4a91-b883-503b806bca72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Wall\StoneWall">
+      <UniqueIdentifier>{1d7e768a-dc20-4dd4-b129-2277f8e213aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Wall\Virtual_Wall">
+      <UniqueIdentifier>{3184e327-178c-47f9-b412-54af6a261b6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -361,10 +367,10 @@
       <Filter>02.GameObjects\Maps\Scarlet\Buildings\Stone</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StoneWall1.h">
-      <Filter>02.GameObjects\Maps\Scarlet\Buildings\StoneWall</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\StoneWall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StoneWall2.h">
-      <Filter>02.GameObjects\Maps\Scarlet\Buildings\StoneWall</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\StoneWall</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TombStone.h">
       <Filter>02.GameObjects\Maps\Scarlet\Buildings\TombStone</Filter>
@@ -482,9 +488,6 @@
     <ClInclude Include="..\public\MapTool.h">
       <Filter>96.IMGUI\Map\Scarlet</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapTool_Desert.h">
-      <Filter>96.IMGUI\Map\Desert</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Building_Ruin.h">
       <Filter>02.GameObjects\Maps\Desert\Architecture\Building_Ruin</Filter>
     </ClInclude>
@@ -550,6 +553,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Monster.h">
       <Filter>02.GameObjects\Maps\SpawnBox\Player\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Virtual_Wall.h">
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\Virtual_Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTool_Desert.h">
+      <Filter>96.IMGUI\Map\Desert</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -638,10 +647,10 @@
       <Filter>02.GameObjects\Maps\Scarlet\Buildings\Stone</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StoneWall1.cpp">
-      <Filter>02.GameObjects\Maps\Scarlet\Buildings\StoneWall</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\StoneWall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StoneWall2.cpp">
-      <Filter>02.GameObjects\Maps\Scarlet\Buildings\StoneWall</Filter>
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\StoneWall</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stair.cpp">
       <Filter>02.GameObjects\Maps\Scarlet\Buildings\Stair</Filter>
@@ -856,6 +865,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Monster.cpp">
       <Filter>02.GameObjects\Maps\SpawnBox\Player\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Virtual_Wall.cpp">
+      <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\Virtual_Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

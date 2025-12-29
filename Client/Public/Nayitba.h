@@ -15,7 +15,7 @@ class CDropComponent;
 
 struct Character_Skill_Desc;
 
-class CNayitba final : public CCharacter
+class CNaytiba final : public CCharacter
 {
 public :
 	typedef struct Nayitba_Desc : GAMEOBJECT_DESC
@@ -28,9 +28,9 @@ public :
 	}NAYITBA_DESC;
 
 private :
-	CNayitba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CNayitba(const CNayitba& Prototype);
-	virtual ~CNayitba() = default;
+	CNaytiba(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CNaytiba(const CNaytiba& Prototype);
+	virtual ~CNaytiba() = default;
 
 public:
 	virtual HRESULT							Initialize_Prototype() override;
@@ -60,6 +60,8 @@ public:
 	const CHARACTER_SKILL_DESC*				FindSkillData(_uint iTypeIndex, _uint iSkillIndex);
 	const CHARACTER_SKILL_DESC*				GetSkillData(_bool bIsRandom = true, _uint iTypeIndex = -1);
 	const _float4x4*						GetLinkTargetBone() { return m_pLinkTargetBoneMatrix; }
+	void									SetActive(_bool bIsActive) override;
+	void									SetActive() override;
 	void									SetActiveMonster(_bool bIsFlag);
 
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
@@ -79,7 +81,9 @@ public:
 
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
+
 	virtual void							Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+	virtual void							Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 
 private:
 	CAISenceComponent*						m_pAISenceCom = { nullptr };
@@ -124,7 +128,7 @@ private :
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 	void									ResetBodyColor();
 
-	void									VisibleStatusUI(_float fTimeDelta);
+	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	
 #pragma region Notify Event
 	void									CreateHitBox(const AnimNotify* pNotify);
@@ -142,7 +146,7 @@ private :
 #pragma endregion
 
 public:
-	static	CNayitba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static	CNaytiba*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*			Clone(void* pArg) override;
 	virtual void					Free() override;
 };

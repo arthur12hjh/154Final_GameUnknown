@@ -21,7 +21,7 @@ HRESULT CMonsterAttackState::Initialize(void* pArg)
 
 void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	m_StaticMonsterData = pEntity->GetStaticMonsterData();
 	auto pOwnerInfo = &pEntity->GetMonsterData();
 
@@ -50,7 +50,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 
 	_vector vOwnerPos = {};
 	if (bIsRandomAttack)
-		m_pSkillData = pEntity->FindSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+		m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
 
 	ReadySetting();
 	pEntity->SetAttackData(m_pSkillData);
@@ -66,7 +66,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 void CMonsterAttackState::Update(_float fTimeDelta)
 {
 	// 여기서 공격 분기
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	SearchTargetDistance();
 
 	if (m_fDistance <= m_pSkillData->fRange)
@@ -113,6 +113,9 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 			case 9:
 				TentaclePattern(fTimeDelta);
 				break;
+			case 10:
+				DroidTurretPattern(fTimeDelta);
+				break;
 			}
 		}
 
@@ -130,14 +133,14 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 
 void CMonsterAttackState::End()
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	
 	pEntity->SetAttackData(nullptr);
 }
 
 void CMonsterAttackState::ReadySetting()
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	auto pOwnerInfo = &pEntity->GetMonsterData();
 
 	switch (m_StaticMonsterData->iMonsetID)
@@ -149,6 +152,7 @@ void CMonsterAttackState::ReadySetting()
 	case 6:
 	case 7:
 	case 9:
+	case 10:
 	{
 		_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 		_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -183,7 +187,7 @@ void CMonsterAttackState::ReadySetting()
 
 void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_float fSpeed = m_fMoveSpeed;
 	_bool bMoveAction = false;
@@ -225,7 +229,7 @@ void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 
 void CMonsterAttackState::BanaclePattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_float fSpeed = m_fMoveSpeed;
 	_bool bMoveAction = false;
@@ -279,7 +283,7 @@ void CMonsterAttackState::BanaclePattern(_float fTimeDelta)
 
 void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -360,7 +364,7 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 
 void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -456,7 +460,7 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 
 void CMonsterAttackState::SunFlowerPattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -500,7 +504,7 @@ void CMonsterAttackState::SunFlowerPattern(_float fTimeDelta)
 
 void CMonsterAttackState::Minion11Pattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -524,7 +528,7 @@ void CMonsterAttackState::Minion11Pattern(_float fTimeDelta)
 
 void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_bool bMoveAction = false;
@@ -562,6 +566,39 @@ void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
 		LerpMoveAction(fTimeDelta, 0.f);
 }
 
+void CMonsterAttackState::DroidTurretPattern(_float fTimeDelta)
+{
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
+	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
+	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+	DIRECTION eType = DIRECTION::FRONT;
+	_bool bMoveAction = false;
+
+	if (751 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 40
+		if (0.5f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.5f;
+			m_fPlayRatio = 1.f;
+			bMoveAction = true;
+		}
+	}
+	else if (753 == m_pSkillData->iSkillID)
+	{
+		// 0 ~ 122
+		if (0.3f >= fAnimPlayRatio)
+		{
+			m_fMoveAnimMaxRatio = 0.3f;
+			eType = DIRECTION::BACK;
+			bMoveAction = true;
+		}
+	}
+
+	if (bMoveAction)
+		LerpMoveAction(fTimeDelta, m_fMoveSpeed, eType);
+}
+
 void CMonsterAttackState::SearchTargetDistance()
 {
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
@@ -571,18 +608,22 @@ void CMonsterAttackState::SearchTargetDistance()
 	m_fDistance =	XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 }
 
-void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed)
+void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed, DIRECTION eType)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 
 	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
 	if (m_StaticMonsterData->fAttackRange >= m_fDistance)
 		return;
 	
-	fSpeed =  m_StaticMonsterData->fMoveSpeed  * (m_fDistance / m_StaticMonsterData->fAttackRange);
+	fSpeed = fSpeed * (m_fDistance / m_StaticMonsterData->fAttackRange);
 	//fSpeed = Clamp<_float>(fSpeed, 0.f, m_StaticMonsterData->fMoveSpeed);
-	m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
+	if(DIRECTION::FRONT == eType)
+		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
+
+	if (DIRECTION::BACK == eType)
+		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, -1.f * m_pOwner->GetTransform()->Get_State(STATE::LOOK), fSpeed);
 }
 
 _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
