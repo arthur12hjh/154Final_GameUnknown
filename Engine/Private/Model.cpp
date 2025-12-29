@@ -1089,7 +1089,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     {
         if (AnimationChanged)
             AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
-        if(m_fStartTrackPpsition > 0.f)
+        if(m_fStartTrackPosition > 0.f)
             m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
         m_isFinish = FALSE;
     }
