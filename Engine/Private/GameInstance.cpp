@@ -202,10 +202,10 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	
 		m_pFrustum->Update();
 		// ������ Frustum ������Ʈ ���Ŀ� �����ؾ���.
-		m_pRenderer->Update_Shadow(fGameSpeed);
 
 		m_pCameraManager->Update(fGameSpeed);
 
+		m_pRenderer->Update(fTimeDelta);
 		//Update �����
 #ifdef _DEBUG
 		ComputeLoopTime(GAMELOOP_TYPE::UPDATE);
@@ -246,8 +246,6 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	if (false == m_bIsPause)
 		m_pPhysx_Manager->Update(fGameSpeed); // isdead üũ�ؼ� ����
-
-	m_pRenderer->Update(fTimeDelta);
 
 	m_pThreadPool->Update_Async();
 	m_pLevel_Manager->Update(fTimeDelta);
@@ -549,8 +547,6 @@ HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
 	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
 }
 
-#ifdef _DEBUG
-
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
@@ -605,10 +601,17 @@ void* CGameInstance::Get_HDR_Desc()
 	return m_pRenderer->Get_HDR_Desc();
 }
 
+void* CGameInstance::Get_VolumeFog_Desc()
+{
+	return m_pRenderer->Get_VolumeFog_Desc();
+}
+
 void CGameInstance::Set_Fog_Desc(void* pArg)
 {
 	m_pRenderer->Set_Fog_Desc(pArg);
 }
+
+#ifdef _DEBUG
 
 void CGameInstance::BeginMarker(ID3D11DeviceContext* pContext, const _tchar* pName)
 {

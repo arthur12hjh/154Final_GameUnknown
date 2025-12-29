@@ -127,13 +127,12 @@ VS_OUT VS_MAIN_REED(VS_IN In)
     
     Out.vPosition = mul(vPosition, matWVP);
     Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vNormal = float4(0.f, 1.f, 0.f, 0.f);
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), g_WorldMatrix)).xyz;
     //Out.vWorldPos = mul(vector(In.vPosition, 1.f), matFixedRotation);
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
-
 
     return Out;
 }
@@ -191,15 +190,14 @@ PS_OUT PS_REED(PS_IN In)
     
     float2 vMaskUV;
     const float fTexelSize = 512.f;
-   
+
     vMaskUV.x = In.vOriginalWorldPos.x / fTexelSize;
     vMaskUV.y = 1.f - In.vOriginalWorldPos.z / fTexelSize;
    
     float fMaskValue = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0).r;
-   
     if (fMaskValue < 0.001f)
         discard;
-    
+
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vMtrlDiffuse.a < 0.4f)
         discard;
@@ -208,9 +206,10 @@ PS_OUT PS_REED(PS_IN In)
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
     float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
     
-    //Out.vDiffuse = float4(1.0f - fMaskValue, fMaskValue, 0.0f, 1.0f);
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
+    //노말의 크기를 줄여서 세팅함. -> SSAO가 너무 강하게 들어가서
+    //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal, 0.1f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     
@@ -231,6 +230,7 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
     
+
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
     return Out;

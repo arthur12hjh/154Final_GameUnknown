@@ -1,8 +1,8 @@
 @echo off
 
 
-set TEXCONV= "C:\Users\gimch\OneDrive\¹®¼­\GitHub\154Final_GameUnknown\Map_Editor"
-set OUTDIR=  ".\out"
+set TEXCONV="D:\Github\154Final_GameUnknown\Map_Editor\texconv.exe"
+set OUTDIR=".\out"
 
 if not exist %OUTDIR% mkdir %OUTDIR%
 

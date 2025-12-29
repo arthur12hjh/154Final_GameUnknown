@@ -311,6 +311,17 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::PLAY_SOUND:
 
             break;
+        case CINEMATICNODE_STATE::MOVE_CHARACTER:
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+            if (pObjectList != nullptr)
+            {
+                for (auto& pObject : *pObjectList)
+                {
+                    pObject->SetActive(TRUE);
+                }
+            }
+            break;
         case CINEMATICNODE_STATE::END:
 
             break;

@@ -32,6 +32,7 @@ private:
 	VOLUMETRIC_DESC* m_pVolumetricDesc = {};
 	HDR_DESC*	m_pHDRDesc = {};
 	LIGHT_DESC* m_pDirectionalLightDesc = { nullptr };
+	VOLUMEFOG_DESC* m_pVolumeFogDesc = { nullptr };
 
 	class CPonyTail_Player* m_pPonytail = { nullptr };
 

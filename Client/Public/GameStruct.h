@@ -498,7 +498,19 @@ namespace Client
 		FADE_IN,				// 6
 		FADE_OUT,				// 7
 		PLAY_SOUND,				// 8
+		MOVE_CHARACTER,			// 9
 		END };
+
+	typedef struct Cinematic_Index_Desc
+	{
+		_uint iActiveIndex;
+		_char szObjectTag[MAX_PATH];
+		_float3 vPosition;
+		_float4 vRotation;		// w = 0이면 그냥 회전. w = 1이면 LookAt
+		_float3 vScale;
+		_uint iInputInt;
+		_float fInputFloat;
+	}CINEMATIC_INDEX_DESC;
 
 	typedef struct Cinematic_Node_Desc
 	{
@@ -506,6 +518,7 @@ namespace Client
 		_float fTrackPosition;
 		_char szObjectTag[MAX_PATH];
 		_uint iActiveIndex;
+		vector<CINEMATIC_INDEX_DESC> CinematicIndexDataList;
 	}CINEMATIC_NODE_DESC;
 
 	typedef struct Cinematic_Desc

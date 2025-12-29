@@ -47,8 +47,6 @@ HRESULT CFog::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	m_pNoiseTextureCom = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/3DPerlinNoise.dds"), 1);
-
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* Target_Fog. */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Fog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.0f, 1.0f, 1.0f, 1.0f))))
@@ -57,8 +55,6 @@ HRESULT CFog::Initialize()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Fog"), TEXT("Target_Fog"))))
 		return E_FAIL;
 
-	if(FAILED(m_pNoiseTextureCom->Bind_ShaderResource(m_pShader, "g_PerlinNoiseTexture", 0)))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -147,6 +143,4 @@ CFog* CFog::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 void CFog::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pNoiseTextureCom);
 }
