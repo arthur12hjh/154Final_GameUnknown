@@ -27,7 +27,7 @@ public:
 
 	// 이거 일단 스킬데이터만 넣어주세요
 	// 다른거 넣을거 있으면 말해주고 추가하면됨
-	virtual	void					Damage(void* pArg) override;
+	virtual	HRESULT					Damage(void* pArg) override;
 	virtual void					ActionSuccess(void* pArg) override;
 
 private:

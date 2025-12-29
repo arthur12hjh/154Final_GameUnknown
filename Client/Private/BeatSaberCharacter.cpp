@@ -169,52 +169,45 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 
 void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 {
-	_bool bIsMove = { false }, bIsCrouch = { false }, bIsUpper = { false };
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		bIsUpper = true;
+	_bool bIsMove = { false };
+	if (DIRECTION::END != m_CharacterDesc.eDirection)
+		m_CharacterDesc.eDirection = DIRECTION::END;
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
-		m_CharacterDesc.eDirection = DIRECTION::BACK;
-		bIsCrouch = true;
-	}
-	else
-	{
-		if (DIRECTION::END != m_CharacterDesc.eDirection)
-			m_CharacterDesc.eDirection = DIRECTION::END;
-	}
-
-	if (false == bIsUpper)
-	{
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
-		{
-			if (bIsCrouch)
-				m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
-			else
-				m_CharacterDesc.eDirection = DIRECTION::LEFT;
-
-			bIsMove = true;
-		}
-
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
-		{
-			if (bIsCrouch)
-				m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
-			else
-				m_CharacterDesc.eDirection = DIRECTION::RIGHT;
-			bIsMove = true;
-		}
-	}
-	else
-	{
-		if(bIsCrouch)
-			m_CharacterDesc.eDirection = DIRECTION::RIGHT_FRONT;
-		else
-			m_CharacterDesc.eDirection = DIRECTION::LEFT_FRONT;
-
+		m_CharacterDesc.eDirection = DIRECTION::LEFT;
 		bIsMove = true;
 	}
 
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::LEFT_FRONT;
+		bIsMove = true;
+	}
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::RIGHT;
+		bIsMove = true;
+	}
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
+		bIsMove = true;
+	}
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::RIGHT_FRONT;
+		bIsMove = true;
+	}
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
+		bIsMove = true;
+	}
 
 	if(bIsMove)
 		m_pFsm->Change_State(TEXT("Move"));

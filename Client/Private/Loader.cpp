@@ -14,6 +14,7 @@
 #include "Sky_Scarlet.h"
 #include "AttackHitBox.h"
 
+#include "Camera_BeatSaber.h"
 #include "Effect.h"
 #include "Trail.h"
 #include "TrailData.h"
@@ -782,6 +783,10 @@ HRESULT CLoader::Loading_For_BeatSaber()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
 		CNote::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_Camera_BeatSaber"),
+		CCamera_BeatSaber::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	Sleep(1000.f);

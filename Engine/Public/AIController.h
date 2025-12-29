@@ -20,8 +20,8 @@ public:
 	virtual void					Late_Update(_float fTimeDelta) override;
 
 	virtual HRESULT					Render() override;
-	virtual void					Damage(void* pArg) {};
-	virtual void					ActionSuccess(void* pArg) {};
+	virtual HRESULT					Damage(void* pArg) { return E_FAIL; }
+	virtual void					ActionSuccess(void* pArg) {}
 
 public:
 	virtual CGameObject*			Clone(void* pArg) override;
