@@ -43,27 +43,27 @@ void CBeatSaber_MoveState::SelectEvadeAnim(CBeatSaberCharacter* pCharacter)
     switch (pCharacterDesc.eDirection)
     {
     case DIRECTION::LEFT :
-        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 30.f, 18.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 18.f);
         break;
 
     case DIRECTION::RIGHT:
-        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 10.f, 0.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 0.f);
         break;
 
     case DIRECTION::LEFT_FRONT:
-        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 40.f, 38.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 40.f, 38.f);
         break;
 
     case DIRECTION::RIGHT_FRONT:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 40.f, 38.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 40.f, 38.f);
         break;
 
     case DIRECTION::LEFT_BACK:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 30.f, 18.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 18.f);
         break;
 
     case DIRECTION::RIGHT_BACK:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 10.f, 0.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 0.f);
         break;
     }
 }

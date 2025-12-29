@@ -48,6 +48,8 @@ void CNote::Update(_float fTimeDelta)
     if (1.f < fDistance)
         m_pTransformCom->Set_State(STATE::POSITION ,XMVectorLerp(vPos, vTargetPos, fTimeDelta * m_fNoteSpeed));
 
+    m_pModelCom->Set_Animation("N_Dororong_Idle");
+    m_pModelCom->Play_Animation(fTimeDelta);
     __super::Update(fTimeDelta);
 }
 
