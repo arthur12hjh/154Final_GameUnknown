@@ -54,10 +54,14 @@ void CBeatSaberCharacter::Priority_Update(_float fTimeDelta)
 void CBeatSaberCharacter::Update(_float fTimeDelta)
 {
 	Key_Input(fTimeDelta);
+
 	m_pFsm->Update(fTimeDelta);
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
+
+	// 현재 상태와 전 프레임 상태 동기화
+	m_CharacterDesc.ePreDirection = m_CharacterDesc.eDirection;
 }
 
 void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
@@ -191,7 +195,8 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 			bIsMove = true;
 		}
-		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 		{
 			if (bIsCrouch)
 				m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
@@ -209,6 +214,7 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 		bIsMove = true;
 	}
+
 
 	if(bIsMove)
 		m_pFsm->Change_State(TEXT("Move"));
