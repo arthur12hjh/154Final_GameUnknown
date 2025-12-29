@@ -126,7 +126,6 @@ public:
 	void*				Get_Cascade_Desc();
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 
-#ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void   Set_DebugVisible(_bool isVisible);
@@ -138,9 +137,11 @@ public:
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
 	void*  Get_HDR_Desc();
-	
+	void*  Get_VolumeFog_Desc();
+
 	void	Set_Fog_Desc(void* pArg);
 
+#ifdef _DEBUG
 	//RenderDoc 전용
 	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
 	//RenderDoc 전용

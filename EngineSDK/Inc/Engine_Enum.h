@@ -41,7 +41,7 @@ namespace Engine
 								  INTERACTION,
 								  END };
 
-	enum class LIGHT_TYPE		{ POINT = 1, SPOT, DIRECTIONAL, END };
+	enum class LIGHT_TYPE		{ POINT=1, SPOT, DIRECTIONAL, VOLUMETRIC, END };
 
 	enum class MOUSEKEYSTATE	{ LBUTTON, RBUTTON, WBUTTON, XBUTTON };
 	enum class MOUSEMOVESTATE	{ HORIZONTAL, VERTICAL, W };

@@ -122,7 +122,7 @@ void CSpawner::Trigger_Event()
 
 void CSpawner::Trigger_SpawnEvent()
 {
-    CNayitba::NAYITBA_DESC SpawnDesc = {};
+    CNaytiba::NAYITBA_DESC SpawnDesc = {};
     SpawnDesc.bIsApplyTransform = true;
     SpawnDesc.vScale = { 1.f, 1.f, 1.f };
 
@@ -146,7 +146,7 @@ void CSpawner::Trigger_SpawnEvent()
             SpawnDesc.pTarget = pPlayer;
 
             auto pGameObject = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::GAMEPLAY), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), TEXT("Monster_Pool"));
-            static_cast<CNayitba*>(pGameObject)->Setting_Data(m_fTimeDelta, SpawnDesc);
+            static_cast<CNaytiba*>(pGameObject)->Setting_Data(m_fTimeDelta, SpawnDesc);
         }
     }
 

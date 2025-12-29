@@ -27,7 +27,7 @@ public:
 	void*   Get_Volumetric_Desc();
 	void*	Get_HDR_Desc();
 	void*	Get_Cascade_Desc();
-
+	void*   Get_VolumeFog_Desc();
 
 	void	Set_Fog_Desc(void* pArg);
 public:
@@ -123,6 +123,7 @@ private:
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
 	class CEmissive*					m_pEmissive = { nullptr };
+	class CVolumeFog*					m_pVolumeFog = { nullptr };
 
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };

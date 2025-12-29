@@ -8,6 +8,7 @@
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
 #include "Level_Scarlet.h"
+#include "Level_BeatSaber.h"
 
 #include "UIHUD.h"
 #include "UIPanel.h"
@@ -86,6 +87,9 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			break;
 		case LEVEL::SCARLET:
 			pNewLevel = CLevel_Scarlet::Create(m_pDevice, m_pContext, m_eNextLevelID);
+			break;
+		case LEVEL::BEATSABER_GAME:
+			pNewLevel = CLevel_BeatSaber::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
 		}
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))

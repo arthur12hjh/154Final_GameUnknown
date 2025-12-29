@@ -294,46 +294,46 @@ void CDesert_Architecture::SetCullingCollider(_uint iObjectID)
 		pCullingCollider->SetCollision({ -15.f, -19.f, -5.f }, {}, { 20.f, 21.f, 12.f }); 
 		break;
 	case 59: // Xion_Wall_1S (10, 22, 17)	TODO
-		pCullingCollider->SetCollision({ 0.f, 11.0f, 0.f }, {}, { 10.f, 22.f, 17.f }); 
+		pCullingCollider->SetCollision({ -14.f, -19.5f, -11.f }, {}, { 15.f, 21.f, 17.f }); 
 		break;
 	case 60: // Xion_Wall_1T (10, 22, 23)
-		pCullingCollider->SetCollision({ 0.f, 11.0f, 0.f }, {}, { 10.f, 22.f, 23.f }); 
+		pCullingCollider->SetCollision({ 6.f, -21.f, -19.f }, {}, { 10.f, 22.f, 23.f }); 
 		break;
 	case 61: // Xion_Wall_2A (85, 36, 9)
-		pCullingCollider->SetCollision({ 0.f, 18.0f, 0.f }, {}, { 85.f, 36.f, 9.f }); 
+		pCullingCollider->SetCollision({ -80.f, -34.0f, -5.f }, {}, { 84.f, 36.f, 9.f }); 
 		break;
 	case 62: // Xion_Wall_2B (85, 36, 9)
-		pCullingCollider->SetCollision({ 0.f, 18.0f, 0.f }, {}, { 85.f, 36.f, 9.f }); 
+		pCullingCollider->SetCollision({ -80.f, -34.0f, -5.f }, {}, { 84.f, 36.f, 9.f }); 
 		break;
 	case 63: // Xion_Wall_4H (25, 35, 13)
-		pCullingCollider->SetCollision({ 0.f, 17.5f, 0.f }, {}, { 25.f, 35.f, 13.f }); 
+		pCullingCollider->SetCollision({ 0.f, 33.f, -2.f }, {}, { 25.f, 35.f, 13.f }); 
 		break;
 	case 64: // Xion_Wall_5A (20, 43, 11)
-		pCullingCollider->SetCollision({ 0.f, 21.5f, 0.f }, {}, { 20.f, 43.f, 11.f }); 
+		pCullingCollider->SetCollision({ 0.f, 41.5f, 0.f }, {}, { 20.f, 43.f, 11.f }); 
 		break;
 	case 65: // Xion_Wall_8A (32, 17, 4)
-		pCullingCollider->SetCollision({ 0.f, 8.5f, 0.f }, {}, { 32.f, 17.f, 4.f }); 
+		pCullingCollider->SetCollision({ 30.f, 15.f, 1.f }, {}, { 32.f, 17.f, 4.f }); 
 		break;
 	case 66: // Xion_Wall_9A (25, 13, 3)
-		pCullingCollider->SetCollision({ 0.f, 6.5f, 0.f }, {}, { 25.f, 13.f, 3.f }); 
+		pCullingCollider->SetCollision({ -22.f, 11.f, -1.f }, {}, { 25.f, 13.f, 3.f }); 
 		break;
 	case 67: // Xion_Wall_9B (10, 12, 2)
-		pCullingCollider->SetCollision({ 0.f, 6.0f, 0.f }, {}, { 10.f, 12.f, 2.f }); 
+		pCullingCollider->SetCollision({ -8.f, 11.0f, -0.5f }, {}, { 10.f, 12.f, 2.f }); 
 		break;
 	case 68: // Xion_Wall_10A (6, 17, 32)
-		pCullingCollider->SetCollision({ 0.f, 8.5f, 0.f }, {}, { 6.f, 17.f, 32.f }); 
+		pCullingCollider->SetCollision({ 0.f, 15.5f, 30.f }, {}, { 6.f, 17.f, 32.f }); 
 		break;
 	case 69: // Xion_Wall_10B (5, 17, 32)
-		pCullingCollider->SetCollision({ 0.f, 8.5f, 0.f }, {}, { 5.f, 17.f, 32.f }); 
+		pCullingCollider->SetCollision({ 1.f, 15.5f, 30.f }, {}, { 5.f, 17.f, 32.f }); 
 		break;
 	case 70: // Xion_Wall_10C (1.5, 3, 7)
-		pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 1.5f, 3.f, 7.f }); 
+		pCullingCollider->SetCollision({ 0.f, 2.5f, 5.8f }, {}, { 1.5f, 3.f, 6.5f }); 
 		break;
 	case 71: // Xion_Wall_10D (6, 2.5, 4)
-		pCullingCollider->SetCollision({ 0.f, 1.25f, 0.f }, {}, { 6.f, 2.5f, 4.f }); 
+		pCullingCollider->SetCollision({ -5.f, 2.f, -3.f }, {}, { 6.f, 2.5f, 4.f }); 
 		break;
 	case 72: // Xion_Building_3A (19, 28, 13)
-		pCullingCollider->SetCollision({ 0.f, 14.0f, 0.f }, {}, { 19.f, 28.f, 13.f }); 
+		pCullingCollider->SetCollision({ 0.f, 26.0f, 0.f }, {}, { 19.f, 28.f, 13.f }); 
 		break;
 	case 73: // Xion_Building_4A (30, 42, 38)
 		pCullingCollider->SetCollision({ 0.f, 21.0f, 0.f }, {}, { 30.f, 42.f, 38.f }); 

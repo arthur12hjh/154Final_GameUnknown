@@ -47,6 +47,7 @@ private:
 	HRESULT Loading_For_Logo();
 
 	HRESULT Loading_For_Scarlet(void* pArg);
+	HRESULT Loading_For_BeatSaber();
 
 #pragma region Scarlet
 	HRESULT	Loading_For_Scarlet();
@@ -102,6 +103,10 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertF_Col(void* pArg);
 	HRESULT Loading_For_Desert_Bridge(void* pArg);
 	HRESULT Loading_For_Desert_Bridge_Col(void* pArg);
+#pragma endregion
+
+#pragma region Beat Saber Map
+	HRESULT	Loading_For_BeatSaber_Model(void* pArg);
 #pragma endregion
 
 

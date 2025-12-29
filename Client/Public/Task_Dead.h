@@ -3,7 +3,7 @@
 #include "Task.h"
 
 NS_BEGIN(Client)
-class CNayitba;
+class CNaytiba;
 class CBossBlackBoard;
 
 class CTask_Dead : public CTask
@@ -19,7 +19,7 @@ public:
 	virtual	NODE_STATE					Update(_float fTimeDelta) override;
 
 private:
-	CNayitba*							m_pOwner = { nullptr };
+	CNaytiba*							m_pOwner = { nullptr };
 	CBossBlackBoard*					m_pBlackBoard = { nullptr };
 	_float								m_fDeadEndTime = {};
 	_bool								m_bIsDeadEffect = { false };

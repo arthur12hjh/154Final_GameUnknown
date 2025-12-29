@@ -539,7 +539,7 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDe
 		}
 		else if (m_iAnimationSequence == 2)
 		{
-			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani03", FALSE, 2.f, 0.f, FALSE);
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_AfterBattle_Eve_ani03", FALSE, 1.6f, 0.f, FALSE);
 			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.289f, 8.f, 247.987f, 1.f));
 			m_pTransformCom->LookAt(XMVectorSet(252.289f, 8.f, 247.987f, 1.f));
 		}

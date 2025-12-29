@@ -253,6 +253,16 @@ HRESULT CComputeShader::Bind_ConstBuffer(_uint iCBNum, _uint* iCBIndex)
     return S_OK;
 }
 
+HRESULT CComputeShader::Bind_ConstBuffer_Slot(_uint iSlot, ID3D11Buffer* pCB)
+{
+    if (nullptr == pCB) 
+        return E_FAIL;
+    
+    m_pContext->CSSetConstantBuffers(iSlot, 1, &pCB);
+
+    return S_OK;
+}
+
 HRESULT CComputeShader::Bind_InputBuffer(_uint iBufferNum, _uint* iInputIndex)
 {
     if (0 > iBufferNum || 8 <= iBufferNum)
@@ -287,6 +297,44 @@ HRESULT CComputeShader::Bind_OutputBuffer(_uint iBufferNum, _uint* iOutputIndex)
     return S_OK;
 }
 
+HRESULT CComputeShader::Bind_UAV(ID3D11UnorderedAccessView** pUAV)
+{
+    m_pContext->CSSetUnorderedAccessViews(0, 1, pUAV, nullptr);
+
+    return S_OK;
+}
+
+HRESULT CComputeShader::Unbind_UAV()
+{
+    ID3D11UnorderedAccessView* pUAV[1] = { nullptr };
+    m_pContext->CSSetUnorderedAccessViews(0, 1, pUAV, nullptr);
+    m_pContext->CSSetShader(nullptr, nullptr, 0);
+
+    return S_OK;
+}
+
+HRESULT CComputeShader::Bind_SRV(ID3D11ShaderResourceView** pSRV)
+{
+    m_pContext->CSSetShaderResources(0, 1, pSRV);
+
+    return S_OK;
+}
+
+HRESULT CComputeShader::Unbind_SRV()
+{
+    ID3D11UnorderedAccessView* pSRV[1] = { nullptr };
+    m_pContext->CSSetUnorderedAccessViews(0, 1, pSRV, nullptr);
+    m_pContext->CSSetShader(nullptr, nullptr, 0);
+
+    return S_OK;
+}
+
+HRESULT CComputeShader::Bind_Sampler(UINT iSlot, ID3D11SamplerState* pSamp)
+{
+    m_pContext->CSSetSamplers(iSlot, 1, &pSamp);
+    
+    return S_OK;
+}
 
 HRESULT		CComputeShader::LoadShader(const WCHAR* szShaderFilePath, const char* szStartFunName)
 {

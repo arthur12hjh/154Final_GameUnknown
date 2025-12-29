@@ -40,7 +40,7 @@ HRESULT CMonsterController::Initialize(void* pArg)
 	if(FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	auto pDefaultData = pNayitba->GetStaticMonsterData();
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
@@ -64,7 +64,7 @@ void CMonsterController::Update(_float fTimeDelta)
 	{
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 		{
-			auto pNayitba = static_cast<CNayitba*>(m_pParent);
+			auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 			if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
 			{
 				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
@@ -108,7 +108,7 @@ HRESULT CMonsterController::Render()
 
 void CMonsterController::Damage(void* pDesc)
 {
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
 
 	auto pAttackState = dynamic_cast<CMonsterAttackState *>(m_pFSM->GetCurrentState());
@@ -225,7 +225,7 @@ HRESULT CMonsterController::Ready_FSM()
 void CMonsterController::Battle_Action(_float fTimeDelta)
 {
 	// 이거 배틀상태가 아니라면 안되게 하자
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
@@ -293,7 +293,7 @@ void CMonsterController::MoveAction(_bool bIsTarget)
 
 	if (bIsTarget)
 	{
-		auto pNayitba = static_cast<CNayitba*>(m_pParent);
+		auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 		MoveStateDesc.pTarget = pNayitba->GetTarget();
 	}
 	else

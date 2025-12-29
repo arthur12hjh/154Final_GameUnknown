@@ -446,7 +446,7 @@ HRESULT CWeapon::Bind_ShaderResources()
 
 void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	CNaytiba* pNaytiba = dynamic_cast<CNaytiba*>(pHitActor);
 	if (pNaytiba)
 	{
 		DEFAULT_DAMAGE_DESC pDamageDesc = {};
@@ -479,7 +479,7 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 
 void CWeapon::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	CNaytiba* pNaytiba = dynamic_cast<CNaytiba*>(pHitActor);
 	if (pNaytiba)
 	{
 		//m_bisBlood = true;

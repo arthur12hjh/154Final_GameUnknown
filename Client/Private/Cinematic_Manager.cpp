@@ -29,7 +29,7 @@ HRESULT CCinematicManager::Initialize()
     m_iCurrentCinematicNodeIndex = 0;
     m_iCurrentCinematicID = -1;
     m_bIsCinematicPlaying = false;
-
+    m_bIsCinematicSkip = FALSE;
     return S_OK;
 }
 
@@ -37,6 +37,12 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
 {
     if (FALSE == m_bIsCinematicPlaying)
         return S_OK;
+
+    if (m_bIsCinematicSkip == TRUE)
+    {
+        Reset_Cinematic();
+        return S_OK;
+    }
 
     m_fCinematicTimer += fTimeDelta * m_pGameInstance->GetGameSpeedfRatio();
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
@@ -70,6 +76,11 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
 	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
         pCinematicObjectPair.second->Late_Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
+    }
+
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+    {
+        Skip_Cinematic();
     }
 
     return S_OK;
@@ -197,6 +208,33 @@ HRESULT CCinematicManager::Change_MainCamera()
     return S_OK;
 }
 
+HRESULT CCinematicManager::Skip_Cinematic()
+{
+    m_bIsCinematicSkip = TRUE;
+
+    return S_OK;
+}
+
+HRESULT CCinematicManager::Reset_Cinematic()
+{
+    m_bIsCinematicPlaying = FALSE;
+    m_bIsCinematicSkip = FALSE;
+    while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
+    {
+        Play_Node(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex]);
+        ++m_iCurrentCinematicNodeIndex;
+    }
+
+    m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
+    CCamera* pCamera = m_pGameInstance->GetMainCamera();
+    Safe_Release(pCamera);
+
+    if (m_FinishedCinematic)
+        m_FinishedCinematic();
+
+    return S_OK;
+}
+
 void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 {
     _tchar szText[MAX_PATH];
@@ -272,6 +310,35 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         }
         case CINEMATICNODE_STATE::PLAY_SOUND:
 
+            break;
+        case CINEMATICNODE_STATE::MOVE_CHARACTER:
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+            if (pObjectList != nullptr)
+            {
+                _int iObjectIndex = 0;
+                for (auto& pObject : *pObjectList)
+                {
+					pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vPosition), 1.f));
+
+                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
+
+                    if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 0.f)
+                    {
+                        pObject->GetTransform()->Rotation(
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.x,
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.y,
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.z);
+                    }
+					else if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 1.f)
+                    {
+                        _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation), 1.f);
+                        pObject->GetTransform()->LookAt(vLookAt);
+                    }
+                    
+                    ++iObjectIndex;
+                }
+            }
             break;
         case CINEMATICNODE_STATE::END:
 

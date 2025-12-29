@@ -53,6 +53,14 @@ sampler DefaultSampler = sampler_state
     AddressV = wrap;
 };
 
+SamplerState Noise3DSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Clamp;
+    AddressV = Clamp;
+    AddressW = Clamp;
+};
+
 sampler MirrorSampler = sampler_state
 {
     Filter = MIN_MAG_MIP_LINEAR;
