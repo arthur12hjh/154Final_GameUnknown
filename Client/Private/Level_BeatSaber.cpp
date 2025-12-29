@@ -64,7 +64,9 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
     {
-        dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+        if(m_pHUD)
+            dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
         if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY, false))))
             return;
 

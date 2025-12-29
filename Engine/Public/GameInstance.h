@@ -126,10 +126,13 @@ public:
 	void*				Get_Cascade_Desc();
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 
+#ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void   Set_DebugVisible(_bool isVisible);
 	void   Set_DebugColliderVisible(_bool isVisible);
+#endif // _DEBUG
+
 	void*  Get_DoF_Desc();
 	void*  Get_Bloom_Desc();
 	void*  Get_Fog_Desc();
