@@ -952,8 +952,29 @@
     <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
       <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Droid">
+      <UniqueIdentifier>{69218c18-b67a-4d5c-8849-034308270384}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
       <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter">
+      <UniqueIdentifier>{29e914e0-158a-4a36-9ff2-5c9b2662015c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM">
+      <UniqueIdentifier>{5c3084bf-4167-490a-bdf7-9f0d48c53159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State">
+      <UniqueIdentifier>{b48a420e-3bbc-4c8a-b785-c09b14c8f0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle">
+      <UniqueIdentifier>{b3b90fc6-5fe8-449e-b7af-bdd641daebf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move">
+      <UniqueIdentifier>{74a24f55-00c4-464e-aa38-ee55979a1883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
+      <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
       <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
@@ -963,6 +984,12 @@
     </Filter>
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
       <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\BeatSaber">
+      <UniqueIdentifier>{e7ead3ee-c3be-467c-b193-8db5cf84b3f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Note">
+      <UniqueIdentifier>{5b861a43-c873-476a-9215-e8f3ab61e90b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1915,11 +1942,35 @@
     <ClInclude Include="..\Public\VelocityExample.h">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bullet_Droid.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Virtual_Wall.h">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacter.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberFsm.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_IdleState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_MoveState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacterBody.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Body_LinkAttackTester.h">
       <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_BeatSaber.h">
+      <Filter>01.Levels\BeatSaber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Note.h">
+      <Filter>02.GameObjects\Actor\Note</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2839,11 +2890,35 @@
     <ClCompile Include="..\Private\VelocityExample.cpp">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Bullet_Droid.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Virtual_Wall.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacter.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberFsm.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_IdleState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_MoveState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacterBody.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
       <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_BeatSaber.cpp">
+      <Filter>01.Levels\BeatSaber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Note.cpp">
+      <Filter>02.GameObjects\Actor\Note</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

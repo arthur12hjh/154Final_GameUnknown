@@ -4,7 +4,7 @@
 
 NS_BEGIN(Client)
 class CScarletBlackBoard;
-class CNayitba;
+class CNaytiba;
 
 class CTask_CutScene final : public CTask
 {
@@ -20,7 +20,7 @@ public:
 
 private:
 	CScarletBlackBoard*					m_pBlackBoard = { nullptr };
-	CNayitba*							m_pNaytiba = { nullptr };
+	CNaytiba*							m_pNaytiba = { nullptr };
 
 public:
 	static	CTask_CutScene*				Create(CBehaviorTree* pOwnerTree);

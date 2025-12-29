@@ -157,9 +157,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Actor.h" />
+    <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
+    <ClInclude Include="..\public\BeatSaberFsm.h" />
+    <ClInclude Include="..\public\Level_BeatSaber.h" />
+    <ClInclude Include="..\public\BeatSaber_IdleState.h" />
+    <ClInclude Include="..\public\BeatSaber_MoveState.h" />
     <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
     <ClInclude Include="..\Public\Building_Ruin.h" />
     <ClInclude Include="..\public\Bullet.h" />
+    <ClInclude Include="..\public\Bullet_Droid.h" />
     <ClInclude Include="..\public\Bullet_Rock.h" />
     <ClInclude Include="..\public\Bullet_Scarlet.h" />
     <ClInclude Include="..\Public\CameraActionInserter.h" />
@@ -203,6 +209,7 @@
     <ClInclude Include="..\Public\Lift_Platform.h" />
     <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
+    <ClInclude Include="..\public\BeatSaberCharacter.h" />
     <ClInclude Include="..\Public\MonsterAttackState.h" />
     <ClInclude Include="..\Public\MonsterController.h" />
     <ClInclude Include="..\Public\MonsterDeadState.h" />
@@ -220,6 +227,7 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
     <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
+    <ClInclude Include="..\public\Note.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\NpcBody.h" />
     <ClInclude Include="..\public\NpcFace.h" />
@@ -472,9 +480,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Actor.cpp" />
+    <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
+    <ClCompile Include="..\private\BeatSaberFsm.cpp" />
+    <ClCompile Include="..\private\Level_BeatSaber.cpp" />
+    <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
+    <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Bullet.cpp" />
+    <ClCompile Include="..\private\Bullet_Droid.cpp" />
     <ClCompile Include="..\private\Bullet_Rock.cpp" />
     <ClCompile Include="..\private\Bullet_Scarlet.cpp" />
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
@@ -517,6 +531,7 @@
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
     <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
+    <ClCompile Include="..\private\BeatSaberCharacter.cpp" />
     <ClCompile Include="..\Private\MonsterAttackState.cpp" />
     <ClCompile Include="..\Private\MonsterController.cpp" />
     <ClCompile Include="..\Private\MonsterDeadState.cpp" />
@@ -534,6 +549,7 @@
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
     <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
+    <ClCompile Include="..\private\Note.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\NpcBody.cpp" />
     <ClCompile Include="..\private\NpcFace.cpp" />

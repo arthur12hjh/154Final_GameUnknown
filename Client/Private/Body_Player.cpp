@@ -272,7 +272,7 @@ HRESULT CBody_Player::Bind_ShaderResources()
 
 void CBody_Player::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	CNayitba* pNaytiba = dynamic_cast<CNayitba*>(pHitActor);
+	CNaytiba* pNaytiba = dynamic_cast<CNaytiba*>(pHitActor);
 	if (pNaytiba)
 	{
 		DEFAULT_DAMAGE_DESC pDamageDesc = {};

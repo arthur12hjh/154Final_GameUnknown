@@ -21,7 +21,7 @@ HRESULT CMonsterStateMimesis::Initialize(void* pArg)
 
 void CMonsterStateMimesis::Start(void* pArg, CState* pPreState)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	auto pOwnerStaticInfo = pEntity->GetStaticMonsterData();
 	m_szAnimationName = pOwnerStaticInfo->szAnimationName;
 	m_szAnimationName += "_Stanby_01";
@@ -32,7 +32,7 @@ void CMonsterStateMimesis::Start(void* pArg, CState* pPreState)
 
 void CMonsterStateMimesis::Update(_float fTimeDelta)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	pEntity->Play_Animation(fTimeDelta);
 }
 

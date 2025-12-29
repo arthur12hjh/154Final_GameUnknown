@@ -8,7 +8,7 @@ struct Character_Skill_Desc;
 class CBullet abstract : public CPartObject
 {
 public:
-	enum class BULLET_TYPE { PROJECTILE, HITSCAN, END };
+	enum class BULLET_TYPE { PROJECTILE, HITSCAN, ARCING, END };
 
 	typedef struct Bullet_Desc : public PARTOBJECT_DESC
 	{

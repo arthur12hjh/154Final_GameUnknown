@@ -44,7 +44,7 @@ private:
 	class CPlayer*				m_pPlayer			= { nullptr };
 	PLAYER_DESC*				m_pPlayerDesc		= { nullptr };
 
-	class CNayitba*				m_pTarget			= { nullptr };
+	class CNaytiba*				m_pTarget			= { nullptr };
 	_wstring					m_strMonsterLayerTag = { TEXT("Layer_Monster") };
 	_float						m_fLockonTimer		= { 0.f };
 

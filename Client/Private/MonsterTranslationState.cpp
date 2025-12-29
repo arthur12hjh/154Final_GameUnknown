@@ -21,7 +21,7 @@ HRESULT CMonsterTranslationState::Initialize(void* pArg)
 
 void CMonsterTranslationState::Start(void* pArg, CState* pPreState)
 {
-    auto pNaytiba = static_cast<CNayitba*>(m_pOwner);
+    auto pNaytiba = static_cast<CNaytiba*>(m_pOwner);
     MONSTER_TRANSLATION_STATE* pDesc = static_cast<MONSTER_TRANSLATION_STATE*>(pArg);
 
     m_szAnimationName = pNaytiba->GetStaticMonsterData()->szAnimationName;
@@ -44,7 +44,7 @@ void CMonsterTranslationState::Start(void* pArg, CState* pPreState)
 
 void CMonsterTranslationState::Update(_float fTimeDelta)
 {
-    auto pNaytiba = static_cast<CNayitba*>(m_pOwner);
+    auto pNaytiba = static_cast<CNaytiba*>(m_pOwner);
 
     if (m_bIsLerp)
     {

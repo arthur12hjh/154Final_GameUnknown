@@ -44,7 +44,7 @@ void CBossController::Priority_Update(_float fTimeDelta)
 
 void CBossController::Update(_float fTimeDelta)
 {
-    auto pNayitba = static_cast<CNayitba*>(m_pParent);
+    auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 
     if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterData().eNaytibaState)
     {
@@ -68,7 +68,7 @@ void CBossController::Damage(void* pArg)
 {
     DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
-    auto pNayitba = static_cast<CNayitba*>(m_pParent);
+    auto pNayitba = static_cast<CNaytiba*>(m_pParent);
     const Character_Skill_Desc* pAttackData = m_pBlackBoard->GetAttackData();
     const CHARACTER_SKILL_DESC* pDamageSKillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
@@ -91,7 +91,7 @@ void CBossController::Damage(void* pArg)
             {
                 auto pGameManger = CGameManager::GetInstance();
                 pGameManger->Play_Cinematic(125, [&]() {
-                    auto pNayitba = static_cast<CNayitba*>(m_pParent);
+                    auto pNayitba = static_cast<CNaytiba*>(m_pParent);
                     pNayitba->Excution();
                 });
 

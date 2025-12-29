@@ -173,7 +173,7 @@ void CDebugCheatUI::DrawObjectDebug()
 
         Safe_Release(pPlayer);
 
-        CNayitba::NAYITBA_DESC Desc = {};
+        CNaytiba::NAYITBA_DESC Desc = {};
         Desc.bIsApplyTransform = true;
         Desc.vScale = { 1.f, 1.f, 1.f };
         Desc.iMonsterID = 4;

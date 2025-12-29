@@ -52,11 +52,12 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 		_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
 
 		// 방향 백터를 구한다. 이방향 백터와 Right를 내적해서 각도를 판별한다.
+		_float	fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 		_vector vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
 		_float fScalar = XMVectorGetX(XMVector3Dot(vOwnerLook, vDir));
 
 		auto iter = m_pPreSearchList.find(pTarget);
-		if (fScalar > 0 || m_fAiSearchRadius >= XM_2PI)
+		if (fScalar > 0 || ( m_fAiSearchRadius >= XM_2PI && fDistance <= m_fAiTargetSearchDistance))
 		{
 			if(m_fAiSearchRadius > acosf(fScalar))
 			{
@@ -77,24 +78,30 @@ void CAISenceComponent::UpdatSenceComponent(_float fDeletaTime)
 				}
 			}
 		}
-		else
-		{
-			if (iter != m_pPreSearchList.end())
-			{
-				iter->second += fDeletaTime;
-				if (iter->second >= m_fAiTargetLostTime)
-				{
-					if (m_TargetLostFunc)
-						m_TargetLostFunc(iter->first);
-
-					auto pObject = find(m_pSearchList.begin(), m_pSearchList.end(), iter->first);
-					m_pSearchList.erase(pObject);
-
-					m_pPreSearchList.erase(iter);
-				}
-			}
-		}
 	}
+
+	for (auto iter = m_pPreSearchList.begin(); iter != m_pPreSearchList.end();)
+	{
+		auto CrrentListIter = m_pCurSearchList.find(iter->first);
+		if (CrrentListIter == m_pCurSearchList.end())
+		{
+			iter->second += fDeletaTime;
+			if (iter->second >= m_fAiTargetLostTime)
+			{
+				if (m_TargetLostFunc)
+					m_TargetLostFunc(iter->first);
+
+				auto pObject = find(m_pSearchList.begin(), m_pSearchList.end(), iter->first);
+				m_pSearchList.erase(pObject);
+				iter = m_pPreSearchList.erase(iter);
+			}
+			else
+				iter++;
+		}
+		else
+			iter++;
+	}
+	
 
 	m_pCurSearchList.clear();
 	_matrix OwnerWorldMatrix = XMLoadFloat4x4(m_pOwner->GetTransform()->Get_WorldMatrixPtr());

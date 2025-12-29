@@ -35,27 +35,30 @@ public :
 #pragma region Default 
 	void						Bind_GameCharacter(class CPlayer* pCharacter);
 	class CPlayer*				GetGameCharacter();
-	PLAYER_DESC*				Get_PlayerDesc();
 
+	void						SavePlayerDesc();
+	_bool						LoadPlayerDesc(PLAYER_DESC& PlayerDesc);
+
+	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion
 
 #pragma region DataManager
-	const NPC_DATA_DESC*			Find_NpcData(_uint iSkillID);
-	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
-	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
-	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
-	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
-	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
-	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
-	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
-	const SCRIPT_DESC*				Get_ScriptData(const _wstring& szScriptTag);
-	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
+	const NPC_DATA_DESC*				Find_NpcData(_uint iSkillID);
+	const CHARACTER_SKILL_DESC*			Find_SkillData(_uint iSkillID);
+	const NAYTIBA_NETWORK_DESC*			Find_BossData(_uint iBossID);
+	const BETA_SKILL_DESC*				Find_BetaSkillData(_uint iSkillID);
+	const vector<ANIM_NOTIFY>*			Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const INTERACTION_DATA*				Find_InteractionData(_uint iID);
+	const CAMERA_ANIMATION_DATA*		Find_CameraAnimationData(_uint iCameraAnimationData);
+	const CINEMATIC_DESC*				Find_CinematicData(_uint iCinematicIndex);
+	const vector<TRANSPORT_DESC>*		Find_TransportData();
+	const TRANSPORT_DESC*				Find_TransportData(_uint iAreaID);
 
-	void							EnableTransport(_uint iAreaID);
-	const vector<TRANSPORT_DESC>*	Find_TransportData();
-	const TRANSPORT_DESC*			Find_TransportData(_uint iAreaID);
+	const SCRIPT_DESC*					Get_ScriptData(const _wstring& szScriptTag);
+	map<_uint, BETA_SKILL_DESC>*		Get_AllBetaSkillDesc();
+	void								EnableTransport(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
@@ -114,7 +117,7 @@ public:
 	HRESULT											Skip_Cinematic();
 #pragma endregion
 
-	// <    > º¸ÀÌ´Â ¼ø°£ private¿¡ ÀÖ´Â m_pLinkAttackTester±îÁö °Á Áö¿öÁÖ¼¼¿ä
+	// <    > ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ privateï¿½ï¿½ ï¿½Ö´ï¿½ m_pLinkAttackTesterï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½
 	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
 	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
 	// </end>
@@ -136,7 +139,7 @@ private :
 	
 	class CPlayer*									m_pPlayer = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
-
+	pair<PLAYER_DESC, _bool>						m_pSavePlayerDesc = {};
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

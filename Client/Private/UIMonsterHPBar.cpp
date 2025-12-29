@@ -48,7 +48,7 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	auto pMonster = dynamic_cast<CNayitba*>(m_pParent->GetParent());
+	auto pMonster = dynamic_cast<CNaytiba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
 		auto StaticDesc = pMonster->GetStaticMonsterData();
