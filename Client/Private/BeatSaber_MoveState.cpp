@@ -28,13 +28,44 @@ void CBeatSaber_MoveState::Update(_float fTimeDelta)
 {
     auto BeatSaberCharacter = static_cast<CBeatSaberCharacter*>(m_pOwner);
 
-
+    SelectEvadeAnim(BeatSaberCharacter);
     BeatSaberCharacter->Play_Animation(fTimeDelta);
 }
 
 void CBeatSaber_MoveState::End()
 {
 
+}
+
+void CBeatSaber_MoveState::SelectEvadeAnim(CBeatSaberCharacter* pCharacter)
+{
+    auto& pCharacterDesc = pCharacter->GetBeatSaberCharacterDesc();
+    switch (pCharacterDesc.eDirection)
+    {
+    case DIRECTION::LEFT :
+        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 30.f, 18.f);
+        break;
+
+    case DIRECTION::RIGHT:
+        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 10.f, 0.f);
+        break;
+
+    case DIRECTION::LEFT_FRONT:
+        pCharacter->Set_Animation("N_Dororong_Evade", true, 1.f, 0.12f, false, 40.f, 38.f);
+        break;
+
+    case DIRECTION::RIGHT_FRONT:
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 40.f, 38.f);
+        break;
+
+    case DIRECTION::LEFT_BACK:
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 30.f, 18.f);
+        break;
+
+    case DIRECTION::RIGHT_BACK:
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", true, 1.f, 0.12f, false, 10.f, 0.f);
+        break;
+    }
 }
 
 CBeatSaber_MoveState* CBeatSaber_MoveState::Create(void* pArg)

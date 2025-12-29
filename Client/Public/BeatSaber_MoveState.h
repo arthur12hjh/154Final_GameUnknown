@@ -3,6 +3,8 @@
 #include "State.h"
 
 NS_BEGIN(Client)
+class CBeatSaberCharacter;
+
 class CBeatSaber_MoveState final : public CState
 {
 private:
@@ -19,6 +21,10 @@ public:
 
 	virtual		void							Update(_float fTimeDelta);
 	virtual		void							End();
+
+private :
+	void										SelectEvadeAnim(CBeatSaberCharacter* pCharacter);
+
 
 public:
 	static	CBeatSaber_MoveState*				Create(void* pArg);

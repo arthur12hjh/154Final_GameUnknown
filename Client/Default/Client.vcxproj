@@ -159,6 +159,7 @@
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
+    <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
     <ClInclude Include="..\Public\Body_LinkAttackTester.h" />
@@ -480,6 +481,7 @@
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
+    <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp" />

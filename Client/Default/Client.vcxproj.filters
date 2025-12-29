@@ -985,6 +985,9 @@
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
       <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\BeatSaber">
+      <UniqueIdentifier>{e7ead3ee-c3be-467c-b193-8db5cf84b3f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1960,6 +1963,9 @@
     <ClInclude Include="..\Public\Body_LinkAttackTester.h">
       <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Level_BeatSaber.h">
+      <Filter>01.Levels\BeatSaber</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2901,6 +2907,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
       <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_BeatSaber.cpp">
+      <Filter>01.Levels\BeatSaber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

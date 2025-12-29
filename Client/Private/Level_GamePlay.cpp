@@ -125,6 +125,17 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 		return;
 	}
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
+		CGameManager::GetInstance()->SavePlayerDesc();
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::BEATSABER_GAME, false))))
+			return;
+
+		return;
+	}
+
 	if (m_bChangeLevel && !m_bLevelTransitioning)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));

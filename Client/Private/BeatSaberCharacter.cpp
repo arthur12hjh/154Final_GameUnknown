@@ -49,9 +49,10 @@ void CBeatSaberCharacter::Priority_Update(_float fTimeDelta)
 
 void CBeatSaberCharacter::Update(_float fTimeDelta)
 {
+	Key_Input(fTimeDelta);
 	m_pFsm->Update(fTimeDelta);
 
-	m_pCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
 }
 
@@ -133,11 +134,81 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_BeatSaberCharacterFsm"),
-		TEXT("BeatSaberFsm"), reinterpret_cast<CComponent**>(&m_pFsm))))
+	CBeatSaberFsm::STATEMACHINE_DESC FsmDesc = {};
+	FsmDesc.pOwner = this;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_BeatSaberCharacterFsm"),
+		TEXT("BeatSaberFsm"), reinterpret_cast<CComponent**>(&m_pFsm), &FsmDesc)))
 		return E_FAIL;
 
+#pragma region ADD_State
+	CState::STATE_DESC StateDesc = {};
+	StateDesc.pOwner = this;
+
+	if(FAILED(m_pFsm->Add_State(TEXT("Idle"), CBeatSaber_IdleState::Create(&StateDesc))))
+		return E_FAIL;
+
+	if (FAILED(m_pFsm->Add_State(TEXT("Move"), CBeatSaber_MoveState::Create(&StateDesc))))
+		return E_FAIL;
+
+	m_pFsm->Change_State(TEXT("Idle"));
+#pragma endregion
+
+
 	return S_OK;
+}
+
+void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
+{
+	_bool bIsMove = { false }, bIsCrouch = { false }, bIsUpper = { false };
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+		bIsUpper = true;
+
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+	{
+		m_CharacterDesc.eDirection = DIRECTION::BACK;
+		bIsCrouch = true;
+	}
+	else
+	{
+		if (DIRECTION::END != m_CharacterDesc.eDirection)
+			m_CharacterDesc.eDirection = DIRECTION::END;
+	}
+
+	if (false == bIsUpper)
+	{
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+		{
+			if (bIsCrouch)
+				m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
+			else
+				m_CharacterDesc.eDirection = DIRECTION::LEFT;
+
+			bIsMove = true;
+		}
+		else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+		{
+			if (bIsCrouch)
+				m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
+			else
+				m_CharacterDesc.eDirection = DIRECTION::RIGHT;
+			bIsMove = true;
+		}
+	}
+	else
+	{
+		if(bIsCrouch)
+			m_CharacterDesc.eDirection = DIRECTION::RIGHT_FRONT;
+		else
+			m_CharacterDesc.eDirection = DIRECTION::LEFT_FRONT;
+
+		bIsMove = true;
+	}
+
+	if(bIsMove)
+		m_pFsm->Change_State(TEXT("Move"));
+	else
+		m_pFsm->Change_State(TEXT("Idle"));
 }
 
 CBeatSaberCharacter* CBeatSaberCharacter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

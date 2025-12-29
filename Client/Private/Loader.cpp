@@ -381,7 +381,7 @@ HRESULT CLoader::Loading()
 	break;
 	case LEVEL::BEATSABER_GAME:
 	{
-		m_strMessage = TEXT("Yeahs~  It Just Feeling Like Fudking Sex with My Sexy Girl!");
+		m_strMessage = TEXT("Dororong");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
@@ -781,6 +781,11 @@ HRESULT CLoader::Loading_For_BeatSaber()
 		CBeatSaberFsm::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	Sleep(1000.f);
+
+	while (m_pGameInstance->IsWorkThread());
+	m_strMessage = TEXT("Loading Complete");
+	m_isFinished = true;
 	return S_OK;
 }
 
@@ -6323,9 +6328,9 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Dororong */
-	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

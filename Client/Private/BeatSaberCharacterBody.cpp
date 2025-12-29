@@ -2,6 +2,7 @@
 #include "BeatSaberCharacterBody.h"
 
 #include "GameInstance.h"
+#include "RimLight.h"
 
 CBeatSaberCharacterBody::CBeatSaberCharacterBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -62,6 +63,9 @@ HRESULT CBeatSaberCharacterBody::Render()
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+            return E_FAIL;
+
+        if (FAILED(m_pShaderCom->Begin(0)))
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Render(i)))

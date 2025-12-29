@@ -17,13 +17,19 @@ HRESULT CBeatSaber_IdleState::Initialize(void* pArg)
 
 void CBeatSaber_IdleState::Start(void* pArg, CState* pPreState)
 {
-    auto pBeatSaberCharacter = static_cast<CBeatSaberCharacter*>(m_pOwner);
-    pBeatSaberCharacter->Set_Animation("N_Dororong_Idle");
+  
 }
 
 void CBeatSaber_IdleState::Update(_float fTimeDelta)
 {
     auto BeatSaberCharacter = static_cast<CBeatSaberCharacter*>(m_pOwner);
+
+    auto& pCharacterDesc = BeatSaberCharacter->GetBeatSaberCharacterDesc();
+    if(DIRECTION::END == pCharacterDesc.eDirection)
+        BeatSaberCharacter->Set_Animation("N_Dororong_Idle");
+    else if(DIRECTION::BACK == pCharacterDesc.eDirection)
+        BeatSaberCharacter->Set_Animation("N_Dororong_Exhaust");
+
     BeatSaberCharacter->Play_Animation(fTimeDelta);
 }
 
