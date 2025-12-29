@@ -34,8 +34,6 @@ private:
 	LIGHT_DESC* m_pDirectionalLightDesc = { nullptr };
 	VOLUMEFOG_DESC* m_pVolumeFogDesc = { nullptr };
 
-	class CPonyTail_Player* m_pPonytail = { nullptr };
-
 public:
 	static CShaderDebugger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

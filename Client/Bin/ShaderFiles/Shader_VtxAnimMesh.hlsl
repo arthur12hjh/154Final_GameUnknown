@@ -415,6 +415,27 @@ PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_NONE_NORMAL(PS_IN In)
+{
+    PS_OUT Out;
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    if (g_IsPattern)
+        Out.vDiffuse = g_vMeshColor;
+    else
+        Out.vDiffuse = vMtrlDiffuse;
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -514,7 +535,16 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SCARLET_ATK_COLOR();
     }
-
+    // idx 9
+    pass NonNormal
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_NONE_NORMAL();
+    }
 }
 
 

@@ -13,12 +13,24 @@ HRESULT CDistortion::Initialize()
     /* 디스토션은 셰이더 따로 필요 없음. */
     _uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 
+    m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred_Distortion.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+    if (nullptr == m_pShader)
+        return E_FAIL;
+
     /* Target_Distortion.*/
     if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Distortion"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
         return E_FAIL;
 
+    /* Target_DistortionResult */
+    if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_DistortionResult"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+        return E_FAIL;
+
     /* MRT_Distortion */
     if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
+        return E_FAIL;
+
+    /* MRT_DistortionResult */
+    if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DistortionResult"), TEXT("Target_DistortionResult"))))
         return E_FAIL;
 
     return S_OK;
@@ -36,9 +48,13 @@ HRESULT CDistortion::Add_RenderObject(CGameObject* pRenderObject)
     return S_OK;
 }
 
-HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer)
+HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strRTTag, const _wstring& strReturnRTTag)
 {
-    /* Diffuse + Normal */
+    m_pShader->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix());
+    m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::VIEW));
+    m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::PROJ));
+
+#pragma region DISTORTION OBJECT RECORD
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Distortion"))))
         return E_FAIL;
 
@@ -54,7 +70,48 @@ HRESULT CDistortion::Render(CVIBuffer_Rect* pVIBuffer)
 
     if (FAILED(m_pGameInstance->End_MRT()))
         return E_FAIL;
+#pragma endregion
 
+#ifdef _DEBUG
+    m_pGameInstance->BeginMarker(m_pContext, TEXT("##############DISTORTION_COMBINE"));
+#endif
+
+#pragma region DISTORTION
+    if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_DistortionResult"))))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Distortion"), m_pShader, "g_DistortionTexture")))
+        return E_FAIL;
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(strRTTag, m_pShader, "g_SceneTexture")))
+        return E_FAIL;
+
+    m_pShader->Begin(0);
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->End_MRT()))
+        return E_FAIL;
+#pragma endregion 
+
+#pragma region DISTIORTION RETURN TO SCENE
+    if (FAILED(m_pGameInstance->Begin_MRT(strReturnRTTag)))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_DistortionResult"), m_pShader, "g_SceneTexture")))
+        return E_FAIL;
+
+    m_pShader->Begin(1);
+    pVIBuffer->Bind_Resources();
+    pVIBuffer->Render();
+
+    if (FAILED(m_pGameInstance->End_MRT()))
+        return E_FAIL;
+#pragma endregion
+
+
+#ifdef _DEBUG
+    m_pGameInstance->EndMarker(m_pContext);
+#endif
     return S_OK;
 }
 

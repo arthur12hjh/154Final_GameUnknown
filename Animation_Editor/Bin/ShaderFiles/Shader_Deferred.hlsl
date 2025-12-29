@@ -41,10 +41,10 @@ texture2D g_EmissiveFinalTexture;
 
 texture2D g_DistortionTexture;
 texture2D g_FogTexture;
+texture2D g_VolumeFogTexture;
 texture2D g_BloomTexture;
 texture2D g_BloomSceneTexture;
 texture2D g_VolumetricTexture;
-
 texture2D g_SceneTexture;
 texture2D g_ScreenTexture;
 
@@ -458,12 +458,9 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     ////이미시브 샘플링.
     Out.vBackBuffer += Calc_Blur(g_EmissiveFinalTexture, In.vTexcoord);
 
-    //블룸 먼저 들어가고, 디스토션이 들어가는 상황.
-    //블룸 샘플링
-    Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
-    //디스토션 샘플링.
-    Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
-
+    //안개 합성.
+    Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
+    Out.vBackBuffer = Calc_VolumeFog(Out.vBackBuffer, g_VolumeFogTexture, In.vTexcoord);
     
     float4 vBlack = g_BlackBlendTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vBlur = saturate(Calc_Blur(g_BlurFinalTexture, In.vTexcoord));
@@ -477,6 +474,8 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     Out.vBackBuffer.rgb += vGlowBloom.rgb * vGlowBloom.a;
     Out.vBackBuffer.rgb = Out.vBackBuffer.rgb * (1 - vBlur.a) + vBlur.rgb * vBlur.a;
     
+    Out.vBackBuffer += g_BloomTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     return Out;
 }
 
@@ -488,9 +487,6 @@ PS_OUT_BACKBUFFER PS_MAIN_TONE_MAPPING(PS_IN In)
     //Out.vBackBuffer.a = 1.f; 
     
     Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord); 
-        //안개 합성.
-    Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
-    
     Out.vBackBuffer.rgb = pow(Out.vBackBuffer.rgb, 2.2f); 
     Out.vBackBuffer *= g_fHDRExposure;
     

@@ -206,6 +206,13 @@ HRESULT CMainApp::Ready_Prototypes()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_VtxMesh */
+	CShader* pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
+		pShader)))
+		return E_FAIL;
+	m_pGameManager->Add_Shader(LEVEL::STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), pShader);
+
 	/* For.Prototype_Component_Shader_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_UI"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_UI.hlsl"), VTX_POSTEX_UI_INSTANCE::Elements, VTX_POSTEX_UI_INSTANCE::iNumElements))))
