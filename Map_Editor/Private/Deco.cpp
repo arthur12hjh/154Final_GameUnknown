@@ -130,6 +130,171 @@ void CDeco::SetCullingCollider(_uint iObjectID)
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);
     switch (iObjectID)
     {
+    case 1: // Box_1A (1, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.f, 0.5f, 0.8f }); 
+        break;
+    case 2: // Box_1B (1, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.f, 0.5f, 0.8f }); 
+        break;
+    case 3: // Box_2C (0.8, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 0.8f, 0.5f, 0.8f }); 
+        break;
+    case 4: // Box_4A (1, 0.8, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.f, 0.8f, 0.8f }); 
+        break;
+    case 5: // Box_5A (0.8, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 0.8f, 0.5f, 0.8f }); 
+        break;
+    case 6: // Box_6A (2.5, 0.8, 2.2)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.5f, 0.8f, 2.2f }); 
+        break;
+    case 7: // Box_11A (2.5, 0.8, 2.2)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.5f, 0.8f, 2.2f }); 
+        break;
+    case 8: // Box_13A (1.5, 1.2, 1)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 1.2f, 1.f }); 
+        break;
+    case 9: // Box_14A (1.5, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 0.5f, 0.8f }); 
+        break;
+    case 10: // Box_16A (1.4, 0.6, 1.2)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.4f, 0.6f, 1.2f }); 
+        break;
+    case 11: // Box_16B (1.5, 0.8, 1.4)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 0.8f, 1.4f }); 
+        break;
+    case 12: // Box_19A (1.5, 1.4, 1.4)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 1.4f, 1.4f }); 
+        break;
+    case 13: // Box_20A (3.5, 4, 2.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 4.f, 2.5f }); 
+        break;
+    case 14: // Box_20B (3.5, 2.5, 3.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 2.5f, 3.5f }); 
+        break;
+    case 15: // Box_20C (3.5, 2.5, 3.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 2.5f, 3.5f }); 
+        break;
+    case 16: // Box_20D (3.5, 3, 2.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 3.f, 2.5f }); 
+        break;
+    case 17: // Box_20E (3, 2.5, 2.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.f, 2.5f, 2.5f }); 
+        break;
+    case 18: // Box_20F (2, 2, 2)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.f, 2.f, 2.f }); 
+        break;
+    case 19: // Box_21A (3, 2, 3)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.f, 2.f, 3.f }); 
+        break;
+    case 20: // Box_21B (3, 4, 2.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.f, 4.f, 2.5f }); 
+        break;
+    case 21: // Box_26A (2.5, 1.5, 2.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 2.5f, 1.5f, 2.5f }); 
+        break;
+    case 22: // Garden_1A (3, 1.5, 3)
+        pCullingCollider->SetCollision({ 0.f, 0.75f, 0.f }, {}, { 3.f, 1.5f, 3.f }); 
+        break;
+    case 23: // Garden_1B (8, 2.5, 18)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 8.f, 2.5f, 18.f }); 
+        break;
+    case 24: // Garden_1C (25, 2.5, 4)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 25.f, 2.5f, 4.f }); 
+        break;
+    case 25: // Restroom_4A (0.5, 0.8, 1.2)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 0.5f, 0.8f, 1.2f }); 
+        break;
+    case 26: // Poster_1A (1, 1, 1)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.f, 1.f, 1.f }); 
+        break;
+    case 27: // Poster_2A (3.5, 4.5, 0.6)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 4.5f, 0.6f }); 
+        break;
+    case 28: // Poster_2B (3.5, 4, 0.6)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 3.5f, 4.f, 0.6f }); 
+        break;
+    case 29: // Poster_3A (1.5, 2.2, 0.4)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.2f, 0.4f }); 
+        break;
+    case 30: // Poster_3B (1.5, 2.2, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.2f, 0.5f }); 
+        break;
+    case 31: // Poster_4A (1.5, 2.3, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.3f, 0.5f }); 
+        break;
+    case 32: // Poster_4B (1.5, 2.3, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.3f, 0.5f }); 
+        break;
+    case 33: // Poster_4C (1.5, 2.3, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.3f, 0.5f }); 
+        break;
+    case 34: // Poster_4E (1.5, 2.3, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.f, 0.f }, {}, { 1.5f, 2.3f, 0.5f }); 
+        break;
+    case 35: // Duct_1A (15, 6.5, 8.5)
+        pCullingCollider->SetCollision({ 0.f, 3.25f, 0.f }, {}, { 15.f, 6.5f, 8.5f }); 
+        break;
+    case 36: // Duct_1B (5.5, 3.5, 7.5)
+        pCullingCollider->SetCollision({ 0.f, 1.75f, 0.f }, {}, { 5.5f, 3.5f, 7.5f }); 
+        break;
+    case 37: // Duct_1C (2, 2, 2)
+        pCullingCollider->SetCollision({ 0.f, 1.0f, 0.f }, {}, { 2.f, 2.f, 2.f }); 
+        break;
+    case 38: // Duct_1D (2, 5, 2)
+        pCullingCollider->SetCollision({ 0.f, 2.5f, 0.f }, {}, { 2.f, 5.f, 2.f }); 
+        break;
+    case 39: // Duct_1E (2.5, 2.5, 2)
+        pCullingCollider->SetCollision({ 0.f, 1.25f, 0.f }, {}, { 2.5f, 2.5f, 2.f }); 
+        break;
+    case 40: // Duct_1G (4.5, 6.2, 2)
+        pCullingCollider->SetCollision({ 0.f, 3.1f, 0.f }, {}, { 4.5f, 6.2f, 2.f }); 
+        break;
+    case 41: // Duct_1H (6, 2.5, 46)
+        pCullingCollider->SetCollision({ 0.f, 1.25f, 0.f }, {}, { 6.f, 2.5f, 46.f }); 
+        break;
+    case 42: // Duct_3A (1, 0.8, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.4f, 0.f }, {}, { 1.f, 0.8f, 0.5f }); 
+        break;
+    case 43: // Duct_3B (1, 0.8, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.4f, 0.f }, {}, { 1.f, 0.8f, 0.5f }); 
+        break;
+    case 44: // Duct_3C (1, 0.4, 0.5)
+        pCullingCollider->SetCollision({ 0.f, 0.2f, 0.f }, {}, { 1.f, 0.4f, 0.5f }); 
+        break;
+    case 45: // Duct_4A (1.8, 2.4, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 1.8f, 2.4f, 1.5f }); 
+        break;
+    case 46: // Duct_4B (2.5, 2.4, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 2.5f, 2.4f, 1.5f }); 
+        break;
+    case 47: // Duct_4C (3.5, 2.4, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 3.5f, 2.4f, 1.5f }); 
+        break;
+    case 48: // Duct_6A (20.5, 4, 10)
+        pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 20.5f, 4.f, 10.f }); 
+        break;
+    case 49: // Duct_8A (2.5, 2, 4.5)
+        pCullingCollider->SetCollision({ 0.f, 1.0f, 0.f }, {}, { 2.5f, 2.f, 4.5f }); 
+        break;
+    case 50: // Duct_9A (1.5, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.25f, 0.f }, {}, { 1.5f, 0.5f, 0.8f }); 
+        break;
+    case 51: // Duct_9B (0.8, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.25f, 0.f }, {}, { 0.8f, 0.5f, 0.8f }); 
+        break;
+    case 52: // Duct_9C (1.5, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.25f, 0.f }, {}, { 1.5f, 0.5f, 0.8f }); 
+        break;
+    case 53: // Duct_9D (0.8, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.25f, 0.f }, {}, { 0.8f, 0.5f, 0.8f }); 
+        break;
+    case 54: // Duct_10A (1.5, 0.5, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 0.25f, 0.f }, {}, { 1.5f, 0.5f, 0.8f }); 
+        break;
+    case 55: // Duct_13A (3, 3, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.5f, 0.f }, {}, { 3.f, 3.f, 1.5f }); 
+        break;
     case 80: // Lamp_47A
         pCullingCollider->SetCollision({ 0.f, 4.f, 1.f }, {}, { 2.f, 4.f, 2.f });
         break;
@@ -303,8 +468,78 @@ _uint CDeco::Object_Number(const _tchar* pComponentTag)
 
     const _tchar* pSuffix = pLastUnderscore + 1;
 
+    // 0. Box 시리즈 (1 ~ 21)
+    if (wcsstr(pComponentTag, TEXT("Box"))) {
+        if (!wcscmp(pSuffix, TEXT("1A"))) return 1;
+        if (!wcscmp(pSuffix, TEXT("1B"))) return 2;
+        if (!wcscmp(pSuffix, TEXT("2C"))) return 3;
+        if (!wcscmp(pSuffix, TEXT("4A"))) return 4;
+        if (!wcscmp(pSuffix, TEXT("5A"))) return 5;
+        if (!wcscmp(pSuffix, TEXT("6A"))) return 6;
+        if (!wcscmp(pSuffix, TEXT("11A"))) return 7;
+        if (!wcscmp(pSuffix, TEXT("13A"))) return 8;
+        if (!wcscmp(pSuffix, TEXT("14A"))) return 9;
+        if (!wcscmp(pSuffix, TEXT("16A"))) return 10;
+        if (!wcscmp(pSuffix, TEXT("16B"))) return 11;
+        if (!wcscmp(pSuffix, TEXT("19A"))) return 12;
+        if (!wcscmp(pSuffix, TEXT("20A"))) return 13;
+        if (!wcscmp(pSuffix, TEXT("20B"))) return 14;
+        if (!wcscmp(pSuffix, TEXT("20C"))) return 15;
+        if (!wcscmp(pSuffix, TEXT("20D"))) return 16;
+        if (!wcscmp(pSuffix, TEXT("20E"))) return 17;
+        if (!wcscmp(pSuffix, TEXT("20F"))) return 18;
+        if (!wcscmp(pSuffix, TEXT("21A"))) return 19;
+        if (!wcscmp(pSuffix, TEXT("21B"))) return 20;
+        if (!wcscmp(pSuffix, TEXT("26A"))) return 21;
+    }
+    // Garden 시리즈 (22 ~ 24)
+    else if (wcsstr(pComponentTag, TEXT("Garden"))) {
+        if (!wcscmp(pSuffix, TEXT("1A"))) return 22;
+        if (!wcscmp(pSuffix, TEXT("1B"))) return 23;
+        if (!wcscmp(pSuffix, TEXT("1C"))) return 24;
+    }
+    // Restroom 시리즈 (25)
+    else if (wcsstr(pComponentTag, TEXT("Restroom"))) {
+        if (!wcscmp(pSuffix, TEXT("4A"))) return 25;
+    }
+    // Poster 시리즈 (26 ~ 34)
+    else if (wcsstr(pComponentTag, TEXT("Poster"))) {
+        if (!wcscmp(pSuffix, TEXT("1A"))) return 26;
+        if (!wcscmp(pSuffix, TEXT("2A"))) return 27;
+        if (!wcscmp(pSuffix, TEXT("2B"))) return 28;
+        if (!wcscmp(pSuffix, TEXT("3A"))) return 29;
+        if (!wcscmp(pSuffix, TEXT("3B"))) return 30;
+        if (!wcscmp(pSuffix, TEXT("4A"))) return 31;
+        if (!wcscmp(pSuffix, TEXT("4B"))) return 32;
+        if (!wcscmp(pSuffix, TEXT("4C"))) return 33;
+        if (!wcscmp(pSuffix, TEXT("4E"))) return 34;
+    }
+    // 4. Duct 시리즈 (35 ~ 55)
+    else if (wcsstr(pComponentTag, TEXT("Duct"))) {
+        if (!wcscmp(pSuffix, TEXT("1A"))) return 35;
+        if (!wcscmp(pSuffix, TEXT("1B"))) return 36;
+        if (!wcscmp(pSuffix, TEXT("1C"))) return 37;
+        if (!wcscmp(pSuffix, TEXT("1D"))) return 38;
+        if (!wcscmp(pSuffix, TEXT("1E"))) return 39;
+        if (!wcscmp(pSuffix, TEXT("1G"))) return 40;
+        if (!wcscmp(pSuffix, TEXT("1H"))) return 41;
+        if (!wcscmp(pSuffix, TEXT("3A"))) return 42;
+        if (!wcscmp(pSuffix, TEXT("3B"))) return 43;
+        if (!wcscmp(pSuffix, TEXT("3C"))) return 44;
+        if (!wcscmp(pSuffix, TEXT("4A"))) return 45;
+        if (!wcscmp(pSuffix, TEXT("4B"))) return 46;
+        if (!wcscmp(pSuffix, TEXT("4C"))) return 47;
+        if (!wcscmp(pSuffix, TEXT("6A"))) return 48;
+        if (!wcscmp(pSuffix, TEXT("8A"))) return 49;
+        if (!wcscmp(pSuffix, TEXT("9A"))) return 50;
+        if (!wcscmp(pSuffix, TEXT("9B"))) return 51;
+        if (!wcscmp(pSuffix, TEXT("9C"))) return 52;
+        if (!wcscmp(pSuffix, TEXT("9D"))) return 53;
+        if (!wcscmp(pSuffix, TEXT("10A"))) return 54;
+        if (!wcscmp(pSuffix, TEXT("13A"))) return 55;
+    }
     // 1. Lamp, Poster, Wheel, Base
-    if (wcsstr(pComponentTag, TEXT("Lamp"))) {
+    else if (wcsstr(pComponentTag, TEXT("Lamp"))) {
         if (!wcscmp(pSuffix, TEXT("47A"))) return 80;
     }
     else if (wcsstr(pComponentTag, TEXT("Poster"))) {

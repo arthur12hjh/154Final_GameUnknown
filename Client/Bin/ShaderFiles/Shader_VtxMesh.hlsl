@@ -276,4 +276,15 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
         PixelShader = compile ps_5_0 PS_MAIN_CASCADE_SHADOW();
     }
+
+    // idx 7
+    pass Tree
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 }
