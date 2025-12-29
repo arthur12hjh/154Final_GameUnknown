@@ -316,9 +316,27 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
             if (pObjectList != nullptr)
             {
+                _int iObjectIndex = 0;
                 for (auto& pObject : *pObjectList)
                 {
-                    pObject->SetActive(TRUE);
+					pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vPosition), 1.f));
+
+                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
+
+                    if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 0.f)
+                    {
+                        pObject->GetTransform()->Rotation(
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.x,
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.y,
+                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.z);
+                    }
+					else if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 1.f)
+                    {
+                        _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation), 1.f);
+                        pObject->GetTransform()->LookAt(vLookAt);
+                    }
+                    
+                    ++iObjectIndex;
                 }
             }
             break;
