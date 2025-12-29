@@ -593,6 +593,7 @@ namespace Client
 		_int		iGameLife;
 		_int		iMaxGameLife;
 
+		_uint		iComboCnt;
 		_float		fCharacterSpeed;
 		// x : 캐릭터 최소 스피드
 		// y : 캐릭터 기본 스피드

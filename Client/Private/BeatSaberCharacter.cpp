@@ -230,11 +230,13 @@ void CBeatSaberCharacter::BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, 
 			{
 				// 실패
 				m_CharacterDesc.iGameLife--;
+				m_CharacterDesc.iComboCnt = 0;
 			}
 			else
 			{
 				// 성공
 				m_CharacterDesc.iScore += 100;
+				m_CharacterDesc.iComboCnt++;
 			}
 		}
 
