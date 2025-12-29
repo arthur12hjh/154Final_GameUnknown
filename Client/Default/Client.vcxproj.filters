@@ -244,9 +244,6 @@
     <Filter Include="01.Levels\Loading\Loader">
       <UniqueIdentifier>{1c661d94-d467-4c27-a3f8-4da71a1c898a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\AttackHitBox">
-      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character">
       <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
     </Filter>
@@ -991,6 +988,9 @@
     <Filter Include="02.GameObjects\Actor\Note">
       <UniqueIdentifier>{5b861a43-c873-476a-9215-e8f3ab61e90b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\AttackHitBox">
+      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1489,7 +1489,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
-      <Filter>02.GameObjects\AttackHitBox</Filter>
+      <Filter>02.GameObjects\Actor\AttackHitBox</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Moon.h">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
@@ -2448,7 +2448,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
-      <Filter>02.GameObjects\AttackHitBox</Filter>
+      <Filter>02.GameObjects\Actor\AttackHitBox</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Moon.cpp">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>

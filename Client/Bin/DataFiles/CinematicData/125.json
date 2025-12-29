@@ -44,12 +44,6 @@
                 "szObjectTag": ""
             },
             {
-                "eState": 7,
-                "fTrackPosition": 26.700000762939453,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
                 "eState": 2,
                 "fTrackPosition": 26.5,
                 "iActiveIndex": 0,
@@ -60,6 +54,29 @@
                 "fTrackPosition": 26.5,
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Monster"
+            },
+	{
+                "eState": 9,
+                "fTrackPosition": 26.6,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player",
+	   "CinematicIndexDataList": [
+        	       {
+      	   	"iActiveIndex": 0,
+      	   	"szObjectTag": "Layer_Player",
+ 	   	"vPosition": [767.795, 2.86, 552.145],
+ 	   	"vRotation": [760.197, 2.022, 700.319, 1.0],
+  	   	"vScale": [1.0, 1.0, 1.0],
+  	   	"iInputInt": 0,
+  	   	"fInputFloat": 0.0
+        	       }
+    	   ]
+            },
+            {
+                "eState": 7,
+                "fTrackPosition": 26.700000762939453,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
             }
         ],
         "iCinematicID": 125,
