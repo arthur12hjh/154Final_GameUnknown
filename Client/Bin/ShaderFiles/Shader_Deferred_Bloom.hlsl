@@ -37,6 +37,23 @@ PS_OUT_BACKBUFFER PS_MAIN(PS_IN In)
     return Out;
 };
 
+PS_OUT_BACKBUFFER PS_DOWNSAMPLE_BOX4(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+
+    float2 vTexel = 1.0 / float2(g_iWinSizeX, g_iWinSizeY);
+
+    // 2x2 ¹Ú½º Æò±Õ(¸éÀû Æò±Õ Èä³»)
+    float4 c =
+        g_SceneTexture.Sample(ClampSampler, In.vTexcoord + vTexel * float2(-0.5, -0.5)) +
+        g_SceneTexture.Sample(ClampSampler, In.vTexcoord + vTexel * float2(0.5, -0.5)) +
+        g_SceneTexture.Sample(ClampSampler, In.vTexcoord + vTexel * float2(-0.5, 0.5)) +
+        g_SceneTexture.Sample(ClampSampler, In.vTexcoord + vTexel * float2(0.5, 0.5));
+
+    Out.vBackBuffer = c * 0.25;
+    return Out;
+}
+
 PS_OUT_BACKBUFFER PS_MAIN_CURVE(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
@@ -100,6 +117,7 @@ PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
     
     float2 vTexcoord;
     float4 vColor = 0.f;
+    float fWeight = 0.f;
     
     for (int i = -10; i < 11; ++i)
     {
@@ -107,9 +125,10 @@ PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fBloomWeights[i + 10] * (g_SceneTexture.Sample(ClampSampler, vTexcoord) + g_SourTexture.Sample(ClampSampler, vTexcoord));
+        fWeight += g_fBloomWeights[i + 10];
     }
     
-    Out.vBlur = vColor / 10.f;
+    Out.vBlur = vColor / fWeight;
     
     return Out;
 }
@@ -117,19 +136,21 @@ PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_X(PS_IN In)
 PS_OUT_BLUR PS_MAIN_ADDITIVE_BLUR_Y(PS_IN In)
 {
     PS_OUT_BLUR Out;
-    
+
     float2 vTexcoord;
     float4 vColor = 0.f;
-    
+    float fWeight = 0.f;
+
     for (int i = -10; i < 11; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
         vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
-        
-        vColor += g_fBloomWeights[i + 10] * g_SceneTexture.Sample(ClampSampler, vTexcoord);
+
+        vColor += g_fBloomWeights[i + 10] * (g_SceneTexture.Sample(ClampSampler, vTexcoord) + g_SourTexture.Sample(ClampSampler, vTexcoord));
+        fWeight += g_fBloomWeights[i + 10];
     }
-    
-    Out.vBlur = vColor / 6.5f;
+
+    Out.vBlur = vColor / fWeight;
     
     return Out;
 }
@@ -195,4 +216,13 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_ADDITIVE_BLUR_Y();
     }
+    pass Downsample_Box4
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0, 0, 0, 0), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        PixelShader = compile ps_5_0 PS_DOWNSAMPLE_BOX4();
+    }
+
 }

@@ -99,6 +99,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMtrlDiffuse.a < 0.4f)
         discard;
     
+    
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
@@ -148,7 +149,8 @@ PS_OUT PS_MOON(PS_IN In)
     Out.vDiffuse.a = vMtrlDiffuse.a;
     Out.vNormal = float4(0.5f, 0.5f, 0.5f, 0.5f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
-
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    
     return Out;
 }
 
@@ -165,8 +167,8 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * 1.5f;
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = g_EmissiveTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 }
