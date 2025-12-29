@@ -222,22 +222,23 @@ void CBeatSaberCharacter::BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, 
 	if (pNote)
 	{
 		auto pNoteData = pNote->GetNoteData();
-
+		_bool bIsSuccess = { false };
 		if (pNoteData.eDirection == m_CharacterDesc.eDirection)
 		{
 			_float fAnimRatio = m_pBodyModelCom->Get_AnimationRatio();
-			if (pNoteData.vBoundAnimRatio.x > fAnimRatio || pNoteData.vBoundAnimRatio.y < fAnimRatio)
-			{
-				// 실패
-				m_CharacterDesc.iGameLife--;
-				m_CharacterDesc.iComboCnt = 0;
-			}
-			else
+			if (pNoteData.vBoundAnimRatio.x <= fAnimRatio && fAnimRatio <= pNoteData.vBoundAnimRatio.y)
 			{
 				// 성공
 				m_CharacterDesc.iScore += 100;
 				m_CharacterDesc.iComboCnt++;
+				bIsSuccess = true;
 			}
+		}
+
+		if (!bIsSuccess)
+		{
+			m_CharacterDesc.iGameLife--;
+			m_CharacterDesc.iComboCnt = 0;
 		}
 
 		pNote->Set_Dead(true);
