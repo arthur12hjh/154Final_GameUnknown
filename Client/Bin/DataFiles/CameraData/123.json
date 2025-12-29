@@ -35,6 +35,30 @@
                 ]
             }
         ],
+	"BoneRotationTrackList": [
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            -120.0,
+            0.0
+                ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 0.5,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+            0.0,
+            -120.0,
+            0.0
+                ]
+            }
+        ],
         "FOVTrackList": [
             {
                 "fTangentEnd": 0.0,

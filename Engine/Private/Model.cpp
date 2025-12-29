@@ -293,7 +293,6 @@ void CModel::Set_AnimationIndex(_int iAnimIndex, _bool isLoop, _float fLerpDurat
 }
 
 void CModel::Set_Animation(const _wstring& strAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition, _bool isRootMotionUpdated)
-
 {
     m_isRootMotionUpdated = isRootMotionUpdated;
 
@@ -1090,9 +1089,11 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     {
         if (AnimationChanged)
             AnimationChanged(m_Animations[m_iCurrentAnimIndex]->Get_Name());
+        if(m_fStartTrackPpsition > 0.f)
+            m_Animations[m_iCurrentAnimIndex]->Set_CurrentTrackPosition(m_fStartTrackPosition);
         m_isFinish = FALSE;
     }
-
+    
     m_Animations[m_iCurrentAnimIndex]->Update_CurrentKeyFrameIndices();
 
     if (m_isLerp && m_fBlendElapsed == 0.f)
