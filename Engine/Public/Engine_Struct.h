@@ -577,6 +577,7 @@ namespace Engine
 	typedef struct tagVolumeFogDesc {
 		INSCATTER_DESC* pInscatterDesc = { nullptr };
 		VOLUMEFOG_COMMON_DESC* pVolumeFogDesc = { nullptr };
+		bool* pActive = { nullptr };
 	} VOLUMEFOG_DESC;
 
 #pragma endregion

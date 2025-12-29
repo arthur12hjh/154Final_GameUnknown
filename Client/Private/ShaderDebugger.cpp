@@ -61,6 +61,7 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::Text("VOLUME FOG INFO");
     
+    ImGui::Checkbox("ACTIVE", m_pVolumeFogDesc->pActive);
     ImGui::DragFloat("AsymmetryG", &m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG, 0.01f, -1.f, 1.f);
     ImGui::DragFloat("Fog Density", &m_pVolumeFogDesc->pInscatterDesc->Density, 0.01f, -1.f, 1.f);
     ImGui::DragFloat("Light Intensity", &m_pVolumeFogDesc->pInscatterDesc->Intensity, 0.01f, -1.f, 1.f);
@@ -71,6 +72,9 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     ImGui::DragFloat("Noise Scale", &m_pVolumeFogDesc->pInscatterDesc->NoiseScale, 0.001f, 0.f, 1.f);
     ImGui::DragFloat("Noise Strength", &m_pVolumeFogDesc->pInscatterDesc->NoiseStrength, 0.01f, 0.f, 2.f);
     ImGui::DragFloat("Near Plane", &m_pVolumeFogDesc->pInscatterDesc->StartDistance, 0.1f, 0.f, 250.f);
+
+    ImGui::ColorEdit4("Light Color", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightColor));
+    ImGui::DragFloat4("Light Direction", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightDirection), 0.01f, -1.f, 1.f);
 
     ImGui::Separator();
 

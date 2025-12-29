@@ -85,7 +85,7 @@ public :
 	HRESULT Add_ReserveDeferred(const _wstring& strReserveDeferredTag, class CReserveDeferred* pReserveDeferred = nullptr);
 	void	Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag);
 	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
-
+	void	Change_ShaderSetting(LEVEL eLevelID);
 #pragma endregion
 
 #pragma region LOCKON

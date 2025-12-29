@@ -763,7 +763,6 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
