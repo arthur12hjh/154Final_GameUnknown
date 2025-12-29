@@ -53,6 +53,7 @@ private:
 	_float m_fNearPlaneDist = {};
 	_float m_fFarPlaneDist = {};
 	_float m_fNoiseTimeAcc = { };
+	_bool  m_isActive = { true };
 
 	INSCATTER_DESC m_tInscatterDesc = {};
 	VOLUMEFOG_COMMON_DESC m_tVolumeFogCommonDesc = {};

@@ -902,6 +902,7 @@ void CRenderer::Render_Deferred()
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
 	hr = m_pVolumeFog->Render(m_pVIBuffer);
+
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 
@@ -928,9 +929,6 @@ void CRenderer::Render_Deferred()
 		return;
 	//metaball
 	if (FAILED(m_pMetaball->Bind_RenderTarget(m_pShader, "g_MetaballTexture")))
-		return;
-
-	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
 		return;
 
 	if (FAILED(m_pVolumeFog->Bind_RenderTarget(m_pShader, "g_VolumeFogTexture")))
@@ -966,6 +964,8 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_ScreenDeferred()
 {
+	// 여러 문제떄문에.. 디스토션은 따로 분리.
+	m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 	// DOF 먼저 적용.
 	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
 	m_pMotionBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));

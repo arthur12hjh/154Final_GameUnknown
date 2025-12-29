@@ -68,6 +68,9 @@ HRESULT CLevel_Scarlet::Initialize()
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
 
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Change_ShaderSetting(LEVEL::SCARLET);
+
 	return S_OK;
 }
 
@@ -120,15 +123,15 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
 
-	//볼류메트릭 광원도 똑같이 추가.
-	LightDesc.eType = LIGHT_TYPE::VOLUMETRIC;
-	LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	////볼류메트릭 광원도 똑같이 추가.
+	//LightDesc.eType = LIGHT_TYPE::VOLUMETRIC;
+	//LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
+	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	//	return E_FAIL;
 
 	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
 	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);

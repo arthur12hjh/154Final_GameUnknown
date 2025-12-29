@@ -87,6 +87,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
 
+	pGameManager->Change_ShaderSetting(LEVEL::GAMEPLAY);
+
 	return S_OK;
 }
 

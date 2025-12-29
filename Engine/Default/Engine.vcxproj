@@ -434,6 +434,7 @@ popd</Command>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_BlackBlend.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Bloom.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Blur.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_DoF.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Fog.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Glow.hlsl" />

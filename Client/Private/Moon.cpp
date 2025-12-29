@@ -25,7 +25,7 @@ HRESULT CMoon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scale(1.5f, 1.5f, 1.5f);
+	m_pTransformCom->Set_Scale(2.f, 2.f, 2.f);
 
 	return S_OK;
 }
@@ -36,7 +36,7 @@ void CMoon::Priority_Update(_float fTimeDelta)
 
 void CMoon::Update(_float fTimeDelta)
 {
-	_vector vOffset = { 0.f, 100.f, 400.f, 1.f };
+	_vector vOffset = { 0.f, 100.f, 500.f, 1.f };
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(m_pGameInstance->Get_CamPosition()) + vOffset);
 
 }
@@ -77,7 +77,7 @@ HRESULT CMoon::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::SCARLET), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
