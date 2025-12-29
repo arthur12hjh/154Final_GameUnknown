@@ -356,14 +356,14 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		}
 		break;
 	// 테스트 스테이트는 제일 아래
-	//case PLAYER_STATE::TEST_STATE:
-	//	switch (m_pPlayerDesc->ePlayerMode)
-	//	{
-	//	case PLAYER_MODE::IDLE: return CPlayer_TestState::Create(tDesc.pArg);;
-	//	case PLAYER_MODE::BATTLE: return CPlayer_TestState::Create(tDesc.pArg);
-	//	case PLAYER_MODE::LOCKON: return CPlayer_TestState::Create(tDesc.pArg);
-	//	}
-	//	break;
+	case PLAYER_STATE::TEST_STATE:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_TestState::Create(tDesc.pArg);;
+		case PLAYER_MODE::BATTLE: return CPlayer_TestState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_TestState::Create(tDesc.pArg);
+		}
+		break;
 	default:
 		break;
 	}

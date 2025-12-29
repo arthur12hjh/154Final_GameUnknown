@@ -117,6 +117,12 @@ public:
 	HRESULT											Skip_Cinematic();
 #pragma endregion
 
+	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���
+	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
+	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
+	// </end>
+
+
 	void											Release_GameMgr();
 
 private :
@@ -132,6 +138,7 @@ private :
 	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
 	class CPlayer*									m_pPlayer = { nullptr };
+	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
 	pair<PLAYER_DESC, _bool>						m_pSavePlayerDesc = {};
 
 private :

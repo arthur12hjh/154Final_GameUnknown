@@ -713,6 +713,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma endregion
 
+	/* For.Prototype_GameObject_LinkAttackTester */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+		CLinkAttackTester::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Body_LinkAttackTester */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Body_LinkAttackTester"),
 		CBody_LinkAttackTester::Create(m_pDevice, m_pContext))))
@@ -983,7 +988,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_CameraBone */
-	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CameraBone");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Camera/CameraBone.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

@@ -976,6 +976,15 @@
     <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
       <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
+      <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Weapon">
+      <UniqueIdentifier>{6cf015cb-cd48-454a-b148-d84f5f731c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
+      <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1747,9 +1756,6 @@
     <ClInclude Include="..\Public\LinkAttackTester.h">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Action.h">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClInclude>
@@ -1950,6 +1956,9 @@
     </ClInclude>
     <ClInclude Include="..\public\BeatSaberCharacterBody.h">
       <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2695,9 +2704,6 @@
     <ClCompile Include="..\Private\LinkAttackTester.cpp">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Action.cpp">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClCompile>
@@ -2892,6 +2898,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp">
       <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
