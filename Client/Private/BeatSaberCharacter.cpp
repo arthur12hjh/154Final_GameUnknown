@@ -2,7 +2,10 @@
 #include "BeatSaberCharacter.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "BeatSaberCharacterBody.h"
+
+#include "Note.h"
 
 #pragma region State
 #include "BeatSaberFsm.h"
@@ -27,6 +30,7 @@ HRESULT CBeatSaberCharacter::Initialize_Prototype()
 
 HRESULT CBeatSaberCharacter::Initialize(void* pArg)
 {
+	//m_pGameManager->Bind_GameCharacter(this);
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -132,7 +136,8 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
-	m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
+	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { BeginOverlapEvent(vHitPoint, vHitDir, pHitActor); });
 
 	CBeatSaberFsm::STATEMACHINE_DESC FsmDesc = {};
 	FsmDesc.pOwner = this;
@@ -211,6 +216,38 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 		m_pFsm->Change_State(TEXT("Idle"));
 }
 
+void CBeatSaberCharacter::BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	auto pNote = dynamic_cast<CNote*>(pHitActor);
+	if (pNote)
+	{
+		auto pNoteData = pNote->GetNoteData();
+
+		if (pNoteData.eDirection == m_CharacterDesc.eDirection)
+		{
+			_float fAnimRatio = m_pBodyModelCom->Get_AnimationRatio();
+			if (pNoteData.vBoundAnimRatio.x > fAnimRatio || pNoteData.vBoundAnimRatio.y < fAnimRatio)
+			{
+				// 실패
+				m_CharacterDesc.iGameLife--;
+			}
+			else
+			{
+				// 성공
+				m_CharacterDesc.iScore += 100;
+			}
+		}
+
+		pNote->Set_Dead(true);
+	}
+
+	if (0 >= m_CharacterDesc.iGameLife)
+	{
+		// 게임 실패
+		// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+	}
+}
+
 CBeatSaberCharacter* CBeatSaberCharacter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBeatSaberCharacter* pBeatSaberCharacter = new CBeatSaberCharacter(pDevice, pContext);
@@ -236,4 +273,6 @@ CGameObject* CBeatSaberCharacter::Clone(void* pArg)
 void CBeatSaberCharacter::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pFsm);
 }

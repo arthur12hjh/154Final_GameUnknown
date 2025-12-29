@@ -227,6 +227,7 @@
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
     <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
+    <ClInclude Include="..\public\Note.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\NpcBody.h" />
     <ClInclude Include="..\public\NpcFace.h" />
@@ -548,6 +549,7 @@
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
     <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
+    <ClCompile Include="..\private\Note.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\NpcBody.cpp" />
     <ClCompile Include="..\private\NpcFace.cpp" />

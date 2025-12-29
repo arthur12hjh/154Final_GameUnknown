@@ -34,7 +34,6 @@ private :
 	BEATSABER_CHARACTER_DESC		m_CharacterDesc = {};
 	CBeatSaberFsm*					m_pFsm = { nullptr };
 	CPartObject*					m_pPartBody = { nullptr };
-	CCollider*						m_pCollider = { nullptr };
 
 private :
 	HRESULT							Ready_CharacterData();
@@ -42,6 +41,7 @@ private :
 	HRESULT							ADD_Components();
 
 	void							Key_Input(_float fTimeDelta);
+	void							BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
 	static	CBeatSaberCharacter*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -91,6 +91,7 @@
 #include "BeatSaberCharacter.h"
 #include "BeatSaberCharacterBody.h"
 #include "BeatSaberFsm.h"
+#include "Note.h"
 #pragma endregion
 
 #pragma region Prob
@@ -620,8 +621,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	// 
 	// dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Change_BoneTag("Bip001-Head", szTargetTagList);
 
-	
-
 	/* For.Prototype_Component_Collider_OBB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		COBBCollider::Create(m_pDevice, m_pContext))))
@@ -779,6 +778,10 @@ HRESULT CLoader::Loading_For_BeatSaber()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_BeatSaberCharacterFsm"),
 		CBeatSaberFsm::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
+		CNote::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	Sleep(1000.f);
@@ -6328,7 +6331,7 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Dororong */
-	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

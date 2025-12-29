@@ -6,6 +6,7 @@
 
 #include "UIHUD.h"
 #include "Level_Loading.h"
+#include "Note.h"
 
 CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID) :
     CLevel(pDevice, pContext, ENUM_CLASS(eLevelID))
@@ -41,6 +42,20 @@ HRESULT CLevel_BeatSaber::Initialize()
 void CLevel_BeatSaber::Update(_float fTimeDelta)
 {
     __super::Update(fTimeDelta);
+
+    if(m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
+    {
+        CNote::NOTE_DESC NoteDesc = {};
+        NoteDesc.bIsApplyTransform = true;
+        NoteDesc.vScale = { 1.f, 1.f, 1.f };
+        NoteDesc.vPosition = { 22.f, 1.f, 60.f };
+        NoteDesc.fNoteSpeed = 2.f;
+        NoteDesc.vTargetPoint = { 22.f, 1.f, 22.f };
+
+        m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
+            ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc);
+    }
+
     if (m_isOverlay && m_pHUD)
     {
         static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
@@ -147,6 +162,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
     CGameObject::GAMEOBJECT_DESC Desc = {};
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
+    Desc.vRotation = { 0.f , XMConvertToRadians(180.f), 0.f, 0.f };
     Desc.vPosition = { 22.f, 1.f, 22.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;

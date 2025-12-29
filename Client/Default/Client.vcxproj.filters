@@ -988,6 +988,9 @@
     <Filter Include="01.Levels\BeatSaber">
       <UniqueIdentifier>{e7ead3ee-c3be-467c-b193-8db5cf84b3f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Note">
+      <UniqueIdentifier>{5b861a43-c873-476a-9215-e8f3ab61e90b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1966,6 +1969,9 @@
     <ClInclude Include="..\public\Level_BeatSaber.h">
       <Filter>01.Levels\BeatSaber</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Note.h">
+      <Filter>02.GameObjects\Actor\Note</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2910,6 +2916,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_BeatSaber.cpp">
       <Filter>01.Levels\BeatSaber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Note.cpp">
+      <Filter>02.GameObjects\Actor\Note</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
