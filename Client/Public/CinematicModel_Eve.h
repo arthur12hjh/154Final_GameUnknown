@@ -55,7 +55,9 @@ private:
 	// Cinematic Code
 	// 0 : Gorilla Meet
 	// 1 : Gorilla Finish
-	// 10 : ..
+	// 2 : Dororong Meet
+	// 3 : Scarlet First Meet
+	// 10 : Scarlet Good Bye
 	// 20 : Scarlet Battle Enter
 	// 21 : Scarlet Battle Phase Change
 	// 22 : Scarlet Battle Finish
@@ -64,6 +66,10 @@ private:
 
 	HRESULT Initialize_Cinematic_GorillaMeet();
 	HRESULT Initialize_Cinematic_GorillaFinish();
+	HRESULT Initialize_Cinematic_Dororong_Meet();
+	HRESULT Initialize_Cinematic_Scarlet_FirstMeet();
+
+	HRESULT Initialize_Cinematic_Scarlet_GoodBye();
 
 	HRESULT Initialize_Cinematic_Scarlet_Battle_Enter();
 	HRESULT Initialize_Cinematic_Scarlet_Battle_PhaseChange();
@@ -71,6 +77,10 @@ private:
 
 	HRESULT Play_Cinematic_GorillaMeet(_float fTimeDelta);
 	HRESULT Play_Cinematic_GorillaFinish(_float fTimeDelta);
+	HRESULT Play_Cinematic_Dororong_Meet(_float fTimeDelta);
+	HRESULT Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta);
+
+	HRESULT Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta);
 
 	HRESULT Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta);
 	HRESULT Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta);

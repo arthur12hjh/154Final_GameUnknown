@@ -21,6 +21,13 @@
         "vScale": [1.0, 1.0, 1.0]
     },
     {
+        "szObjectTag": "Prototype_GameObject_CinematicModel_Dororong",
+        "eType": 0,
+        "vPosition": [760.197, 46.912, 700.319],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
         "szObjectTag": "ActionCamera_GigasMeetPlayer01",
         "eType": 1,
         "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
