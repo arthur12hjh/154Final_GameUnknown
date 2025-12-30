@@ -146,6 +146,8 @@ PS_OUT PS_MOON(PS_IN In)
     float3 finalDiffuseColor = vMtrlDiffuse.rgb * (vAmbientColor + fDiffuse * vLightColor);
     
     Out.vDiffuse.rgb = finalDiffuseColor + vEmissiveColor;
+    Out.vDiffuse *= 2.f;
+    
     Out.vDiffuse.a = vMtrlDiffuse.a;
     Out.vNormal = float4(0.5f, 0.5f, 0.5f, 0.5f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);

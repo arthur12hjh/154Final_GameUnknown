@@ -483,15 +483,34 @@ HRESULT CLightTool::Render()
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
 	{
-		// 빛 오브젝트 저장
-		if (FAILED(Save_Light_Objects()))
+		if (m_pLights && !m_pLights->empty())
 		{
-			MessageBoxW(g_hWnd, L"빛 오브젝트 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+			int idx = 0;
+			// m_LightNames와 m_pLights를 동시에 순회하며 인덱스를 비교해야 합니다.
+			for (class CLight* pLight : *m_pLights) // CLight* 타입 명시
+			{
+				const char* lightName = "";
+				if (idx < m_LightNames.size()) {
+					static char tempName[64];
+					/*sprintf_s(tempName, 64, "Light %d (Type: %s)", idx,
+						(pLight->Get_LightDesc()->eType == LIGHT_TYPE::DIRECTIONAL ? "Dir" : "Point"));*/
+
+					if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+					{
+						// 빛 오브젝트 저장
+						if (FAILED(Save_Light_Objects()))
+						{
+							MessageBoxW(g_hWnd, L"빛 오브젝트 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+						}
+						else
+						{
+							MessageBoxW(g_hWnd, L"빛 오브젝트 저장 성공.", L"알림", MB_OK);
+						}
+					}
+				}
+			}
 		}
-		else
-		{
-			MessageBoxW(g_hWnd, L"빛 오브젝트 저장 성공.", L"알림", MB_OK);
-		}
+
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Load"))

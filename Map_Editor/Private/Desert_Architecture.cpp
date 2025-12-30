@@ -51,7 +51,7 @@ void CDesert_Architecture::Update(_float fTimeDelta)
 
 void CDesert_Architecture::Late_Update(_float fTimeDelta)
 {
-	//if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
@@ -293,7 +293,7 @@ void CDesert_Architecture::SetCullingCollider(_uint iObjectID)
 	case 58: // Xion_Wall_1R (20, 21, 12)
 		pCullingCollider->SetCollision({ -15.f, -19.f, -5.f }, {}, { 20.f, 21.f, 12.f }); 
 		break;
-	case 59: // Xion_Wall_1S (10, 22, 17)	TODO
+	case 59: // Xion_Wall_1S (10, 22, 17)
 		pCullingCollider->SetCollision({ -14.f, -19.5f, -11.f }, {}, { 15.f, 21.f, 17.f }); 
 		break;
 	case 60: // Xion_Wall_1T (10, 22, 23)
@@ -332,77 +332,77 @@ void CDesert_Architecture::SetCullingCollider(_uint iObjectID)
 	case 71: // Xion_Wall_10D (6, 2.5, 4)
 		pCullingCollider->SetCollision({ -5.f, 2.f, -3.f }, {}, { 6.f, 2.5f, 4.f }); 
 		break;
-	case 72: // Xion_Building_3A (19, 28, 13)
+	case 72: // Xion_Building_3A (19, 28, 13) 
 		pCullingCollider->SetCollision({ 0.f, 26.0f, 0.f }, {}, { 19.f, 28.f, 13.f }); 
 		break;
-	case 73: // Xion_Building_4A (30, 42, 38)
-		pCullingCollider->SetCollision({ 0.f, 21.0f, 0.f }, {}, { 30.f, 42.f, 38.f }); 
+	case 73: // Xion_Building_4A (30, 42, 38)   TODO
+		pCullingCollider->SetCollision({ 0.f, 40.0f, 0.f }, {}, { 30.f, 42.f, 38.f }); 
 		break;
 	case 74: // Xion_Building_5A (42, 44, 40)
-		pCullingCollider->SetCollision({ 0.f, 22.0f, 0.f }, {}, { 42.f, 44.f, 40.f }); 
+		pCullingCollider->SetCollision({ 0.f, 42.0f, -20.f }, {}, { 42.f, 44.f, 40.f }); 
 		break;
 	case 75: // Xion_Building_6A (58, 70, 40)
-		pCullingCollider->SetCollision({ 0.f, 35.0f, 0.f }, {}, { 58.f, 70.f, 40.f }); 
+		pCullingCollider->SetCollision({ 7.f, 68.0f, -10.f }, {}, { 58.f, 70.f, 40.f }); 
 		break;
 	case 76: // Xion_Building_8 (65, 70, 60)
-		pCullingCollider->SetCollision({ 0.f, 35.0f, 0.f }, {}, { 65.f, 70.f, 60.f }); 
+		pCullingCollider->SetCollision({ 58.f, 35.0f, -40.f }, {}, { 65.f, 70.f, 60.f }); 
 		break;
 	case 77: // Xion_Building_9A (15, 7, 10)
-		pCullingCollider->SetCollision({ 0.f, 3.5f, 0.f }, {}, { 15.f, 7.f, 10.f }); 
+		pCullingCollider->SetCollision({ 26.f, 5.f, 19.f }, {}, { 15.f, 7.f, 10.f }); 
 		break;
 	case 78: // Xion_Building_17 (80, 80, 85)
-		pCullingCollider->SetCollision({ 0.f, 40.0f, 0.f }, {}, { 80.f, 80.f, 85.f }); 
+		pCullingCollider->SetCollision({ 0.f, -70.0f, 30.f }, {}, { 80.f, 80.f, 85.f }); 
 		break;
 	case 79: // Xion_Building4_1A (95, 80, 40)
-		pCullingCollider->SetCollision({ 0.f, 40.0f, 0.f }, {}, { 95.f, 80.f, 40.f }); 
+		pCullingCollider->SetCollision({ -13.f, 15.0f, 0.f }, {}, { 95.f, 80.f, 40.f }); 
 		break;
 	case 80: // Xion_Building4_1B (88, 93, 40)
-		pCullingCollider->SetCollision({ 0.f, 46.5f, 0.f }, {}, { 88.f, 93.f, 40.f }); 
+		pCullingCollider->SetCollision({ -20.f, 5.f, 6.f }, {}, { 88.f, 93.f, 40.f }); 
 		break;
 	case 81: // Xion_Building4_1C (120, 120, 60)
-		pCullingCollider->SetCollision({ 0.f, 60.0f, 0.f }, {}, { 120.f, 120.f, 60.f }); 
+		pCullingCollider->SetCollision({ 0.f, 57.0f, 27.f }, {}, { 120.f, 120.f, 60.f }); 
 		break;
 	case 82: // Xion_Building4_1D (70, 86, 45)
-		pCullingCollider->SetCollision({ 0.f, 43.0f, 0.f }, {}, { 70.f, 86.f, 45.f }); 
+		pCullingCollider->SetCollision({ 10.f, 73.0f, 10.f }, {}, { 70.f, 86.f, 45.f }); 
 		break;
 	case 83: // Xion_Building4_1E (60, 95, 50)
-		pCullingCollider->SetCollision({ 0.f, 47.5f, 0.f }, {}, { 60.f, 95.f, 50.f }); 
+		pCullingCollider->SetCollision({ 3.f, 93.f, 10.f }, {}, { 60.f, 95.f, 55.f }); 
 		break;
 	case 84: // Xion_Building4_1F (60, 78, 40)
-		pCullingCollider->SetCollision({ 0.f, 39.0f, 0.f }, {}, { 60.f, 78.f, 40.f }); 
+		pCullingCollider->SetCollision({ 10.f, 75.0f, 8.f }, {}, { 60.f, 78.f, 40.f }); 
 		break;
 	case 85: // Xion_Building5_4 (35, 45, 40)
-		pCullingCollider->SetCollision({ 0.f, 22.5f, 0.f }, {}, { 35.f, 45.f, 40.f }); 
+		pCullingCollider->SetCollision({ 0.f, 43.f, 0.f }, {}, { 35.f, 46.f, 40.f }); 
 		break;
-	case 86: // Xion_Building_callD4 (30, 42, 40)
-		pCullingCollider->SetCollision({ 0.f, 21.0f, 0.f }, {}, { 30.f, 42.f, 40.f }); 
+	case 86: // Xion_Building5_callD4 (30, 42, 40)
+		pCullingCollider->SetCollision({ 0.f, 40.0f, 0.f }, {}, { 30.f, 42.f, 40.f }); 
 		break;
-	case 87: // Xion_Building_callD5 (40, 38, 40)
-		pCullingCollider->SetCollision({ 0.f, 19.0f, 0.f }, {}, { 40.f, 38.f, 40.f }); 
+	case 87: // Xion_Building5_callD5 (40, 38, 40)
+		pCullingCollider->SetCollision({ 0.f, 36.0f, -20.f }, {}, { 40.f, 38.f, 40.f }); 
 		break;
 	case 88: // Store_3 (10, 6, 10)
-		pCullingCollider->SetCollision({ 0.f, 3.0f, 0.f }, {}, { 10.f, 6.f, 10.f }); 
+		pCullingCollider->SetCollision({ 8.f, 5.0f, 11.5f }, {}, { 10.f, 6.f, 13.f }); 
 		break;
 	case 89: // Store_4 (10, 6, 7)
-		pCullingCollider->SetCollision({ 0.f, 3.0f, 0.f }, {}, { 10.f, 6.f, 7.f }); 
+		pCullingCollider->SetCollision({ 9.f, 5.0f, 6.f }, {}, { 10.f, 6.f, 7.f }); 
 		break;
 	case 90: // Stair_1A (14, 4, 8)
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 14.f, 4.f, 8.f }); 
+		pCullingCollider->SetCollision({ -14.f, 6.5f, 13.f }, {}, { 14.f, 4.f, 8.f }); 
 		break;
 	case 91: // Stair_1B (14, 4, 8)
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 14.f, 4.f, 8.f }); 
+		pCullingCollider->SetCollision({ -14.5f, 13.f, -18.f }, {}, { 14.f, 4.f, 8.f }); 
 		break;
 	case 92: // Stair_1C (31, 2, 17)
-		pCullingCollider->SetCollision({ 0.f, 1.0f, 0.f }, {}, { 31.f, 2.f, 17.f }); 
+		pCullingCollider->SetCollision({ 0.f, 1.3f, 31.f }, {}, { 31.f, 2.f, 17.f }); 
 		break;
 	case 93: // Stair_2A (7, 2, 5)
-		pCullingCollider->SetCollision({ 0.f, 1.0f, 0.f }, {}, { 7.f, 2.f, 5.f }); 
+		pCullingCollider->SetCollision({ 0.f, 1.0f, -2.f }, {}, { 7.f, 2.f, 5.f }); 
 		break;
 	case 94: // Stair_3A (5, 4, 5)
-		pCullingCollider->SetCollision({ 0.f, 2.0f, 0.f }, {}, { 5.f, 4.f, 5.f }); 
+		pCullingCollider->SetCollision({ 0.f, 3.0f, -4.f }, {}, { 5.f, 4.f, 5.f }); 
 		break;
 	case 95: // Stair_3B (4.5, 1.5, 1.5)
-		pCullingCollider->SetCollision({ 0.f, 0.75f, 0.f }, {}, { 4.5f, 1.5f, 1.5f }); 
+		pCullingCollider->SetCollision({ 0.f, 0.75f, -1.f }, {}, { 4.5f, 1.5f, 1.5f }); 
 		break;
 	default:
 		break;
@@ -519,6 +519,19 @@ _uint CDesert_Architecture::Object_Number(const _tchar* pComponentTag)
 		if (!wcscmp(pSuffix, TEXT("H"))) return 42;
 		if (!wcscmp(pSuffix, TEXT("I"))) return 43;
 	}
+	else if (wcsstr(pComponentTag, TEXT("Xion_Building4"))) {
+		if (!wcscmp(pSuffix, TEXT("1A"))) return 79;
+		if (!wcscmp(pSuffix, TEXT("1B"))) return 80;
+		if (!wcscmp(pSuffix, TEXT("1C"))) return 81;
+		if (!wcscmp(pSuffix, TEXT("1D"))) return 82;
+		if (!wcscmp(pSuffix, TEXT("1E"))) return 83;
+		if (!wcscmp(pSuffix, TEXT("1F"))) return 84;
+	}
+	else if (wcsstr(pComponentTag, TEXT("Xion_Building5"))) {
+		if (!wcscmp(pSuffix, TEXT("4"))) return 85;
+		if (!wcscmp(pSuffix, TEXT("callD4"))) return 86;
+		if (!wcscmp(pSuffix, TEXT("callD5"))) return 87;
+	}
 	// Xion_Building 시리즈 (72 ~ 87)
 	else if (wcsstr(pComponentTag, TEXT("Xion_Building"))) {
 		if (!wcscmp(pSuffix, TEXT("3A"))) return 72;
@@ -528,15 +541,6 @@ _uint CDesert_Architecture::Object_Number(const _tchar* pComponentTag)
 		if (!wcscmp(pSuffix, TEXT("8")))  return 76;
 		if (!wcscmp(pSuffix, TEXT("9A"))) return 77;
 		if (!wcscmp(pSuffix, TEXT("17"))) return 78;
-		if (!wcscmp(pSuffix, TEXT("4_1A"))) return 79;
-		if (!wcscmp(pSuffix, TEXT("4_1B"))) return 80;
-		if (!wcscmp(pSuffix, TEXT("4_1C"))) return 81;
-		if (!wcscmp(pSuffix, TEXT("4_1D"))) return 82;
-		if (!wcscmp(pSuffix, TEXT("4_1E"))) return 83;
-		if (!wcscmp(pSuffix, TEXT("4_1F"))) return 84;
-		if (!wcscmp(pSuffix, TEXT("5_4")))  return 85;
-		if (!wcscmp(pSuffix, TEXT("callD4"))) return 86;
-		if (!wcscmp(pSuffix, TEXT("callD5"))) return 87;
 	}
 	// Store 시리즈 (88 ~ 89)
 	else if (wcsstr(pComponentTag, TEXT("Store"))) {

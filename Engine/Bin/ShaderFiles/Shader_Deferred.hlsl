@@ -462,13 +462,6 @@ PS_OUT_BACKBUFFER PS_MAIN_DEFERRED(PS_IN In)
     Out.vBackBuffer = Calc_Fog(Out.vBackBuffer, g_FogTexture, g_vFogColor, In.vTexcoord);
     Out.vBackBuffer = Calc_VolumeFog(Out.vBackBuffer, g_VolumeFogTexture, In.vTexcoord);
     
-
-    //블룸 먼저 들어가고, 디스토션이 들어가는 상황.
-    //블룸 샘플링
-    //디스토션 샘플링.
-    Out.vBackBuffer = Calc_Distortion(Out.vBackBuffer, g_SceneTexture, g_DistortionTexture, In.vTexcoord);
-
-    
     float4 vBlack = g_BlackBlendTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vBlur = saturate(Calc_Blur(g_BlurFinalTexture, In.vTexcoord));
     float4 vGlow = saturate(Calc_Glow(g_GlowFinalTexture, In.vTexcoord));
