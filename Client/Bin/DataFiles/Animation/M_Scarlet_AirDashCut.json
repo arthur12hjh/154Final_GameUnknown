@@ -282,11 +282,11 @@
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 1.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 263,
+                "iNotifyKeyFrame": 250,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -295,16 +295,16 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "",
+                "szNotifyArg01": "Prototype_Component_Effect_Power_Yellow",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "EFFECT",
-                "szSocketTag": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-Head",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -316,9 +316,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             },
             {
@@ -406,7 +406,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 293,
+                "iNotifyKeyFrame": 275,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -476,7 +476,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -488,7 +488,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 73,
                 "iNumData01": 1,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -506,7 +506,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -516,7 +516,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -528,7 +528,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 73,
                 "iNumData01": 2,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -546,7 +546,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -556,7 +556,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -568,7 +568,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 73,
                 "iNumData01": 3,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -586,7 +586,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -596,7 +596,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -636,7 +636,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -646,8 +646,8 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 120,
-                "iNumData01": 1,
+                "iNotifyKeyFrame": 145,
+                "iNumData01": 2,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -676,7 +676,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -687,7 +687,7 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 190,
-                "iNumData01": 1,
+                "iNumData01": 2,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -716,7 +716,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -728,7 +728,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 200,
                 "iNumData01": 1,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -746,7 +746,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -756,7 +756,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -768,7 +768,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 200,
                 "iNumData01": 2,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -786,7 +786,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -796,7 +796,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -808,7 +808,7 @@
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 200,
                 "iNumData01": 3,
-                "iNumData02": 2,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -826,7 +826,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -836,7 +836,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -847,7 +847,7 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 225,
-                "iNumData01": 1,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -876,7 +876,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -887,8 +887,8 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 225,
-                "iNumData01": 1,
-                "iNumData02": 2,
+                "iNumData01": 4,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -906,7 +906,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -916,7 +916,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -927,8 +927,8 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 225,
-                "iNumData01": 2,
-                "iNumData02": 2,
+                "iNumData01": 5,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -946,7 +946,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -956,7 +956,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -967,8 +967,8 @@
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 225,
-                "iNumData01": 3,
-                "iNumData02": 2,
+                "iNumData01": 6,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -986,7 +986,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -996,7 +996,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -1006,8 +1006,8 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 250,
-                "iNumData01": 1,
+                "iNotifyKeyFrame": 240,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -1036,7 +1036,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.0,
                     0.0
                 ]
@@ -1046,9 +1046,9 @@
                 "fNumData02": 0.5,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 250,
-                "iNumData01": 1,
-                "iNumData02": 2,
+                "iNotifyKeyFrame": 240,
+                "iNumData01": 4,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -1066,7 +1066,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -1076,7 +1076,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -1086,9 +1086,9 @@
                 "fNumData02": 0.699999988079071,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 250,
-                "iNumData01": 2,
-                "iNumData02": 2,
+                "iNotifyKeyFrame": 240,
+                "iNumData01": 5,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -1106,7 +1106,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -1116,7 +1116,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
                 ]
@@ -1126,9 +1126,9 @@
                 "fNumData02": 0.4000000059604645,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 250,
-                "iNumData01": 3,
-                "iNumData02": 2,
+                "iNotifyKeyFrame": 240,
+                "iNumData01": 6,
+                "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
@@ -1146,7 +1146,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
-                    -5.5,
+                    -3.700000047683716,
                     -0.10000000149011612,
                     0.0
                 ],
@@ -1156,9 +1156,169 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    -5.5,
+                    -3.700000047683716,
                     0.10000000149011612,
                     0.0
+                ]
+            },
+            {
+                "fNumData01": 1.2000000476837158,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 273,
+                "iNumData01": 1,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Teleport",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-Pelvis",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.20000000298023224,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    6.0,
+                    6.0,
+                    6.0
+                ]
+            },
+            {
+                "fNumData01": 1.2000000476837158,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 298,
+                "iNumData01": 1,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Teleport",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-Pelvis",
+                "vNotifyPosition": [
+                    0.0,
+                    -0.20000000298023224,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    6.0,
+                    6.0,
+                    6.0
+                ]
+            },
+            {
+                "fNumData01": 2.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 265,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Signal",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-L-Hand",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.5,
+                    1.5,
+                    1.5
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 280,
+                "iNumData01": 1,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Combo",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Body",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Bip001-Pelvis",
+                "vNotifyPosition": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.5,
+                    2.5,
+                    2.5
                 ]
             }
         ],

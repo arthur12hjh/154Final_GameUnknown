@@ -134,6 +134,11 @@ void CDebugCheatUI::DrawObjectDebug()
         Safe_Release(pPlayer);
     }
 
+    if (ImGui::Button("Anim Refresh"))
+    {
+        CGameManager::GetInstance()->Refresh();
+    }
+
     ImGui::Dummy(ImVec2(0.f, 10.f));
     // 12.09 서민석 - 텔포 포인트 하나 임의로 추가해뒀음
     // 얘는 치우지 말아다오

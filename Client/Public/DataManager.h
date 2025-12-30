@@ -41,6 +41,7 @@ public :
 	map<_uint, CAMERA_ANIMATION_DATA>*					Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*							Get_CinematicDataMap();
 
+	void												Refresh();
 private:
 	//스킬 데이터
 	map<_uint, CHARACTER_SKILL_DESC>					m_pSkillDatas = {};

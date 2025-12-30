@@ -42,8 +42,20 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	EffectDesc.fRot = _float3(0, 0, 0);
 	EffectDesc.fSize = 1.2f;
 	EffectDesc.iFloor = 0;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	switch (m_eBulletType)
+	{
+	case BULLET_TYPE::PROJECTILE:
+		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+		break;
+	case BULLET_TYPE::HITSCAN:
+	{
+		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Triple"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	}
+	break;
+	}
 
 	return S_OK;
 }
@@ -202,5 +214,5 @@ void CBullet_Scarlet::Free()
 {
 	__super::Free();
 	if (nullptr != m_pEffect)
-		m_pEffect->End(true);
+ 		m_pEffect->End(true);
 }

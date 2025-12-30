@@ -162,6 +162,7 @@ void CNaytibaLeftWeaponPart::Active_SFX(const _wstring& strObjectTag, const ANIM
             CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
             EffectDesc.fRotationPerSec = 1.f;
             EffectDesc.fSpeedPerSec = 1.f;
+            EffectDesc.fSpeed = NotifyReference.fNumData01;
 
             if (NotifyReference.szSocketTag.compare("None") == 0)
             {
@@ -243,7 +244,7 @@ void CNaytibaLeftWeaponPart::Active_SFX(const _wstring& strObjectTag, const ANIM
             Traildesc.vHigh = _float4(NotifyReference.vNotifyScale.x, NotifyReference.vNotifyScale.y, NotifyReference.vNotifyScale.z, 0.f);
             Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
             Traildesc.bisLine = false;
-
+            Traildesc.bisLong = NotifyReference.iNumData02 == 1;
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
 

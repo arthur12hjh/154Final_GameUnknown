@@ -36,10 +36,18 @@ HRESULT CTrailEffect::Initialize(void* pArg)
             return E_FAIL;
     }
     else {
-        /* Com_Trail */
-        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
-            TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
-            return E_FAIL;
+        if (pDesc->bisLong) {
+            /* Com_Trail */
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Long_Trail"),
+                TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
+                return E_FAIL;
+        }
+        else {
+            /* Com_Trail */
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Trail"),
+                TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pTrail), pArg)))
+                return E_FAIL;
+        }
     }
 
     if (FAILED(Ready_Components(pArg)))

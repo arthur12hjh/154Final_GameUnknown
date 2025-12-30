@@ -1045,6 +1045,10 @@ void Tornado(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
+            if (0 == viLoopAndCount.x && 2 != vfisSphere.x)
+                return;
+            if (2 == viLoopAndCount.x)
+                return;
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
             g_Out[DTid.x].WorldMat = g_WorldMatrix;
             vDir = normalize(mul(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0), g_Out[DTid.x].WorldMat));

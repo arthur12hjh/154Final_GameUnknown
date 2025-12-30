@@ -61,7 +61,9 @@ public :
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
 
 #ifdef _DEBUG
-	
+
+	void Refresh();
+
 	void								Save_CameraAnimationData();
 	void								Save_CinematicData();
 #endif

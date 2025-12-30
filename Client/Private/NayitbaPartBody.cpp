@@ -281,7 +281,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
             EffectDesc.fRotationPerSec = 1.f;
             EffectDesc.fSpeedPerSec = 1.f;
-
+            EffectDesc.fSpeed = NotifyReference.fNumData01;
             if (NotifyReference.szSocketTag.compare("None") == 0)
             {
                 EffectDesc.pRootMatrix = nullptr;
@@ -363,6 +363,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
             Traildesc.bisLine = false;
 
+            Traildesc.bisLong = NotifyReference.iNumData02 == 1;
 
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);

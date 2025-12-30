@@ -187,6 +187,7 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
   	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
+	EffectDesc.fSpeed = AnimNotify.fNumData01;
 	if (!AnimNotify.szNotifyArg08.empty())
 	{
 		_TCHAR szPartObjectName[MAX_PATH];
@@ -215,24 +216,64 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 	EffectDesc.fSize = AnimNotify.vNotifyScale.x;
 
 	_float4x4 matTransform;
-	if ((AnimNotify.iNumData01 == 1 || AnimNotify.iNumData01 == 4) && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
-		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+	if (AnimNotify.iNumData01 == 1 && nullptr != EffectDesc.pRootMatrix) {
+		if (nullptr != EffectDesc.pWorldMatrix)
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		else
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
 		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
 	}
-	else if (AnimNotify.iNumData01 == 2 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
-		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+	else if (AnimNotify.iNumData01 == 2 && nullptr != EffectDesc.pRootMatrix) {
+		if(nullptr != EffectDesc.pWorldMatrix)
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		else
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
 		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + pWorldMatrix->_42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
 	}
-	if (AnimNotify.iNumData01 == 3 && nullptr != EffectDesc.pRootMatrix && nullptr != EffectDesc.pWorldMatrix) {
-		XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+	else if (AnimNotify.iNumData01 == 3 && nullptr != EffectDesc.pRootMatrix) {
+		if (nullptr != EffectDesc.pWorldMatrix)
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		else
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
+		_matrix mat = XMLoadFloat4x4(&matTransform);
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
 		EffectDesc.fRot = _float3(0,0,0);
-		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+		EffectDesc.vPos = mat.r[3];
+		EffectDesc.vPos += mat.r[0] * AnimNotify.vNotifyPosition.x;
+		EffectDesc.vPos += mat.r[1] * AnimNotify.vNotifyPosition.y;
+		EffectDesc.vPos += mat.r[2] * AnimNotify.vNotifyPosition.z;
+		//EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+	}
+	else if (AnimNotify.iNumData01 == 4 && nullptr != EffectDesc.pRootMatrix) {
+		if (nullptr != EffectDesc.pWorldMatrix)
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		else
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
+		_matrix mat = XMLoadFloat4x4(&matTransform);
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = mat.r[3];
+		EffectDesc.vPos += mat.r[0] * AnimNotify.vNotifyPosition.x;
+		EffectDesc.vPos += mat.r[1] * AnimNotify.vNotifyPosition.y;
+		EffectDesc.vPos += mat.r[2] * AnimNotify.vNotifyPosition.z;
+	}
+	else if (AnimNotify.iNumData01 == 5 && nullptr != EffectDesc.pRootMatrix) {
+		if (nullptr != EffectDesc.pWorldMatrix)
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
+		else
+			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+
+		_TCHAR szPartObjectName[MAX_PATH];
+		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg07.c_str(), szPartObjectName);
+		const _float4x4* pBodyMatrix = m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr();
+		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + pBodyMatrix->_42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
 	}
 
 	_TCHAR szEffectTag[MAX_PATH];

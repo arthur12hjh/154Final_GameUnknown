@@ -15,10 +15,10 @@ CTrail::CTrail(const CTrail& Prototype)
 	Safe_AddRef(m_pIB);
 }
 
-HRESULT CTrail::Initialize_Prototype()
+HRESULT CTrail::Initialize_Prototype(_int iNum)
 {
-	m_iNumPositions = 50;
-	m_iNumVertices = 250;
+	m_iNumPositions = iNum;
+	m_iNumVertices = iNum * 5;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
@@ -319,11 +319,11 @@ HRESULT CTrail::Initialize(void* pArg)
 	return S_OK;
 }
 
-CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum)
 {
 	CTrail* pInstance = new CTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iNum)))
 	{
 		MSG_BOX("Failed to Created : CTrail");
 		Safe_Release(pInstance);

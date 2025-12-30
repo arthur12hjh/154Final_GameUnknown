@@ -1275,6 +1275,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CTrail::Create(m_pDevice, m_pContext);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Trail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Long_Trail");
+	PrototypeDesc.pPrototype = CTrail::Create(m_pDevice, m_pContext, 150);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Line_Trail */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Line_Trail");
 	PrototypeDesc.pPrototype = CWaveTrail::Create(m_pDevice, m_pContext);

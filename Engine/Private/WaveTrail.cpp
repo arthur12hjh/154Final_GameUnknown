@@ -78,8 +78,8 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 	if (m_fTime < 0.015f)
 		return;
 	if (false == bMakeWaveTrail) {
-		m_fWaveTime += m_fTime;
 		_int index = m_fTime / 0.015f;
+		m_iNumRemove += index;
 		m_fTime -= index * 0.015f;
 		for (_int i = 0; i < index; ++i) {
 			if (2 < m_iNumPositionPresent) {
@@ -154,8 +154,8 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 					_vector		vLook = XMVector3Normalize(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition));
 					_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 					_vector		vUp = XMVector3Cross(vLook, vRight);
-					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh  * m_fSpeed) * m_fPow * (iIndex / (m_iNumPresent * 0.3f)));
-					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (iIndex / (m_iNumPresent * 0.3f)));
+					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh  * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)) + vRight * cosf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)));
+					XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)) + vRight * cosf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)));
 				}
 				m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
 				m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
@@ -172,7 +172,7 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 		}
 		return;
 	}
-	m_fWaveTime = 0.f;
+	m_iNumRemove = 0;
 	memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
 	memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
 
@@ -273,8 +273,8 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 			_vector		vLook = XMVector3Normalize(XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow + 2].vPosition));
 			_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 			_vector		vUp = XMVector3Cross(vLook, vRight);
-			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
-			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
+			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexHigh].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)) + vRight * cosf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
+			XMStoreFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXPOSTEXs[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)) + vRight * cosf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * (_float(iIndex) / (m_iNumPresent * 0.3f)));
 		}
 
 		m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };

@@ -26,6 +26,7 @@ public:
         _vector vPos;
         _float3 fRot;
         _float fSize;
+        _float fSpeed = 0;
         _int   iFloor;
     }EFFECT_TRANSFORM_DESC;
     
@@ -61,6 +62,7 @@ private:
     const   _float4x4* m_pParentMat = { nullptr };
     _float4x4	        m_CombinedWorldMatrix = {};
     _float	        m_fStopTime = {};
+    _float	        m_fSpeed= {};
     _int           m_iFloor = {};
     vector<CMeshEffect*> m_pMeshEffects;
     vector<CMeshParticle*> m_pMeshParticles;

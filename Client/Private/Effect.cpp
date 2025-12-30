@@ -52,6 +52,7 @@ HRESULT CEffect::Initialize(void* pArg)
         m_pTransformCom->Set_State(STATE::POSITION, pDesc->vPos);
         m_pTransformCom->Rotation(pDesc->fRot.x, pDesc->fRot.y, pDesc->fRot.z);
         m_pTransformCom->Set_Scale(pDesc->fSize, pDesc->fSize, pDesc->fSize);
+        m_fSpeed = 0 == pDesc->fSpeed ? 1 : pDesc->fSpeed;
         if (nullptr != pDesc->pDir) {
             m_pTransformCom->LookAt(m_pTransformCom->Get_State(STATE::POSITION) + XMLoadFloat3(pDesc->pDir));
         }
@@ -98,13 +99,13 @@ HRESULT CEffect::Initialize(void* pArg)
 void CEffect::Priority_Update(_float fTimeDelta)
 {
     for (auto pMeshEffect : m_pMeshEffects) {
-        pMeshEffect->Priority_Update(fTimeDelta);
+        pMeshEffect->Priority_Update(fTimeDelta * m_fSpeed);
     }
     for (auto pSpriteParticle : m_pSpriteParticles) {
-        pSpriteParticle->Priority_Update(fTimeDelta);
+        pSpriteParticle->Priority_Update(fTimeDelta * m_fSpeed);
     }
     for (auto pMeshParticle : m_pMeshParticles) {
-        pMeshParticle->Priority_Update(fTimeDelta);
+        pMeshParticle->Priority_Update(fTimeDelta * m_fSpeed);
     }
 }
 
@@ -311,13 +312,13 @@ void CEffect::Update(_float fTimeDelta)
         }
     }
     for (auto pMeshEffect : m_pMeshEffects) {
-        pMeshEffect->Update(fTimeDelta);
+        pMeshEffect->Update(fTimeDelta * m_fSpeed);
     }
     for (auto pSpriteParticle : m_pSpriteParticles) {
-        pSpriteParticle->Update(fTimeDelta);
+        pSpriteParticle->Update(fTimeDelta * m_fSpeed);
     }
     for (auto pMeshParticle : m_pMeshParticles) {
-        pMeshParticle->Update(fTimeDelta);
+        pMeshParticle->Update(fTimeDelta * m_fSpeed);
     }
 }
 
@@ -408,7 +409,7 @@ void CEffect::Late_Update(_float fTimeDelta)
                 i = m_pMeshEffects.erase(i);
             }
             else {
-                (*i)->Late_Update(fTimeDelta);
+                (*i)->Late_Update(fTimeDelta * m_fSpeed);
                 ++i;
             }
         }
@@ -419,7 +420,7 @@ void CEffect::Late_Update(_float fTimeDelta)
             m_pMeshEffects.clear();
         }
         else {
-            m_pMeshEffects[0]->Late_Update(fTimeDelta);
+            m_pMeshEffects[0]->Late_Update(fTimeDelta * m_fSpeed);
         }
     }
     if (1 < m_pSpriteParticles.size()) {
@@ -429,7 +430,7 @@ void CEffect::Late_Update(_float fTimeDelta)
                 i = m_pSpriteParticles.erase(i);
             }
             else {
-                (*i)->Late_Update(fTimeDelta);
+                (*i)->Late_Update(fTimeDelta* m_fSpeed);
                 ++i;
             }
         }
@@ -440,7 +441,7 @@ void CEffect::Late_Update(_float fTimeDelta)
             m_pSpriteParticles.clear();
         }
         else {
-            m_pSpriteParticles[0]->Late_Update(fTimeDelta);
+            m_pSpriteParticles[0]->Late_Update(fTimeDelta* m_fSpeed);
         }
     }
     if (1 < m_pMeshParticles.size()) {
@@ -450,7 +451,7 @@ void CEffect::Late_Update(_float fTimeDelta)
                 i = m_pMeshParticles.erase(i);
             }
             else {
-                (*i)->Late_Update(fTimeDelta);
+                (*i)->Late_Update(fTimeDelta * m_fSpeed);
                 ++i;
             }
         }
@@ -461,7 +462,7 @@ void CEffect::Late_Update(_float fTimeDelta)
             m_pMeshParticles.clear();
         }
         else {
-            m_pMeshParticles[0]->Late_Update(fTimeDelta);
+            m_pMeshParticles[0]->Late_Update(fTimeDelta* m_fSpeed);
         }
     }
     if (0 >= m_pMeshEffects.size() + m_pSpriteParticles.size() + m_pMeshParticles.size())

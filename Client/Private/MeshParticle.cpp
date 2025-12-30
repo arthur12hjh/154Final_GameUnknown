@@ -3,6 +3,8 @@
 #include "VIBuffer_Instance_MeshParticle.h"
 #include "GameInstance.h"
 
+#include "EffectSRV.h"
+
 CMeshParticle::CMeshParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -101,6 +103,7 @@ HRESULT CMeshParticle::Initialize(void* pArg)
 
 	if (FAILED(Ready_ComputeShader()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 	return S_OK;
 }
 
@@ -318,6 +321,10 @@ HRESULT CMeshParticle::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
 	return S_OK;
 }
 

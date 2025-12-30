@@ -10,6 +10,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Client)
+class CEffectSRV;
 //texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 class CMeshEffect final : public CGameObject
 {
@@ -63,6 +64,9 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
+
+	CEffectSRV* m_pEffectSRV = { nullptr };
+
 	_float		m_fTime = {};
 	_uint			m_iRenderCount = {};
 	MESH_EFFECT_DATA	m_tData;

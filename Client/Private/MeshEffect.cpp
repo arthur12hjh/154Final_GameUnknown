@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 
+#include "EffectSRV.h"
+
 CMeshEffect::CMeshEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -85,6 +87,7 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 
 	return S_OK;
 }
@@ -226,6 +229,9 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
 	return S_OK;
 }
 
