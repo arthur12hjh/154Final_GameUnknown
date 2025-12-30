@@ -59,31 +59,31 @@ void CLinkAttackTester::Priority_Update(_float fTimeDelta)
 
 void CLinkAttackTester::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	{
-		m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 199.f, 1.f));
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_C))
-	{
-		m_pTransformCom->LookAt(XMVectorSet(999.f, 0.f, 200.f, 1.f));
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_V))
-	{
-		m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 201.f, 1.f));
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
-	{
-		m_pTransformCom->LookAt(XMVectorSet(1001.f, 0.f, 200.f, 1.f));
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	//{
+	//	m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 199.f, 1.f));
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_C))
+	//{
+	//	m_pTransformCom->LookAt(XMVectorSet(999.f, 0.f, 200.f, 1.f));
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_V))
+	//{
+	//	m_pTransformCom->LookAt(XMVectorSet(1000.f, 0.f, 201.f, 1.f));
+	//}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
+	//{
+	//	m_pTransformCom->LookAt(XMVectorSet(1001.f, 0.f, 200.f, 1.f));
+	//}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
-	{
-		m_bIsActive = TRUE;
-		m_iAnimationSequence = 0;
-		m_fMoveTime = 0.f;
-		m_pBodyModelCom->Set_Animation("Hit_Sword_Normal_LinkAttack1", FALSE, 1.f, 0.12f, TRUE);
-		//m_pBodyModelCom->Set_Animation("M_Scarlet_GroggyCounter", FALSE, 1.f, 0.12f, TRUE);
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
+	//{
+	//	m_bIsActive = TRUE;
+	//	m_iAnimationSequence = 0;
+	//	m_fMoveTime = 0.f;
+	//	m_pBodyModelCom->Set_Animation("Hit_Sword_Normal_LinkAttack1", FALSE, 1.f, 0.12f, TRUE);
+	//	//m_pBodyModelCom->Set_Animation("M_Scarlet_GroggyCounter", FALSE, 1.f, 0.12f, TRUE);
+	//}
 
 	if (m_bIsActive)
 	{

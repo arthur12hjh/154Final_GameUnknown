@@ -991,6 +991,30 @@
     <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
       <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
+      <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Weapon">
+      <UniqueIdentifier>{6cf015cb-cd48-454a-b148-d84f5f731c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
+      <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\BeatSaber">
+      <UniqueIdentifier>{e7ead3ee-c3be-467c-b193-8db5cf84b3f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Note">
+      <UniqueIdentifier>{5b861a43-c873-476a-9215-e8f3ab61e90b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\AttackHitBox">
+      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicModel_Dororong">
+      <UniqueIdentifier>{8d377dbb-39fe-4271-a3d0-97ea8c431125}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicPartBody">
+      <UniqueIdentifier>{5e880200-fba0-4698-a7b9-a424d79c7de3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="30.ImGui\LightTool">
       <UniqueIdentifier>{4bc73f0a-b3c9-4138-a70a-0d5ff04fee58}</UniqueIdentifier>
     </Filter>
@@ -1978,6 +2002,12 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h">
       <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CinematicModel_Dororong.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Dororong</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CinematicPartBody.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicPartBody</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
@@ -2931,6 +2961,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera_BeatSaber.cpp">
       <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicModel_Dororong.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicModel_Dororong</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicPartBody.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicPartBody</Filter>
     </ClCompile>
     <ClCompile Include="..\private\LightTool.cpp">
       <Filter>30.ImGui\LightTool</Filter>

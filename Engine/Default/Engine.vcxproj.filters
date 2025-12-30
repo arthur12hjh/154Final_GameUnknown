@@ -354,7 +354,7 @@
       <Filter>01.Utility\05.Renderer\Deferred\SSAO</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Emissive.h">
-      <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
+      <Filter>01.Utility\05.Renderer\Emissive</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Physx_FilterShader.h">
       <Filter>01.Utility\17.Physx\Filter</Filter>
@@ -722,7 +722,7 @@
       <Filter>01.Utility\05.Renderer\Deferred\SSAO</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Emissive.cpp">
-      <Filter>01.Utility\05.Renderer\Deferred\Blur\Emissive</Filter>
+      <Filter>01.Utility\05.Renderer\Emissive</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Physx_FilterShader.cpp">
       <Filter>01.Utility\17.Physx\Filter</Filter>
@@ -1152,9 +1152,6 @@
     <Filter Include="01.Utility\03.Components\PhysxComponent\RigidBody">
       <UniqueIdentifier>{0825bc0e-3cbf-4c5d-92ce-23b4a774c3f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\Deferred\Blur\Emissive">
-      <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Components\PhysxComponent\CharacterController\CCTQueryFilterCallback">
       <UniqueIdentifier>{4485119a-22b1-4fe0-bbd4-f2c184d9123d}</UniqueIdentifier>
     </Filter>
@@ -1211,6 +1208,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\Distortion\ShaderFile">
       <UniqueIdentifier>{48b7a659-f846-4219-a41f-8617c9a4b99c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer\Emissive">
+      <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

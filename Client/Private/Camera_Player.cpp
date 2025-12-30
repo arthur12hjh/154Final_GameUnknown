@@ -36,7 +36,7 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     m_fRotateX = 0.f;
     m_fRotateY = 90.f;
     m_bIsPositionInitialized = FALSE;
-    m_fDistance = 8.f;
+    m_fDistance = 13.f;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
