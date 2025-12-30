@@ -30,7 +30,7 @@ HRESULT CLevel_Desert::Initialize()
 	CImgui_Manager::GetInstance()->Initialize(m_pDevice, m_pContext);
 
 	CImgui_Manager* pManager = CImgui_Manager::GetInstance();
-	if (pManager->Get_MapTool_Desert() == nullptr) // MapTool이 아직 생성되지 않았다면
+	if (pManager->Get_MapTool_Desert() == nullptr) 
 	{
 		if (FAILED(pManager->Create_MapTool_For_Desert(m_pDevice, m_pContext)))
 			return E_FAIL;
@@ -40,8 +40,8 @@ HRESULT CLevel_Desert::Initialize()
 		return E_FAIL;
 
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;*/
 
 
 

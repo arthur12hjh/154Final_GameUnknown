@@ -10,6 +10,7 @@
 #include "ShaderDebugger.h"
 #include "CameraActionInserter.h"
 #include "CinematicMaker.h"
+#include "LightTool.h"
 
 IMPLEMENT_SINGLETON(CImGuiManager);
 
@@ -120,6 +121,14 @@ HRESULT CImGuiManager::ADD_ImGuiObject()
 		return E_FAIL;
 
 	m_ImGuis.emplace(TEXT("ImGui_CinematicMaker"), pCinematicMaker);
+#pragma endregion
+
+#pragma region LightTool
+	auto pLightTool = CLightTool::Create(m_pDevice, m_pContext);
+	if (pLightTool == nullptr)
+		return E_FAIL;
+
+	m_ImGuis.emplace(TEXT("ImGui_LightTool"), pLightTool);
 #pragma endregion
 
 	return S_OK;

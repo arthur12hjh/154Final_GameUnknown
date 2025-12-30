@@ -106,7 +106,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SCREEN_BLUR_X();
     }
 
-    //기존 렌더타겟으로 합성해서 내보내기 위한 렌더타겟.
     pass DoF
     {
         SetRasterizerState(RS_Default);

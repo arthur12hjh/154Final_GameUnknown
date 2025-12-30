@@ -210,6 +210,7 @@
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
     <ClInclude Include="..\Public\Lift_Platform.h" />
+    <ClInclude Include="..\public\LightTool.h" />
     <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\public\BeatSaberCharacter.h" />
@@ -538,6 +539,7 @@
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
+    <ClCompile Include="..\private\LightTool.cpp" />
     <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\private\BeatSaberCharacter.cpp" />
