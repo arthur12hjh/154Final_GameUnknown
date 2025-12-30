@@ -107,7 +107,7 @@ HRESULT CMonsterMimesisController::Render()
 	return S_OK;
 }
 
-void CMonsterMimesisController::Damage(void* pArg)
+HRESULT CMonsterMimesisController::Damage(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
@@ -175,8 +175,11 @@ void CMonsterMimesisController::Damage(void* pArg)
 				m_bIsMimesis = false;
 
 			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+			return S_OK;
 		}
 	}
+
+	return E_FAIL;
 }
 
 void CMonsterMimesisController::ActionSuccess(void* pArg)
@@ -249,10 +252,13 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_bIsMimesis)
 	{
-		CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-		AttackStateDesc.pTarget = pTarget;
-		AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-		m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+		if (fDistance <= m_pOwnerData->fAttackRange * 1.5f)
+		{
+			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+			AttackStateDesc.pTarget = pTarget;
+			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+		}
 	}
 	else
 	{

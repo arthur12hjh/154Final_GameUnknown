@@ -1,7 +1,7 @@
 #pragma once
 
-#include "MapTool_Defines.h"
-#include "Base.h"
+#include "Client_Defines.h"
+#include "GameObject.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -13,9 +13,9 @@ class CModel;
 class CLight;
 NS_END
 
-NS_BEGIN(Tool_Map)
+NS_BEGIN(Client)
 
-class CLightTool final : public CBase
+class CLightTool final : public CGameObject
 {
 	typedef struct SavedObjectInfo
 	{
@@ -23,20 +23,22 @@ class CLightTool final : public CBase
 	}SAVEDOBJECTINFO;
 
 public:
-	CLightTool();
+	CLightTool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CLightTool() = default;
 
 public:
-	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	HRESULT Initialize();
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
+	void Setting_Light(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT Render();
+
 
 	HRESULT Save_Light_Objects();
 	HRESULT Load_Light_Objects();
 
-	void Update_Light_Properties(); 
+	void Update_Light_Properties();
 	void Load_Selected_Light_Desc();
 
 private:
@@ -73,7 +75,7 @@ private:
 	/* 스포트 광원에서 사용 보통 1.0f 설정하며     */
 	/* 안쪽 원뿔과 바깥쪽 원뿔간의 빛의 세기 차이  */
 	_float m_fFalloff = { 0.f };
-	
+
 	/* 스포트 광원의 안쪽 원뿔의 각도 */
 	_float m_fTheta = { 0.f };
 
@@ -87,15 +89,13 @@ private:
 
 	const list<CLight*>* m_pLights = { nullptr };
 	list<string>		m_LightNames = {};
-	class CLight*		m_pSelectedLight = { nullptr };
-
-	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
+	class CLight* m_pSelectedLight = { nullptr };
 
 private:
 	_bool				m_bIsMapMode = { false };
 
 	// 빛
-	_int				m_iSelectedLightIndex = {-1};
+	_int				m_iSelectedLightIndex = { -1 };
 
 	_bool				m_bIsDeplayPointLight = { false };
 	_bool				m_bIsDeplayDirLight = { false };
@@ -104,6 +104,8 @@ private:
 
 
 public:
+	static	CLightTool* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
 

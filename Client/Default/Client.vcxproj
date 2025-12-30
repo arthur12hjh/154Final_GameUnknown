@@ -159,6 +159,7 @@
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
+    <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
     <ClInclude Include="..\Public\Lift_Platform.h" />
+    <ClInclude Include="..\public\LightTool.h" />
     <ClInclude Include="..\Public\LinkAttackTester.h" />
     <ClInclude Include="..\Public\LockonManager.h" />
     <ClInclude Include="..\public\BeatSaberCharacter.h" />
@@ -482,6 +484,7 @@
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
+    <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
@@ -529,6 +532,7 @@
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
     <ClCompile Include="..\Private\Lift_Platform.cpp" />
+    <ClCompile Include="..\private\LightTool.cpp" />
     <ClCompile Include="..\Private\LinkAttackTester.cpp" />
     <ClCompile Include="..\Private\LockonManager.cpp" />
     <ClCompile Include="..\private\BeatSaberCharacter.cpp" />

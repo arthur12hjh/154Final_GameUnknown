@@ -106,7 +106,7 @@ HRESULT CMonsterController::Render()
 	return S_OK;
 }
 
-void CMonsterController::Damage(void* pDesc)
+HRESULT CMonsterController::Damage(void* pDesc)
 {
 	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pDesc);
@@ -171,9 +171,10 @@ void CMonsterController::Damage(void* pDesc)
 		if (bIsHitAble)
 		{
 			m_pFSM->Change_State(TEXT("Hit"), pDesc, true);
+			return S_OK;
 		}
-			
 	}
+	return E_FAIL;
 }
 
 void CMonsterController::ActionSuccess(void* pArg)

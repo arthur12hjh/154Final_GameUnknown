@@ -159,7 +159,7 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	// Load_Light_Data();
+	Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 
@@ -597,7 +597,7 @@ HRESULT CLevel_Scarlet::Load_Light_Data()
 		return E_FAIL;
 	}
 
-	const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
+	/*const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
 
 	if (pLights && !pLights->empty())
 	{
@@ -605,7 +605,7 @@ HRESULT CLevel_Scarlet::Load_Light_Data()
 		{
 			pLight->SetDead(true);
 		}
-	}
+	}*/
 
 	_uint iNumLights = 0;
 	ifs.read(reinterpret_cast<_char*>(&iNumLights), sizeof(_uint));

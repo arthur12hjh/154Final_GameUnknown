@@ -612,6 +612,8 @@ namespace Client
 		// y : 캐릭터 기본 스피드
 		// z : 캐릭터 최대 스피드
 		_float3		fBoundCharacterSpeed;
+
+		DIRECTION	ePreDirection;
 		DIRECTION	eDirection;
 	}BEATSABER_CHARACTER_DESC;
 }

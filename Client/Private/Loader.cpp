@@ -14,6 +14,7 @@
 #include "Sky_Scarlet.h"
 #include "AttackHitBox.h"
 
+#include "Camera_BeatSaber.h"
 #include "Effect.h"
 #include "Trail.h"
 #include "TrailData.h"
@@ -783,6 +784,10 @@ HRESULT CLoader::Loading_For_BeatSaber()
 		CNote::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_Camera_BeatSaber"),
+		CCamera_BeatSaber::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	Sleep(1000.f);
 
 	while (m_pGameInstance->IsWorkThread());
@@ -1491,11 +1496,6 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_Effect_Blood_Hit */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blood_Hit");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
-
-	/* For.Prototype_Component_Effect_Monster_Sting */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Ashes */
@@ -2474,27 +2474,27 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
-	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
-	ExplosionDesc.iNumInstance = 1000;
-	ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
-	ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
-	ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
-	ExplosionDesc.vSize = _float2(0.2f, 0.6f);
-	ExplosionDesc.vLifeTime = _float2(3.f, 7.f);
-	ExplosionDesc.vSpeed = _float2(2.f, 5.f);
-	ExplosionDesc.isLoop = true;
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Particle_Explosion");
-	pProtoDesc.pPrototype = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ComputeShader_Expolosion");
-	pProtoDesc.pPrototype = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	//CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
+	//ExplosionDesc.iNumInstance = 1000;
+	//ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
+	//ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
+	//ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
+	//ExplosionDesc.vSize = _float2(0.2f, 0.6f);
+	//ExplosionDesc.vLifeTime = _float2(3.f, 7.f);
+	//ExplosionDesc.vSpeed = _float2(2.f, 5.f);
+	//ExplosionDesc.isLoop = true;
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Particle_Explosion");
+	//pProtoDesc.pPrototype = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ComputeShader_Expolosion");
+	//pProtoDesc.pPrototype = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 	_matrix PreTransformMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_Fiona */

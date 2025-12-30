@@ -18,10 +18,6 @@ HRESULT CBeatSaber_MoveState::Initialize(void* pArg)
 void CBeatSaber_MoveState::Start(void* pArg, CState* pPreState)
 {
 
-
-
-
-
 }
 
 void CBeatSaber_MoveState::Update(_float fTimeDelta)
@@ -40,30 +36,34 @@ void CBeatSaber_MoveState::End()
 void CBeatSaber_MoveState::SelectEvadeAnim(CBeatSaberCharacter* pCharacter)
 {
     auto& pCharacterDesc = pCharacter->GetBeatSaberCharacterDesc();
+    _bool bIsReset = false;
+    if (pCharacterDesc.eDirection != pCharacterDesc.ePreDirection)
+        bIsReset = true;
+
     switch (pCharacterDesc.eDirection)
     {
     case DIRECTION::LEFT :
-        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 18.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, bIsReset, 30.f, 18.f);
         break;
 
     case DIRECTION::RIGHT:
-        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 0.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, bIsReset, 10.f, 0.f);
         break;
 
     case DIRECTION::LEFT_FRONT:
-        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 40.f, 38.f);
+        pCharacter->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, bIsReset, 40.f, 38.f);
         break;
 
     case DIRECTION::RIGHT_FRONT:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 40.f, 38.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, bIsReset, 40.f, 38.f);
         break;
 
     case DIRECTION::LEFT_BACK:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 18.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, bIsReset, 30.f, 18.f);
         break;
 
     case DIRECTION::RIGHT_BACK:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 0.f);
+        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, bIsReset, 10.f, 0.f);
         break;
     }
 }

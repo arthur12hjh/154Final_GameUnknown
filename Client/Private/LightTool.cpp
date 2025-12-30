@@ -4,13 +4,14 @@
 #include "Light.h"
 #include <fstream>
 
-CLightTool::CLightTool()
+CLightTool::CLightTool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject(pDevice, pContext)
 {
 
 }
 
 
-HRESULT CLightTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT CLightTool::Initialize()
 {
 	m_pGameInstance = CGameInstance::GetInstance();
 
@@ -23,98 +24,105 @@ void CLightTool::Priority_Update(_float fTimeDelta)
 
 void CLightTool::Update(_float fTimeDelta)
 {
-	if (ImGui::GetIO().WantCaptureMouse)
+	/*if (ImGui::GetIO().WantCaptureMouse)
 	{
 		return;
-	}
+	}*/
+#ifdef _DEBUG
+	_bool bIsOpen = 1 - ENUM_CLASS(m_eVisibility);
+	ImGui::Begin("LightTool", &bIsOpen);
 
-	if (m_eToolMode == TOOL_MODE::LIGHT)
+	Setting_Light(fTimeDelta);
+	Render();
+	ImGui::End();
+
+	if (!bIsOpen)
+		m_eVisibility = VISIBILITY::HIDDEN;
+#endif // _DEBUG
+}
+
+void CLightTool::Setting_Light(_float fTimeDelta)
+{	
+	// 마우스 좌클릭 이벤트 체크
+	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
 	{
-		// 마우스 좌클릭 이벤트 체크
-		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
+
+		_float3 vPickedPoint = {};
+		if (true == m_pGameInstance->isPicking(&vPickedPoint))
 		{
+			_float4 vPickPoint = XMFLOAT4(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
 
-			_float3 vPickedPoint = {};
-			if (true == m_pGameInstance->isPicking(&vPickedPoint))
+			if (m_bIsDeplayPointLight)
 			{
-				_float4 vPickPoint = XMFLOAT4(vPickedPoint.x, vPickedPoint.y, vPickedPoint.z, 1.f);
-				// 1. 네비게이션 포인트 추가
+				LIGHT_DESC			LightDesc{};
 
-				if (m_bIsDeplayPointLight)
-				{
-					LIGHT_DESC			LightDesc{};
+				LightDesc.eType = LIGHT_TYPE::POINT;
+				LightDesc.vDiffuse = _float4(0.f, 1.0f, 0.f, 1.f);
+				LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
+				LightDesc.vSpecular = _float4(0.f, 0.f, 1.f, 1.f);
+				LightDesc.vPosition = vPickPoint;
+				LightDesc.fRange = 10.f;
 
-					LightDesc.eType = LIGHT_TYPE::POINT;
-					LightDesc.vDiffuse = _float4(0.f, 1.0f, 0.f, 1.f);
-					LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
-					LightDesc.vSpecular = _float4(0.f, 0.f, 1.f, 1.f);
-					LightDesc.vPosition = vPickPoint;
-					LightDesc.fRange = 10.f;
-
-					m_pGameInstance->Add_Light(LightDesc);
-				}
-				else if (m_bIsDeplaySpotLight)
-				{
-					LIGHT_DESC			LightDesc{};
-
-					LightDesc.eType = LIGHT_TYPE::SPOT;
-					LightDesc.vDiffuse = _float4(1.f, 1.0f, 1.f, 1.f);
-					LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
-					LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 1.f);
-					LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-					LightDesc.vPosition = vPickPoint;
-					LightDesc.fFalloff = 1.f;
-					LightDesc.fTheta = XMConvertToRadians(35.f);
-					LightDesc.fPhi = XMConvertToRadians(45.f);
-					LightDesc.fRange = 10.f;
-
-					m_pGameInstance->Add_Light(LightDesc);
-				}
-				else if (m_bIsDeplayDirLight)
-				{
-						
-				}
+				m_pGameInstance->Add_Light(LightDesc);
 			}
+			else if (m_bIsDeplaySpotLight)
+			{
+				LIGHT_DESC			LightDesc{};
 
+				LightDesc.eType = LIGHT_TYPE::SPOT;
+				LightDesc.vDiffuse = _float4(1.f, 1.0f, 1.f, 1.f);
+				LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 0.1f);
+				LightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+				LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+				LightDesc.vPosition = vPickPoint;
+				LightDesc.fFalloff = 1.f;
+				LightDesc.fTheta = XMConvertToRadians(35.f);
+				LightDesc.fPhi = XMConvertToRadians(45.f);
+				LightDesc.fRange = 10.f;
+
+				m_pGameInstance->Add_Light(LightDesc);
+			}
+			else if (m_bIsDeplayDirLight)
+			{
+
+			}
 		}
 
-
-		if (m_pSelectedLight != nullptr)
-		{
-			LIGHT_DESC newLightDesc = *m_pSelectedLight->Get_LightDesc();
-			_float4& vPos = newLightDesc.vPosition;
-
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
-			{
-				vPos.x += m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
-			{
-				vPos.x -= m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
-			{
-				vPos.z += m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
-			{
-				vPos.z -= m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
-			{
-				vPos.y += m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-			if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
-			{
-				vPos.y -= m_fMoveSpeed * fTimeDelta * 60.f;
-			}
-
-			m_pSelectedLight->SetLightInfo(newLightDesc);
-		}
-
-
-		return; // 네비게이션 모드일 때는 다른 오브젝트 추가 로직은 건너뜁니다.
 	}
+	if (m_pSelectedLight != nullptr)
+	{
+		LIGHT_DESC newLightDesc = *m_pSelectedLight->Get_LightDesc();
+		_float4& vPos = newLightDesc.vPosition;
+
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_1))
+		{
+			vPos.x += m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_2))
+		{
+			vPos.x -= m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_3))
+		{
+			vPos.z += m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_4))
+		{
+			vPos.z -= m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_5))
+		{
+			vPos.y += m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_6))
+		{
+			vPos.y -= m_fMoveSpeed * fTimeDelta * 60.f;
+		}
+
+		m_pSelectedLight->SetLightInfo(newLightDesc);
+	}
+
+	return;
 }
 
 void CLightTool::Late_Update(_float fTimeDelta)
@@ -123,25 +131,11 @@ void CLightTool::Late_Update(_float fTimeDelta)
 
 HRESULT CLightTool::Render()
 {
-	ImGui::SetNextWindowSize(ImVec2(300.f, 600.f), ImGuiCond_Once);
+	//ImGui::SetNextWindowSize(ImVec2(300.f, 600.f), ImGuiCond_Once);
 
-	ImGui::Begin("Light Editor");
-	if(m_pSelectedLight)
+	//ImGui::Begin("Light Editor");
+	if (m_pSelectedLight)
 		m_pGameInstance->Select_LightRender(m_pSelectedLight);
-
-	ImGui::Text("LightTool");
-	if (ImGui::Checkbox("Light Tool Mode", &m_bIsLightMode))
-	{
-		if (m_bIsLightMode)
-		{
-			m_eToolMode = TOOL_MODE::LIGHT;
-			m_bIsMapMode = false;
-		}
-		else
-		{
-			m_eToolMode = TOOL_MODE::END;
-		}
-	}
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
 	ImGui::Separator(); // 구분선을 추가
@@ -233,7 +227,6 @@ HRESULT CLightTool::Render()
 	// 1. 버튼 생성 및 팝업 열기 요청
 	if (ImGui::Button(strLightButtonLabel))
 	{
-		// 버튼 클릭 시 최신 조명 리스트를 다시 가져옵니다.
 		m_pLights = (list<class CLight*>*)m_pGameInstance->GetAllLight();
 
 		m_LightNames.clear();
@@ -490,7 +483,7 @@ HRESULT CLightTool::Render()
 		}
 	}
 
-	ImGui::End();
+	//ImGui::End();
 
 	return S_OK;
 }
@@ -589,7 +582,7 @@ HRESULT CLightTool::Load_Light_Objects()
 
 	_uint iNumLights = 0;
 	ifs.read(reinterpret_cast<_char*>(&iNumLights), sizeof(_uint));
-	
+
 	for (_uint i = 0; i < iNumLights; ++i)
 	{
 		LIGHT_DESC LightDesc;
@@ -650,6 +643,22 @@ void CLightTool::Load_Selected_Light_Desc()
 	m_fPhi = XMConvertToDegrees(desc.fPhi);
 }
 
+
+CLightTool* CLightTool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CLightTool* pLightTool = new CLightTool(pDevice, pContext);
+	if (FAILED(pLightTool->Initialize()))
+	{
+		Safe_Release(pLightTool);
+		MSG_BOX("Create Fail : LightTool");
+	}
+	return pLightTool;
+}
+
+CGameObject* CLightTool::Clone(void* pArg)
+{
+	return nullptr;
+}
 
 void CLightTool::Free()
 {
