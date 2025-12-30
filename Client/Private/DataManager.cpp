@@ -929,7 +929,7 @@ HRESULT CDataManager::LoadShopData(void* pArg)
         desc.iID = id;
 		desc.iPrice = jInfo["iPrice"];
         desc.szItemTag = UTF8ToWString(jInfo["szItemTag"]);
-        desc.szScriptTag = UTF8ToWString(jInfo["szScriptTag"]);
+        desc.szScript = UTF8ToWString(jInfo["szScript"]);
 
         m_ShopDatas.push_back(desc);
     }

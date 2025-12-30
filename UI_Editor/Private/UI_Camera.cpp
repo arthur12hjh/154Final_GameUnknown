@@ -338,11 +338,11 @@ void CUI_Camera::GetCameraLock(_bool (&pOut)[2])
 
 HRESULT CUI_Camera::Ready_PlayerDesc()
 {
-	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxHealth = 250;
 	m_PlayerDesc.iMaxShield = 100;
-	m_PlayerDesc.iMaxBetaEnergy = 24;
+	m_PlayerDesc.iMaxBetaEnergy = 20;
 
-	m_PlayerDesc.iCurrentHealth = 100;
+	m_PlayerDesc.iCurrentHealth = 250;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
 
@@ -351,10 +351,10 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
-	m_PlayerDesc.iCurrentBetaEnergy = 24;
+	m_PlayerDesc.iCurrentBetaEnergy = 20;
 
-	m_PlayerDesc.iCurrentPotions = 3;
-	m_PlayerDesc.iMaxPotions = 3;
+	m_PlayerDesc.iCurrentPotions = 5;
+	m_PlayerDesc.iMaxPotions = 5;
 
 	m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;

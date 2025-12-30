@@ -3,17 +3,17 @@
         "0": {
             "szItemTag": "포션",
             "iPrice": 150,
-            "szScriptTag": "Potion_Info"
+            "szScript": "포션의 최대 갯수를 1개 늘려줍니다."
         },
         "1": {
             "szItemTag": "체력",
             "iPrice": 100,
-            "szScriptTag": "Health_Info"
+            "szScript": "체력을 10 늘려줍니다."
         },
         "2": {
             "szItemTag": "베타",
             "iPrice": 300,
-            "szScriptTag": "Beta_Info"
+            "szScript": "베타 포인트 4개를 늘려줍니다."
         }
     }
 }
