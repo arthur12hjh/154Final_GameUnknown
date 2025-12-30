@@ -51,6 +51,7 @@ texture2D g_ScreenTexture;
 texture2D g_ShadowBlurXTexture;
 texture2D g_ShadowAreaTexture; 
 Texture2DArray g_CascadeShadowTexture;
+
 float g_fCascadeEnds[6] = { 
     0.1f,
 	10.0f,

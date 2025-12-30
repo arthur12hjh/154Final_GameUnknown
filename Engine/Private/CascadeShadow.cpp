@@ -258,8 +258,8 @@ void CCascadeShadow::Calc_CascadeMatrices()
 		if (fMaxY <= fMinY) fMaxY = fMinY + 1.f;
 		if (fMaxZ <= fMinZ) fMaxZ = fMinZ + 1.f;
 
-		_float fShadowResX = 2048.f; // 보통 2048
-		_float fShadowResY = 2048.f; // 보통 2048 (정사각 텍스처면 X=Y)
+		_float fShadowResX = m_vCascadeShadowMapSize.x;
+		_float fShadowResY = m_vCascadeShadowMapSize.y;
 
 		_float fExtentX = fMaxX - fMinX;
 		_float fExtentY = fMaxY - fMinY;

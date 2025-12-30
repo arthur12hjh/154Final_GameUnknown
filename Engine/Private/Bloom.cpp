@@ -187,6 +187,10 @@ HRESULT CBloom::Ready_DSVs()
 
 HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRenderTargetTag)
 {
+#ifdef _DEBUG
+    m_pGameInstance->BeginMarker(m_pContext, TEXT("############### BLOOOM"));
+#endif
+
     // i가 0일때도 0x0 계산하는것만 방지해주자.
     for (_uint i = 0; i < m_iBloomLevel; ++i)
     {
@@ -201,9 +205,11 @@ HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRende
 
         if (i == 0)
         {
-            if (FAILED(m_pGameInstance->Bind_RenderTarget(strSceneRenderTargetTag, m_pShader, "g_SceneTexture")))
+
+            if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Bloom"), m_pShader, "g_SceneTexture")))
                 return E_FAIL;
             m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::CURVE));
+
         }
         else
         {
@@ -227,6 +233,10 @@ HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRende
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
     }
+
+#ifdef _DEBUG
+    m_pGameInstance->EndMarker(m_pContext);
+#endif
 
     return S_OK;
 }

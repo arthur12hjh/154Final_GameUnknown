@@ -59,7 +59,7 @@ inline float BayerDither(float2 pixelPos)
 
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
-    /*
+/*
         float fSum = 0.0f;
     
     float2 vTexcoord;
@@ -68,7 +68,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
-    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
+    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f) * 2.f;
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
     float fBias = 0.0002f;
@@ -104,7 +104,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.0002f;
+    float fBias = 0.0005f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
@@ -123,7 +123,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     float fSum = 0.0f;
-    float fBias = 0.002f;
+    float fBias = 0.0005f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;
