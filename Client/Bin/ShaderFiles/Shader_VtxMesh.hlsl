@@ -105,6 +105,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -122,6 +123,7 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -149,9 +151,42 @@ PS_OUT PS_MOON(PS_IN In)
     Out.vDiffuse *= 2.f;
     
     Out.vDiffuse.a = vMtrlDiffuse.a;
-    Out.vNormal = float4(0.5f, 0.5f, 0.5f, 0.5f);
+   
+    
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
-    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vORM = Out.vDiffuse;
+
+    Out.vEmissive = Out.vDiffuse;
+    Out.vBloom = float4(1, 0, 1, 1);
+    
+    return Out;
+}
+
+PS_OUT PS_MOON_GAMEOBJECT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.r < 0.001f && vMtrlDiffuse.g < 0.001f && vMtrlDiffuse.b < 0.001f)
+        discard;
+    
+    float3 vNormal = normalize(In.vNormal);
+    float3 vLightDir = normalize(float3(0.f, 0.f, 1.f));
+    
+    float fDiffuse = max(0.f, dot(vNormal, -vLightDir));
+    
+    float3 vAmbientColor = float3(0.1f, 0.1f, 0.12f);
+    float3 vLightColor = float3(0.8f, 0.8f, 0.9f);
+    float3 vEmissiveColor = float3(0.3f, 0.45f, 0.7f);
+    
+    float3 finalDiffuseColor = vMtrlDiffuse.rgb * (vAmbientColor + fDiffuse * vLightColor);
+    
+    Out.vDiffuse = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vNormal = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(finalDiffuseColor + vEmissiveColor, 1.f);
     
     return Out;
 }
@@ -166,11 +201,13 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     
     float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal * -1.f, In.vNormal);
     
-    Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse = vMtrlDiffuse + Calc_Emissive(g_EmissiveTexture, vMtrlDiffuse, In.vTexcoord) * 5.f;
+    
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * 1.5f;
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -207,6 +244,8 @@ PS_OUT_SHADOW PS_MAIN_CASCADE_SHADOW(PS_IN_SHADOW In)
     
     return Out;
 }
+
+
 
 technique11 DefaultTechnique
 { 
@@ -279,5 +318,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN_CASCADE_SHADOW();
         GeometryShader = compile gs_5_0 GS_MAIN_SHADOW();
         PixelShader = compile ps_5_0 PS_MAIN_CASCADE_SHADOW();
+    }
+    // idx 7 알면 다침
+    pass MOON_GAMEOBJECT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_DepthTest_ON_Write_OFF, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOON_GAMEOBJECT();
     }
 }

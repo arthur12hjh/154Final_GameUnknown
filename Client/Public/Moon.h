@@ -28,7 +28,7 @@ public:
 private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
-
+	_uint   m_iRenderCount = { 0 };
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

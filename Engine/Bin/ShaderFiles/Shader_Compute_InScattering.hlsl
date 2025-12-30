@@ -17,7 +17,7 @@ Intensity : 빛 강도 조절을 위한 변수
 [numthreads(8, 8, 8)]
 void main(uint3 DTid : SV_DispatchThreadId)
 {
-    float4 HemisphereUpperColor = float4(0.4, 0.45, 0.5, 0.1);
+    float4 HemisphereUpperColor = FogAmbient;
 
     uint3 dims;
     FrustumVolume.GetDimensions(dims.x, dims.y, dims.z);
@@ -37,7 +37,7 @@ void main(uint3 DTid : SV_DispatchThreadId)
         float3 noiseUVW = (worldPosition - NoiseAnchor.xyz) * NoiseScale;
         
         // 바람 방향(월드 기준) + 속도
-        float3 windDir = normalize(float3(1.0f, 0.0f, 0.2f)); // 원하는 방향
+        float3 windDir = normalize(float3(1.0f, 0.0f, 0.2f)) * -1.f; // 원하는 방향
         float windSpeed = 0.1f; // 0.01~0.08
 
         noiseUVW += windDir * (windSpeed * NoiseTime);
