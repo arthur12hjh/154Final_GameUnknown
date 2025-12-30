@@ -1099,6 +1099,9 @@
     <Filter Include="02.GameObjects\CinematicModel\CinematicPartBody">
       <UniqueIdentifier>{5e880200-fba0-4698-a7b9-a424d79c7de3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="30.ImGui\LightTool">
+      <UniqueIdentifier>{4bc73f0a-b3c9-4138-a70a-0d5ff04fee58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2098,6 +2101,9 @@
     <ClInclude Include="..\Public\CinematicPartBody.h">
       <Filter>02.GameObjects\CinematicModel\CinematicPartBody</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\LightTool.h">
+      <Filter>30.ImGui\LightTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3063,6 +3069,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CinematicPartBody.cpp">
       <Filter>02.GameObjects\CinematicModel\CinematicPartBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LightTool.cpp">
+      <Filter>30.ImGui\LightTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

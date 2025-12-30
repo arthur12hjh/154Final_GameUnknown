@@ -59,7 +59,7 @@ HRESULT CMoon::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(4)))
+		if (FAILED(m_pShaderCom->Begin(5)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
