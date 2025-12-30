@@ -63,7 +63,7 @@ void CShaderDebugger::Update(_float fTimeDeleta)
     
     ImGui::Checkbox("ACTIVE", m_pVolumeFogDesc->pActive);
     ImGui::DragFloat("AsymmetryG", &m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG, 0.01f, -1.f, 1.f);
-    ImGui::DragFloat("Fog Density", &m_pVolumeFogDesc->pInscatterDesc->Density, 0.01f, -1.f, 1.f);
+    ImGui::DragFloat("Fog Density", &m_pVolumeFogDesc->pInscatterDesc->Density, 0.01f, -1.f, 5.f);
     ImGui::DragFloat("Light Intensity", &m_pVolumeFogDesc->pInscatterDesc->Intensity, 0.01f, -1.f, 1.f);
     //float 4·Î ¹Ù²ã¾ßÇÔ
 
@@ -75,6 +75,7 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::ColorEdit4("Light Color", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightColor));
     ImGui::DragFloat4("Light Direction", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->LightDirection), 0.01f, -1.f, 1.f);
+    ImGui::ColorEdit4("VolumeFog Color", reinterpret_cast<float*>(&m_pVolumeFogDesc->pInscatterDesc->FogAmbient));
 
     ImGui::Separator();
 

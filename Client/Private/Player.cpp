@@ -259,7 +259,10 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Render_Shadow()
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_Shadow();
+	{
+		if(pPartObject.first != TEXT("Part_Hair"))
+			pPartObject.second->Render_Shadow();
+	}
 
 	return S_OK;
 }

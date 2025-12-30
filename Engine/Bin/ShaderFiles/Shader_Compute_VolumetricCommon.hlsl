@@ -57,6 +57,7 @@ cbuffer InscatteringParameters : register(b0)
     float4 LightDirection;
     float4 LightColor;
     float4 NoiseAnchor;
+    float4 FogAmbient;
 }
 
 cbuffer VolumetricFogParameterBuffer : register(b1)

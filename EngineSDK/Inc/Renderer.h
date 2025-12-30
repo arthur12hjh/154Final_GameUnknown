@@ -95,7 +95,7 @@ private:
 
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 혹은 16384, 9216
-	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
+	_uint2								m_vCascadeShadowMapSize = { 4096, 4096 };
 	
 	_bool								m_isBloom = { true };
 	_bool								m_isFog = { true };

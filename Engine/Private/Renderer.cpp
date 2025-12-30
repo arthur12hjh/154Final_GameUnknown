@@ -170,8 +170,9 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SpecDetail"), 750.0f, 450.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Bloom"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_ShadowBlurX"), 750.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Combined"), 750.0f, 750.0f, 300.f, 300.f)))
@@ -299,8 +300,8 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Emissive */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
-	/* Target_SpecDetail */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SpecDetail"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+	/* Target_Bloom */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	/* MRT_LightAcc */
@@ -356,6 +357,9 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_ORM"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
+		return E_FAIL;
+	//시발 달..
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Bloom"))))
 		return E_FAIL;
 
 	/* MRT_LightAcc */
@@ -594,7 +598,6 @@ void CRenderer::Render_Priority()
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
-
 		Safe_Release(pRenderObject);
 	}
 
@@ -700,6 +703,21 @@ void CRenderer::Render_NonBlend()
 	/* Diffuse + Normal */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return;
+
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND_PRIORITY)])
+	{
+		if (nullptr != pRenderObject)
+		{
+			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				pRenderObject->Render();
+				iRenderedCount++;
+			}
+		}
+
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND_PRIORITY)].clear();
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
 	{
@@ -1084,10 +1102,6 @@ void CRenderer::Render_Debug()
 
 	if (false == m_isDebugVisible)
 		return;
-
-	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
-		return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
@@ -1115,6 +1129,9 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_ShadowBlurX"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+		return;
+	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
 }
 

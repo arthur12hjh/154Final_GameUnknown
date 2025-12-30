@@ -220,8 +220,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -241,7 +241,8 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     //������Ʈ�� ���ؼ� ����.
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -262,6 +263,7 @@ PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal, 0.001f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -315,6 +317,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 
@@ -351,6 +354,7 @@ PS_OUT PS_GORILLA_DISSOLVE(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -367,6 +371,7 @@ PS_OUT PS_ORSS(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -411,6 +416,7 @@ PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
     
     //������Ʈ�� ���ؼ� ����.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -432,6 +438,7 @@ PS_OUT PS_NONE_NORMAL(PS_IN In)
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
