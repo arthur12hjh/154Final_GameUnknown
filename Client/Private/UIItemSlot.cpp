@@ -36,6 +36,7 @@ HRESULT CUIItemSlot::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pMousePointer = dynamic_cast<CMousePointer*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"))->front());
+	Safe_AddRef(m_pMousePointer);
 
 	m_ItemSlotDescs.clear();
 	m_ItemSlotDescs.reserve(m_pGameManager->Get_ShopDatas()->size());
