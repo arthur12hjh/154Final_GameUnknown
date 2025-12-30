@@ -573,7 +573,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	//// 오피스 스타일
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle_WeightLimited.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle_WeightLimited.fbx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 	
