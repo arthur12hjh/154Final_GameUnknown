@@ -9,6 +9,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Client)
+
 class CMousePointer : public CUIObject
 {
 public :
@@ -35,8 +36,6 @@ private:
 	CShader*					m_pShaderCom = { nullptr };
 
 	MOUSE_SCALE					m_eMosueScale = {MOUSE_SCALE::SCLAE_DEFUALT};
-
-	_bool						m_bIsRendered = TRUE;
 
 private:
 	HRESULT						Ready_Components();

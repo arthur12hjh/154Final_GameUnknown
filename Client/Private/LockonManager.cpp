@@ -47,6 +47,9 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
     {
         m_pTarget = nullptr;
         m_fLockonTimer = 0.f;
+        CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+        pUIHUD->Return_WorldUI(m_pLockonUI);
+        Safe_Release(pUIHUD);
 
         return false;
     }

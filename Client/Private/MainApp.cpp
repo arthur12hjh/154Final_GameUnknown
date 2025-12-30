@@ -208,8 +208,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	/* For.Prototype_Component_Shader_VtxMesh */
 	CShader* pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
-		pShader)))
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"), pShader)))
 		return E_FAIL;
 	m_pGameManager->Add_Shader(LEVEL::STATIC, TEXT("Prototype_Component_Shader_VtxMesh"), pShader);
 
@@ -227,8 +226,7 @@ HRESULT CMainApp::Ready_Prototypes()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_Mouse"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Cursor/cursor_%d.png"), 4))))
-		return E_FAIL;
-	
+		return E_FAIL;	
 
 	/* For.Prototype_GameObject_TriggerBox */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),

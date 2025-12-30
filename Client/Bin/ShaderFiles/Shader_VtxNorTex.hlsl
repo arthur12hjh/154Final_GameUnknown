@@ -126,6 +126,43 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    
+    float2 vMaskUV;
+    const float fTexelSize = 2048.f;
+    vMaskUV.x = In.vWorldPos.x / fTexelSize;
+    vMaskUV.y = 1.f - In.vWorldPos.z / fTexelSize;
+    
+    vector vMask = g_MaskTexture.SampleLevel(DefaultSampler, clamp(vMaskUV, 0.f, 1.f), 0);
+    
+    vector vResult = lerp(vDiffuse, vDiffuse_Red, vMask.r);
+    
+    vResult = lerp(vResult, vDiffuse_Green, vMask.g);
+    
+    Out.vDiffuse = vResult;
+    
+    //if (fMaxMaskValue > 0.01f)
+    //{
+    //    Out.vDiffuse = float4(vMask.r, vMask.g, 0.0f, 1.0f);
+    //}
+    //else
+    //{
+    //    Out.vDiffuse = vDiffuse;
+    //}
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
+    Out.vORM = float4(1.f, 0.8f, 0.f, 0.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Terrain
@@ -146,5 +183,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DESERT_TERRAIN();
+    }
+
+    pass Terrain_Desert_MAPTOOL
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DESERT_TERRAIN_MAPTOOL();
     }
 }

@@ -68,19 +68,11 @@ void CUI_Level_GamePlay::Update(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_Map_Selector_Popup"));
+		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_Map_Selector_Popup"));
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
-	{
-		static_cast<CUIHUD*>(m_pHUD)->Open_Popup(TEXT("UI_CostumePuzzlePopup"));
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_8))
-	{
-		static_cast<CUIHUD*>(m_pHUD)->Close_Popup(TEXT("UI_CostumePuzzlePopup"));
+		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
 	}
 }
 
@@ -140,6 +132,9 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Shop"))))
 		return E_FAIL;
 
 	return S_OK;

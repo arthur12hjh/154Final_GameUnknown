@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "LightTool.h"
 #include "GameInstance.h"
-#include "Navigation.h"
-#include "Cell.h"
-#include "Terrain.h"
 #include "Light.h"
 #include <fstream>
 
@@ -16,19 +13,6 @@ CLightTool::CLightTool()
 HRESULT CLightTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	m_pGameInstance = CGameInstance::GetInstance();
-
-	list<CGameObject*>* pTerrainList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Layer_Terrain"));
-
-	if (pTerrainList != nullptr && !pTerrainList->empty())
-	{
-		m_pTerrain = dynamic_cast<CTerrain*>(pTerrainList->back());
-	}
-	else
-	{
-		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
-	}
-
-
 
 	return S_OK;
 }
@@ -519,7 +503,51 @@ HRESULT CLightTool::Save_Light_Objects()
 		return S_OK;
 	}
 
-	// 라이트 데이터
+	//if (m_pLights && !m_pLights->empty())
+	//{
+	//	for (class CLight* pLight : *m_pLights) // CLight* 타입 명시
+	//	{
+	//		if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+	//		{
+	//		}
+	//	}
+	//}
+
+	//// 라이트 데이터
+	//std::ofstream ofs("../Bin/DataFiles/LightData.bin", std::ios::binary);
+	//if (!ofs.is_open())
+	//{
+	//	MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);
+	//	return E_FAIL;
+	//}
+
+	//_uint iNumLights = (_uint)m_pLights->size();
+	//ofs.write(reinterpret_cast<const _char*>(&iNumLights), sizeof(_uint));
+
+	//for (auto pLight : *m_pLights)
+	//{
+	//	const LIGHT_DESC* pDesc = pLight->Get_LightDesc();
+	//	ofs.write(reinterpret_cast<const _char*>(pDesc), sizeof(LIGHT_DESC));
+	//}
+
+	//ofs.close();
+
+	//return S_OK;
+	// 
+	// 
+	// 1. POINT 라이트만 따로 수집
+	vector<CLight*> PointLights;
+	for (auto& pLight : *m_pLights)
+	{
+		if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+		{
+			PointLights.push_back(pLight);
+		}
+	}
+
+	if (PointLights.empty())
+		return S_OK;
+
 	std::ofstream ofs("../Bin/DataFiles/LightData.bin", std::ios::binary);
 	if (!ofs.is_open())
 	{
@@ -527,17 +555,16 @@ HRESULT CLightTool::Save_Light_Objects()
 		return E_FAIL;
 	}
 
-	_uint iNumLights = (_uint)m_pLights->size();
+	_uint iNumLights = (_uint)PointLights.size();
 	ofs.write(reinterpret_cast<const _char*>(&iNumLights), sizeof(_uint));
 
-	for (auto pLight : *m_pLights)
+	for (auto& pPointLight : PointLights)
 	{
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc();
+		const LIGHT_DESC* pDesc = pPointLight->Get_LightDesc();
 		ofs.write(reinterpret_cast<const _char*>(pDesc), sizeof(LIGHT_DESC));
 	}
 
 	ofs.close();
-
 	return S_OK;
 }
 

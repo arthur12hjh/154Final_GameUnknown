@@ -9,7 +9,7 @@ NS_BEGIN(Client)
 struct Interaction_Data;
 class CGameManager;
 class CUIBase;
-class CInteractionUIBinder;
+class CInteractionBinder;
 
 class CProb_Interaction abstract : public CActor
 {
@@ -38,13 +38,13 @@ public:
 
 	//INTERACTION_STATE				Get_InterState() const { return m_eInterState; }
 	//const INTERACTION_DATA*			Get_InterDesc() { return m_InteractionDesc; }
-	//const CInteractionUIBinder*		Get_InterCom() { return m_pInteractionCom; }
+	//const CInteractionBinder*		Get_InterCom() { return m_pInteractionCom; }
 
 	//_float							Get_Ratio() { return m_fInteractionDuration / m_InteractionDesc->fInteractionTime; }
 
 protected:
 	CGameManager*					m_pGameManager = { nullptr }; 
-	CInteractionUIBinder*			m_pInteractionCom = { nullptr };
+	CInteractionBinder*			m_pInteractionCom = { nullptr };
 
 	//const INTERACTION_DATA*			m_InteractionDesc = {};
 	//INTERACTION_STATE				m_eInterState = { INTERACTION_STATE::DEFAULT };
