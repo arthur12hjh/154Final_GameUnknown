@@ -38,9 +38,6 @@ protected:
 
 private:
 	CTexture* m_pDimTextureCom{ nullptr };
-	CTexture* m_pInnerFrameTextureCom{ nullptr };
-	CTexture* m_pAnswerTextureCom{ nullptr };
-	CTexture* m_pSuitIconsTextureCom{ nullptr };
 
 	_float m_fAmount{ 0.f };
 

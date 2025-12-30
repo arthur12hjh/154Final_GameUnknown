@@ -53,7 +53,10 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
+
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
@@ -107,8 +110,16 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
 	//		return;
-
 	//}
+
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
+	}*/
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -235,22 +246,22 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}*/
 
-	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
-	InteractionDesc.bIsApplyTransform = true;
-	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
-	InteractionDesc.iInteractionID = 5;
-	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
-	for (size_t i = 0; i < 5; i++)
-	{
-		InteractionDesc.vPosition = { 10.f * i,
-								1.f,
-							   //m_pGameInstance->Random(0, 50),
-							   m_pGameInstance->Random(5, 50) };
-	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_CanBox"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-			return E_FAIL;
-	}
+	//CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	//InteractionDesc.bIsApplyTransform = true;
+	//InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	//InteractionDesc.iInteractionID = 5;
+	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
+	//for (size_t i = 0; i < 5; i++)
+	//{
+	//	InteractionDesc.vPosition = { 10.f * i,
+	//							1.f,
+	//						   //m_pGameInstance->Random(0, 50),
+	//						   m_pGameInstance->Random(5, 50) };
+	//
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_CanBox"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+	//		return E_FAIL;
+	//}
 
 	/*InteractionDesc.iInteractionID = 2;
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
@@ -477,8 +488,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
-	NpcDesc.iNpcID = 1;
-	NpcDesc.vPosition = { 1000.f, 1.f, 150.f };
+	NpcDesc.iNpcID = 4;
+	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;
@@ -510,7 +521,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_InteractionDot"), TEXT("UI_InteractionDot"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 30, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
@@ -520,6 +532,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Shop"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -532,10 +547,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
 	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
 	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
-	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
+	pTriggerBoxDesc.vPosition = { 715.428f, 38.124f, 491.423f };
 	pTriggerBoxDesc.fDelayTime = -1.f;
 
-	//  시네마틱용 트리거
+	//  기가스 조우
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
+		return E_FAIL;
+	
+	pTriggerBoxDesc.iTriggerCode = 123;
+	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 358.814f };
+
+	//  도로롱 조우
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;

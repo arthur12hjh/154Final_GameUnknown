@@ -2,3 +2,4 @@
 1,Scarlet,Prototype_Component_Model_Scarlet_Body,Prototype_Component_NpcInteractionController,"2.4, 2.4, 2.4",0,7,2,"NpcTest, NpcTest2"
 2,Adam,M_Beholder,None,"1, 1, 1",0,7,1,NpcTest
 3,Bolt,M_BarnacleA,None,"1, 1, 1",0,7,1,NpcTest
+4,D1G-g2r,Prototype_Component_Model_D1G-g2r_Body,Prototype_Component_NpcInteractionController,"2, 2, 2",0,8,1,NpcD1G-g2r

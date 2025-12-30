@@ -601,14 +601,26 @@
     <ClCompile Include="..\..\Client\Private\UILoadingBlock.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Client\Private\InteractionUIBinder.cpp">
-      <Filter>999. CPP From Client\05. ETC</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIMapSelector.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\Player_GrabState.cpp">
       <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIShop.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\InteractionBinder.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIItemSlot.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\MousePointer.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIMouseInteraction.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

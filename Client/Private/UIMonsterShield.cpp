@@ -65,7 +65,8 @@ void CUIMonsterShield::Update(_float fTimeDelta)
 
 void CUIMonsterShield::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
+	if (m_isRent)
+		__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIMonsterShield::Render()

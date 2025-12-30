@@ -179,6 +179,12 @@ void CShaderManager::Load_Desert_ShaderSettings()
 
 void CShaderManager::Load_Scarlet_ShaderSettings()
 {
+
+#pragma region DIRECTIONAL
+    m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
+    m_pDirectionalLightDesc->vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
+#pragma endregion
+
 #pragma region MB
     * m_pMotionBlurDesc->fCamBlurScale = { 0.05f };
     *m_pMotionBlurDesc->fObjectBlurScale = { 1.f };
@@ -187,12 +193,12 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
 #pragma endregion
 
 #pragma region FOG
-    *m_pFogDesc->vFogColor = { 0.1922f, 0.2235f, 0.2706f, 1.f };
+    *m_pFogDesc->vFogColor = { 0.031f, 0.058f, 0.094f, 1.0000f };
     *m_pFogDesc->fFogStart = { 0.f };
     *m_pFogDesc->fFogEnd = { 285 };
     *m_pFogDesc->fFogPowerMin = { 0.5f };
     *m_pFogDesc->fFogPowerMax = { 1.f };
-    *m_pFogDesc->fSkyboxFogPower = { 0.14f };
+    *m_pFogDesc->fSkyboxFogPower = { 0.2f };
 #pragma endregion
 
 #pragma region SSAO
@@ -200,7 +206,7 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
     *m_pSSAODesc->fRadiusMax = { 5.f };
     *m_pSSAODesc->fBiasMin = { 0.029f };
     *m_pSSAODesc->fBiasMax = { 0.059f };
-    *m_pSSAODesc->fIntensity = { 1.4f };
+    *m_pSSAODesc->fIntensity = { 0.68f };
 #pragma endregion
 
 #pragma region HDR
@@ -208,19 +214,16 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
 #pragma endregion
 
 #pragma region VOLUMEFOG
-    m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.f;
-    m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG = -1.f;
-    m_pVolumeFogDesc->pInscatterDesc->Density = 0.58f;
-    m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.1f;
+    m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG = 0.f;
+    m_pVolumeFogDesc->pInscatterDesc->Density = 1.28f;
+    m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.08f;
     m_pVolumeFogDesc->pInscatterDesc->NoiseContrast = 0.572f;
     m_pVolumeFogDesc->pInscatterDesc->NoiseScale = 0.006f;
     m_pVolumeFogDesc->pInscatterDesc->NoiseStrength = 2.f;
-    m_pVolumeFogDesc->pInscatterDesc->StartDistance = 122.6f;
+    m_pVolumeFogDesc->pInscatterDesc->StartDistance = 36.f;
+    m_pVolumeFogDesc->pInscatterDesc->FogAmbient = _float4(0.141f, 0.172f, 0.2f, 0.149f);
     m_pVolumeFogDesc->pInscatterDesc->LightColor = _float4(0.f, 0.f, 0.f, 1.f);
 #pragma endregion
-
-    m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
-    m_pDirectionalLightDesc->vDiffuse = _float4(0.274f, 0.274f, 0.274f, 1.f);
 }
 
 void CShaderManager::Load_Scarlet_Phase2_ShaderSettings()

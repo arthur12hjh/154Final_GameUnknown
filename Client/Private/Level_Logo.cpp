@@ -60,19 +60,19 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (!m_bLevelTransitioning) // 바로 넘어가는거
-	{
-		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
-		m_bLevelTransitioning = true;
-	}
+	//if (!m_bLevelTransitioning) // 바로 넘어가는거
+	//{
+	//	dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
+	//	m_bLevelTransitioning = true;
+	//}
 
-	/* // 이게 진짜
+	// 이게 진짜
 	if (!m_bLevelTransitioning
 		&& (m_bChangeLevel || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE)))
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro"));
 		m_bLevelTransitioning = true;
-	}*/
+	}
 
 	if ((m_bLevelTransitioning || m_bChangeLevel)
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Logo"), TEXT("Logo_Overlay"), TEXT("Outro")))

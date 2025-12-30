@@ -456,8 +456,11 @@ namespace Client
 	///  - 145 : 홍련 잡기
 	/// 
 	/// 4자리 카메라
+	/// 110n : 도로롱 조우
 	/// 111n : 기가스 조우
 	/// 112n : 기가스 처형
+	/// 113n : 사막에서 홍련 조우
+	/// 120n : 마을에서 홍련 이별
 	/// 13nn : 홍련 조우
 	/// 14nn : 홍련 페이즈 변경
 	/// 15nn : 홍련 처형
@@ -598,6 +601,14 @@ namespace Client
 		_float4 vColor;
 		_float  fIntensity;
 	} COLORCHANGE_DEFERRED_DESC;
+
+	typedef struct tagShopDataDesc
+	{
+		_uint iID;
+		_uint iPrice;
+		_wstring szItemTag;
+		_wstring szScript;
+	}SHOP_DESC;
 
 	typedef	struct BeatSaberCharacterDesc
 	{

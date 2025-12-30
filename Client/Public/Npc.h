@@ -11,7 +11,7 @@ NS_END
 
 NS_BEGIN(Client)
 struct Npc_Data_Desc;
-class CInteractionUIBinder;
+class CInteractionBinder;
 
 class CNpc final : public CCharacter
 {
@@ -37,10 +37,12 @@ public:
 	virtual HRESULT				Render() override;
 	virtual HRESULT				Render_Shadow() override;
 
+	const Npc_Data_Desc*		Get_NpcDesc() { return m_NpcDesc; }
+
 private:
 	const Npc_Data_Desc*		m_NpcDesc = {};
 
-	CInteractionUIBinder*		m_pInteractionCom = { nullptr };
+	CInteractionBinder*			m_pInteractionCom = { nullptr };
 	CAIController*				m_pAIController = { nullptr };
 
 private :

@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 
 #include "UIHUD.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 #include "GameObject.h"
 #include "UIWorldWrapper.h"
 #include "StringHelper.h"
@@ -45,7 +45,7 @@ void CUISimpleKey::Priority_Update(_float fTimeDelta)
 
 void CUISimpleKey::Update(_float fTimeDelta)
 {
-	CInteractionUIBinder* pNearInterCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
+	CInteractionBinder* pNearInterCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 
 	CGameObject* pOwner = nullptr;
 

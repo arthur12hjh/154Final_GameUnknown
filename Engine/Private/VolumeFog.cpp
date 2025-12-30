@@ -56,6 +56,11 @@ HRESULT CVolumeFog::Initialize()
 
 void CVolumeFog::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_P))
+		m_isActive = !m_isActive;
+#endif
+
 	/* 
 	다른 제어 필요없음? 
 	-> ㅇㅇ. 같은 Context라면 입력이 들어온대로만 실행해줌.

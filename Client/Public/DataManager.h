@@ -41,6 +41,8 @@ public :
 	map<_uint, CAMERA_ANIMATION_DATA>*					Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*							Get_CinematicDataMap();
 
+	const vector<SHOP_DESC>*							Get_ShopDatas();
+
 private:
 	//스킬 데이터
 	map<_uint, CHARACTER_SKILL_DESC>					m_pSkillDatas = {};
@@ -72,6 +74,9 @@ private:
 	// 캐릭터 이동 위치 데이터
 	vector<TRANSPORT_DESC>								m_Transports = {};
 
+	// 상점 데이터
+	vector<SHOP_DESC>									m_ShopDatas = {};
+
 private:
 	HRESULT												LoadNaytibaData(void* pArg);
 	HRESULT												LoadNpcData(void* pArg);
@@ -82,6 +87,7 @@ private:
 	HRESULT												LoadCameraAnimationData(void* pArg = nullptr);
 	HRESULT												LoadCinematicData(void* pArg = nullptr);
 	HRESULT												LoadTransportData(void* pArg = nullptr);
+	HRESULT												LoadShopData(void* pArg = nullptr);
 	HRESULT												AddBetaSkill(_uint iSkillID, CHARACTER_SKILL_DESC& Desc);
 
 	// 한글 때문에 만듦

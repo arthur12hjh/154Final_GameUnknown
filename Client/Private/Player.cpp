@@ -12,7 +12,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 #include "Effect.h"
 #include "Notify.h"
 #include "AttackHitBox.h"
@@ -259,7 +259,10 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Render_Shadow()
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_Shadow();
+	{
+		if(pPartObject.first != TEXT("Part_Hair"))
+			pPartObject.second->Render_Shadow();
+	}
 
 	return S_OK;
 }
@@ -526,14 +529,14 @@ HRESULT CPlayer::Ready_PartObjects()
 HRESULT CPlayer::Ready_PlayerDesc()
 {
 	
-	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxHealth = 250;
 	m_PlayerDesc.iMaxShield = 100;
 	
 	//베타 에너지
 	m_PlayerDesc.iMaxBetaEnergy = 20;
 	m_PlayerDesc.iCurrentBetaEnergy = 0;
 
-	m_PlayerDesc.iCurrentHealth = 100;
+	m_PlayerDesc.iCurrentHealth = 250;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
 
@@ -562,7 +565,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 0;
+	m_PlayerDesc.iOwnGold			= 5000;
 
 	return S_OK;
 }
@@ -648,7 +651,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
@@ -704,7 +707,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 	}
 	else if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_F))
 	{
-		auto pInteractionCom = dynamic_cast<CInteractionUIBinder*>(m_pGameInstance->GetNearInteraction());
+		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 

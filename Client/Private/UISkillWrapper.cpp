@@ -40,7 +40,7 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pCharactor->Get_Desc()->eBetaSkillState[i]);
 			m_iSkillID[i] = const_cast<_uint*>(&pCharactor->Get_Desc()->iBetaSkillId[i]);
-			m_ePrevSkillState[i] = *m_eSkillState[i];
+			//m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
 		m_iCurrentBeta = const_cast<LONGLONG*>(&pCharactor->Get_Desc()->iCurrentBetaEnergy);
@@ -58,7 +58,7 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
 			m_iSkillID[i] = const_cast<_uint*>(&pGaraPlayer->Get_Desc()->iBetaSkillId[i]);
-			m_ePrevSkillState[i] = *m_eSkillState[i];
+			//m_ePrevSkillState[i] = *m_eSkillState[i];
 		}
 
 		m_iCurrentBeta = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);

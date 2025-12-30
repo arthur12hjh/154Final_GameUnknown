@@ -5,7 +5,7 @@
 #include "GameManager.h"
 #include "BoxOpenEvent.h"
 
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 #include "DropComponent.h"
 
 #include "UIBase.h"
@@ -155,13 +155,13 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
 
 #pragma endregion
     /* Com_Interaction */
-    CInteractionUIBinder::INTERACTION_DESC InteractionDesc = {};
+    CInteractionBinder::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
     InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject * pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
 

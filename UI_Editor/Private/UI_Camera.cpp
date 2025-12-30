@@ -338,11 +338,11 @@ void CUI_Camera::GetCameraLock(_bool (&pOut)[2])
 
 HRESULT CUI_Camera::Ready_PlayerDesc()
 {
-	m_PlayerDesc.iMaxHealth = 100;
+	m_PlayerDesc.iMaxHealth = 250;
 	m_PlayerDesc.iMaxShield = 100;
 	m_PlayerDesc.iMaxBetaEnergy = 20;
 
-	m_PlayerDesc.iCurrentHealth = 100;
+	m_PlayerDesc.iCurrentHealth = 250;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
 
@@ -353,8 +353,8 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 	m_PlayerDesc.iCurrentAttackPoint = 100;
 	m_PlayerDesc.iCurrentBetaEnergy = 20;
 
-	m_PlayerDesc.iCurrentPotions = 3;
-	m_PlayerDesc.iMaxPotions = 3;
+	m_PlayerDesc.iCurrentPotions = 5;
+	m_PlayerDesc.iMaxPotions = 5;
 
 	m_PlayerDesc.eRushState = Client::SKILL_STATE::DEFAULT;
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;
@@ -363,7 +363,7 @@ HRESULT CUI_Camera::Ready_PlayerDesc()
 	for (int i = 0; i < 4; ++i)
 		m_PlayerDesc.eBetaSkillState[i] = Client::SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.iOwnGold = 0;
+	m_PlayerDesc.iOwnGold = 1000;
 
 	m_PlayerDesc.iBetaSkillCount = 2;
 	m_PlayerDesc.iBetaSkillId[0] = 1004;

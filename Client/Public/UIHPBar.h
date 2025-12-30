@@ -42,6 +42,7 @@ private:
 	LONGLONG m_MaxGara = 100;
 #endif // DEBUG
 
+	_uint m_iCellCount = 0;        // 몇칸으로 나눌지
 	_float m_fCurrentFill = 1.f;   // 현재 값
 	_float m_fTargetFill = 1.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지

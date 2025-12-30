@@ -228,7 +228,7 @@ float GetBloomCurve(float fIntensity)
     float fResult = fIntensity;
     fIntensity *= 2.0f;
 
-    fResult = max(0, fIntensity - 1.0f) * 0.5; // default gThreshold = 1.26
+    fResult = max(0, fIntensity - 1.45f) * 0.5; // default gThreshold = 1.26
 
 
     return fResult * 0.5f;

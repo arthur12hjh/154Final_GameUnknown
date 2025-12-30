@@ -60,13 +60,12 @@ struct PS_IN
 
 struct PS_OUT
 {
-    float4 vDiffuse : SV_TARGET0;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vORM : SV_Target3;
+    float4 vDiffuse  : SV_TARGET0;
+    float4 vNormal   : SV_TARGET1;
+    float4 vDepth    : SV_TARGET2;
+    float4 vORM      : SV_Target3;
     float4 vEmissive : SV_TARGET4;
-    float4 vSSSAO : SV_TARGET5;
-    float4 vSpecDetail : SV_TARGET6;
+    float4 vBloom    : SV_TARGET5;
 };
 
 struct PS_OUT_SHADOW
