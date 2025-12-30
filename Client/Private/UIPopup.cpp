@@ -300,7 +300,4 @@ void CUIPopup::Free()
 	__super::Free();
 
 	Safe_Release(m_pDimTextureCom);
-	Safe_Release(m_pInnerFrameTextureCom);
-	Safe_Release(m_pAnswerTextureCom);
-	Safe_Release(m_pSuitIconsTextureCom);
 }

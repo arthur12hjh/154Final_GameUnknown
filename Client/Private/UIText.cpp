@@ -66,7 +66,18 @@ HRESULT CUIText::Render()
 			m_tUIDesc.m_tUITextDesc.vColor.w * fAlpha
 			);
 
-		if (m_eDrawType == DRAW_TYPE::WORLD_SCREEN)
+		_uint2 iHalf{ g_iHalfWinSizeX, g_iHalfWinSizeY };
+
+		_float2 pos{
+			(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f) + iHalf.x,
+			-(m_tUIDesc.fY + m_tUIDesc.fOffsetY + fTextSize.y * 0.5f) + iHalf.y
+		};
+
+		m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+			m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
+			pos, vColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+		/*if (m_eDrawType == DRAW_TYPE::WORLD_SCREEN)
 		{
 			_uint2 iHalf{ g_iHalfWinSizeX, g_iHalfWinSizeY };
 
@@ -83,9 +94,11 @@ HRESULT CUIText::Render()
 		{
 			m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
 				m_tUIDesc.Get_UI_Text_Desc()->szText.c_str(),
-				_float2(m_tUIDesc.fX + m_tUIDesc.fOffsetX - fTextSize.x * 0.5f, m_tUIDesc.fY + m_tUIDesc.fOffsetY - fTextSize.y * 0.5f),
-				vColor, m_tUIDesc.m_tUITextDesc.fScale);
-		}
+				_float2(
+					m_tUIDesc.fX + m_tUIDesc.fOffsetX - (fTextSize.x * 0.5f),
+					-m_tUIDesc.fY + m_tUIDesc.fOffsetY - (fTextSize.y * 0.5f)
+				), vColor, m_tUIDesc.m_tUITextDesc.fScale);
+		}*/
 	}
 
 #ifdef _DEBUG

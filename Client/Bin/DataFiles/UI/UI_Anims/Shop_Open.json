@@ -1,0 +1,39 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                1600.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.5,
+    "isBeapBeap": false,
+    "isLoop": false,
+    "isInfluenceChildren": true,
+    "szAnimTag": "Shop_Open"
+}

@@ -18,8 +18,8 @@ float		        g_fGameFrame;
 bool				g_bIsFocus;
 bool				g_bIsMouseLock;
 
-unsigned int		g_iHalfWinSizeX;
-unsigned int		g_iHalfWinSizeY;
+unsigned int		g_iHalfWinSizeX = 800;
+unsigned int		g_iHalfWinSizeY = 450;
 bool				g_bIsImgKeyBoardFoucs;
 float 			    g_fTimeRatio;
 

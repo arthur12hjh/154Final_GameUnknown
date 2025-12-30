@@ -12,7 +12,7 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CInteractionUIBinder;
+class CInteractionBinder;
 
 class CUISimpleKey final : public CUIBase
 {
@@ -41,7 +41,7 @@ protected:
 private:
 	CVIBuffer_Rect_Instance* m_pVIBaseBufferCom{ nullptr };
 	CTexture* m_pHoldGaugeTextureCom{ nullptr };
-	CInteractionUIBinder* m_pTargetInteractionCom{ nullptr };
+	CInteractionBinder* m_pTargetInteractionCom{ nullptr };
 	CGameObject* m_pTargetOwner{ nullptr };
 
 	INTERACTION_STATE m_eInterState{ INTERACTION_STATE::END };

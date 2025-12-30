@@ -2,6 +2,7 @@
 #include "MousePointer.h"
 
 #include "GameInstance.h"
+#include "UIStruct.h"
 
 CMousePointer::CMousePointer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CUIObject(pDevice, pContext)
@@ -35,8 +36,6 @@ HRESULT CMousePointer::Initialize(void* pArg)
 
 void CMousePointer::Priority_Update(_float fTimeDelta)
 {
-   /* if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_GRAVE))
-        m_bIsRendered = !m_bIsRendered;*/
 } 
 
 void CMousePointer::Update(_float fTimeDelta)
@@ -50,7 +49,7 @@ void CMousePointer::Late_Update(_float fTimeDelta)
     MousePoint.y += m_pTransformCom->Get_Scale().y * 0.3f;
     ComputeTransform(XMVectorSet(MousePoint.x, MousePoint.y, 0.f, 1.f));
 
-    if(!g_bIsMouseLock)
+    if(!g_bIsMouseLock && m_eVisibility == VISIBILITY::VISIBLE)
         m_pGameInstance->Add_RenderGroup(RENDER::UI, this);
 }
 
@@ -101,7 +100,7 @@ HRESULT CMousePointer::Bind_ShaderResources()
 
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
         return E_FAIL;
-
+   
     if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", ENUM_CLASS(m_eMosueScale))))
         return E_FAIL;
 

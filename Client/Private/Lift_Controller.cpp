@@ -2,7 +2,7 @@
 #include "Lift_Controller.h"
 
 #include "GameInstance.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 #include "Lift_Platform.h"
 
 #include "UIBase.h"
@@ -167,7 +167,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
 	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { this->Excute_CallBack(fTimeDelta, pActionObject); };
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 	m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);

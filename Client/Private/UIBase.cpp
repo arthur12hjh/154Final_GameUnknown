@@ -90,10 +90,10 @@ void CUIBase::Update(_float fTimeDelta)
 
 				m_eVisibility = m_pParent->GetVisibility();
 			}*/
-		}
-		m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(m_tUIDesc.fRotation));
+			m_pTransformCom->Rotation(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMConvertToRadians(m_tUIDesc.fRotation));
 
-		ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
+			ComputeTransform(XMVectorSet(m_tUIDesc.fX + m_tUIDesc.fOffsetX, m_tUIDesc.fY + m_tUIDesc.fOffsetY, 0.f, 1.f));
+		}
 	}
 	else if(m_eDrawType == CUIObject::DRAW_TYPE::WORLD_SCREEN)
 	{

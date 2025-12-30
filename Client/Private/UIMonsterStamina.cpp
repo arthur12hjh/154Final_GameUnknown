@@ -35,6 +35,12 @@ HRESULT CUIMonsterStamina::Initialize(void* pArg)
 void CUIMonsterStamina::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (!m_isRent)
+	{
+		m_iCurrentStamina = 0;
+		m_iMaxStamina = 0;
+	}
 }
 
 void CUIMonsterStamina::Update(_float fTimeDelta)
@@ -42,6 +48,9 @@ void CUIMonsterStamina::Update(_float fTimeDelta)
 	auto pMonster = static_cast<CNaytiba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
+		if (pMonster->GetStaticMonsterData()->eNaytiba_Type > NAYTIBA_TYPE::ELITE)
+			return;
+
 		auto StaticDesc = pMonster->GetStaticMonsterData();
 		auto CurDesc = pMonster->GetMonsterData();
 
@@ -84,7 +93,7 @@ void CUIMonsterStamina::Update(_float fTimeDelta)
 
 void CUIMonsterStamina::Late_Update(_float fTimeDelta)
 {
-	if(m_iMaxStamina > 0)
+	if (m_isRent)
 		__super::Late_Update(fTimeDelta);
 
 	m_fCurrentFill = static_cast<_float>(m_iCurrentStamina) / m_iMaxStamina;
