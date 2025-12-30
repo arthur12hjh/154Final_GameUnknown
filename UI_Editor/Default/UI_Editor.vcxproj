@@ -182,10 +182,11 @@
     <ClCompile Include="..\..\Client\Private\Effect.cpp" />
     <ClCompile Include="..\..\Client\Private\EffectSRV.cpp" />
     <ClCompile Include="..\..\Client\Private\GameManager.cpp" />
-    <ClCompile Include="..\..\Client\Private\InteractionUIBinder.cpp" />
+    <ClCompile Include="..\..\Client\Private\InteractionBinder.cpp" />
     <ClCompile Include="..\..\Client\Private\LockonManager.cpp" />
     <ClCompile Include="..\..\Client\Private\MeshEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\MeshParticle.cpp" />
+    <ClCompile Include="..\..\Client\Private\MousePointer.cpp" />
     <ClCompile Include="..\..\Client\Private\Nayitba.cpp" />
     <ClCompile Include="..\..\Client\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\..\Client\Private\Notify.cpp" />
@@ -276,6 +277,7 @@
     <ClCompile Include="..\..\Client\Private\UIImage.cpp" />
     <ClCompile Include="..\..\Client\Private\UIInstanceBuffer.cpp" />
     <ClCompile Include="..\..\Client\Private\UIInteractionFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIItemSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UILoadingBlock.cpp" />
     <ClCompile Include="..\..\Client\Private\UILoadingBlur.cpp" />
     <ClCompile Include="..\..\Client\Private\UILockOn.cpp" />
@@ -285,6 +287,7 @@
     <ClCompile Include="..\..\Client\Private\UIMonsterShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterStaminaFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIMouseInteraction.cpp" />
     <ClCompile Include="..\..\Client\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp" />
@@ -295,6 +298,7 @@
     <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UIScript.cpp" />
     <ClCompile Include="..\..\Client\Private\UIShield.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIShop.cpp" />
     <ClCompile Include="..\..\Client\Private\UISimpleKey.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp" />

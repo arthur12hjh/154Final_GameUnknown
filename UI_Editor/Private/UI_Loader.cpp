@@ -48,6 +48,10 @@
 #include "UICostumePuzzleHint.h"
 #include "UIMapSelector.h"
 
+#include "UIShop.h"
+#include "UIItemSlot.h"
+#include "UIMouseInteraction.h"
+
 #pragma endregion
 
 #include "GameInstance.h"
@@ -169,35 +173,35 @@ HRESULT CUI_Loader::Loading_UI_For_Logo_Level()
 	m_strMessage = TEXT("UI텍스쳐들 로딩 중 입니다.");
 	/* For.Prototype_Component_UI_Texture_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_BackGround"),
-		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.png"), 1);
+		TEXT("Com_Texture_UI_BackGround"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/BackGround_%d.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Overlay"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Overlay"),
-		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
+		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Logo_Main_Title */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Logo_Main_Title"),
-		TEXT("Com_Texture_UI_Logo_Main_Title"), TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.png"), 1);
+		TEXT("Com_Texture_UI_Logo_Main_Title"), TEXT("../../Client/Bin/Resources/Textures/UI/Logo/Main_Title.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Dot_Select */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_UI_Texture_Dot_Select"),
-		TEXT("Com_Texture_UI_Dot_Select"), TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.png"), 1);
+		TEXT("Com_Texture_UI_Dot_Select"), TEXT("../../Client/Bin/Resources/Textures/UI/Dots/Dot_Select.dds"), 1);
 
 	m_strMessage = TEXT("UI객체원형들 로딩 중 입니다.");
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_GameObject_UI_Panel"),
@@ -234,40 +238,43 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	if (FAILED(Loading_UI_For_World()))
 		return E_FAIL;
 
+	if (FAILED(Loading_UI_For_Shop()))
+		return E_FAIL;
+
 	if (FAILED(Loading_UI_For_Popups()))
 		return E_FAIL;
 
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Overlay"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Overlay"),
-		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.png"), 1);
+		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Center_Pivot */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Aim/Center_Pivot.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Center_Pivot"),
-		TEXT("Com_Texture_UI_Center_Pivot"), TEXT("../../Client/Bin/Resources/Textures/UI/Aim/Center_Pivot.png"), 1);
+		TEXT("Com_Texture_UI_Center_Pivot"), TEXT("../../Client/Bin/Resources/Textures/UI/Aim/Center_Pivot.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Number */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.png"), 10))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.dds"), 10))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Number"),
-		TEXT("Com_Texture_UI_Number"), TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.png"), 10);
+		TEXT("Com_Texture_UI_Number"), TEXT("../../Client/Bin/Resources/Textures/UI/Number/Number_%d.dds"), 10);
 
 	/* For.Prototype_Component_UI_Texture_Icon_Gold */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Icon_Gold"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Info/Icon_Gold.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Info/Icon_Gold.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Icon_Gold"),
-		TEXT("Com_Texture_UI_Icon_Gold"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Info/Icon_Gold.png"), 1);
+		TEXT("Com_Texture_UI_Icon_Gold"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Info/Icon_Gold.dds"), 1);
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Panel"),
 		CUIPanel::Create(m_pDevice, m_pContext))))
@@ -295,35 +302,35 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 
 	/* For.Prototype_Component_UI_Texture_Boss_Vital_Shadow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Vital_Shadow"),
-		TEXT("Com_Texture_UI_Boss_Vital_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.png"), 1);
+		TEXT("Com_Texture_UI_Boss_Vital_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Vital_Shadow.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Boss_Name */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Name"),
-		TEXT("Com_Texture_UI_Boss_Name"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.png"), 1);
+		TEXT("Com_Texture_UI_Boss_Name"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Boss_Name_%d.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Boss_Stamina */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Stamina"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.dds"), 3))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_Stamina"),
-		TEXT("Com_Texture_UI_Boss_Stamina"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.png"), 3);
+		TEXT("Com_Texture_UI_Boss_Stamina"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_%d.dds"), 3);
 
 	/* For.Prototype_Component_UI_Texture_Boss_StaminaFX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_StaminaFX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Boss_StaminaFX"),
-		TEXT("Com_Texture_UI_Boss_Stamina_FX"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.png"), 2);
+		TEXT("Com_Texture_UI_Boss_Stamina_FX"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Boss/Stamina_FX_%d.dds"), 2);
 
 	/*=========================================================================================================================*/
 
@@ -401,12 +408,12 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 	/* For.Prototype_Component_Model_Sky */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Model_Sky"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Texture_Sky1 */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Sky1"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Maps/Sky/T_Sky_RockyHills.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.dds"), 1))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
@@ -424,59 +431,59 @@ HRESULT CUI_Loader::Loading_UI_For_Combat_HUD_Vitals()
 {
 	/* For.Prototype_Component_UI_Texture_Vital */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Vital"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.dds"), 3))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Vital"),
-		TEXT("Com_Texture_UI_Vital_Tag"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.png"), 3);
+		TEXT("Com_Texture_UI_Vital_Tag"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Vital/Vital_Tag_%d.dds"), 3);
 
 	/* For.Prototype_Component_UI_Texture_Player_Hp */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp"),
-		TEXT("Com_Texture_UI_Player_Hp"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.png"), 2);
+		TEXT("Com_Texture_UI_Player_Hp"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_%d.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Player_Hp_FX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp_FX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_Hp_FX"),
-		TEXT("Com_Texture_UI_Player_Hp_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.png"), 1);
+		TEXT("Com_Texture_UI_Player_Hp_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/Player_HP_FX.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Player_BetaFX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_BetaFX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/BetaFx_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/BetaFx_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Player_BetaFX"),
-		TEXT("Com_Texture_UI_Player_BetaFX"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/BetaFx_%d.png"), 2);
+		TEXT("Com_Texture_UI_Player_BetaFX"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Player_HP/BetaFx_%d.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Potion */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion"),
-		TEXT("Com_Texture_UI_Potion"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.png"), 1);
+		TEXT("Com_Texture_UI_Potion"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Potion_Stack */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion_Stack"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Potion_Stack"),
-		TEXT("Com_Texture_UI_Potion_Stack"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.png"), 1);
+		TEXT("Com_Texture_UI_Potion_Stack"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/Potion/Potion_Stack.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Btn_Empty */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Btn_Empty"),
-		TEXT("Com_Texture_UI_Btn_Empty"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.png"), 1);
+		TEXT("Com_Texture_UI_Btn_Empty"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Btn_Empty.dds"), 1);
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_HPBar"),
 		CUIHPBar::Create(m_pDevice, m_pContext))))
@@ -517,131 +524,131 @@ HRESULT CUI_Loader::Loading_UI_For_Combat_HUD_Skills()
 {
 	/* For.Prototype_Component_UI_Texture_SkillFrame */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame"),
-		TEXT("Com_Texture_UI_SkillFrame"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.png"), 1);
+		TEXT("Com_Texture_UI_SkillFrame"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Beta_Cost_Deco */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Beta_Cost_Deco"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Beta_Cost_Deco.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Beta_Cost_Deco.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Beta_Cost_Deco"),
-		TEXT("Com_Texture_UI_Beta_Cost_Deco"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Beta_Cost_Deco.png"), 1);
+		TEXT("Com_Texture_UI_Beta_Cost_Deco"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Beta_Cost_Deco.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_SkillFrame_Shadow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillFrame_Shadow"),
-		TEXT("Com_Texture_UI_SkillFrame_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.png"), 2);
+		TEXT("Com_Texture_UI_SkillFrame_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillFrame_Shadow_%d.dds"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_Skill_Focus_Glow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Focus_Glow"),
-		TEXT("Com_Texture_UI_Skill_Focus_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.png"), 1);
+		TEXT("Com_Texture_UI_Skill_Focus_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Ring_Focus_OutGlow.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Skill_On_Fx */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_On_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_On_Fx"),
-		TEXT("Com_Texture_UI_Skill_On_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.png"), 1);
+		TEXT("Com_Texture_UI_Skill_On_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Skill_On_Fx_0.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_SkillWrapper_On_Fx */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillWrapper_On_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_SkillWrapper_On_Fx"),
-		TEXT("Com_Texture_UI_SkillWrapper_On_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.png"), 2);
+		TEXT("Com_Texture_UI_SkillWrapper_On_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillWrapper_On_Fx_%d.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Skill_Line_Fx */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Line_Fx"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Line_Fx"),
-		TEXT("Com_Texture_UI_Skill_Line_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.png"), 2);
+		TEXT("Com_Texture_UI_Skill_Line_Fx"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Line_%d.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Skills */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skills"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.png"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.dds"), 4))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skills"),
-		TEXT("Com_Texture_UI_Skills"), TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.png"), 4);
+		TEXT("Com_Texture_UI_Skills"), TEXT("../../Client/Bin/Resources/Textures/UI/Skills/Skill_%d.dds"), 4);
 	
 	/* For.Prototype_Component_UI_Texture_Rush */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush"),
-		TEXT("Com_Texture_UI_Rush"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.png"), 1);
+		TEXT("Com_Texture_UI_Rush"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Rush_Frame */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame"),
-		TEXT("Com_Texture_UI_Rush_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.png"), 1);
+		TEXT("Com_Texture_UI_Rush_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Rush_CoolTime */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_CoolTime"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_CoolTime"),
-		TEXT("Com_Texture_UI_Rush_CoolTime"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.png"), 1);
+		TEXT("Com_Texture_UI_Rush_CoolTime"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_CoolTime.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Rush_Glow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Glow"),
-		TEXT("Com_Texture_UI_Rush_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_.png"), 2);
+		TEXT("Com_Texture_UI_Rush_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Glow_.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Rush_Frame_Glow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Rush_Frame_Glow"),
-		TEXT("Com_Texture_UI_Rush_Frame_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.png"), 1);
+		TEXT("Com_Texture_UI_Rush_Frame_Glow"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/Rush_Frame_Glow.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_On_Ring */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_Ring"),
-		TEXT("Com_Texture_UI_On_Ring"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.png"), 1);
+		TEXT("Com_Texture_UI_On_Ring"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_Ring.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Skill_Slot_Covor */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Slot_Covor"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Skill_Slot_Covor"),
-		TEXT("Com_Texture_UI_Skill_Slot_Covor"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.png"), 1);
+		TEXT("Com_Texture_UI_Skill_Slot_Covor"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/SkillCover.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_On_BetaText */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_BetaText"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.dds"), 1))))
 		return E_FAIL;
 	
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_On_BetaText"),
-		TEXT("Com_Texture_UI_On_BetaText"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.png"), 1);
+		TEXT("Com_Texture_UI_On_BetaText"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/SkillFrame/On_BetaText.dds"), 1);
 
 	/* For.Prototype_GameObject_UI_SkillWrapper */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_SkillWrapper"),
@@ -676,75 +683,75 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	// 팝업
 	/* For.Prototype_Component_UI_Texture_PopupBG */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_PopupBG"),
-		TEXT("Com_Texture_UI_PopupBG"), TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.png"), 2);
+		TEXT("Com_Texture_UI_PopupBG"), TEXT("../../Client/Bin/Resources/Textures/UI/Popup/Popup_Bg_%d.dds"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_Popup_Inner_Frame */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Popup_Inner_Frame"),
-		TEXT("Com_Texture_UI_Popup_Inner_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.png"), 2);
+		TEXT("Com_Texture_UI_Popup_Inner_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Inner_Frame_%d.dds"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_Costume_Puzzle_Button */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Costume_Puzzle_Button"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.png"), 4))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.dds"), 4))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Button"),
-		TEXT("Com_Texture_UI_Puzzle_Button"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.png"), 4);
+		TEXT("Com_Texture_UI_Puzzle_Button"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Puzzle_Button_%d.dds"), 4);
 	
-	/* For.Prototype_Component_UI_Texture_Suit_Icon */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.png"), 12))))
-		return E_FAIL;
+	///* For.Prototype_Component_UI_Texture_Suit_Icon */
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.dds"), 12))))
+	//	return E_FAIL;
 
-	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
-		TEXT("Com_Texture_UI_Suit_Icon"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.png"), 12);
+	//m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icon"),
+	//	TEXT("Com_Texture_UI_Suit_Icon"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_%d.dds"), 12);
 	
 	/* For.Prototype_Component_UI_Texture_Suit_Icons */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icons"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Suit_Icons"),
-		TEXT("Com_Texture_UI_Suit_Icons"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.png"), 1);
+		TEXT("Com_Texture_UI_Suit_Icons"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Suit_Icons.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Puzzle_Answer */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Answer"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Answer"),
-		TEXT("Com_Texture_UI_Puzzle_Answer"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.png"), 1);
+		TEXT("Com_Texture_UI_Puzzle_Answer"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Answer_%d.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Puzzle_Unlock */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Puzzle_Unlock"),
-		TEXT("Com_Texture_UI_Puzzle_Unlock"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.png"), 2);
+		TEXT("Com_Texture_UI_Puzzle_Unlock"), TEXT("../../Client/Bin/Resources/Textures/UI/Puzzle/Lock_Glow_%d.dds"), 2);
 
 	/* For.Prototype_Component_UI_Texture_Map_Thumbnails */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Map_Thumbnails"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.dds"), 3))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Map_Thumbnails"),
-		TEXT("Com_Texture_UI_Map_Thumbnail"), TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.png"), 3);
+		TEXT("Com_Texture_UI_Map_Thumbnail"), TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.dds"), 3);
 	
 	/* For.Prototype_Component_UI_Texture_ItemIcons */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.dds"), 3))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
-		TEXT("Com_Texture_UI_ItemIcons"), TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.png"), 3);
+		TEXT("Com_Texture_UI_ItemIcons"), TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.dds"), 3);
 
 	/*=================================================================================================================*/
 
@@ -781,79 +788,140 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 	return S_OK;
 }
 
+HRESULT CUI_Loader::Loading_UI_For_Shop()
+{
+	/* For.Prototype_Component_UI_Shop_Frame */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Frame"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Shop_Frame_%d.dds"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Frame"),
+		TEXT("Com_Texture_UI_Shop_Frame"), TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Shop_Frame_%d.dds"), 2);
+	
+	/* For.Prototype_Component_UI_Shop_Npc */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Npc"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Shop_Npc.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Npc"),
+		TEXT("Com_Texture_UI_Shop_Npc"), TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Shop_Npc.dds"), 1);
+	
+	/* For.Prototype_Component_UI_Shop_Slot */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Slot"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Slot_%d.dds"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Shop_Slot"),
+		TEXT("Com_Texture_UI_Shop_Slot"), TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Slot_%d.dds"), 2);
+	
+	/* For.Prototype_Component_UI_Item_Icons */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Item_Icons"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Item_Icons.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Item_Icons"),
+		TEXT("Com_Texture_UI_Item_Icons"), TEXT("../../Client/Bin/Resources/Textures/UI/Shop/Item_Icons.dds"), 1);
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Mouse_Right_Hold"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/btn_MouseRightHold.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_Mouse_Right_Hold"),
+		TEXT("Com_Texture_UI_Item_Icons"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/btn_MouseRightHold.dds"), 1);
+
+	/*=====================================================================================================*/
+
+	/* For.Prototype_GameObject_UI_Shop */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_Shop"),
+		CUIShop::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_ItemSlot */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_ItemSlot"),
+		CUIItemSlot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_MouseInteraction */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_MouseInteraction"),
+		CUIMouseInteraction::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CUI_Loader::Loading_UI_For_World()
 {
 	/* For.Prototype_Component_UI_Texture_LockOn */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_LockOn"),
-		TEXT("Com_Texture_UI_LockOn"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.png"), 1);
+		TEXT("Com_Texture_UI_LockOn"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/LockOnMark.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Interaction_Key */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.dds"), 2))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
-		TEXT("Com_Texture_UI_Interaction_Key"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.png"), 2);
+		TEXT("Com_Texture_UI_Interaction_Key"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.dds"), 2);
 	
 	/* For.Prototype_Component_UI_Texture_KeyIcon_Mouse */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_KeyIcon_Mouse"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_KeyIcon_Mouse"),
-		TEXT("Com_Texture_UI_KeyIcon_Mouse"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.png"), 1);
+		TEXT("Com_Texture_UI_KeyIcon_Mouse"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Shadow_Ball */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Ball"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Ball"),
-		TEXT("Com_Texture_UI_Shadow_Ball"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.png"), 1);
+		TEXT("Com_Texture_UI_Shadow_Ball"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Shadow_Ball.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Shadow_Block */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Block"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Shadow_Block"),
-		TEXT("Com_Texture_UI_Shadow_Block"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.png"), 1);
+		TEXT("Com_Texture_UI_Shadow_Block"), TEXT("../../Client/Bin/Resources/Textures/UI/Combat_HUD/ETC/Shadow_Block.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Finish_Ring */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Finish_Ring"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Finish_Ring"),
-		TEXT("Com_Texture_UI_Finish_Ring"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.png"), 1);
+		TEXT("Com_Texture_UI_Finish_Ring"), TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/Finish_Ring.dds"), 1);
 	
 	/* For.Prototype_Component_UI_Texture_Interaction_Hold_Gauge */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Hold_Gauge.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Hold_Gauge.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge"),
-		 TEXT("Com_Texture_UI_Hold_Gauge"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Hold_Gauge.png"), 1);
+		 TEXT("Com_Texture_UI_Hold_Gauge"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Hold_Gauge.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Interaction_Shadow */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Shadow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.dds"), 1))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Shadow"),
-		TEXT("Com_Texture_UI_Interaction_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.png"), 1);
+		TEXT("Com_Texture_UI_Interaction_Shadow"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Shadow.dds"), 1);
 
 	/* For.Prototype_Component_UI_Texture_Interaction_FX */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.png"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.dds"), 3))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
-		TEXT("Com_Texture_UI_Interaction_FX"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.png"), 3);
+		TEXT("Com_Texture_UI_Interaction_FX"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.dds"), 3);
 
 	/*=====================================================================================================*/
 

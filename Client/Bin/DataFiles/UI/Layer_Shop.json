@@ -1,0 +1,311 @@
+[
+    {
+        "Children": [
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 640.0,
+                "fOffsetY": -400.0,
+                "fRotation": 0.0,
+                "fSizeX": 160.0,
+                "fSizeY": 40.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 210,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 1,
+                "szLayerTag": "Layer_Shop",
+                "szProtoTag": "Prototype_GameObject_UI_OwnGold",
+                "szUIID": "UI_OwnGold_1",
+                "szUITag": "UI_OwnGold"
+            },
+            {
+                "fAlpha": 0.0,
+                "fOffsetX": -135.0,
+                "fOffsetY": -100.0,
+                "fRotation": 0.0,
+                "fSizeX": 1118.0,
+                "fSizeY": 478.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 200,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 1,
+                "szEvents": {
+                    "ItemSlot_Event": [
+                        {
+                            "szActionTag": "ItemSlot_Event",
+                            "szArg": "ItemSlot_Event",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Shop",
+                "szProtoTag": "Prototype_GameObject_UI_ItemSlot",
+                "szUIID": "UI_ItemSlot_2",
+                "szUITag": "UI_ItemSlot"
+            },
+            {
+                "Children": [
+                    {
+                        "TextureDesc": {
+                            "iPass": 0,
+                            "iTextureIndex": 0,
+                            "szProtoTag": "Prototype_Component_UI_Texture_Interaction_Shadow",
+                            "szTextureComTag": "Com_Texture_UI_Interaction_Shadow"
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 61.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 217.0,
+                        "fSizeY": 50.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 201,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Show_Key",
+                                "szPrefabTag": "Show_Key"
+                            },
+                            {
+                                "szAnimTag": "Hide_Key",
+                                "szPrefabTag": "Hide_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "MaouseInteraction_Shadow_Show_Effect": [
+                                {
+                                    "szActionTag": "Show_Key",
+                                    "szArg": "Show_Key",
+                                    "szSubscribeEventTags": [
+                                        "MaouseInteraction_Show"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "MaouseInteraction_Shadow_Hide_Effect": [
+                                {
+                                    "szActionTag": "Hide_Key",
+                                    "szArg": "Hide_Key",
+                                    "szSubscribeEventTags": [
+                                        "MaouseInteraction_Hide"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Shop",
+                        "szProtoTag": "Prototype_GameObject_UI_Image",
+                        "szUIID": "UI_Simple_Interaction_Shadow_4-1",
+                        "szUITag": "InteractionShadow"
+                    },
+                    {
+                        "TextDesc": {
+                            "fScale": 0.7,
+                            "szFont": "KoPub",
+                            "szText": "구매",
+                            "vColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 70.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 100.0,
+                        "fSizeY": 20.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 203,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Show_Key",
+                                "szPrefabTag": "FadeIn_0_5"
+                            },
+                            {
+                                "szAnimTag": "Hide_Key",
+                                "szPrefabTag": "FadeOut_0_5"
+                            }
+                        ],
+                        "szEvents": {
+                            "MaouseInteraction_Text_Show_Effect": [
+                                {
+                                    "szActionTag": "Show_Key",
+                                    "szArg": "Show_Key",
+                                    "szSubscribeEventTags": [
+                                        "MaouseInteraction_Show"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ],
+                            "MaouseInteraction_Text_Hide_Effect": [
+                                {
+                                    "szActionTag": "Hide_Key",
+                                    "szArg": "Hide_Key",
+                                    "szSubscribeEventTags": [
+                                        "MaouseInteraction_Hide"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Shop",
+                        "szProtoTag": "Prototype_GameObject_UI_Text",
+                        "szUIID": "UI_Simple_Interaction_Text_4-2",
+                        "szUITag": "Interaction_Text"
+                    },
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 200.0,
+                        "fSizeY": 200.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 204,
+                        "iDrawType": 1,
+                        "iLevel": 3,
+                        "iRenderGroup": 9,
+                        "iVisibility": 1,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "MaouseInteraction_Active",
+                                "szPrefabTag": "Active_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "MouseInteraction_Active_FX": [
+                                {
+                                    "szActionTag": "MaouseInteraction_Active",
+                                    "szArg": "MaouseInteraction_Active",
+                                    "szSubscribeEventTags": [
+                                        "MaouseInteraction_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Shop",
+                        "szProtoTag": "Prototype_GameObject_UI_InteractionFX",
+                        "szUIID": "UI_Simple_Interaction_FX_4-3",
+                        "szUITag": "Interaction_FX"
+                    }
+                ],
+                "Shader": {
+                    "bUseScale": true,
+                    "fScale": 0.0
+                },
+                "fAlpha": 0.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 40.0,
+                "fSizeY": 40.0,
+                "fX": 0.0,
+                "fY": 0.0,
+                "iDepth": 205,
+                "iDrawType": 1,
+                "iLevel": 3,
+                "iRenderGroup": 9,
+                "iVisibility": 1,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Show_Key",
+                        "szPrefabTag": "Show_Key"
+                    },
+                    {
+                        "szAnimTag": "Hide_Key",
+                        "szPrefabTag": "Hide_Key"
+                    }
+                ],
+                "szEvents": {
+                    "MaouseInteraction_Show": [
+                        {
+                            "szActionTag": "Show_Key",
+                            "szArg": "Show_Key",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "MaouseInteraction_Hide": [
+                        {
+                            "szActionTag": "Hide_Key",
+                            "szArg": "Hide_Key",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "MaouseInteraction_Active": [
+                        {
+                            "szActionTag": "MaouseInteraction_Active",
+                            "szArg": "MaouseInteraction_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "ItemSlot_Event_Effect": [
+                        {
+                            "szActionTag": "ItemSlot_Event_Effect",
+                            "szArg": "ItemSlot_Event_Effect",
+                            "szSubscribeEventTags": [
+                                "ItemSlot_Event"
+                            ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Shop",
+                "szProtoTag": "Prototype_GameObject_UI_MouseInteraction",
+                "szUIID": "UI_MouseInteraction_3-2",
+                "szUITag": "UI_MouseInteraction"
+            }
+        ],
+        "fAlpha": 0.0,
+        "fOffsetX": 1600.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 200,
+        "iDrawType": 1,
+        "iLevel": 3,
+        "iRenderGroup": 9,
+        "iVisibility": 1,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Shop_Open",
+                "szPrefabTag": "Shop_Open"
+            },
+            {
+                "szAnimTag": "Shop_Close",
+                "szPrefabTag": "Shop_Close"
+            }
+        ],
+        "szLayerTag": "Layer_Shop",
+        "szProtoTag": "Prototype_GameObject_UI_Shop",
+        "szUIID": "UI_Shop_1",
+        "szUITag": "UI_Shop"
+    }
+]

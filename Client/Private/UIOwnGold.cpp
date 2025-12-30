@@ -71,33 +71,43 @@ void CUIOwnGold::Late_Update(_float fTimeDelta)
 {
 	__super::Late_Update(fTimeDelta);
 
-	if (m_iPrevOwnGold != *m_iOwnGold)
-		m_bShow = true;
-
-	if (m_bShow)
+	if (m_tOriginUIDesc.szLayerTag == TEXT("Layer_Shop"))
 	{
-		m_fTimeAcc += fTimeDelta;
+		m_tUIDesc.fAlpha = 1.f;
+		m_vTransOffset.y = 0.f;
+
 		m_iPrevOwnGold = *m_iOwnGold;
-
-		if (m_fTimeAcc >= 1.f)
-		{
-			m_tUIDesc.fAlpha -= fTimeDelta * 5.f;
-			m_vTransOffset.y -= fTimeDelta * 5.f;
-		}
-		if (m_fTimeAcc <= 0.3f)
-		{
-			m_tUIDesc.fAlpha += fTimeDelta * 4.f;
-			m_vTransOffset.y -= fTimeDelta * 7.f;
-		}
-
-		if (m_fTimeAcc >= 0.f && m_tUIDesc.fAlpha <= 0.f)
-			m_bShow = false;
 	}
 	else
 	{
-		m_fTimeAcc = 0.f;
-		m_iPrevOwnGold = *m_iOwnGold;
-		m_vTransOffset = _float2(0.f, 0.f);
+		if (m_iPrevOwnGold != *m_iOwnGold)
+			m_bShow = true;
+
+		if (m_bShow)
+		{
+			m_fTimeAcc += fTimeDelta;
+			m_iPrevOwnGold = *m_iOwnGold;
+
+			if (m_fTimeAcc >= 1.f)
+			{
+				m_tUIDesc.fAlpha -= fTimeDelta * 5.f;
+				m_vTransOffset.y -= fTimeDelta * 5.f;
+			}
+			if (m_fTimeAcc <= 0.3f)
+			{
+				m_tUIDesc.fAlpha += fTimeDelta * 4.f;
+				m_vTransOffset.y -= fTimeDelta * 7.f;
+			}
+
+			if (m_fTimeAcc >= 0.f && m_tUIDesc.fAlpha <= 0.f)
+				m_bShow = false;
+		}
+		else
+		{
+			m_fTimeAcc = 0.f;
+			m_iPrevOwnGold = *m_iOwnGold;
+			m_vTransOffset = _float2(0.f, 0.f);
+		}
 	}
 }
 

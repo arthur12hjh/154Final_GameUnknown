@@ -3,12 +3,12 @@
 #include "Interaction_Component.h"
 
 NS_BEGIN(Client)
-class CInteractionUIBinder final : public CInteraction_Component
+class CInteractionBinder final : public CInteraction_Component
 {
 private:
-	CInteractionUIBinder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CInteractionUIBinder(const CInteractionUIBinder& Prototype);
-	virtual ~CInteractionUIBinder() = default;
+	CInteractionBinder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CInteractionBinder(const CInteractionBinder& Prototype);
+	virtual ~CInteractionBinder() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -36,7 +36,7 @@ private:
 	_float m_fInteractionDuration{};
 
 public:
-	static		CInteractionUIBinder*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static		CInteractionBinder*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual		CComponent*			Clone(void* pArg) override;
 	virtual		void				Free() override;
 

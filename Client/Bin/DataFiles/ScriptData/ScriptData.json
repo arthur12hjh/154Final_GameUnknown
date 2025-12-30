@@ -107,6 +107,20 @@
                     "szText": "줴훈줴훈.."
                 }
             ]
+        },
+        "NpcD1G-g2r": {
+            "szAnimTag": "Default",
+            "bCanControl": true,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "D1G-g2r",
+            "Scripts": [
+                {
+                    "szText": "대줴훈대줴훈.."
+                }
+            ]
         }
     }
 }

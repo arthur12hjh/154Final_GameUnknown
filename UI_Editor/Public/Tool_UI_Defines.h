@@ -17,6 +17,7 @@ namespace Tool_UI
 		LOGO,
 		GAMEPLAY,
 		SCARLET,
+		BEATSABER_GAME,
 		LEVEL_PROB,
 		END
 	};

@@ -125,6 +125,7 @@ private:
 	HRESULT Loading_UI_For_Combat_HUD_Vitals(void* pArg);
 	HRESULT Loading_UI_For_Combat_HUD_Skills(void* pArg);
 	HRESULT Loading_UI_For_World(void* pArg);
+	HRESULT Loading_UI_For_Shop(void* pArg);
 	HRESULT Loading_UI_For_Popup(void* pArg);
 
 public:

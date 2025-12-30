@@ -66,6 +66,9 @@ public:
 	void Close_Popup(const _wstring& szPopupTag);
 	_bool Check_isOpenPopup(const _wstring& szPopupTag);
 
+	void Open_Shop();
+	void Close_Shop();
+
 	// 한글 때문에 만듦
 	string WStringToUTF8(const _wstring& wstr);
 	_wstring UTF8ToWString(const string& str);

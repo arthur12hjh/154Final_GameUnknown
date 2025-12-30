@@ -77,10 +77,14 @@ void CUIHPBar::Update(_float fTimeDelta)
 	}*/
 #endif
 	
+	m_iCellCount = (*m_iMaxHp * 0.1f);
+	
 	m_fTargetFill = static_cast<_float>(*m_iCurrentHp) / static_cast<_float>(*m_iMaxHp);
 
 	m_fCurrentFill = Lerp(m_fCurrentFill, m_fTargetFill, fTimeDelta * m_fSpeed);
 
+	Set_Size((m_iCellCount * 8.f), m_tOriginUIDesc.fSizeY);
+	m_tUIDesc.fOffsetX = m_tOriginUIDesc.fOffsetX + (4.f * (m_iCellCount - 25));
 }
 
 void CUIHPBar::Late_Update(_float fTimeDelta)
@@ -143,7 +147,7 @@ HRESULT CUIHPBar::Bind_ShaderResources()
 		return E_FAIL;
 
 	_float2 vUV{};
-	vUV.x = 25.f;
+	vUV.x = (_float)m_iCellCount;
 	vUV.y = 3.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVScale", &vUV, sizeof(_float2))))
