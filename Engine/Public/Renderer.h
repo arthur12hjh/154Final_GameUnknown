@@ -27,7 +27,7 @@ public:
 	void*   Get_Volumetric_Desc();
 	void*	Get_HDR_Desc();
 	void*	Get_Cascade_Desc();
-
+	void*   Get_VolumeFog_Desc();
 
 	void	Set_Fog_Desc(void* pArg);
 public:
@@ -95,7 +95,7 @@ private:
 
 	_uint2								m_vScreenSize = {};
 	_uint2								m_vShadowMapSize = {}; 	//8192, 4608 혹은 16384, 9216
-	_uint2								m_vCascadeShadowMapSize = { 2048, 2048 };		
+	_uint2								m_vCascadeShadowMapSize = { 4096, 4096 };
 	
 	_bool								m_isBloom = { true };
 	_bool								m_isFog = { true };
@@ -123,6 +123,7 @@ private:
 	class CMotionBlur*					m_pMotionBlur = { nullptr };
 	class CSSAO*						m_pSSAO = { nullptr }; 
 	class CEmissive*					m_pEmissive = { nullptr };
+	class CVolumeFog*					m_pVolumeFog = { nullptr };
 
 #ifdef _DEBUG
 	class CColliderRenderer*			m_pColliderRenderer = { nullptr };

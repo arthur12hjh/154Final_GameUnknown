@@ -35,27 +35,30 @@ public :
 #pragma region Default 
 	void						Bind_GameCharacter(class CPlayer* pCharacter);
 	class CPlayer*				GetGameCharacter();
-	PLAYER_DESC*				Get_PlayerDesc();
 
+	void						SavePlayerDesc();
+	_bool						LoadPlayerDesc(PLAYER_DESC& PlayerDesc);
+
+	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
 
 #pragma endregion
 
 #pragma region DataManager
-	const NPC_DATA_DESC*			Find_NpcData(_uint iSkillID);
-	const CHARACTER_SKILL_DESC*		Find_SkillData(_uint iSkillID);
-	const NAYTIBA_NETWORK_DESC*		Find_BossData(_uint iBossID);
-	const BETA_SKILL_DESC*			Find_BetaSkillData(_uint iSkillID);
-	map<_uint, BETA_SKILL_DESC>*	Get_AllBetaSkillDesc();
-	const vector<ANIM_NOTIFY>*		Find_AnimationNotifyData(const _wstring& szAnimationTag);
-	const INTERACTION_DATA*			Find_InteractionData(_uint iID);
-	const CAMERA_ANIMATION_DATA*	Find_CameraAnimationData(_uint iCameraAnimationData);
-	const SCRIPT_DESC*				Get_ScriptData(const _wstring& szScriptTag);
-	const CINEMATIC_DESC*			Find_CinematicData(_uint iCinematicIndex);
+	const NPC_DATA_DESC*				Find_NpcData(_uint iSkillID);
+	const CHARACTER_SKILL_DESC*			Find_SkillData(_uint iSkillID);
+	const NAYTIBA_NETWORK_DESC*			Find_BossData(_uint iBossID);
+	const BETA_SKILL_DESC*				Find_BetaSkillData(_uint iSkillID);
+	const vector<ANIM_NOTIFY>*			Find_AnimationNotifyData(const _wstring& szAnimationTag);
+	const INTERACTION_DATA*				Find_InteractionData(_uint iID);
+	const CAMERA_ANIMATION_DATA*		Find_CameraAnimationData(_uint iCameraAnimationData);
+	const CINEMATIC_DESC*				Find_CinematicData(_uint iCinematicIndex);
+	const vector<TRANSPORT_DESC>*		Find_TransportData();
+	const TRANSPORT_DESC*				Find_TransportData(_uint iAreaID);
 
-	void							EnableTransport(_uint iAreaID);
-	const vector<TRANSPORT_DESC>*	Find_TransportData();
-	const TRANSPORT_DESC*			Find_TransportData(_uint iAreaID);
+	const SCRIPT_DESC*					Get_ScriptData(const _wstring& szScriptTag);
+	map<_uint, BETA_SKILL_DESC>*		Get_AllBetaSkillDesc();
+	void								EnableTransport(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
@@ -84,7 +87,7 @@ public :
 	HRESULT Add_ReserveDeferred(const _wstring& strReserveDeferredTag, class CReserveDeferred* pReserveDeferred = nullptr);
 	void	Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag);
 	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
-
+	void	Change_ShaderSetting(LEVEL eLevelID);
 #pragma endregion
 
 #pragma region LOCKON
@@ -116,6 +119,12 @@ public:
 	HRESULT											Skip_Cinematic();
 #pragma endregion
 
+	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���
+	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
+	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
+	// </end>
+
+
 	void											Release_GameMgr();
 
 private :
@@ -131,6 +140,8 @@ private :
 	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
 	class CPlayer*									m_pPlayer = { nullptr };
+	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
+	pair<PLAYER_DESC, _bool>						m_pSavePlayerDesc = {};
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

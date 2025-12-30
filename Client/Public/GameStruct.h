@@ -18,7 +18,6 @@ namespace Client
 #define iFLAG_INTERPOLATION_NONE		0
 #define iFLAG_INTERPOLATION_LERP		(1 << 0)
 
-
 #define iFLAG_CAMERA_SOURCE_BONE        (1 << 0)
 #define iFLAG_CAMERA_SOURCE_WORLD       (1 << 1)
 #define iFLAG_CAMERA_SOURCE_TARGET      (1 << 2)
@@ -193,7 +192,7 @@ namespace Client
 		bool   isJustParryable = { false };
 
 		bool   isLinkAttackAvailable = { true };
-		class CNayitba* pLinkAttackTarget = { nullptr };
+		class CNaytiba* pLinkAttackTarget = { nullptr };
 		const _float4x4* pGrabBone = { nullptr };
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
@@ -450,6 +449,8 @@ namespace Client
 	///  - 112 : 블링크
 	/// 12n : Link Attack. 무력화 공격 카메라 액션
 	///  - 123 : 기가스 링크 어택
+	///  - 121 : 홍련 1페이즈 링크 어택
+	///  - 122 : 홍련 2페이즈 링크 어택 카운터
 	/// 13n : 
 	/// 14n : 잡기 카메라 액션
 	///  - 145 : 홍련 잡기
@@ -497,7 +498,19 @@ namespace Client
 		FADE_IN,				// 6
 		FADE_OUT,				// 7
 		PLAY_SOUND,				// 8
+		MOVE_CHARACTER,			// 9
 		END };
+
+	typedef struct Cinematic_Index_Desc
+	{
+		_uint iActiveIndex;
+		_char szObjectTag[MAX_PATH];
+		_float3 vPosition;
+		_float4 vRotation;		// w = 0이면 그냥 회전. w = 1이면 LookAt
+		_float3 vScale;
+		_uint iInputInt;
+		_float fInputFloat;
+	}CINEMATIC_INDEX_DESC;
 
 	typedef struct Cinematic_Node_Desc
 	{
@@ -505,6 +518,7 @@ namespace Client
 		_float fTrackPosition;
 		_char szObjectTag[MAX_PATH];
 		_uint iActiveIndex;
+		vector<CINEMATIC_INDEX_DESC> CinematicIndexDataList;
 	}CINEMATIC_NODE_DESC;
 
 	typedef struct Cinematic_Desc
@@ -584,4 +598,22 @@ namespace Client
 		_float4 vColor;
 		_float  fIntensity;
 	} COLORCHANGE_DEFERRED_DESC;
+
+	typedef	struct BeatSaberCharacterDesc
+	{
+		long long	iScore;
+
+		_int		iGameLife;
+		_int		iMaxGameLife;
+
+		_uint		iComboCnt;
+		_float		fCharacterSpeed;
+		// x : 캐릭터 최소 스피드
+		// y : 캐릭터 기본 스피드
+		// z : 캐릭터 최대 스피드
+		_float3		fBoundCharacterSpeed;
+
+		DIRECTION	ePreDirection;
+		DIRECTION	eDirection;
+	}BEATSABER_CHARACTER_DESC;
 }

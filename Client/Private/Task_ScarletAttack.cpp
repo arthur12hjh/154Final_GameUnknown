@@ -17,7 +17,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 		return E_FAIL;
 
 	if (nullptr == m_pOwner)
-		m_pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+		m_pOwner = static_cast<CNaytiba*>(m_pOwnerTree->GetOwner());
 
 	if (nullptr == m_pBlackBoard)
 		m_pBlackBoard = static_cast<CScarletBlackBoard*>(m_pOwnerTree->GetBlackBoard());
@@ -66,6 +66,9 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	}
 
 	ActionAmount(fTimeDelta);
+	if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
+		m_fAnimationSpeed = 1.2f;
+
 	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
 	if (bIsFinished)
 	{
@@ -228,36 +231,36 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	m_pSkillData.push(m_pGameManager->Find_SkillData(28));
+	m_pSkillData.push(m_pGameManager->Find_SkillData(42));
 	SelectAttackData();
 
-	//if (false == m_pBlackBoard->IsPhaseLastAttack())
-	//{
-	//	if (m_pBlackBoard->bIsEnableEntarnceAttack())
-	//	{
-	//		EntranceAttack();
-	//	}
-	//	else
-	//	{
-	//		CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
-	//		if (false == m_pBlackBoard->IsParryAttack())
-	//		{
-	//			if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
-	//				SecondPhaseNormalAttack();
-	//			else
-	//				NormalAttackPattern();
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	m_pSkillData.push(m_pGameManager->Find_SkillData(34));
-	//	m_pSkillData.push(m_pGameManager->Find_SkillData(35));
-	//	m_pSkillData.push(m_pGameManager->Find_SkillData(36));
-	//	m_pSkillData.push(m_pGameManager->Find_SkillData(51));
-	//	m_pSkillData.push(m_pGameManager->Find_SkillData(37));
-	//	SelectAttackData();
-	//}
+	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
+	{
+		if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		{
+			EntranceAttack();
+		}
+		else
+		{
+			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+			if (false == m_pBlackBoard->IsParryAttack())
+			{
+				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+					SecondPhaseNormalAttack();
+				else
+					NormalAttackPattern();
+			}
+		}
+	}
+	else
+	{
+		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
+		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
+		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
+		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
+		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+		SelectAttackData();
+	}*/
 
 	return true;
 }
@@ -368,7 +371,12 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 	}
 	else if (93 > iRandom)
 	{
-		m_pSkillData.push(m_pGameManager->Find_SkillData(42)); // Link Break Chance Attack
+		_float fDistance = m_pBlackBoard->GetTargetDistance();
+
+		if(fDistance >= 10.f)
+			m_pSkillData.push(m_pGameManager->Find_SkillData(42)); // Link Break Chance Attack
+		else
+			m_pSkillData.push(m_pGameManager->Find_SkillData(44)); // Air Dash SpaceCut
 	}
 	else if (96 > iRandom)
 	{
@@ -379,6 +387,8 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 		m_pSkillData.push(m_pGameManager->Find_SkillData(45)); // Blink Combo1
 		m_pSkillData.push(m_pGameManager->Find_SkillData(46)); // Blink Combo2
 	}
+
+
 
 	SelectAttackData();
 }
@@ -783,7 +793,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 	break;
 #pragma endregion
 
-	case 38 :
+	case 38 :	
 #pragma region BLINK SHOT1
 	{
 		Desc.BeginTime = 0.76f;
@@ -830,12 +840,12 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 	{
 		Desc.BeginTime = 0.28f;
 		Desc.EndTime = 0.35f;
-		Desc.fRange = 5.f;
-		Desc.fSpeed = 7.f;
+		Desc.fRange = -5.f;
+		Desc.fSpeed = 5.f;
 		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
-		Desc.bIsTarget = false;
+		Desc.bIsTarget = true;
 		m_TimeLineDatas.emplace(Desc);
 	}
 	break;

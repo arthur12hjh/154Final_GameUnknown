@@ -87,6 +87,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
 
+	pGameManager->Change_ShaderSetting(LEVEL::GAMEPLAY);
+
 	return S_OK;
 }
 
@@ -118,7 +120,19 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
 
+		CGameManager::GetInstance()->SavePlayerDesc();
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
+			return;
+
+		return;
+	}
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
+		CGameManager::GetInstance()->SavePlayerDesc();
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::BEATSABER_GAME, false))))
 			return;
 
 		return;
@@ -133,8 +147,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning && m_bChangeLevel
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro")))
 	{
+		CGameManager::GetInstance()->SavePlayerDesc();
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 
@@ -348,10 +362,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 {	
-	//테스트용
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_VelocityExample"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
-		return E_FAIL;
+	////테스트용
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_VelocityExample"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+	//	return E_FAIL;
 
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
@@ -376,7 +390,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//		return E_FAIL;
 	//}
 
-	CNayitba::NAYITBA_DESC Desc = {};
+	CNaytiba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
@@ -408,7 +422,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	}
 	//}
 	
-	Desc.iMonsterID = 9;
+	Desc.iMonsterID = 10;
 	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
 	Desc.bIsSuperMonster = false;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
@@ -439,10 +453,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
 		return E_FAIL;*/
 
-	//  시네마틱 테스트용 모델임
-	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-		return E_FAIL;*/
+	////  시네마틱 테스트용 모델임
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
+	//	return E_FAIL;
 
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -454,11 +468,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;
 
-	CNpc::NPC_DESC NpcDesc= {};
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
+{
+	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
 	NpcDesc.iNpcID = 1;
-	NpcDesc.vPosition = { 10.f, 1.f, 10.f };
+	NpcDesc.vPosition = { 1000.f, 1.f, 150.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;
@@ -727,7 +747,7 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Format(std::ifstream& ifs, const _t
 		SAVEDMONSTERINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDMONSTERINFO));
 
-		CNayitba::NAYITBA_DESC Desc = {};
+		CNaytiba::NAYITBA_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		//Desc.vScale = { 1.f, 1.f, 1.f };

@@ -86,7 +86,10 @@ _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool i
 			return iFLAG_ANIMATION_RESET;
 		}
 		else
+		{
+			m_fCurrentTrackPosition -= m_fTickPerSecond * fTimeDelta; // 마지막 프레임 고정
 			return iFLAG_ANIMATION_FINISH;
+		}
 	}
 
 	return iFLAG_ANIMATION_PLAY;

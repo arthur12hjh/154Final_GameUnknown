@@ -32,8 +32,7 @@ private:
 	VOLUMETRIC_DESC* m_pVolumetricDesc = {};
 	HDR_DESC*	m_pHDRDesc = {};
 	LIGHT_DESC* m_pDirectionalLightDesc = { nullptr };
-
-	class CPonyTail_Player* m_pPonytail = { nullptr };
+	VOLUMEFOG_DESC* m_pVolumeFogDesc = { nullptr };
 
 public:
 	static CShaderDebugger* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

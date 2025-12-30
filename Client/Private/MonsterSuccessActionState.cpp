@@ -21,7 +21,7 @@ HRESULT CMonsterSuccessActionState::Initialize(void* pArg)
 
 void CMonsterSuccessActionState::Start(void* pArg, CState* pPreState)
 {
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	CMonsterAttackState* pAttackState = dynamic_cast<CMonsterAttackState*>(pPreState);
 	if (pAttackState)
 	{
@@ -37,7 +37,7 @@ void CMonsterSuccessActionState::Start(void* pArg, CState* pPreState)
 void CMonsterSuccessActionState::Update(_float fTimeDelta)
 {
 	// 여기서 공격 분기
-	auto pEntity = static_cast<CNayitba*>(m_pOwner);
+	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 
 	m_bIsFinished = m_bIsFinished = pEntity->Play_Animation(fTimeDelta);
 

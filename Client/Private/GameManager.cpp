@@ -71,6 +71,30 @@ CPlayer* CGameManager::GetGameCharacter()
     return m_pPlayer;
 }
 
+// 레벨 전환할때 할거
+void CGameManager::SavePlayerDesc()
+{
+    const PLAYER_DESC* SavePlayerDesc = m_pPlayer->Get_Desc();
+         
+    m_pSavePlayerDesc = make_pair(*SavePlayerDesc, true);
+    m_pSavePlayerDesc.first.pPlayerTransform = nullptr;
+    m_pSavePlayerDesc.first.pPlayerController = nullptr;
+    m_pSavePlayerDesc.first.pLinkAttackTarget = nullptr;
+    m_pSavePlayerDesc.first.pGrabBone = nullptr;
+    m_pSavePlayerDesc.first.pGrabAttackter = nullptr;
+}
+
+_bool CGameManager::LoadPlayerDesc(PLAYER_DESC& PlayerDesc)
+{
+    if (m_pSavePlayerDesc.second)
+    {
+        PlayerDesc = m_pSavePlayerDesc.first;
+        return  true;
+    }
+
+    return false;
+}
+
 PLAYER_DESC* CGameManager::Get_PlayerDesc()
 {
     return m_pPlayer->Get_Desc();
@@ -232,6 +256,11 @@ void CGameManager::Set_Active_ReserveDeferred(const _wstring& strReserveDeferred
 void CGameManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg)
 {
     m_pShaderManager->Set_Desc_ReserveDeferred(strReserveDeferredTag, pArg);
+}
+
+void CGameManager::Change_ShaderSetting(LEVEL eLevelID)
+{
+    m_pShaderManager->Change_ShaderSetting(eLevelID);
 }
 
 #pragma region LOCKON

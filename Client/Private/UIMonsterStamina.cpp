@@ -39,7 +39,7 @@ void CUIMonsterStamina::Priority_Update(_float fTimeDelta)
 
 void CUIMonsterStamina::Update(_float fTimeDelta)
 {
-	auto pMonster = static_cast<CNayitba*>(m_pParent->GetParent());
+	auto pMonster = static_cast<CNaytiba*>(m_pParent->GetParent());
 	if (pMonster)
 	{
 		auto StaticDesc = pMonster->GetStaticMonsterData();

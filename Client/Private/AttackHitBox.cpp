@@ -101,9 +101,6 @@ void CAttackHitBox::Update(_float fTimeDelta)
 	}
 	else
 	{
-		if (1.f <= fTimeDelta)
-			int a = 10.f;
-
 		m_vDelayDead.x += fTimeDelta;
 		if (m_vDelayDead.x > m_vDelayDead.y)
 		{
@@ -125,18 +122,20 @@ void CAttackHitBox::Update(_float fTimeDelta)
 
 void CAttackHitBox::Late_Update(_float fTimeDelta)
 {
-	if (m_vAliveTime.x > m_vAliveTime.y)
-		ReturnObjectPool();
-	else
+	if (false == m_isDead)
 	{
+		if (m_vAliveTime.x > m_vAliveTime.y)
+			ReturnObjectPool();
+		else
+		{
 #ifdef _DEBUG
-		m_pGameInstance->ADD_Collider(m_pColliderCom);
-		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+			m_pGameInstance->ADD_Collider(m_pColliderCom);
+			m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #else
-		m_pGameInstance->ADD_Collider(m_pColliderCom);
+			m_pGameInstance->ADD_Collider(m_pColliderCom);
 #endif // _DEBUG
+		}
 	}
-
 
 }
 
@@ -248,8 +247,6 @@ void CAttackHitBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 
 void CAttackHitBox::ReturnObjectPool()
 {
-	
-
 #ifdef _DEBUG
 	m_vDelayDead.x = m_vAliveTime.x = 0.f;
 #else

@@ -31,7 +31,7 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 		return E_FAIL;
 
 	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
-	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	/*CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 
@@ -42,20 +42,8 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	EffectDesc.fRot = _float3(0, 0, 0);
 	EffectDesc.fSize = 1.2f;
 	EffectDesc.iFloor = 0;
-
-	switch (m_eBulletType)
-	{
-	case BULLET_TYPE::PROJECTILE:
-		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-		break;
-	case BULLET_TYPE::HITSCAN:
-	{
-		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Triple"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-	}
-	break;
-	}
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));*/
 
 	return S_OK;
 }
@@ -97,6 +85,7 @@ void CBullet_Scarlet::Late_Update(_float fTimeDelta)
 	}
 	else
 	{
+		//m_pEffect->Set_Dead(true);
 		Set_Dead(true);
 	}
 }
@@ -183,6 +172,7 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
+	//m_pEffect->Set_Dead(true);
 	Set_Dead(true);
 }
 
@@ -213,6 +203,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
-	if (nullptr != m_pEffect)
- 		m_pEffect->End(true);
+	
+	Safe_Release(m_pEffect);
 }

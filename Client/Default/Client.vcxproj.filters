@@ -244,89 +244,8 @@
     <Filter Include="01.Levels\Loading\Loader">
       <UniqueIdentifier>{1c661d94-d467-4c27-a3f8-4da71a1c898a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\AttackHitBox">
-      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character">
-      <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player">
-      <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State">
-      <UniqueIdentifier>{fea85870-6048-4bb4-9f16-3a49def8d9bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\01. FSM">
-      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\CCTHitReporter">
-      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
-      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\Sky\Moon">
       <UniqueIdentifier>{3bb00c10-dc5b-4b3a-9b12-0d1d9b4697a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates">
-      <UniqueIdentifier>{294263e1-de50-4109-a46b-224a96877c07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Attack">
-      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit">
-      <UniqueIdentifier>{58c823c4-5a32-437e-b510-580cd5b9f22f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts">
-      <UniqueIdentifier>{f9ff9b15-0039-4b3e-aded-3fa60784543f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair">
-      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face">
-      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Body">
-      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\PonyTail">
-      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\03. Weapon">
-      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle">
-      <UniqueIdentifier>{3a7ebc78-50dc-4039-ac6c-3ff33cfb27a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle">
-      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Walk">
-      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Landing">
-      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Evade">
-      <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon">
-      <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Jump">
-      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack">
-      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Idle">
-      <UniqueIdentifier>{fe853f77-99c9-4906-8306-1f011008172e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Walk">
-      <UniqueIdentifier>{232e0a39-f2da-4e0e-a52c-faeadefb084e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Landing">
-      <UniqueIdentifier>{5fb787e7-a9a1-4114-a5cc-210d2852ef68}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIHPBar">
       <UniqueIdentifier>{032f3bd1-48da-42e6-9b1a-37d8701e48b4}</UniqueIdentifier>
@@ -363,15 +282,6 @@
     </Filter>
     <Filter Include="10.GameManager\LockonManager">
       <UniqueIdentifier>{22a47143-a8d1-42b2-8ae2-00a6e2f2cff2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face\ShaderFile">
-      <UniqueIdentifier>{e5f327b3-eb7d-4a7b-a281-86c09811a342}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
-      <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword">
-      <UniqueIdentifier>{44d852bb-6247-411a-ba19-092b64c64ffe}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UISkillWrapperFX">
       <UniqueIdentifier>{defadc56-6f2b-43b0-983a-37d6a3698a66}</UniqueIdentifier>
@@ -436,12 +346,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossHPBar\UIBossHPBarFX">
       <UniqueIdentifier>{37c3e0f8-291d-458e-9fa8-a175d8da52b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
-      <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hairpin">
-      <UniqueIdentifier>{f1c04c9b-b8bc-44d5-9444-3ac8b7b32b8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossName">
       <UniqueIdentifier>{e88f829b-296d-4815-9fc9-488b620260e6}</UniqueIdentifier>
     </Filter>
@@ -463,18 +367,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\WorldUI\UIInteraction\UIInteractionFX">
       <UniqueIdentifier>{711f2d7d-b11b-4829-bb26-9e4ada82edcf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry">
-      <UniqueIdentifier>{c6aeef3f-f870-4109-af74-6cd14f729c9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End">
-      <UniqueIdentifier>{9267c26b-1679-4e76-9703-790ea17fd768}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success">
-      <UniqueIdentifier>{c4d0df81-c37f-4e2c-8c85-cf9b3183ab79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard">
-      <UniqueIdentifier>{132802e6-6b05-484a-8b47-291aa6dea9e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\Lift">
       <UniqueIdentifier>{5cd2e6cf-b9eb-4e73-ae19-18ab6354be95}</UniqueIdentifier>
     </Filter>
@@ -492,9 +384,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Actor\ProbActor\Static_Prob">
       <UniqueIdentifier>{0ff13882-e0d0-45c5-ad37-2f61f06d00b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\04. CameraBone">
-      <UniqueIdentifier>{20f1c4c4-22e5-4aa5-832a-aa9113d3ec3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBossVitalWrapper\UIBossStamina">
       <UniqueIdentifier>{32d93346-c349-4dc6-8f7d-8569d0befeab}</UniqueIdentifier>
@@ -529,26 +418,8 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIGetterQueue">
       <UniqueIdentifier>{0a500016-3cec-4400-bfb6-015a19d66535}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\CCTQueryFilterCallback">
-      <UniqueIdentifier>{651a9412-91f3-4020-bec4-104c498b478b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Architecture">
       <UniqueIdentifier>{412b9843-e2f2-466f-b075-6996a915c366}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
-      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Sprint">
-      <UniqueIdentifier>{c46e3d19-c724-4dd6-9339-73406899f2b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Evade">
-      <UniqueIdentifier>{7073a845-5c53-4d35-8390-f0ad90682728}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Walk">
-      <UniqueIdentifier>{bcd7b35f-3fbd-4b8f-8ca6-2c4f06bdf5b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Sprint">
-      <UniqueIdentifier>{f2e289de-1474-4577-a9b3-e9297c4991c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\StaticInteraction">
       <UniqueIdentifier>{d2f317cb-6cf5-45b7-8102-afc1c7206498}</UniqueIdentifier>
@@ -568,20 +439,11 @@
     <Filter Include="02.GameObjects\Actor\Interaction\Item">
       <UniqueIdentifier>{ea90e411-efc7-4fd3-b057-68de852e29a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack">
-      <UniqueIdentifier>{160b9f71-8abf-4e4d-8575-379de2c01811}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST">
-      <UniqueIdentifier>{99dd7ca2-e18c-465b-b30e-89a7bc85e2f9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester">
       <UniqueIdentifier>{5d12c9c1-3029-4b2f-b2bb-e20c0ac9c2c5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part">
       <UniqueIdentifier>{e32eac82-bd3d-4361-84c2-e3cc641ea9a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Camera\Camera_CutScene">
-      <UniqueIdentifier>{b500611a-8115-4467-983f-469d5e540a8b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Action">
       <UniqueIdentifier>{559b4dcb-c12d-4871-912d-69f322112f25}</UniqueIdentifier>
@@ -724,14 +586,203 @@
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Scarlet">
       <UniqueIdentifier>{f69194f1-2a39-4d1c-b86f-c442b3540ed6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade">
-      <UniqueIdentifier>{b5b809f0-5cf3-4d11-bf1f-db3620849047}</UniqueIdentifier>
+    <Filter Include="03.Effects\Particle\MeshParticle">
+      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred">
+      <UniqueIdentifier>{82b0837e-9118-478f-878d-65733b5e58d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. ReserveDeferred\ShaderFiles">
+      <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
+      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\InteractionUIBinder">
+      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlock">
+      <UniqueIdentifier>{5ed4bcd1-5791-4af0-b31b-53c90fd8304b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
+      <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample">
+      <UniqueIdentifier>{496a1f2a-adf0-4e5e-9607-ae80b22e1d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
+      <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Droid">
+      <UniqueIdentifier>{69218c18-b67a-4d5c-8849-034308270384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
+      <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
+      <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Weapon">
+      <UniqueIdentifier>{6cf015cb-cd48-454a-b148-d84f5f731c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Scabbard">
+      <UniqueIdentifier>{f41c7b08-035a-4388-8252-3ab078319a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\BeatSaber">
+      <UniqueIdentifier>{e7ead3ee-c3be-467c-b193-8db5cf84b3f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Note">
+      <UniqueIdentifier>{5b861a43-c873-476a-9215-e8f3ab61e90b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\AttackHitBox">
+      <UniqueIdentifier>{2e003877-cb41-4ff5-a4a1-4a1a18fe4588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_BeatSaber">
+      <UniqueIdentifier>{6f098d84-1b96-44b8-8aad-d7a8bb37fd3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character">
+      <UniqueIdentifier>{1d8d0452-aca0-4bb1-a15b-2f87e0e16a2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player">
+      <UniqueIdentifier>{675ad12f-86c0-4da2-9070-9b57502fee52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State">
+      <UniqueIdentifier>{fea85870-6048-4bb4-9f16-3a49def8d9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates">
+      <UniqueIdentifier>{294263e1-de50-4109-a46b-224a96877c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Attack">
+      <UniqueIdentifier>{5c40bf62-c8b3-48a2-a178-8fd84e96b2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit">
+      <UniqueIdentifier>{58c823c4-5a32-437e-b510-580cd5b9f22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
+      <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Jump">
+      <UniqueIdentifier>{437c83d3-0038-4647-b818-92f78f27bb23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\AerialAttack">
+      <UniqueIdentifier>{eda8a455-b391-4c4b-9e89-9148df822837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\DrawSword">
+      <UniqueIdentifier>{44d852bb-6247-411a-ba19-092b64c64ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\SheatheHairpin">
+      <UniqueIdentifier>{41f7cf4e-2f54-415d-8267-a5f1f0534ec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry">
+      <UniqueIdentifier>{c6aeef3f-f870-4109-af74-6cd14f729c9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\End">
+      <UniqueIdentifier>{9267c26b-1679-4e76-9703-790ea17fd768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Success">
+      <UniqueIdentifier>{c4d0df81-c37f-4e2c-8c85-cf9b3183ab79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Parry\Guard">
+      <UniqueIdentifier>{132802e6-6b05-484a-8b47-291aa6dea9e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack">
+      <UniqueIdentifier>{160b9f71-8abf-4e4d-8575-379de2c01811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\00. TEST">
+      <UniqueIdentifier>{99dd7ca2-e18c-465b-b30e-89a7bc85e2f9}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Repulse">
       <UniqueIdentifier>{df882f56-a60d-4305-b7ff-cc86f5d1ea57}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Blink">
       <UniqueIdentifier>{6f395894-96de-487b-a755-8f2c6c7c4d57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle">
+      <UniqueIdentifier>{3a7ebc78-50dc-4039-ac6c-3ff33cfb27a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Idle">
+      <UniqueIdentifier>{fe853f77-99c9-4906-8306-1f011008172e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Walk">
+      <UniqueIdentifier>{232e0a39-f2da-4e0e-a52c-faeadefb084e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Landing">
+      <UniqueIdentifier>{5fb787e7-a9a1-4114-a5cc-210d2852ef68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\01. Idle\Interaction">
+      <UniqueIdentifier>{81554571-ca1e-4fbd-accf-cbdd474a0403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle">
+      <UniqueIdentifier>{b080ad93-a943-405c-a6c6-589921826132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Walk">
+      <UniqueIdentifier>{76cd4b4e-e223-48f5-b785-a9b0d393f338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Landing">
+      <UniqueIdentifier>{ecc8081c-fde7-4177-b2d9-75da1f9ea163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Evade">
+      <UniqueIdentifier>{af413890-63b3-4351-a39b-1806f7e20aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\02. Battle\Sprint">
+      <UniqueIdentifier>{c46e3d19-c724-4dd6-9339-73406899f2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon">
+      <UniqueIdentifier>{11a6201e-f29b-40b5-9f15-be6dc3493b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Evade">
+      <UniqueIdentifier>{7073a845-5c53-4d35-8390-f0ad90682728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Walk">
+      <UniqueIdentifier>{bcd7b35f-3fbd-4b8f-8ca6-2c4f06bdf5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\Sprint">
+      <UniqueIdentifier>{f2e289de-1474-4577-a9b3-e9297c4991c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\00. State\03. Lockon\JustEvade">
+      <UniqueIdentifier>{b5b809f0-5cf3-4d11-bf1f-db3620849047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\01. FSM">
+      <UniqueIdentifier>{ac49a78a-d23f-4578-bea1-bdb13ca6d0b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts">
+      <UniqueIdentifier>{f9ff9b15-0039-4b3e-aded-3fa60784543f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair">
+      <UniqueIdentifier>{7528cc1d-1a67-4c0e-a28f-1a97532bdb30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hair\ShaderFile">
+      <UniqueIdentifier>{4b2937ce-5400-43c9-8ca9-3ad05e93f511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face">
+      <UniqueIdentifier>{10325fb4-a5c1-40ad-b92d-6c92bd58020e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Face\ShaderFile">
+      <UniqueIdentifier>{e5f327b3-eb7d-4a7b-a281-86c09811a342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Body">
+      <UniqueIdentifier>{79dc92b4-763e-43d0-b980-490cb31deb2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\PonyTail">
+      <UniqueIdentifier>{b06fa5ee-1b92-40e5-89cb-4affe78ee36e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\02. Parts\Hairpin">
+      <UniqueIdentifier>{f1c04c9b-b8bc-44d5-9444-3ac8b7b32b8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\03. Weapon">
+      <UniqueIdentifier>{6652cc1f-b4e6-4c17-a93b-31f11fb0b69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\Player\04. CameraBone">
+      <UniqueIdentifier>{20f1c4c4-22e5-4aa5-832a-aa9113d3ec3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\CCTHitReporter">
+      <UniqueIdentifier>{a59e3f7b-30e6-4eb3-877b-b2e49f7a4155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\CCTBehaviorCallBack">
+      <UniqueIdentifier>{b55d41c4-2938-4b9c-a23e-36cf0833f69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\CCTQueryFilterCallback">
+      <UniqueIdentifier>{651a9412-91f3-4020-bec4-104c498b478b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Character\AI">
       <UniqueIdentifier>{a8428a58-d008-477d-a91c-ad624bbfcf6e}</UniqueIdentifier>
@@ -826,6 +877,45 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack">
       <UniqueIdentifier>{8f680505-4586-43b4-8b12-7e144a98837f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack">
+      <UniqueIdentifier>{8093c9e1-07f8-4c0b-9854-5288c2311060}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
+      <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM">
+      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State">
+      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Mimesis">
+      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Dead">
+      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Hit">
+      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Idle">
+      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Attack">
+      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Move">
+      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Translation">
+      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\SuccessAction">
+      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
+      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody">
       <UniqueIdentifier>{21a70436-9f58-4ff1-870d-b31069fc4fa8}</UniqueIdentifier>
     </Filter>
@@ -883,77 +973,23 @@
     <Filter Include="02.GameObjects\Character\AI\Controller\Npc\Default">
       <UniqueIdentifier>{d6a77df2-57e7-4a72-979a-b3f7581517d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\Particle\MeshParticle">
-      <UniqueIdentifier>{14972697-beb5-4a63-bfd8-1a779e0da875}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter">
+      <UniqueIdentifier>{29e914e0-158a-4a36-9ff2-5c9b2662015c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="07. ReserveDeferred">
-      <UniqueIdentifier>{82b0837e-9118-478f-878d-65733b5e58d8}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM">
+      <UniqueIdentifier>{5c3084bf-4167-490a-bdf7-9f0d48c53159}</UniqueIdentifier>
     </Filter>
-    <Filter Include="07. ReserveDeferred\ShaderFiles">
-      <UniqueIdentifier>{94039bdd-1a22-4efd-b9ad-af1e0f4ed310}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State">
+      <UniqueIdentifier>{b48a420e-3bbc-4c8a-b785-c09b14c8f0c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Default_Attack">
-      <UniqueIdentifier>{8093c9e1-07f8-4c0b-9854-5288c2311060}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle">
+      <UniqueIdentifier>{b3b90fc6-5fe8-449e-b7af-bdd641daebf4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Attack\Scarlet_Interaction_Attack">
-      <UniqueIdentifier>{96682ba2-d639-4146-81b1-ae9fb22c8e9e}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move">
+      <UniqueIdentifier>{74a24f55-00c4-464e-aa38-ee55979a1883}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
-      <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\InteractionUIBinder">
-      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlock">
-      <UniqueIdentifier>{5ed4bcd1-5791-4af0-b31b-53c90fd8304b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM">
-      <UniqueIdentifier>{3257bd36-82e0-499b-9a94-7c70d149c2c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State">
-      <UniqueIdentifier>{c289aa36-0ef5-4594-97ac-30cd081b8d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Mimesis">
-      <UniqueIdentifier>{7a474373-0fd2-47af-a687-f269894d1749}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Dead">
-      <UniqueIdentifier>{b12927e7-7921-4efe-bc46-21b27e7128d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Hit">
-      <UniqueIdentifier>{9b2f9d53-3aa7-4778-9fc1-4c36ebd42827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Idle">
-      <UniqueIdentifier>{b551e7ee-c6fc-4fb5-8085-fd27ca37664c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Attack">
-      <UniqueIdentifier>{946d80ce-19b1-4f8f-941f-de3022876921}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Move">
-      <UniqueIdentifier>{35f1db7c-7207-4128-9332-c6ecc0e5ec5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Translation">
-      <UniqueIdentifier>{45fc90a3-5cc5-4b3f-a97d-1c6dd83bae4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\SuccessAction">
-      <UniqueIdentifier>{a554d96d-600a-4c4c-93e9-dad22435caaf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\FSM\State\Groggy">
-      <UniqueIdentifier>{0254bc46-55de-49e2-9e9a-d79beca7d982}</UniqueIdentifier>
-	</Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIBase\UIMapSelector">
-      <UniqueIdentifier>{519c75c7-61fe-4a85-8ab1-4082c59c3fb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\Player\00. State\00. SharedStates\Hit\Grab">
-      <UniqueIdentifier>{c7925f77-0298-4dcf-8e3c-4f49819bee34}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\TestModel\VelocityExample">
-      <UniqueIdentifier>{496a1f2a-adf0-4e5e-9607-ae80b22e1d19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\TestModel\VelocityExample\shader">
-      <UniqueIdentifier>{140c0ecb-caa7-4574-86f0-411fb04456b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall">
-      <UniqueIdentifier>{9025746b-8ed8-4c0c-a4c9-96bca728ee41}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
+      <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1453,7 +1489,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AttackHitBox.h">
-      <Filter>02.GameObjects\AttackHitBox</Filter>
+      <Filter>02.GameObjects\Actor\AttackHitBox</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Moon.h">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
@@ -1726,9 +1762,6 @@
     <ClInclude Include="..\Public\LinkAttackTester.h">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Action.h">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClInclude>
@@ -1909,8 +1942,38 @@
     <ClInclude Include="..\Public\VelocityExample.h">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bullet_Droid.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Virtual_Wall.h">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacter.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberFsm.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_IdleState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaber_MoveState.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberCharacterBody.h">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_LinkAttackTester.h">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_BeatSaber.h">
+      <Filter>01.Levels\BeatSaber</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Note.h">
+      <Filter>02.GameObjects\Actor\Note</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_BeatSaber.h">
+      <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2388,7 +2451,7 @@
       <Filter>02.GameObjects\Character\Player\00. State\01. Idle\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AttackHitBox.cpp">
-      <Filter>02.GameObjects\AttackHitBox</Filter>
+      <Filter>02.GameObjects\Actor\AttackHitBox</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Moon.cpp">
       <Filter>02.GameObjects\Actor\Sky\Moon</Filter>
@@ -2656,9 +2719,6 @@
     <ClCompile Include="..\Private\LinkAttackTester.cpp">
       <Filter>02.GameObjects\TestModel\LinkAttackTester</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
-      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Action.cpp">
       <Filter>02.GameObjects\Camera\Camera_Action</Filter>
     </ClCompile>
@@ -2833,8 +2893,38 @@
     <ClCompile Include="..\Private\VelocityExample.cpp">
       <Filter>02.GameObjects\TestModel\VelocityExample</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Bullet_Droid.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Droid</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Virtual_Wall.cpp">
       <Filter>02.GameObjects\Map\Scarlet\Buildings\VIrtual_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacter.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberFsm.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_IdleState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaber_MoveState.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\FSM\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberCharacterBody.cpp">
+      <Filter>02.GameObjects\Character\BeatSaberCharacter\PartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_LinkAttackTester.cpp">
+      <Filter>02.GameObjects\TestModel\LinkAttackTester\Part\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_BeatSaber.cpp">
+      <Filter>01.Levels\BeatSaber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Note.cpp">
+      <Filter>02.GameObjects\Actor\Note</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_BeatSaber.cpp">
+      <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

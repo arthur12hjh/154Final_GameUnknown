@@ -30,7 +30,11 @@ void CTransform::Set_State(STATE eState, _vector vState)
 	switch (eState)
 	{
 	case Engine::STATE::RIGHT:
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
 	case Engine::STATE::UP:
+		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
+		break;
 	case Engine::STATE::LOOK:
 		XMStoreFloat4(reinterpret_cast<_float4*>(&m_WorldMatrix.m[ENUM_CLASS(eState)]), vState);
 		break;

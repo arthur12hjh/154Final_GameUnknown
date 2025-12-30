@@ -51,15 +51,20 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-    
-    //if (m_bIsChangeColorDissolve)
-    //{
-    //    m_fDeadTime += fTimeDelta * 5.f;
-    //}
+
+    if (m_bIsRimLight && m_fRimLightTime.y < INFINITY)
+    {
+        m_fRimLightTime.x += fTimeDelta;
+        if (m_fRimLightTime.x >= m_fRimLightTime.y)
+            m_bIsRimLight = false;
+    }
+
+    if (m_bIsEnableCollider)
+        m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pColliderSocket) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
 
     if (m_isDeadEffect)
     {
-        CNayitba* Naytiba = static_cast<CNayitba*>(m_pParent);
+        CNaytiba* Naytiba = static_cast<CNaytiba*>(m_pParent);
         if (0 >= m_fDeadTime && m_bisSetDeadEffect) {
 
             if (NAYTIBA_TYPE::ELITE == Naytiba->GetStaticMonsterData()->eNaytiba_Type) {
@@ -128,7 +133,6 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
-    m_fLineTime += fTimeDelta;
     for (auto TrailEffect : m_pTrailEffects)
     {
         if (nullptr == TrailEffect.first->pRootMatrix) {
@@ -138,19 +142,10 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
             TrailEffect.first->pTrailEffect->Update_Trail(XMLoadFloat4x4(TrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix), fTimeDelta, TrailEffect.first->bisPlay);
         }
     }
-    for (auto LineTrailEffect : m_pLineTrailEffects)
-    {
-        if (nullptr == LineTrailEffect.first->pRootMatrix) {
 
-            _matrix mat = XMLoadFloat4x4(&m_CombinedWorldMatrix);
-            LineTrailEffect.first->pTrailEffect->Update_Trail(mat, LineTrailEffect.first->bisPlay ? fTimeDelta : fTimeDelta * 1.5f, LineTrailEffect.first->bisPlay);
-        }
-        else {
-            _matrix mat = XMLoadFloat4x4(LineTrailEffect.first->pRootMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix);
-            LineTrailEffect.first->pTrailEffect->Update_Trail(mat, LineTrailEffect.first->bisPlay ? fTimeDelta : fTimeDelta * 1.5f, LineTrailEffect.first->bisPlay);
-        }
-    }
-    
+    if (m_bIsEnableCollider)
+        m_pGameInstance->ADD_Collider(m_pColliderCom);
+
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -179,6 +174,12 @@ HRESULT CNayitbaPartBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
+        if (m_bIsRimLight)
+        {
+            m_pRimLight->Set_RimLightDesc(m_MonsterLimLightDesc);
+            m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
+        }
+
         if (m_bIsChangeBodyColor)
         {
             if (FAILED(m_pShaderCom->Begin(8)))
@@ -186,13 +187,23 @@ HRESULT CNayitbaPartBody::Render()
         }
         else
         {
+
             if (0 < m_fDeadTime && m_isDeadEffect) {
                 if (FAILED(m_pShaderCom->Begin(5)))
                     return E_FAIL;
             }
             else {
-                if (FAILED(m_pShaderCom->Begin(0)))
-                    return E_FAIL;
+                if (m_bIsRimLight)
+                {
+                    if (FAILED(m_pShaderCom->Begin(2)))
+                        return E_FAIL;
+                }
+                else
+                {
+                    if (FAILED(m_pShaderCom->Begin(0)))
+                        return E_FAIL;
+                }
+                
             }
         }
 
@@ -281,7 +292,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
             EffectDesc.fRotationPerSec = 1.f;
             EffectDesc.fSpeedPerSec = 1.f;
-            EffectDesc.fSpeed = NotifyReference.fNumData01;
+
             if (NotifyReference.szSocketTag.compare("None") == 0)
             {
                 EffectDesc.pRootMatrix = nullptr;
@@ -358,12 +369,9 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             }
             ptrailDesc->bisPlay = true;
 
-            CTrailEffect::TRAIL_DATA Traildesc{};
+            CTrail::TRAILHIGHLOW Traildesc{};
             Traildesc.vHigh = _float4(NotifyReference.vNotifyScale.x, NotifyReference.vNotifyScale.y, NotifyReference.vNotifyScale.z, 0.f);
             Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
-            Traildesc.bisLine = false;
-
-            Traildesc.bisLong = NotifyReference.iNumData02 == 1;
 
             _TCHAR szEffectTag[MAX_PATH];
             CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
@@ -385,53 +393,17 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
             }
         }
     }
+}
 
-    else if (strObjectTag == TEXT("Play_LineTrail"))
-    {
-        CTrailEffect* pTrailEffect = nullptr;
-        for (auto LineTrailEffect : m_pLineTrailEffects)
-        {
-            if (LineTrailEffect.second == NotifyReference.iNumData01) {
-                LineTrailEffect.first->bisPlay = true;
-                return;
-            }
-        }
+void CNayitbaPartBody::Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
+{
+    auto pComponents = Find_Component(strColliderTag);
+    if (nullptr == pComponents)
+        return;
 
-        NAYITBA_LINE_TRAIL_DESC* pLinetrailDesc = new NAYITBA_LINE_TRAIL_DESC;
-
-        if (NotifyReference.szSocketTag.compare("Transform") != 0)
-        {
-            pLinetrailDesc->pRootMatrix = m_pModelCom->Get_BoneMatrixPtr(NotifyReference.szSocketTag.c_str());
-        }
-        pLinetrailDesc->bisPlay = true;
-
-
-        CTrailEffect::TRAIL_DATA Traildesc{};
-        Traildesc.vHigh = _float4(NotifyReference.vNotifyScale.x, NotifyReference.vNotifyScale.y, NotifyReference.vNotifyScale.z, 0.f);
-        Traildesc.vLow = _float4(NotifyReference.vNotifyPosition.x, NotifyReference.vNotifyPosition.y, NotifyReference.vNotifyPosition.z, 0.f);
-        Traildesc.fSpeed = NotifyReference.fNumData01;
-        Traildesc.fPow = NotifyReference.fNumData02;
-        Traildesc.bisLine = true;
-
-        _TCHAR szEffectTag[MAX_PATH];
-        CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
-
-        pTrailEffect = static_cast<CTrailEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), szEffectTag,
-            ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &Traildesc));
-        pLinetrailDesc->pTrailEffect = pTrailEffect;
-        Safe_AddRef(pTrailEffect);
-        m_pLineTrailEffects.push_back({ pLinetrailDesc, NotifyReference.iNumData01 });
-    }
-    else if (strObjectTag == TEXT("Stop_LineTrail"))
-    {
-        for (auto LineTrailEffect : m_pLineTrailEffects)
-        {
-            if (LineTrailEffect.second == NotifyReference.iNumData01) {
-                LineTrailEffect.first->bisPlay = false;
-                return;
-            }
-        }
-        }
+    m_bIsEnableCollider = NotifyRef.iNumData01;
+    if (false == m_bIsEnableCollider)
+        static_cast<CCollider*>(pComponents)->ResetCollision();
 }
 
 void CNayitbaPartBody::Play_DeadEffect()
@@ -448,6 +420,9 @@ void CNayitbaPartBody::Play_DeadEffect()
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
+    if(XMVector3Equal(XMLoadFloat4(&vColor), XMVectorZero()))
+        m_vPatternColor = vColor;
+
     /*m_bIsChangeColorDissolve = bIsDissolve;
 
     if (bIsDissolve)
@@ -462,13 +437,16 @@ void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _fl
        }
     }*/
 
-    m_vPatternColor = vColor;
-    m_MonsterLimLightDesc.fRimLightIntensity = 10.f;
-    m_MonsterLimLightDesc.fRimLightPower = 20.f;
-    m_MonsterLimLightDesc.vRimLightColor = vColor;
+    SetRimLightData(bIsEnable, 10.f, 20.f, vColor, INFINITY);
+}
 
-    m_pRimLight->Set_RimLightDesc(m_MonsterLimLightDesc);
-    m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
+void CNayitbaPartBody::SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime)
+{
+    m_bIsRimLight = bIsEnable;
+    m_fRimLightTime = { 0.f, DurTime };
+    m_MonsterLimLightDesc.fRimLightIntensity = fRimLightIntensity;
+    m_MonsterLimLightDesc.fRimLightPower = fRimLightPower;
+    m_MonsterLimLightDesc.vRimLightColor = vRimLightColor;
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
@@ -493,15 +471,30 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
         TEXT("Com_RimLight"), reinterpret_cast<CComponent**>(&m_pRimLight), &m_MonsterLimLightDesc)))
         return E_FAIL;
 
-    ///* Com_Collider_Sphere */
-    //CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+    auto pNaytiba = static_cast<CNaytiba*>(m_pParent);
+    auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
+    if (pNaytibaInitData)
+    {
+        if (10 == pNaytibaInitData->iMonsetID)
+        {
+            /* Com_Collider_Sphere */
+            COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
+            OBBDesc.vSize = { 0.3f, 4.f, 0.3f };
+            OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
-    //SphereDesc.fRadius = 0.5f;
-    //SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+                TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+                return E_FAIL;
 
-    //if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-    //	TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
-    //	return E_FAIL;
+            m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+
+            m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
+            m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
+        }
+    }
 
     return S_OK;
 }
@@ -561,6 +554,19 @@ HRESULT CNayitbaPartBody::End_ShaderResources()
     return S_OK;
 }
 
+void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+    auto pCharacter = static_cast<CCharacter*>(pHitActor);
+
+    DEFAULT_DAMAGE_DESC DamageDesc = {};
+    DamageDesc.pAttacker = m_pParent;
+    DamageDesc.vHitDir = vHitDir;
+    DamageDesc.vHitPoint = vHitPoint;
+    DamageDesc.pSkillData = static_cast<CNaytiba*>(m_pParent)->GetSkillData();
+
+    pCharacter->Damaged(&DamageDesc);
+}
+
 CNayitbaPartBody* CNayitbaPartBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CNayitbaPartBody* pNayitbaPartBody = new CNayitbaPartBody(pDevice, pContext);
@@ -599,15 +605,6 @@ void CNayitbaPartBody::Free()
     }
      
     m_pTrailEffects.clear();
-
-
-    for (auto& pLineTrailEffect : m_pLineTrailEffects)
-    {
-        Safe_Release(pLineTrailEffect.first->pTrailEffect);
-        Safe_Delete(pLineTrailEffect.first);
-    }
-
-    m_pLineTrailEffects.clear();
 
     Safe_Release(m_pRimLight);
     Safe_Release(m_pTexture);

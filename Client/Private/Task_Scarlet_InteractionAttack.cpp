@@ -17,7 +17,7 @@ HRESULT CTask_Scarlet_InteractionAttack::Initialize_Prototype(CBehaviorTree* pOw
 		return E_FAIL;
 
 	if (nullptr == m_pOwner)
-		m_pOwner = static_cast<CNayitba*>(m_pOwnerTree->GetOwner());
+		m_pOwner = static_cast<CNaytiba*>(m_pOwnerTree->GetOwner());
 
 	if (nullptr == m_pBlackBoard)
 		m_pBlackBoard = static_cast<CScarletBlackBoard*>(m_pOwnerTree->GetBlackBoard());

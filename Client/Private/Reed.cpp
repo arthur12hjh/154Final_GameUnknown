@@ -84,13 +84,12 @@ HRESULT CReed::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	m_pGameInstance->Get_ResourceManagerTextureResource(TEXT("Default_Normal.png"))->Bind_ShaderResource(m_pShaderCom, "g_NormalTexture", 0);
+
 	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_ORMTexture", aiTextureType_METALNESS, 0)))
@@ -151,11 +150,14 @@ HRESULT CReed::Bind_ShaderResources()
 	_float fFrequency = 0.4f;  // ÆÐÅÏ ¹Ðµµ
 	_float fAmplitude = 0.8f;  // Èçµé¸² ÃÖ´ë Æø
 
+	CAMERA_INFO Desc = m_pGameInstance->Get_CurrentCamInfo();
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveSpeed", &fSpeed, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveFrequency", &fFrequency, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fWaveAmplitude", &fAmplitude, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_CamFar", &Desc.fFar, sizeof(_float))))
 		return E_FAIL;
 
 	struct MinMaxScale

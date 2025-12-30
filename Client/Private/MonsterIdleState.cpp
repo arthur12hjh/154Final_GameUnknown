@@ -22,7 +22,7 @@ HRESULT CMonsterIdleState::Initialize(void* pArg)
 
 void CMonsterIdleState::Start(void* pArg, CState* pPreState)
 {
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
     m_pStaticOwnerInfo = pEntity->GetStaticMonsterData();
     m_pOwnerInfo = &pEntity->GetMonsterData();
 
@@ -53,7 +53,7 @@ void CMonsterIdleState::Start(void* pArg, CState* pPreState)
 
 void CMonsterIdleState::Update(_float fTimeDelta)
 {
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
     
     if (false == m_bIsPlayStartAnim)
     {

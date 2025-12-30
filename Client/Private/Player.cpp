@@ -137,8 +137,16 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	if (FAILED(Ready_PlayerDesc()))
-		return E_FAIL;
+	if (false == m_pGameManager->LoadPlayerDesc(m_PlayerDesc))
+	{
+		if (FAILED(Ready_PlayerDesc()))
+			return E_FAIL;
+	}
+	else
+	{
+		m_PlayerDesc.pPlayerTransform = m_pTransformCom;
+		m_PlayerDesc.pPlayerController = m_pCCT;
+	}
 
 	if (FAILED(Ready_BetaSkillDesc()))
 		return E_FAIL;
@@ -251,7 +259,10 @@ HRESULT CPlayer::Render()
 HRESULT CPlayer::Render_Shadow()
 {
 	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_Shadow();
+	{
+		if(pPartObject.first != TEXT("Part_Hair"))
+			pPartObject.second->Render_Shadow();
+	}
 
 	return S_OK;
 }
@@ -517,6 +528,7 @@ HRESULT CPlayer::Ready_PartObjects()
 
 HRESULT CPlayer::Ready_PlayerDesc()
 {
+	
 	m_PlayerDesc.iMaxHealth = 100;
 	m_PlayerDesc.iMaxShield = 100;
 	
@@ -795,19 +807,23 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	switch (pSkillDesc->eSkillType)
 	{
 	case SKILL_TYPE::INTERACTION_SKILL:
-
+		{
 		memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
-		
+
 		Desc.isChangeMode = false;
 		Desc.eNextState = PLAYER_STATE::GRAB;
 		Desc.pArg = &SkillDescCopy;
 
 		//공격한 녀석의 본 이름 & 객체 포인터 들고옴
-		m_PlayerDesc.pGrabBone = static_cast<CNayitba*>(pDamageDesc->pAttacker)->Get_BodyModelCom()
+		auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+		m_PlayerDesc.pGrabBone = pNayitba->Get_BodyModelCom()
 			->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
+
 		m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
 
+		pNayitba->ActionSuccess(nullptr);
 		m_pFSM->Handle_Transition(Desc);
+		}
 		break;
 	default:
 		if (true == m_PlayerDesc.isJustParryable)
@@ -819,7 +835,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			m_pFSM->Handle_Transition(Desc);
 			DamageDesc.pAttacker = this;
 
-			auto pNayitba = static_cast<CNayitba*>(pDamageDesc->pAttacker);
+			auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
 			if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
 			{
 				if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)

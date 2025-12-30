@@ -187,36 +187,44 @@ HRESULT CBloom::Ready_DSVs()
 
 HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRenderTargetTag)
 {
-    //블룸 레벨이 3이고, 샘플레벨이 3이라면,
-    //3x3, 6x6, 9x9 렌더타겟들에 대해 다운 샘플링을 수행한다.
+#ifdef _DEBUG
+    m_pGameInstance->BeginMarker(m_pContext, TEXT("############### BLOOOM"));
+#endif
 
+    // i가 0일때도 0x0 계산하는것만 방지해주자.
     for (_uint i = 0; i < m_iBloomLevel; ++i)
     {
-        _wstring strPreRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * i) + TEXT("x") + to_wstring(m_iSampleLevel * i);
         _wstring strRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
         _wstring strMRTTag = m_strRenderTargetTags[1] + to_wstring(m_iSampleLevel * (i + 1)) + TEXT("x") + to_wstring(m_iSampleLevel * (i + 1));
 
-        /* 다운 샘플링 4x4 수행.*/
         if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[i])))
             return E_FAIL;
 
-        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, (i + 1)), m_vOriginScreenSize.y / pow(m_iSampleLevel, (i + 1)));
+        m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, (i + 1)),
+            m_vOriginScreenSize.y / pow(m_iSampleLevel, (i + 1)));
 
-        /* 캡쳐된 화면을 바인딩. */
-        if (0 == i)
+        if (i == 0)
         {
-            if (FAILED(m_pGameInstance->Bind_RenderTarget(strSceneRenderTargetTag, m_pShader, "g_SceneTexture")))
-                return E_FAIL;
 
+            if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Bloom"), m_pShader, "g_SceneTexture")))
+                return E_FAIL;
             m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::CURVE));
+
         }
-        /* 이전 렌더타겟을 바인딩. */
         else
         {
+            _uint2 inSize = _uint2(
+                m_vOriginScreenSize.x / pow(m_iSampleLevel, i),   // i=1이면 /2
+                m_vOriginScreenSize.y / pow(m_iSampleLevel, i)
+            );
+
+            m_pShader->Bind_RawValue("g_iWinSizeX", &inSize.x, sizeof(_int));
+            m_pShader->Bind_RawValue("g_iWinSizeY", &inSize.y, sizeof(_int));
+
+            _wstring strPreRenderTargetTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * i) + TEXT("x") + to_wstring(m_iSampleLevel * i);
             if (FAILED(m_pGameInstance->Bind_RenderTarget(strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
                 return E_FAIL;
-
-            m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
+            m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::DOWNSAMPLE));
         }
 
         pVIBuffer->Bind_Resources();
@@ -225,6 +233,10 @@ HRESULT CBloom::DownSampling(CVIBuffer* pVIBuffer, const _wstring& strSceneRende
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
     }
+
+#ifdef _DEBUG
+    m_pGameInstance->EndMarker(m_pContext);
+#endif
 
     return S_OK;
 }
@@ -315,20 +327,21 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         // Additive Blend 시 이 텍스처를 g_SourTexture에 바인딩.
         _wstring strCurrentDownSampleOriginalTag = m_strRenderTargetTags[0] + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier) + TEXT("x") + to_wstring(m_iSampleLevel * iCurrentSampleLevelMultiplier); // Target_BloomDownSample
 
-        /* 업 샘플링 수행 (이전 레벨의 블러 결과를 현재 레벨 크기로 단순히 업샘플링) */
-        if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV 인덱스도 currentSampleLevelMultiplier에 맞춰 조정
+        // 업 샘플링 수행 (이전 레벨의 블러 결과를 현재 레벨 크기로 업샘플)
+        if (FAILED(m_pGameInstance->Begin_MRT(strMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1])))
             return E_FAIL;
 
         m_pGameInstance->Set_ScreenSize(m_vOriginScreenSize.x / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier), m_vOriginScreenSize.y / pow(m_iSampleLevel, iCurrentSampleLevelMultiplier));
 
-        m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(m_strPreRenderTargetTag, m_pShader, "g_SceneTexture")))
+            return E_FAIL;
 
+        m_pShader->Begin(ENUM_CLASS(SHADER_BLOOM_IDX::SAMPLING));
         pVIBuffer->Bind_Resources();
         pVIBuffer->Render();
 
         if (FAILED(m_pGameInstance->End_MRT()))
             return E_FAIL;
-
         /* 블러 X 처리 (가산 블러) */
         if (FAILED(m_pGameInstance->Begin_MRT(strBlurXMRTTag, m_pDSVs[iCurrentSampleLevelMultiplier - 1]))) // DSV 인덱스 조정
             return E_FAIL;
@@ -365,6 +378,9 @@ HRESULT CBloom::UpSampling(CVIBuffer* pVIBuffer)
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &vNewScreenSize.x, sizeof(_int))))
             return E_FAIL;
         if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeY", &vNewScreenSize.y, sizeof(_int))))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Bind_RenderTarget(strCurrentDownSampleOriginalTag, m_pShader, "g_SourTexture")))
             return E_FAIL;
 
         // g_SceneTexture: 이전 블러 X 결과

@@ -25,7 +25,7 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
 {
     MOVE_STATE_DESC* pMoveStateDesc = static_cast<MOVE_STATE_DESC*>(pArg);
 
-    CNayitba* pOwner = static_cast<CNayitba*>(m_pOwner);
+    CNaytiba* pOwner = static_cast<CNaytiba*>(m_pOwner);
     m_pTarget = pMoveStateDesc->pTarget;
     m_pInitOwnerInfo = pOwner->GetStaticMonsterData();
     m_pOwnerInfo = &pOwner->GetMonsterData();
@@ -116,7 +116,7 @@ void CMonsterMoveState::End()
 
 void CMonsterMoveState::Update_Caution(_float fTimeDelta)
 {
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
     string AnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
 
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
@@ -203,7 +203,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
 
 void CMonsterMoveState::Update_Move(_float fTimeDelta)
 {
-    auto pEntity = static_cast<CNayitba*>(m_pOwner);
+    auto pEntity = static_cast<CNaytiba*>(m_pOwner);
     _vector vDir = {};
     _bool   bIsAnimLoop = true;
 

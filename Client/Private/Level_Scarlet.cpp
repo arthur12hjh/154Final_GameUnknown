@@ -68,6 +68,9 @@ HRESULT CLevel_Scarlet::Initialize()
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
 
+	auto pGameManager = CGameManager::GetInstance();
+	pGameManager->Change_ShaderSetting(LEVEL::SCARLET);
+
 	return S_OK;
 }
 
@@ -109,6 +112,40 @@ void CLevel_Scarlet::FontRender()
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
+	LIGHT_DESC			LightDesc{};
+	//방향성 광원 추가 코드.
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
+	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;
+
+	////볼류메트릭 광원도 똑같이 추가.
+	//LightDesc.eType = LIGHT_TYPE::VOLUMETRIC;
+	//LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
+	//LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	//if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+	//	return E_FAIL;
+
+	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
+	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
+		return E_FAIL;
+
+	STATIC_SHADOW_DESC		StaticShadowDesc{};
+	StaticShadowDesc.fFar = 2000.f;
+	StaticShadowDesc.fNear = 0.1f;
+	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
+
+	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
+		return E_FAIL;
+
 	/*LIGHT_DESC			LightDesc{};
 	
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -122,7 +159,7 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 
 
 	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	Load_Light_Data();
+	// Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
 
@@ -276,7 +313,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Ready_Layer_Monster(const _wstring& strLayerTag)
 {
-	CNayitba::NAYITBA_DESC Desc = {};
+	CNaytiba::NAYITBA_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 

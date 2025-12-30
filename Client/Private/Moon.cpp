@@ -25,25 +25,35 @@ HRESULT CMoon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scale(1.5f, 1.5f, 1.5f);
-
 	return S_OK;
 }
 
 void CMoon::Priority_Update(_float fTimeDelta)
 {
+	m_iRenderCount = 0;
 }
 
 void CMoon::Update(_float fTimeDelta)
 {
-	_vector vOffset = { 0.f, 100.f, 400.f, 1.f };
-	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(m_pGameInstance->Get_CamPosition()) + vOffset);
+	_vector vCamPos = XMLoadFloat4(m_pGameInstance->Get_CamPosition());
+	//_vector vCamOffset = { 269.347, 11.777, 182.173f };
+	_vector vOffset = { -8.f, 70.f, 100.f, 1.f };
 
+	m_pTransformCom->Set_State(STATE::POSITION, vCamPos + vOffset);
+
+	_vector vRight = (XMLoadFloat4(m_pGameInstance->Get_CamRight()));
+	_vector vUp = (XMLoadFloat4(m_pGameInstance->Get_CamUp()));
+	_vector vLook = (XMLoadFloat4(m_pGameInstance->Get_CamLook()));
+
+	m_pTransformCom->Set_State(STATE::RIGHT, vRight);
+	m_pTransformCom->Set_State(STATE::UP, vUp);
+	m_pTransformCom->Set_State(STATE::LOOK, vLook);
 }
 
 void CMoon::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDER::PRIORITY, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND_PRIORITY, this);
 }
 
 HRESULT CMoon::Render()
@@ -59,12 +69,22 @@ HRESULT CMoon::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(5)))
-			return E_FAIL;
+		if (0 == m_iRenderCount)
+		{
+			if (FAILED(m_pShaderCom->Begin(5)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Begin(7)))
+				return E_FAIL;
+		}
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+
+	m_iRenderCount++;
 
 	return S_OK;
 }
@@ -77,7 +97,7 @@ HRESULT CMoon::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

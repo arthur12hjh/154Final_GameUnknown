@@ -108,7 +108,7 @@ HRESULT CPoolingManager::Ready_GamePlayPool()
     vector<CGameObject*> PoolList = {};
     PoolList.reserve(1000);
 
-    CNayitba::NAYITBA_DESC NaytibaDesc = {};
+    CNaytiba::NAYITBA_DESC NaytibaDesc = {};
     NaytibaDesc.iMonsterID = 7;
 
     for (_uint i = 0; i < 100; ++i)

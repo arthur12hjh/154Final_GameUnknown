@@ -156,6 +156,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -176,6 +177,7 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     //림라이트도 더해서 던져.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -215,6 +217,7 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -234,6 +237,7 @@ PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }

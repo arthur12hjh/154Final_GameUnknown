@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 class CBloom final : public CDeferred
 {
 public:
-	enum class SHADER_BLOOM_IDX { SAMPLING, CURVE, SAMPLING_BLUR_X, SAMPLING_BLUR_Y, ADDITIVE_BLUR_X, ADDITIVE_BLUR_Y, COMBINE };
+	enum class SHADER_BLOOM_IDX { SAMPLING, CURVE, SAMPLING_BLUR_X, SAMPLING_BLUR_Y, ADDITIVE_BLUR_X, ADDITIVE_BLUR_Y, COMBINE, DOWNSAMPLE };
 private:
 	CBloom(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CBloom() = default;
@@ -17,8 +17,8 @@ public:
 
 public:
 	virtual HRESULT Initialize() override;
-	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override { return S_OK; }
-	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override { return S_OK;  };
+	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) { return S_OK; }
+	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override { return S_OK;  }
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer, const _wstring& strRenderTargetTag, const _wstring& strCombineRTTag);
 	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
 #ifdef _DEBUG
@@ -29,8 +29,8 @@ public:
 private:
 	vector<ID3D11DepthStencilView*> m_pDSVs = {};
 	BLOOM_DESC m_Desc = {};
-	_uint m_iBloomLevel = { 4 }; 
-	_uint m_iSampleLevel = { 1 };
+	_uint m_iBloomLevel = { 1 }; 
+	_uint m_iSampleLevel = { 4 };
 
 	_uint2 m_vOriginScreenSize = {};
 
@@ -46,6 +46,7 @@ private:
 	};
 
 	_wstring m_strPreRenderTargetTag = { TEXT("")};
+	list<class CGameObject*> m_BloomObjects = {};
 
 private:
 	HRESULT Ready_RenderTargets();

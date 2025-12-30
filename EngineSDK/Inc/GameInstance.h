@@ -131,6 +131,8 @@ public:
 	HRESULT Add_PhysxGeometry(class CGameObject* pGameObject, class PxRigidActor* pActor, class PxShape* pShape);
 	void   Set_DebugVisible(_bool isVisible);
 	void   Set_DebugColliderVisible(_bool isVisible);
+#endif // _DEBUG
+
 	void*  Get_DoF_Desc();
 	void*  Get_Bloom_Desc();
 	void*  Get_Fog_Desc();
@@ -138,9 +140,11 @@ public:
 	void*  Get_MotionBlur_Desc();
 	void*  Get_Volumetric_Desc();
 	void*  Get_HDR_Desc();
-	
+	void*  Get_VolumeFog_Desc();
+
 	void	Set_Fog_Desc(void* pArg);
 
+#ifdef _DEBUG
 	//RenderDoc 전용
 	void		BeginMarker(ID3D11DeviceContext* pContext, const _tchar* name);
 	//RenderDoc 전용

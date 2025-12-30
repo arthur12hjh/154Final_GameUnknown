@@ -13,7 +13,7 @@ HRESULT CBossBlackBoard::Initialize(void* pArg)
     BOSS_BLACKBOARD_DESC* pDesc = static_cast<BOSS_BLACKBOARD_DESC*>(pArg);
     m_pOwner = pDesc->pOwner;
 
-    auto pOwner = static_cast<CNayitba*>(m_pOwner);
+    auto pOwner = static_cast<CNaytiba*>(m_pOwner);
     m_BossDefualtInfo = pOwner->GetStaticMonsterData();
     m_BossCurrentInfo = &pOwner->GetMonsterData();
 
@@ -53,7 +53,7 @@ void CBossBlackBoard::Set_BossPhase(BOSS_PAHSE ePhase)
 
 void CBossBlackBoard::Set_PlayCutScene()
 {
-    auto pOwner = static_cast<CNayitba*>(m_pOwner);
+    auto pOwner = static_cast<CNaytiba*>(m_pOwner);
     pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
 
     m_ChangePhaseRatio[ENUM_CLASS(m_eBossPhase)].second.bIsCutScene = true;
@@ -155,7 +155,7 @@ void CBossBlackBoard::SetPhaseLastAttack(_bool bIsFlag)
 
     if (bIsFlag)
     {
-        auto pOwner = static_cast<CNayitba*>(m_pOwner);
+        auto pOwner = static_cast<CNaytiba*>(m_pOwner);
         if(8 == m_BossDefualtInfo->iMonsetID)
             pOwner->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
         pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
@@ -184,7 +184,7 @@ void CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
     m_eExcution = eExcution;
     if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
     {
-        static_cast<CNayitba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
+        static_cast<CNaytiba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
     }
 }
 
@@ -207,7 +207,7 @@ _bool CBossBlackBoard::IsAttackEnable()
 void CBossBlackBoard::SetAttackData(const Character_Skill_Desc* pAttack_Data)
 {
     m_pAttack_Skill = pAttack_Data;
-    static_cast<CNayitba*>(m_pOwner)->SetAttackData(pAttack_Data);
+    static_cast<CNaytiba*>(m_pOwner)->SetAttackData(pAttack_Data);
 }
 
 const Character_Skill_Desc* CBossBlackBoard::GetAttackData()

@@ -41,6 +41,12 @@ namespace Engine
 		WINMODE				eWindowMode;
 	}ENGINE_DESC;
 
+	/*
+	볼류메트릭이 쓸 변수는 
+	Type, Diffuse, Position, Range,
+	vDirection, vPosition,
+	fAttenuation0?
+	*/
 	typedef struct tagLightDesc
 	{
 		LIGHT_TYPE			eType;
@@ -50,17 +56,18 @@ namespace Engine
 
 		XMFLOAT4			vPosition;
 		XMFLOAT4			vDirection;        /* 광원의 빛의 방향 */
-		float				fRange;            /* 빛의 최대 진행 거리 방향성 광원의 경우 의이없음 */
-											   /* 루트 FLT_MAX의 값을 넘어갈수 없다.  */
+		float				fRange;            /* 빛의 최대 진행 거리 방향성 광원의 경우 의이없음   */
+											   /* 루트 FLT_MAX의 값을 넘어갈수 없다.				*/
 
-		float				fFalloff;			/* 스포트 광원에서 사용 보통 1.0f 설정하며     */
-												/* 안쪽 원뿔과 바깥쪽 원뿔간의 빛의 세기 차이  */
-
+		float				fFalloff;			/* 스포트 광원에서 사용 보통 1.0f 설정하며			*/
+												/* 안쪽 원뿔과 바깥쪽 원뿔간의 빛의 세기 차이		*/
 		float				fAttenuation0;		/* 상수 감쇠 계수 */
 		float				fAttenuation1;		/* 선형 감쇠 계수 */
 		float				fAttenuation2;		/* 이차 감쇠 계수 */
 		float				fTheta;				/* 스포트 광원의 안쪽 원뿔의 각도 */
 		float				fPhi;				/* 스포트 광원의 바깥쪽 원뿔의 각도 */
+
+		float				fDensity;			/* 볼류메트릭용 밀도 감소 */
 	}LIGHT_DESC;
 
 	typedef struct tagStaticShadowLight
@@ -534,6 +541,45 @@ namespace Engine
 		const char* pProjMatrixTag = { nullptr };
 	} CLIENT_SHADER_RESERVE;
 
+	typedef struct CB_VolumetricFogParam
+	{
+		float Exposure;
+		float DepthPackExponent;
+		float NearPlaneDist;
+		float FarPlaneDist;
+	} VOLUMEFOG_COMMON_DESC;
+
+	typedef struct CB_InscatteringParameters
+	{
+		float AsymmetryParameterG;
+		float Density;
+		float Intensity;
+		float StartDistance = { 50.f };
+
+		float NoiseTime = { 0.0f };
+		float NoiseScale = { 0.02f };
+		float NoiseStrength = { 0.5f };
+		float NoiseContrast = { 1.f };
+
+		XMFLOAT4X4 ViewMatrix;
+		XMFLOAT4X4 ProjMatrix;
+		XMFLOAT4X4 PreViewMatrix;
+		XMFLOAT4X4 PreProjMatrix;
+		XMFLOAT4X4 InvProjMatrix;
+		XMFLOAT4X4 InvViewMatrix;
+
+		XMFLOAT4 CameraPos;
+		XMFLOAT4 LightDirection;
+		XMFLOAT4 LightColor;
+		XMFLOAT4 NoiseAnchor;
+		XMFLOAT4 FogAmbient;
+	} INSCATTER_DESC;
+
+	typedef struct tagVolumeFogDesc {
+		INSCATTER_DESC* pInscatterDesc = { nullptr };
+		VOLUMEFOG_COMMON_DESC* pVolumeFogDesc = { nullptr };
+		bool* pActive = { nullptr };
+	} VOLUMEFOG_DESC;
 
 #pragma endregion
 }

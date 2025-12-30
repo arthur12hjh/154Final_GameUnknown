@@ -23,6 +23,7 @@
 #include "SSAO.h"
 #include "Emissive.h"
 #include "ReserveDeferred.h"
+#include "VolumeFog.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -142,6 +143,10 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pEmissive)
 		return E_FAIL;
 
+	m_pVolumeFog = CVolumeFog::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pVolumeFog)
+		return E_FAIL;
+	
 	/* 스크린 사이즈는 미리 바인딩 한다. */
 	if (FAILED(m_pShader->Bind_RawValue("g_iWinSizeX", &m_vScreenSize.x, sizeof(_int))))
 		return E_FAIL;
@@ -165,8 +170,9 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Velocity"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_SpecDetail"), 750.0f, 450.0f, 300.f, 300.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Bloom"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_ShadowBlurX"), 750.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Combined"), 750.0f, 750.0f, 300.f, 300.f)))
@@ -230,6 +236,8 @@ void CRenderer::Update(_float fTimeDelta)
 
 	m_pRadialBlur->Update(fTimeDelta);
 	m_pDepthofField->Update(fTimeDelta);
+	m_pVolumeFog->Update(fTimeDelta);
+	m_pCascadeShadow->Update(fTimeDelta);
 }
 
 void CRenderer::Update_Shadow(_float fTimeDelta)
@@ -292,8 +300,8 @@ HRESULT CRenderer::Ready_RenderTargets()
 	/* Target_Emissive */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
-	/* Target_SpecDetail */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SpecDetail"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.0f, 1.f, 1.f, 1.f))))
+	/* Target_Bloom */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Bloom"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	/* MRT_LightAcc */
@@ -349,6 +357,9 @@ HRESULT CRenderer::Ready_MRTs()
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_ORM"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Emissive"))))
+		return E_FAIL;
+	//시발 달..
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Bloom"))))
 		return E_FAIL;
 
 	/* MRT_LightAcc */
@@ -563,6 +574,11 @@ void* CRenderer::Get_Cascade_Desc()
 	return m_pCascadeShadow->Get_Desc();
 }
 
+void* CRenderer::Get_VolumeFog_Desc()
+{
+	return m_pVolumeFog->Get_Desc();
+}
+
 HRESULT CRenderer::Add_StaticShadowObject(CGameObject* pGameObject)
 {
 	return m_pStaticShadow->Add_RenderObject(pGameObject);
@@ -582,7 +598,6 @@ void CRenderer::Render_Priority()
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
-
 		Safe_Release(pRenderObject);
 	}
 
@@ -688,6 +703,21 @@ void CRenderer::Render_NonBlend()
 	/* Diffuse + Normal */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return;
+
+	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND_PRIORITY)])
+	{
+		if (nullptr != pRenderObject)
+		{
+			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
+			{
+				pRenderObject->Render();
+				iRenderedCount++;
+			}
+		}
+
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND_PRIORITY)].clear();
 
 	for (auto& pRenderObject : m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)])
 	{
@@ -889,6 +919,8 @@ void CRenderer::Render_Deferred()
 	hr = m_pDistortion->Render(m_pVIBuffer);
 	hr = m_pBloom->Render(m_pVIBuffer, TEXT("Target_CombinedBloomScene"), TEXT("MRT_Scene"));
 	hr = m_pFog->Render(m_pVIBuffer);
+	hr = m_pVolumeFog->Render(m_pVIBuffer);
+
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 
@@ -917,7 +949,7 @@ void CRenderer::Render_Deferred()
 	if (FAILED(m_pMetaball->Bind_RenderTarget(m_pShader, "g_MetaballTexture")))
 		return;
 
-	if (FAILED(m_pDistortion->Bind_RenderTarget(m_pShader, "g_DistortionTexture")))
+	if (FAILED(m_pVolumeFog->Bind_RenderTarget(m_pShader, "g_VolumeFogTexture")))
 		return;
 
 	if (false == m_isBloom)
@@ -950,6 +982,8 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_ScreenDeferred()
 {
+	// 여러 문제떄문에.. 디스토션은 따로 분리.
+	m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 	// DOF 먼저 적용.
 	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
 	m_pMotionBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
@@ -1068,10 +1102,6 @@ void CRenderer::Render_Debug()
 
 	if (false == m_isDebugVisible)
 		return;
-
-	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
-		return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
 	//	return;
 	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_LightAcc"), m_pShader, m_pVIBuffer)))
@@ -1099,6 +1129,9 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_ShadowBlurX"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+		return;
+	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return;
 }
 
@@ -1207,6 +1240,7 @@ void CRenderer::Free()
 	Safe_Release(m_pRS_OcclusionQuery);
 	Safe_Release(m_pStaticShadow);
 	Safe_Release(m_pCascadeShadow);
+	Safe_Release(m_pVolumeFog);
 
 #ifdef _DEBUG
 	Safe_Release(m_pColliderRenderer);

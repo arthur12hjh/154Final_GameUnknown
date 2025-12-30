@@ -20,7 +20,7 @@ HRESULT CMonsterGroggyState::Initialize(void* pArg)
 
 void CMonsterGroggyState::Start(void* pArg, CState* pPreState)
 {
-    CNayitba* pNaytiba = static_cast<CNayitba*>(m_pOwner);
+    CNaytiba* pNaytiba = static_cast<CNaytiba*>(m_pOwner);
     m_vGroogyTime.y = m_pGameInstance->Random(3.f, 4.f);
     m_vGroogyTime.x = 0.f;
 
@@ -33,7 +33,7 @@ void CMonsterGroggyState::Start(void* pArg, CState* pPreState)
 
 void CMonsterGroggyState::Update(_float fTimeDelta)
 {
-    CNayitba* pNaytiba = static_cast<CNayitba*>(m_pOwner);
+    CNaytiba* pNaytiba = static_cast<CNaytiba*>(m_pOwner);
     if (1 == m_iSectionIndex)
     {
         m_vGroogyTime.x += fTimeDelta;
@@ -64,7 +64,7 @@ void CMonsterGroggyState::Update(_float fTimeDelta)
 
 void CMonsterGroggyState::End()
 {
-    CNayitba* pNaytiba = static_cast<CNayitba*>(m_pOwner);
+    CNaytiba* pNaytiba = static_cast<CNaytiba*>(m_pOwner);
     pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 }
 

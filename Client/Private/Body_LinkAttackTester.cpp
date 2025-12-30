@@ -2,6 +2,7 @@
 #include "Body_LinkAttackTester.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 
 #include "Character.h"
 
@@ -131,7 +132,7 @@ HRESULT CBody_LinkAttackTester::Render_Shadow()
 HRESULT CBody_LinkAttackTester::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Scarlet_Body"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

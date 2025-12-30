@@ -44,7 +44,7 @@ HRESULT CMonsterMimesisController::Initialize(void* pArg)
 	if (FAILED(Ready_FSM()))
 		return E_FAIL;
 
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	auto pDefaultData = pNayitba->GetStaticMonsterData();
 	m_pOwnerData = &pNayitba->GetMonsterData();
 
@@ -66,7 +66,7 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 	{
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
 		{
-			auto pNayitba = static_cast<CNayitba*>(m_pParent);
+			auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 			if (NAYTIBA_STATE::DEFAULT == pNayitba->GetMonsterPreState())
 			{
 				CMonsterTranslationState::MONSTER_TRANSLATION_STATE M_TranslationState = {};
@@ -107,11 +107,11 @@ HRESULT CMonsterMimesisController::Render()
 	return S_OK;
 }
 
-void CMonsterMimesisController::Damage(void* pArg)
+HRESULT CMonsterMimesisController::Damage(void* pArg)
 {
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	auto pAttackState = dynamic_cast<CMonsterAttackState*>(m_pFSM->GetCurrentState());
 	if (0 >= m_pOwnerData->iCurrentHealth)
 	{
@@ -175,8 +175,11 @@ void CMonsterMimesisController::Damage(void* pArg)
 				m_bIsMimesis = false;
 
 			m_pFSM->Change_State(TEXT("Hit"), pArg, true);
+			return S_OK;
 		}
 	}
+
+	return E_FAIL;
 }
 
 void CMonsterMimesisController::ActionSuccess(void* pArg)
@@ -231,7 +234,7 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 {
 	// 이거 배틀상태가 아니라면 안되게 하자
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
@@ -249,13 +252,13 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 	// 상태가 바뀐다면 Bool Flag 리턴하자
 	if (m_bIsMimesis)
 	{
-		//if (fDistance <= m_pOwnerData->fAttackRange)
-		//{
+		if (fDistance <= m_pOwnerData->fAttackRange * 1.5f)
+		{
 			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
 			AttackStateDesc.pTarget = pTarget;
 			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-		//}
+		}
 	}
 	else
 	{
@@ -314,7 +317,7 @@ void CMonsterMimesisController::DelayAction(_float fDelayTime)
 
 void CMonsterMimesisController::MoveAction(_bool bIsTarget)
 {
-	auto pNayitba = static_cast<CNayitba*>(m_pParent);
+	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	CMonsterMoveState::MOVE_STATE_DESC MoveStateDesc = {};
 	//MoveStateDesc.PathFindingPoints = m_pTargetCom->GetPathFinding();
 	MoveStateDesc.OnMoveCompleted = [&](_float fDelayTime) { this->DelayAction(fDelayTime); };

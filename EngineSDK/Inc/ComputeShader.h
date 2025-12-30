@@ -39,15 +39,20 @@ public:
 
 	// 동시에 사용가능한 리소스 버퍼 8개 입니다.
 	HRESULT									Bind_ConstBuffer(_uint iCBNum, _uint* iCBIndex);
-
+	HRESULT									Bind_ConstBuffer_Slot(_uint iSlot, ID3D11Buffer* pCB);
 	// 동시에 사용가능한 리소스 버퍼 8개 입니다.
 	HRESULT									Bind_InputBuffer(_uint iBufferNum, _uint* iInputIndex);
 
 	// 동시에 사용가능한 리소스 버퍼 8개 입니다.
 	HRESULT									Bind_OutputBuffer(_uint iBufferNum, _uint* iOutputIndex);
 
-	// 툴에서 바로 새로고침하려고 만드는 리셋
-	HRESULT									Reset();
+	HRESULT									Bind_UAV(ID3D11UnorderedAccessView** pUAV);
+	HRESULT									Unbind_UAV();
+
+	HRESULT									Bind_SRV(ID3D11ShaderResourceView** pSRV);
+	HRESULT									Unbind_SRV();
+
+	HRESULT									Bind_Sampler(UINT iSlot, ID3D11SamplerState* pSamp);
 
 private:
 	ID3D11ComputeShader*					m_pComputeShaderCom = nullptr;
@@ -63,7 +68,7 @@ private:
 	vector<ID3D11Buffer*>					m_pOutputBuffer = {};
 	vector<ID3D11UnorderedAccessView*>		m_pUAVs = {};
 
-private :
+private:
 	HRESULT									LoadShader(const WCHAR* szShaderFilePath, const char* szStartFunName);
 
 
