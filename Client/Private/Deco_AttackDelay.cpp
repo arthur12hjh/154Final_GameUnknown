@@ -25,9 +25,6 @@ CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 	{
 		if (false == m_pBlackBoard->IsAttackEnable() || m_pBlackBoard->bIsExcution())
 		{
-			if (CBossBlackBoard::BOSS_STATE::INTERACTION_ATTACK == m_pBlackBoard->GetCurState())
-				int a = 10;
-
 			return NODE_STATE::FAIL;
 		}
 	}

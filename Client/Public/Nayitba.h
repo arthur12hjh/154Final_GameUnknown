@@ -124,7 +124,7 @@ private :
 
 	HRESULT									ADD_Components();
 	HRESULT									ADD_PartObjects();
-
+	
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 	void									ResetBodyColor();
 
@@ -136,6 +136,7 @@ private :
 	void									ShootProjectile(const AnimNotify* pNotify);
 	void									Attack_Interaction(const AnimNotify* pNotify);
 	void									Change_Color(const AnimNotify* pNotify);
+	void									Draw_AttackLine(const AnimNotify* pNotify);
 #pragma endregion
 
 #pragma region Damage Logic

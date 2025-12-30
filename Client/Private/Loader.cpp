@@ -54,6 +54,7 @@
 #include "Nayitba.h"
 
 #include "NayitbaPartBody.h"
+#include "NaytibaBeam_Part.h"
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
 
@@ -683,6 +684,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CNayitbaPartBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Nayitba_Beam */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_BeamPart"),
+		CNaytibaBeam_Part::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Monster_Controller */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_MonsterController"),
 		CMonsterController::Create(m_pDevice, m_pContext))))
@@ -1099,10 +1105,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
 	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 
-
-
-	
-
 	/* For.Prototype_Component_Model_StatueA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
@@ -1116,6 +1118,13 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationX(XMConvertToRadians(90.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Cylinder");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Cylinder/Cylinder.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1149,6 +1158,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_CameraBone_Player */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CameraBone_Player");
 	pProtoDesc.pPrototype = CCameraBone_Player::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_BeamPart */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_BeamShader");
+	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_BeamShader.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

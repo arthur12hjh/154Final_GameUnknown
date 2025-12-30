@@ -107,7 +107,6 @@ void CAttackHitBox::Update(_float fTimeDelta)
 			m_isDead = true;
 			ReturnObjectPool();
 		}
-			
 	}
 #else
 	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
@@ -129,7 +128,9 @@ void CAttackHitBox::Late_Update(_float fTimeDelta)
 		else
 		{
 #ifdef _DEBUG
-			m_pGameInstance->ADD_Collider(m_pColliderCom);
+			if (!m_bIsDelayDead)
+				m_pGameInstance->ADD_Collider(m_pColliderCom);
+
 			m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #else
 			m_pGameInstance->ADD_Collider(m_pColliderCom);
