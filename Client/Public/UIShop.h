@@ -38,10 +38,11 @@ protected:
 
 private:
 	CTexture* m_pNpcTextureCom{ nullptr };
+	CTexture* m_pScriptBGTextureCom{ nullptr };
 
 	_float m_fAmount{ 0.f };
 
-	_bool m_isOpen{ true };
+	_bool m_isOpen{ false };
 	_bool m_isClosing{ false };
 	_bool m_isLevelChange{ false };
 

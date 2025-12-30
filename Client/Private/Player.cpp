@@ -565,7 +565,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 1000;
+	m_PlayerDesc.iOwnGold			= 5000;
 
 	return S_OK;
 }

@@ -867,6 +867,14 @@ HRESULT CUI_Loader::Loading_UI_For_World()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
 		TEXT("Com_Texture_UI_Interaction_Key"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.dds"), 2);
 	
+	/* For.Prototype_Component_UI_Texture_Interaction_Lock */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Lock"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Lock.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Lock"),
+		TEXT("Com_Texture_UI_Interaction_Lock"), TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_Lock.dds"), 1);
+	
 	/* For.Prototype_Component_UI_Texture_KeyIcon_Mouse */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_KeyIcon_Mouse"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/LockOn/KeyIcon_Mouse_0.dds"), 1))))
