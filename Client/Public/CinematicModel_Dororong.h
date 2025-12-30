@@ -10,12 +10,12 @@ NS_END
 NS_BEGIN(Client)
 class CWeapon;
 
-class CCinematicModel_Scarlet final : public CCinematicObject
+class CCinematicModel_Dororong final : public CCinematicObject
 {
 private:
-	CCinematicModel_Scarlet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CCinematicModel_Scarlet(const CCinematicModel_Scarlet& Prototype);
-	virtual ~CCinematicModel_Scarlet() = default;
+	CCinematicModel_Dororong(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CCinematicModel_Dororong(const CCinematicModel_Dororong& Prototype);
+	virtual ~CCinematicModel_Dororong() = default;
 
 public:
 	virtual void	 Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
@@ -37,9 +37,6 @@ public:
 	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 
 private:
-	CPartObject*		m_pWeapon = { nullptr };
-	CPartObject*		m_pScabbard = { nullptr };
-
 	_float3		m_vRotationQuaternion = {};
 	_float		m_fMoveTime = 0.f;
 	_int		m_iAnimationSequence = 0;
@@ -50,27 +47,15 @@ private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 
-	HRESULT Initialize_Cinematic_Scarlet_FirstMeet();
-	
-	HRESULT Initialize_Cinematic_Scarlet_GoodBye();
+	HRESULT Initialize_Cinematic_Dororong_Meet();
 
-	HRESULT Initialize_Cinematic_Scarlet_Battle_Enter();
-	HRESULT Initialize_Cinematic_Scarlet_Battle_PhaseChange();
-	HRESULT Initialize_Cinematic_Scarlet_Battle_Finish();
-
-	HRESULT Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta);
-
-	HRESULT Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta);
-
-	HRESULT Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta);
-	HRESULT Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta);
-	HRESULT Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDelta);
+	HRESULT Play_Cinematic_Dororong_Meet(_float fTimeDelta);
 
 	void Reset_CinematicChanges();
 
 
 public:
-	static CCinematicModel_Scarlet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CCinematicModel_Dororong* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

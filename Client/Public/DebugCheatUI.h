@@ -46,7 +46,7 @@ private:
 	_float						m_vTeleportPoint[3] = {};
 	_float						m_fGameSpeed = {1.f};
 	_float						m_fFreeCamSpeed = { 1.f };
-	_float						m_fCamDistance = { 10.f };
+	_float						m_fCamDistance = { 13.f };
 
 	_bool						m_bIsCamLerp = false;
 	_bool						m_bIsFreeCamera = false;

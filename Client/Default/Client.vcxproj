@@ -160,6 +160,8 @@
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
+    <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
+    <ClInclude Include="..\Public\CinematicPartBody.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
@@ -484,6 +486,8 @@
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
+    <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
+    <ClCompile Include="..\Private\CinematicPartBody.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
