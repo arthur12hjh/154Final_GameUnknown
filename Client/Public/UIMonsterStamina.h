@@ -39,8 +39,8 @@ private:
 	
 	_float m_fCurrentFill = 1.f;   // ÇöÀç °ª
 
-	_uint m_iCurrentStamina{ 5 };
-	_uint m_iMaxStamina{ 5 };
+	_uint m_iCurrentStamina{ 0 };
+	_uint m_iMaxStamina{ 0 };
 
 public:
 	static CUIMonsterStamina* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

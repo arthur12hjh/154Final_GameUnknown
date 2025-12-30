@@ -15,6 +15,8 @@
 
 #include "UIInstanceBuffer.h"
 
+#include "MousePointer.h"
+
 /********************************
 * 대재훈의 은총 이 얼마나 관대한가 *
 * 대민석의 은총 이 얼마나 찬란한가 *
@@ -53,6 +55,9 @@ HRESULT CUI_MainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototypes()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
@@ -158,6 +163,11 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_UI.hlsl"), VTX_POSTEX_UI_INSTANCE::Elements, VTX_POSTEX_UI_INSTANCE::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Shader_Point */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_Mouse"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_Mouse.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
@@ -167,6 +177,27 @@ HRESULT CUI_MainApp::Ready_Prototypes()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_UI_Camera"),
 		CUI_Camera::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Texture_Mouse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Cursor/cursor_%d.png"), 4))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_MainApp::Ready_Mouse()
+{
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Mouse"),
+		CMousePointer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	CUIObject::UIOBJECT_DESC UIDesc = {};
+	UIDesc.fSizeX = 32.f;
+	UIDesc.fSizeY = 32.f;
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Mouse"),
+		ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"), &UIDesc)))
+		return E_FAIL; 
 
 	return S_OK;
 }

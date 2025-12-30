@@ -62,7 +62,8 @@ void CUIMonsterHPBar::Update(_float fTimeDelta)
 
 void CUIMonsterHPBar::Late_Update(_float fTimeDelta)
 {
-	__super::Late_Update(fTimeDelta);
+	if (m_isRent)
+		__super::Late_Update(fTimeDelta);
 }
 
 HRESULT CUIMonsterHPBar::Render()

@@ -3,7 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 
 #include "UIHUD.h"
 #include "UIScript.h"
@@ -194,7 +194,7 @@ HRESULT CSciFi_Door::Ready_Components(const _tchar* pComponentTag)
 	InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
 	InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
 		TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
 		return E_FAIL;
 	

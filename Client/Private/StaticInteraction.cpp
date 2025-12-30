@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "UIBase.h"
 #include "GameManager.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 #include "UIScript.h"
 #include "UIHUD.h"
 
@@ -150,7 +150,7 @@ HRESULT CStaticInteraction::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     InteractionDesc.EndCallBackFunc = [&]() { End_OverlapCallBack(); };
     InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
     m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(Desc.iInteractionID));
@@ -286,19 +286,20 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
                 return;
             }
 
-            if (m_bHasHint)
+            pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
+            /*if (m_bHasHint)
             {
                 pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
             }
             else
             {
-                /* CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+                 CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
 
                 if (!pScript)
                     return;
 
-                pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("CorpseInteractionScript")));*/
-            }
+                pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("CorpseInteractionScript")));
+            }*/
             Safe_Release(pHUD);
         }
         else if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::VENDING_MACINE) // 자판기 상호작용 처리
