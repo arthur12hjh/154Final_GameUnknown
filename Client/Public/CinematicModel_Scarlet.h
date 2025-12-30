@@ -50,9 +50,17 @@ private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
 
+	HRESULT Initialize_Cinematic_Scarlet_FirstMeet();
+	
+	HRESULT Initialize_Cinematic_Scarlet_GoodBye();
+
 	HRESULT Initialize_Cinematic_Scarlet_Battle_Enter();
 	HRESULT Initialize_Cinematic_Scarlet_Battle_PhaseChange();
 	HRESULT Initialize_Cinematic_Scarlet_Battle_Finish();
+
+	HRESULT Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta);
+
+	HRESULT Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta);
 
 	HRESULT Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDelta);
 	HRESULT Play_Cinematic_Scarlet_Battle_PhaseChange(_float fTimeDelta);

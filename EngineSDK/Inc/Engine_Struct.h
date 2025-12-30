@@ -572,6 +572,7 @@ namespace Engine
 		XMFLOAT4 LightDirection;
 		XMFLOAT4 LightColor;
 		XMFLOAT4 NoiseAnchor;
+		XMFLOAT4 FogAmbient;
 	} INSCATTER_DESC;
 
 	typedef struct tagVolumeFogDesc {

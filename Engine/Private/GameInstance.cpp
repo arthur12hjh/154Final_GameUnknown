@@ -547,6 +547,7 @@ HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
 	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
 }
 
+#ifdef _DEBUG
 HRESULT CGameInstance::Add_DebugComponent(CComponent* pDebugCom)
 {
 	return m_pRenderer->Add_DebugComponent(pDebugCom);
@@ -565,6 +566,9 @@ void CGameInstance::Set_DebugColliderVisible(_bool isVisible)
 {
 	m_pRenderer->Set_DebugColliderVisible(isVisible);
 }
+#endif // _DEBUG
+
+
 
 void* CGameInstance::Get_DoF_Desc()
 {

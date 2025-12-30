@@ -160,8 +160,7 @@ struct PS_OUT
     float4 vDepth : SV_TARGET2;
     float4 vORM : SV_Target3;
     float4 vEmissive : SV_TARGET4;
-    float4 vSSSAO : SV_TARGET5;
-    float4 vSpecDetail : SV_TARGET6;
+    float4 vBloom : SV_TARGET5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -180,6 +179,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -206,12 +206,13 @@ PS_OUT PS_REED(PS_IN In)
     float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
     float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
     
-    Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse = float4(vMtrlDiffuse.xyz, 1.f);
     //노말의 크기를 줄여서 세팅함. -> SSAO가 너무 강하게 들어가서
     //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal, 0.1f);
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -233,6 +234,7 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
 
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
+    
     return Out;
 }
 

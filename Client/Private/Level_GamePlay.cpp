@@ -56,6 +56,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
@@ -453,10 +456,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pSapwnerDesc)))
 		return E_FAIL;*/
 
-	//  시네마틱 테스트용 모델임
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
-		return E_FAIL;
+	////  시네마틱 테스트용 모델임
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_LinkAttackTester"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, nullptr)))
+	//	return E_FAIL;
 
 	/*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Test_InstanceModel"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -532,10 +535,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	pTriggerBoxDesc.eColType = COLLIDER::OBB;
 	pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
 	pTriggerBoxDesc.vRotation= { 0.f, 0.f, 0.f };
-	pTriggerBoxDesc.vPosition = { 738.66f, 2.022f, 608.569f };
+	pTriggerBoxDesc.vPosition = { 715.428f, 38.124f, 491.423f };
 	pTriggerBoxDesc.fDelayTime = -1.f;
 
-	//  시네마틱용 트리거
+	//  기가스 조우
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
+		return E_FAIL;
+	
+	pTriggerBoxDesc.iTriggerCode = 123;
+	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 358.814f };
+
+	//  도로롱 조우
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;

@@ -1,0 +1,38 @@
+[
+    {
+        "CinematicNodeTrackList": [
+            {
+                "eState": 7,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 2,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Dororong"
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 2,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },
+	{
+                "eState": 6,
+                "fTrackPosition": 18.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
+                "eState": 7,
+                "fTrackPosition": 18.4,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            }
+        ],
+        "iCinematicID": 123,
+        "szCinematicName": "DororongFirstMeet"
+    }
+]

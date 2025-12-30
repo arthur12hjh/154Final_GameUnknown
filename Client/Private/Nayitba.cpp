@@ -226,7 +226,11 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	}
 
 	VisibleStatusUI(0.f);
-	m_pAIController->Damage(pArg);
+	if (S_OK == m_pAIController->Damage(pArg))
+	{
+		// 여기서 몬스터 림라이트 처리
+		m_pPartBody->SetRimLightData(true, 10.f, 20.f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
+	}
 
 	return S_OK;
 }

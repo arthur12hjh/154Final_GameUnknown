@@ -36,9 +36,9 @@ PLAYER_TRANSITION_DESC CPlayer_IdleState::Update(_float fTimeDelta)
         m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
         m_tNextState.eNextState = PLAYER_STATE::WALK;
 
-    //Test State로 전환하는 코드.
-    else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
-        m_tNextState.eNextState = PLAYER_STATE::TEST_STATE;
+    ////Test State로 전환하는 코드.
+    //else if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_Z))
+    //    m_tNextState.eNextState = PLAYER_STATE::TEST_STATE;
 
     return m_tNextState;
 }

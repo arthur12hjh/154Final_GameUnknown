@@ -59,7 +59,7 @@ VS_OUT VS_MAIN(VS_IN In)
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
-        MatrixW * In.vBlendWeight.w;
+        MatrixW * fWeightW;
     
     /* ��Ű�� */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
@@ -90,7 +90,9 @@ VS_OUT VS_MAIN(VS_IN In)
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
-
+    
+    float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+          
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -100,7 +102,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
         MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
-        MatrixW * In.vBlendWeight.w;
+        MatrixW * fWeightW;
 
     float4 vSkinnedLocal = mul(float4(In.vPosition, 1.f), BoneMatrix);
 
@@ -130,12 +132,12 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
         MatrixY * In.vBlendWeight.y +
         MatrixZ * In.vBlendWeight.z +
-        MatrixW * In.vBlendWeight.w;
+        MatrixW * fWeightW;
     
     matrix PreBoneMatrix = PreMatrixX * In.vBlendWeight.x +
         PreMatrixY * In.vBlendWeight.y +
         PreMatrixZ * In.vBlendWeight.z +
-        PreMatrixW * In.vBlendWeight.w;
+        PreMatrixW * fWeightW;
    
     /* ��Ű�� */
     vector vCurrentPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
@@ -220,8 +222,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -241,7 +243,8 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     //������Ʈ�� ���ؼ� ����.
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -262,6 +265,7 @@ PS_OUT PS_MAIN_EYEMASKING(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal, 0.001f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -315,6 +319,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 
@@ -351,6 +356,7 @@ PS_OUT PS_GORILLA_DISSOLVE(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -367,6 +373,7 @@ PS_OUT PS_ORSS(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -411,6 +418,7 @@ PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
     
     //������Ʈ�� ���ؼ� ����.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -432,6 +440,7 @@ PS_OUT PS_NONE_NORMAL(PS_IN In)
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }

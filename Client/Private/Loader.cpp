@@ -14,6 +14,7 @@
 #include "Sky_Scarlet.h"
 #include "AttackHitBox.h"
 
+#include "Camera_BeatSaber.h"
 #include "Effect.h"
 #include "Trail.h"
 #include "TrailData.h"
@@ -76,6 +77,9 @@
 #include "CinematicModel_Gorilla.h"
 #include "CinematicModel_Eve.h"
 #include "CinematicModel_Scarlet.h"
+#include "CinematicModel_Dororong.h"
+
+#include "CinematicPartBody.h"
 
 #pragma endregion
 
@@ -554,7 +558,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.fbx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.binx");
 
 	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
@@ -564,7 +568,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	//// 오피스 스타일
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle_WeightLimited.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 	
@@ -661,6 +665,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_Cinematic_Dororong */
+	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Dororong"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix))))
+		return E_FAIL;
+
+
 #pragma region Nayitba
 	/* For.Prototype_GameObject_Nayitba */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
@@ -708,6 +719,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_CinematicModel_Scarlet */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Scarlet"),
 		CCinematicModel_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CinematicModel_Dororong */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicModel_Dororong"),
+		CCinematicModel_Dororong::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CinematicPartBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicPartBody"),
+		CCinematicPartBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion
@@ -781,6 +802,10 @@ HRESULT CLoader::Loading_For_BeatSaber()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
 		CNote::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_Camera_BeatSaber"),
+		CCamera_BeatSaber::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	Sleep(1000.f);
@@ -1491,11 +1516,6 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_Effect_Blood_Hit */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blood_Hit");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blood_Hit.binx");
-	Desc->pAddObejct.push_back(PrototypeDesc);
-
-	/* For.Prototype_Component_Effect_Monster_Sting */
-	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Ashes */
@@ -2474,27 +2494,27 @@ HRESULT CLoader::Loading_For_GamePlay_InstanceMesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_VIBuffer_Particle_Explosion */
-	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
-	ExplosionDesc.iNumInstance = 1000;
-	ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
-	ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
-	ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
-	ExplosionDesc.vSize = _float2(0.2f, 0.6f);
-	ExplosionDesc.vLifeTime = _float2(3.f, 7.f);
-	ExplosionDesc.vSpeed = _float2(2.f, 5.f);
-	ExplosionDesc.isLoop = true;
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Particle_Explosion");
-	pProtoDesc.pPrototype = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
-
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ComputeShader_Expolosion");
-	pProtoDesc.pPrototype = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance);
-	if (nullptr == pProtoDesc.pPrototype)
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);
+	//CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		ExplosionDesc{};
+	//ExplosionDesc.iNumInstance = 1000;
+	//ExplosionDesc.vCenter = _float3(0.0f, 1.f, 0.0f);
+	//ExplosionDesc.vPivot = _float3(0.0f, 0.f, 0.0f);
+	//ExplosionDesc.vRange = _float3(0.5f, 0.5f, 0.5f);
+	//ExplosionDesc.vSize = _float2(0.2f, 0.6f);
+	//ExplosionDesc.vLifeTime = _float2(3.f, 7.f);
+	//ExplosionDesc.vSpeed = _float2(2.f, 5.f);
+	//ExplosionDesc.isLoop = true;
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VIBuffer_Particle_Explosion");
+	//pProtoDesc.pPrototype = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &ExplosionDesc);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_Component_ComputeShader_Expolosion");
+	//pProtoDesc.pPrototype = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), "CS", ExplosionDesc.iNumInstance);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 	_matrix PreTransformMatrix = XMMatrixIdentity();
 	/* For.Prototype_Component_Model_Fiona */

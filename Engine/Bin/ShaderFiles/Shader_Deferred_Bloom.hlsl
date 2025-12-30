@@ -57,7 +57,7 @@ PS_OUT_BACKBUFFER PS_DOWNSAMPLE_BOX4(PS_IN In)
 PS_OUT_BACKBUFFER PS_MAIN_CURVE(PS_IN In)
 {
     PS_OUT_BACKBUFFER Out;
-  
+    /*
     float3 vColor = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord).xyz;
     
     //0 나누기 방지..
@@ -67,6 +67,9 @@ PS_OUT_BACKBUFFER PS_MAIN_CURVE(PS_IN In)
     float3 vBloomColor = vColor * fBloomIntensity / fIntensity;
     
     Out.vBackBuffer = float4(vBloomColor, 1.f);
+    */
+    
+    Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;
 };
