@@ -112,14 +112,14 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	//		return;
 	//}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}
+	}*/
 
 	if (m_isOverlay && m_pHUD)
 	{
