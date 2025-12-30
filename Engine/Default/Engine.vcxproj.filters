@@ -395,6 +395,9 @@
     <ClInclude Include="..\Public\VolumeFog.h">
       <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\WaveTrail.h">
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -759,6 +762,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\VolumeFog.cpp">
       <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WaveTrail.cpp">
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1211,6 +1217,9 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Deferred\Distortion\ShaderFile">
       <UniqueIdentifier>{48b7a659-f846-4219-a41f-8617c9a4b99c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail\WaveTrail">
+      <UniqueIdentifier>{d596d991-8eed-4ac4-a96b-61934095e736}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

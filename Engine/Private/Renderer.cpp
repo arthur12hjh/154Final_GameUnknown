@@ -924,7 +924,10 @@ void CRenderer::Render_Deferred()
 #ifdef _DEBUG
 	BeginMarker(m_pContext, TEXT("########## Screen Combine"));
 #endif 
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Screen"))))
+	// 여러 문제떄문에.. 디스토션은 따로 분리.
+	m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
+
+	if (FAILED(m_pGameInstance->Load_MRT(TEXT("MRT_Screen"))))
 		return;
 
 	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_Combined"), m_pShader, "g_SceneTexture")))
@@ -982,8 +985,8 @@ void CRenderer::Render_Deferred()
 
 void CRenderer::Render_ScreenDeferred()
 {
-	// 여러 문제떄문에.. 디스토션은 따로 분리.
-	m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
+	//// 여러 문제떄문에.. 디스토션은 따로 분리.
+	//m_pDistortion->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));
 	// DOF 먼저 적용.
 	m_pDepthofField->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("Target_Depth"), TEXT("MRT_Screen"));
 	m_pMotionBlur->Render(m_pVIBuffer, TEXT("Target_Screen"), TEXT("MRT_Screen"));

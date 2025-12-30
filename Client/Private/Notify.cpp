@@ -221,9 +221,13 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix) * XMLoadFloat4x4(EffectDesc.pWorldMatrix));
 		else
 			XMStoreFloat4x4(&matTransform, XMLoadFloat4x4(EffectDesc.pRootMatrix));
+		_matrix mat = XMLoadFloat4x4(&matTransform);
 		EffectDesc.pRootMatrix = nullptr;
 		EffectDesc.pWorldMatrix = nullptr;
-		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + matTransform._42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+		EffectDesc.vPos = mat.r[3];
+		EffectDesc.vPos += mat.r[0] * AnimNotify.vNotifyPosition.x;
+		EffectDesc.vPos += mat.r[1] * AnimNotify.vNotifyPosition.y;
+		EffectDesc.vPos += mat.r[2] * AnimNotify.vNotifyPosition.z;
 	}
 	else if (AnimNotify.iNumData01 == 2 && nullptr != EffectDesc.pRootMatrix) {
 		if(nullptr != EffectDesc.pWorldMatrix)
