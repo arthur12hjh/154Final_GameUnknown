@@ -64,7 +64,7 @@ HRESULT CBossController::Render()
     return S_OK;
 }
 
-void CBossController::Damage(void* pArg)
+HRESULT CBossController::Damage(void* pArg)
 {
     DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
@@ -110,7 +110,7 @@ void CBossController::Damage(void* pArg)
         {
             // 나중에 여러 속성 추가할 예정
             if (nullptr == pDamageSKillDesc || nullptr == pAttackData)
-                return;
+                return E_FAIL;
 
             if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
             {
@@ -174,8 +174,11 @@ void CBossController::Damage(void* pArg)
         {
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::HIT);
             m_pBlackBoard->SetHitData(pDamageDesc);
+            return S_OK;
         }
     }
+
+    return E_FAIL;
 }
 
 void CBossController::ActionSuccess(void* pArg)

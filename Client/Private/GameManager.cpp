@@ -253,6 +253,11 @@ void CGameManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTa
     m_pShaderManager->Set_Desc_ReserveDeferred(strReserveDeferredTag, pArg);
 }
 
+void CGameManager::Change_ShaderSetting(LEVEL eLevelID)
+{
+    m_pShaderManager->Change_ShaderSetting(eLevelID);
+}
+
 #pragma region LOCKON
 
 CTransform* CGameManager::Get_TargetTransform()

@@ -29,6 +29,8 @@ HRESULT CNote::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
+    // 여기서 램덤으로 방향을 6방향중에서 선택
+    SettingNoteDirection();
     return S_OK;
 }
 
@@ -48,7 +50,7 @@ void CNote::Update(_float fTimeDelta)
     if (1.f < fDistance)
         m_pTransformCom->Set_State(STATE::POSITION ,XMVectorLerp(vPos, vTargetPos, fTimeDelta * m_fNoteSpeed));
 
-    m_pModelCom->Set_Animation("N_Dororong_Idle");
+    //m_pModelCom->Set_Animation("N_Dororong_Idle");
     m_pModelCom->Play_Animation(fTimeDelta);
     __super::Update(fTimeDelta);
 }
@@ -142,6 +144,45 @@ HRESULT CNote::Bind_ShaderResources()
         return E_FAIL;
 
     return S_OK;
+}
+
+void CNote::SettingNoteDirection()
+{
+    _uint iIndexRandom = _uint(m_pGameInstance->Random(0.f, 120.f) / 20.f);
+
+    switch (iIndexRandom)
+    {
+    case 0 :
+        m_NoteData.eDirection = DIRECTION::LEFT;
+        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
+        m_NoteData.vBoundAnimRatio = { 8.f, 10.f };
+        break;
+    case 1:
+        m_NoteData.eDirection = DIRECTION::RIGHT;
+        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
+        m_NoteData.vBoundAnimRatio = { 28.f, 30.f };
+        break;
+    case 2:
+        m_NoteData.eDirection = DIRECTION::RIGHT_FRONT;
+        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 40.f, 40.f);
+        m_NoteData.vBoundAnimRatio = { 38.f, 40.f };
+        break;
+    case 3:
+        m_NoteData.eDirection = DIRECTION::LEFT_FRONT;
+        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 40.f, 40.f);
+        m_NoteData.vBoundAnimRatio = { 38.f, 40.f };
+        break;
+    case 4:
+        m_NoteData.eDirection = DIRECTION::LEFT_BACK;
+        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
+        m_NoteData.vBoundAnimRatio = { 8.f, 10.f };
+        break;
+    case 5:
+        m_NoteData.eDirection = DIRECTION::RIGHT_BACK;
+        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
+        m_NoteData.vBoundAnimRatio = { 28.f, 30.f };
+        break;
+    }
 }
 
 CNote* CNote::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

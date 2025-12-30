@@ -32,7 +32,7 @@ public:
 
 	virtual HRESULT						Render() override;
 
-	virtual	void						Damage(void* pArg) override;
+	virtual	HRESULT						Damage(void* pArg) override;
 	virtual void						ActionSuccess(void* pArg) override;
 
 	_bool								bIsLastAttack();

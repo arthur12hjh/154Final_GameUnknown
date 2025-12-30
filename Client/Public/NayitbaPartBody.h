@@ -46,6 +46,7 @@ public:
 	void												Play_DeadEffect();
 
 	void												SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve = false, _float4 vColor = {});
+	void												SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime);
 
 private:
 	CCollider*											m_pColliderCom = { nullptr };
@@ -71,6 +72,8 @@ private:
 
 	_bool												m_bIsChangeBodyColor = { false };
 	_bool												m_bIsChangeColorDissolve = { false };
+	_bool												m_bIsRimLight = { false };
+	_float2												m_fRimLightTime = {};
 	RIMLIGHT_DESC										m_MonsterLimLightDesc = {};
 
 private:

@@ -11,6 +11,7 @@ void* CVolumeFog::Get_Desc()
 {
 	m_tVolumeFogDesc.pInscatterDesc = &m_tInscatterDesc;
 	m_tVolumeFogDesc.pVolumeFogDesc = &m_tVolumeFogCommonDesc;
+	m_tVolumeFogDesc.pActive = &m_isActive;
 
 	return &m_tVolumeFogDesc;
 }
@@ -38,7 +39,7 @@ HRESULT CVolumeFog::Initialize()
 
 	_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
 	/* Target_Fog. */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_VolumeFog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 0.0f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_VolumeFog"), vScreenSize.x, vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 0.0f, 1.0f))))
 		return E_FAIL;
 	/* MRT_Fog */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_VolumeFog"), TEXT("Target_VolumeFog"))))
@@ -106,6 +107,12 @@ void CVolumeFog::Update(_float fTimeDelta)
 
 HRESULT CVolumeFog::Render(CVIBuffer_Rect* pVIBuffer)
 {
+	if (false == m_isActive)
+	{
+		m_pGameInstance->Clear_MRT(TEXT("MRT_VolumeFog"));
+		return S_OK;
+	}
+
 	/* 블러 X 처리 */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_VolumeFog"))))
 		return E_FAIL;

@@ -1209,6 +1209,9 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile">
       <UniqueIdentifier>{0210d8a5-9948-41fc-8869-d08d2c762046}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\05.Renderer\Deferred\Distortion\ShaderFile">
+      <UniqueIdentifier>{48b7a659-f846-4219-a41f-8617c9a4b99c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -1276,6 +1279,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_VolumetricCommon.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\VolumeFog\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl">
+      <Filter>01.Utility\05.Renderer\Deferred\Distortion\ShaderFile</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

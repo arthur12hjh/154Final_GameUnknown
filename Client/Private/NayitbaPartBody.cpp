@@ -51,11 +51,13 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-    
-    //if (m_bIsChangeColorDissolve)
-    //{
-    //    m_fDeadTime += fTimeDelta * 5.f;
-    //}
+
+    if (m_bIsRimLight && m_fRimLightTime.y < INFINITY)
+    {
+        m_fRimLightTime.x += fTimeDelta;
+        if (m_fRimLightTime.x >= m_fRimLightTime.y)
+            m_bIsRimLight = false;
+    }
 
     if (m_bIsEnableCollider)
         m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pColliderSocket) * XMLoadFloat4x4(&m_CombinedWorldMatrix));
@@ -172,6 +174,12 @@ HRESULT CNayitbaPartBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
+        if (m_bIsRimLight)
+        {
+            m_pRimLight->Set_RimLightDesc(m_MonsterLimLightDesc);
+            m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
+        }
+
         if (m_bIsChangeBodyColor)
         {
             if (FAILED(m_pShaderCom->Begin(8)))
@@ -179,13 +187,23 @@ HRESULT CNayitbaPartBody::Render()
         }
         else
         {
+
             if (0 < m_fDeadTime && m_isDeadEffect) {
                 if (FAILED(m_pShaderCom->Begin(5)))
                     return E_FAIL;
             }
             else {
-                if (FAILED(m_pShaderCom->Begin(0)))
-                    return E_FAIL;
+                if (m_bIsRimLight)
+                {
+                    if (FAILED(m_pShaderCom->Begin(2)))
+                        return E_FAIL;
+                }
+                else
+                {
+                    if (FAILED(m_pShaderCom->Begin(0)))
+                        return E_FAIL;
+                }
+                
             }
         }
 
@@ -402,6 +420,9 @@ void CNayitbaPartBody::Play_DeadEffect()
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
+    if(XMVector3Equal(XMLoadFloat4(&vColor), XMVectorZero()))
+        m_vPatternColor = vColor;
+
     /*m_bIsChangeColorDissolve = bIsDissolve;
 
     if (bIsDissolve)
@@ -416,13 +437,16 @@ void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _fl
        }
     }*/
 
-    m_vPatternColor = vColor;
-    m_MonsterLimLightDesc.fRimLightIntensity = 10.f;
-    m_MonsterLimLightDesc.fRimLightPower = 20.f;
-    m_MonsterLimLightDesc.vRimLightColor = vColor;
+    SetRimLightData(bIsEnable, 10.f, 20.f, vColor, INFINITY);
+}
 
-    m_pRimLight->Set_RimLightDesc(m_MonsterLimLightDesc);
-    m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
+void CNayitbaPartBody::SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime)
+{
+    m_bIsRimLight = bIsEnable;
+    m_fRimLightTime = { 0.f, DurTime };
+    m_MonsterLimLightDesc.fRimLightIntensity = fRimLightIntensity;
+    m_MonsterLimLightDesc.fRimLightPower = fRimLightPower;
+    m_MonsterLimLightDesc.vRimLightColor = vRimLightColor;
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
