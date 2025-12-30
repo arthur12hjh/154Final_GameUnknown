@@ -138,6 +138,15 @@ void CCinematicModel_Eve::Update(_float fTimeDelta)
 	case 1: // 고릴라 처형 시네마틱
 		Play_Cinematic_GorillaFinish(fTimeDelta);
 		break;
+	case 2: // 도로롱 조우 시네마틱
+		Play_Cinematic_Dororong_Meet(fTimeDelta);
+		break;
+	case 3: // 홍련 첫 만남
+		Play_Cinematic_Scarlet_FirstMeet(fTimeDelta);
+		break;
+	case 10: // 홍련 이별
+		Play_Cinematic_Scarlet_GoodBye(fTimeDelta);
+		break;
 	case 20: // 홍련 전투 조우
 		Play_Cinematic_Scarlet_Battle_Enter(fTimeDelta);
 		break;
@@ -204,6 +213,15 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 			break;
 		case 1: // 고릴라 처형 시네마틱
 			Initialize_Cinematic_GorillaFinish();
+			break;
+		case 2: // 도로롱 조우 시네마틱
+			Initialize_Cinematic_Dororong_Meet();
+			break;
+		case 3: // 홍련 첫 만남
+			Initialize_Cinematic_Scarlet_FirstMeet();
+			break;
+		case 10: // 홍련 이별
+			Initialize_Cinematic_Scarlet_GoodBye();
 			break;
 		case 20: // 홍련 전투 조우
 			Initialize_Cinematic_Scarlet_Battle_Enter();
@@ -361,6 +379,45 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Dororong_Meet()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = TRUE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_eve_01", FALSE, 1.35f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(684.761f, 31.453f, 383.506f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(684.761f, 31.453f, 382.506f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_FirstMeet()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = FALSE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_EVE_01", FALSE, 1.8f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_GoodBye()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_PlayerDesc.isWeaponVisible = FALSE;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_b", FALSE, 2.f);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Enter()
 {
 	m_bIsActive = TRUE;
@@ -442,6 +499,83 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 		//isSkipped = FALSE;
 		m_bIsActive = FALSE;
 		m_iCinematicCode = -1;
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Dororong_Meet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 2)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_eve_02", FALSE, 1.f, 0.f);
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 2)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_eve_02", FALSE, 2.f, 0.f);
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 4)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_c", FALSE, 2.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_d", FALSE, 2.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 3)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_e", FALSE, 2.f, 0.12f, FALSE);
+		}
+
 	}
 
 	return S_OK;

@@ -22,6 +22,7 @@
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 #include "PlayerCCTQueryFilterCallback.h"
+#include "CinematicModel_Dororong.h"
 
 
 CCinematicModel_Scarlet::CCinematicModel_Scarlet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -131,6 +132,12 @@ void CCinematicModel_Scarlet::Update(_float fTimeDelta)
 
 	switch (m_iCinematicCode)
 	{
+	case 3: // È«·Ã Ã¹ ¸¸³²
+		Play_Cinematic_Scarlet_FirstMeet(fTimeDelta);
+		break;
+	case 10: // È«·Ã ÀÌº°
+		Play_Cinematic_Scarlet_GoodBye(fTimeDelta);
+		break;
 	case 20: // È«·Ã ÀüÅõ Á¶¿ì
 		Play_Cinematic_Scarlet_Battle_Enter(fTimeDelta);
 		break;
@@ -192,6 +199,12 @@ HRESULT CCinematicModel_Scarlet::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 
 	switch (m_iCinematicCode)
 	{
+	case 3: // È«·Ã Ã¹ ¸¸³²
+		Initialize_Cinematic_Scarlet_FirstMeet();
+		break;
+	case 10: // È«·Ã ÀÌº°
+		Initialize_Cinematic_Scarlet_GoodBye();
+		break;
 	case 20: // È«·Ã ÀüÅõ Á¶¿ì
 		Initialize_Cinematic_Scarlet_Battle_Enter();
 		break;
@@ -259,6 +272,30 @@ HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_FirstMeet()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_01_05", FALSE, 2.f, 0.f, TRUE);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_GoodBye()
+{
+	m_bIsActive = TRUE;
+	m_iAnimationSequence = 0;
+	m_fMoveTime = 0.f;
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_b2", FALSE, 2.f, 0.f, TRUE);
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Enter()
 {
 	m_bIsActive = TRUE;
@@ -292,6 +329,74 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Finish()
 	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_Scarlet_01", FALSE, 2.f, 0.f, FALSE, 1400.f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 4)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(740.967f, 2.f, 647.034f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(740.967f, 2.f, 645.034f, 1.f));
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_02", FALSE, 2.f, 0.12f, FALSE, -1.f, 10.f);
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(734.967f, 2.f, 647.834f, 1.f));
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_03", FALSE, 2.f, 0.f, FALSE);
+			//m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+		}
+		else if (m_iAnimationSequence == 3)
+		{
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(734.967f, 2.f, 647.834f, 1.f));
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_04", FALSE, 2.f, 0.f, FALSE);
+			//m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+		}
+
+	}
+
+	return S_OK;
+}
+
+HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta)
+{
+	m_fMoveTime += fTimeDelta;
+	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (isFinished)
+	{
+		++m_iAnimationSequence;
+		if (m_iAnimationSequence == 4)
+		{
+			m_bIsActive = FALSE;
+			m_iCinematicCode = -1;
+		}
+		else if (m_iAnimationSequence == 1)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_c", FALSE, 2.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 2)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_d", FALSE, 2.f, 0.12f, FALSE);
+		}
+		else if (m_iAnimationSequence == 3)
+		{
+			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_e", FALSE, 2.f, 0.12f, FALSE);
+		}
+
+	}
 
 	return S_OK;
 }

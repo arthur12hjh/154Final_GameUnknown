@@ -1,0 +1,38 @@
+[
+    {
+        "CinematicNodeTrackList": [
+            {
+                "eState": 7,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 3,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
+            },
+            {
+                "eState": 1,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 3,
+                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+            },
+	{
+                "eState": 6,
+                "fTrackPosition": 50.0,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+	{
+                "eState": 7,
+                "fTrackPosition": 50.4,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            }
+        ],
+        "iCinematicID": 126,
+        "szCinematicName": "ScarletFirstMeet"
+    }
+]
