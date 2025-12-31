@@ -53,19 +53,19 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_NPC"))))
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	////Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -110,8 +110,16 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
 	//		return;
-
 	//}
+
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
+	}*/
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -238,22 +246,22 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 			return E_FAIL;
 	}*/
 
-	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
-	InteractionDesc.bIsApplyTransform = true;
-	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
-	InteractionDesc.iInteractionID = 5;
-	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
-	for (size_t i = 0; i < 5; i++)
-	{
-		InteractionDesc.vPosition = { 10.f * i,
-								1.f,
-							   //m_pGameInstance->Random(0, 50),
-							   m_pGameInstance->Random(5, 50) };
-	
-		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_CanBox"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
-			return E_FAIL;
-	}
+	//CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	//InteractionDesc.bIsApplyTransform = true;
+	//InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	//InteractionDesc.iInteractionID = 5;
+	//InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
+	//for (size_t i = 0; i < 5; i++)
+	//{
+	//	InteractionDesc.vPosition = { 10.f * i,
+	//							1.f,
+	//						   //m_pGameInstance->Random(0, 50),
+	//						   m_pGameInstance->Random(5, 50) };
+	//
+	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_CanBox"),
+	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+	//		return E_FAIL;
+	//}
 
 	/*InteractionDesc.iInteractionID = 2;
 	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Interaction_Chair117");
@@ -426,7 +434,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//}
 	
 	Desc.iMonsterID = 10;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	Desc.vPosition = { 60.f, 1.f, 60.f };
 	Desc.bIsSuperMonster = false;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
@@ -480,8 +488,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
-	NpcDesc.iNpcID = 1;
-	NpcDesc.vPosition = { 1000.f, 1.f, 150.f };
+	NpcDesc.iNpcID = 4;
+	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;
@@ -513,7 +521,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 
 	pUIHUD->Register_WorldUI(TEXT("Pool_LockOnMark"), TEXT("UI_LockOnMark"), 1, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
 	pUIHUD->Register_WorldUI(TEXT("Pool_InteractionDot"), TEXT("UI_InteractionDot"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
-	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 10, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+	pUIHUD->Register_WorldUI(TEXT("Pool_MonsterVital"), TEXT("UI_Monster_Vital"), 30, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_World"));
+
 	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
@@ -523,6 +532,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Shop"))))
 		return E_FAIL;
 
 	return S_OK;

@@ -92,12 +92,7 @@ private:
 	TOOL_MODE			m_eToolMode = { TOOL_MODE::END };
 
 private:
-	class CPlayer* m_pPlayer = { nullptr };
-	class CTerrain* m_pTerrain = { nullptr };
-
-	_bool				m_bIsDeplayMode = { false };
 	_bool				m_bIsMapMode = { false };
-	_bool				m_bIsDragging = { false };
 
 	// ºû
 	_int				m_iSelectedLightIndex = {-1};

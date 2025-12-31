@@ -1567,6 +1567,92 @@ PS_OUT PS_MAP_SELECTOR(PS_IN In)
 
 /*------------------[E_MAP_SELECTOR]----------------*/
 
+/*------------------[S_SHOP]----------------*/
+
+PS_OUT PS_SHOP(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 BG = g_Texture0.Sample(DefaultSampler, uv);
+    BG.a = 1.f;
+    
+    float2 ScaleUV = uv;
+    ScaleUV -= float2(720.f / 1600.f, 383.f / 900.f) * 0.5f;
+    ScaleUV /= float2(1280.f / 1600.f, 576.f / 900.f);
+    ScaleUV += float2(720.f / 1600.f, 383.f / 900.f) * 0.5f;
+    
+    float4 InnerFrame = g_Texture1.Sample(NoneSampler, ScaleUV);
+    
+    float2 NpcUV = uv;
+    NpcUV -= float2(1.f, 1.f);
+    NpcUV /= float2(272.f / 1600.f, 410.f / 900.f);
+    NpcUV += float2(1.f, 1.f);
+    
+    float4 Npc = g_Texture2.Sample(NoneSampler, NpcUV);
+    
+    float2 ScriptBGUV = uv;
+    ScriptBGUV -= float2(1000.f / 1600.f, 880.f / 900.f);
+    ScriptBGUV /= float2(723.f / 1600.f, 209.f / 900.f);
+    ScriptBGUV += float2(1000.f / 1600.f, 880.f / 900.f);
+    
+    float4 ScriptBG = g_Texture3.Sample(NoneSampler, ScriptBGUV);
+    
+    float4 result = BG;
+    result = lerp(result, InnerFrame, InnerFrame.a);
+    result = lerp(result, Npc, Npc.a);
+    result = lerp(result, ScriptBG, ScriptBG.a);
+    
+    Out.vColor = result * g_Alpha;
+    
+    return Out;
+}
+
+/*------------------[E_SHOP]----------------*/
+
+/*------------------[S_SHOP_SLOT]----------------*/
+
+PS_OUT PS_SHOP_SLOT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 Slot = g_Texture0.Sample(DefaultSampler, uv);
+    
+    float4 Result = Slot;
+    
+    if(In.vAtlasIndex.w == 1.f)
+    {
+        float4 Hover = g_Texture1.Sample(DefaultSampler, uv);
+        Result = lerp(Result, Hover, Hover.a);
+    }
+    
+    Out.vColor = Result;
+    
+    return Out;
+}
+
+/*------------------[E_SHOP_SLOT]----------------*/
+
+/*------------------[S_ITEM_ICON]----------------*/
+
+PS_OUT PS_ITEM_ICON(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
+    
+    Out.vColor = Icon;
+    
+    return Out;
+}
+
+/*------------------[E_ITEM_ICON]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1869,5 +1955,35 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAP_SELECTOR();
+    }
+
+    pass SHOP // 29
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SHOP();
+    }
+   
+    pass SHOP_SLOT // 30
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SHOP_SLOT();
+    }
+
+    pass ITEM_ICON // 31
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_ITEM_ICON();
     }
 }

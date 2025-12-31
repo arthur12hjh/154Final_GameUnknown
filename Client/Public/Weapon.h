@@ -41,7 +41,7 @@ public:
 	void						EnableCollider(_bool bIsEnable);
 
 	void						Set_PlayerDesc(PLAYER_DESC* pPlayerDesc);
-
+	void						Set_TrailEffectVisible(_bool bFlag); 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 

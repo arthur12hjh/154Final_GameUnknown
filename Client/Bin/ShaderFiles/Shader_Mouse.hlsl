@@ -83,6 +83,7 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;    
     
     vector vTexture = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    
     if (vTexture.a < 0.3f)
         discard;
     

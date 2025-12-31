@@ -35,12 +35,12 @@ HRESULT CJointChain::Set_Root(CRigidBody* pRigidBody)
     static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setSolverIterationCounts(24, 8); // posIters/velIters (일단 강하게)
     //   - "너무 금방 멈춘다/찰랑이 없다" -> AngularDamping 내리기 (예: 2.0 -> 1.0 ~ 1.5)
     //   - "상모돌리기/과회전"           -> AngularDamping 올리기 (예: 2.0 -> 3.0 ~ 4.0)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setAngularDamping(0.9f);
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setAngularDamping(2.f);
     // - 머리카락처럼 "가볍게" 보이려면 보통 낮게 둠(0.05~0.3 선에서 많이 시작)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setLinearDamping(0.09f);
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setLinearDamping(0.06f);
     //   - "돌아오는게 느리다/답답" -> MaxAngularVelocity 올리기 (예: 8 -> 15~30)
     //   - "너무 과하게 휙휙 돈다" -> MaxAngularVelocity 내리기 (예: 30 -> 15)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxAngularVelocity(15.f);
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxAngularVelocity(5.f);
     //   - "몸에 닿으면 질질 끌리고 느리다" -> MaxDepenetrationVelocity 올리기 (예: 2 -> 6~12)
     //   - "충돌 때 튕겨나가며 과장"        -> MaxDepenetrationVelocity 내리기 (예: 12 -> 6)
     static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxDepenetrationVelocity(0.2f); // 충돌 보정 폭주 억제

@@ -496,7 +496,7 @@ void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _fl
        }
     }*/
 
-    SetRimLightData(bIsEnable, 10.f, 20.f, vColor, INFINITY);
+    SetRimLightData(bIsEnable, 10.f, 60.f, vColor, INFINITY);
 }
 
 void CNayitbaPartBody::SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime)

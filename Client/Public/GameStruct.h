@@ -602,6 +602,14 @@ namespace Client
 		_float  fIntensity;
 	} COLORCHANGE_DEFERRED_DESC;
 
+	typedef struct tagShopDataDesc
+	{
+		_uint iID;
+		_uint iPrice;
+		_wstring szItemTag;
+		_wstring szScript;
+	}SHOP_DESC;
+
 	typedef	struct BeatSaberCharacterDesc
 	{
 		long long	iScore;

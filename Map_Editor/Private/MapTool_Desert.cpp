@@ -4483,7 +4483,7 @@ HRESULT CMapTool_Desert::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szLoadFilePath[256] = "../Bin/DataFiles/DaeChanbin.bin";
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData_Xion.bin";
 	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
 
 	if (ImGui::Button("Load"))

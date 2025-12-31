@@ -4,7 +4,7 @@
 
 #include "JsonParser.h"
 #include "StringHelper.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 
 #include "UIBase.h"
 #include "UIAnimManager.h"
@@ -21,6 +21,7 @@
 #include "PlayerFSM.h"
 
 #include "UIPopup.h"
+#include "UIShop.h"
 #include "UILockOn.h"
 #include "Lift_Controller.h"
 
@@ -57,7 +58,7 @@ void CUIHUD::Update(_float fTimeDelta)
 				_float3 newPos{};
 				_float3 vPivot{ 0.f, 0.f, 0.f };
 
-				CInteractionUIBinder* pInteraction = dynamic_cast<CInteractionUIBinder*>(Interactions[i]);
+				CInteractionBinder* pInteraction = dynamic_cast<CInteractionBinder*>(Interactions[i]);
 				CGameObject* pOwner = pInteraction->GetOwner();
 
 				if (pInteraction->Get_InterDesc())
@@ -127,11 +128,19 @@ void CUIHUD::Update(_float fTimeDelta)
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+			for (auto& pWorldUIs : m_WorldUIs)
+			{
+				for (auto& pUI : pWorldUIs.second)
+				{
+					if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::HIDDEN);
+				}
+			}
 			for (auto& pWorldUIs : m_RentWorldUIs)
 			{
 				for (auto& pUI : pWorldUIs.second)
 				{
-					//if (pUI->Get_Rent())
+					if (pUI->Get_Rent())
 						pUI->SetVisibility(VISIBILITY::HIDDEN);
 				}
 			}
@@ -142,6 +151,14 @@ void CUIHUD::Update(_float fTimeDelta)
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
+			for (auto& pWorldUIs : m_WorldUIs)
+			{
+				for (auto& pUI : pWorldUIs.second)
+				{
+					if (pUI->Get_Rent())
+						pUI->SetVisibility(VISIBILITY::HIDDEN);
+				}
+			}
 			for (auto& pWorldUIs : m_RentWorldUIs)
 			{
 				for (auto& pUI : pWorldUIs.second)
@@ -268,6 +285,40 @@ void CUIHUD::Close_Popup(const _wstring& szPopupTag)
 		return;
 
 	pPopup->Close_Popup();
+}
+
+void CUIHUD::Open_Shop()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Shop"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Shop"));
+
+	CUIShop* pShop = dynamic_cast<CUIShop*>(pObj->second);
+
+	if (!pShop)
+		return;
+
+	pShop->Open_Shop();
+}
+
+void CUIHUD::Close_Shop()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Shop"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Shop"));
+
+	CUIShop* pShop = dynamic_cast<CUIShop*>(pObj->second);
+
+	if (!pShop)
+		return;
+
+	pShop->Close_Shop();
 }
 
 _bool CUIHUD::Check_isOpenPopup(const _wstring& szPopupTag)
@@ -1081,6 +1132,7 @@ HRESULT CUIHUD::Register_WorldUI(const _wstring& szPoolTag, const _wstring& szUI
 
 			pool.push_back(pUI);
 		}
+		pUIBase->SetVisibility(VISIBILITY::HIDDEN);
 		Safe_Release(pUIBase);
 	}
 
@@ -1163,10 +1215,12 @@ void CUIHUD::Return_WorldUI(CUIBase*& pUI)
 
 	_wstring szPoolTag = pUI->Get_UIBase_Desc().szPoolTag;
 
-	for (auto iter = m_RentWorldUIs[szPoolTag].begin(); iter == m_RentWorldUIs[szPoolTag].end();)
+	for (auto iter = m_RentWorldUIs[szPoolTag].begin(); iter != m_RentWorldUIs[szPoolTag].end();)
 	{
 		if (*iter == pUI)
+		{
 			iter = m_RentWorldUIs[szPoolTag].erase(iter);
+		}
 		else
 			++iter;
 	}

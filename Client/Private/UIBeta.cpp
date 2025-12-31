@@ -96,6 +96,11 @@ void CUIBeta::Update(_float fTimeDelta)
 
 	// ÇöÀç ¹­À½ ÀÎµ¦½º
 	m_iCurrentvGroupFilled = filledGroups / m_iPerCount;  // 0~5 ¹üÀ§
+
+	Set_Size(((*m_iMaxCount / m_iPerCount) * 16.f) + (6.0f * ((*m_iMaxCount / m_iPerCount) - 1)), 16.f);
+	m_tUIDesc.fOffsetX = m_tOriginUIDesc.fOffsetX + (11.f * ((*m_iMaxCount / m_iPerCount) - 5));
+	/*m_tUIDesc.fOffsetX = m_tOriginUIDesc.fOffsetX - m_tUIDesc.fSizeX;
+	Set_Position(m_tUIDesc.fOffsetX, m_tUIDesc.fOffsetY);*/
 }
 
 void CUIBeta::Late_Update(_float fTimeDelta)
@@ -164,7 +169,7 @@ HRESULT CUIBeta::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_TileCount", &vTile, sizeof(_float2))))
 		return E_FAIL;
 
-	_float fGroupCount{ 5.f };
+	_float fGroupCount{ (_float)(*m_iMaxCount / m_iPerCount) };
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GroupCount", &fGroupCount, sizeof(_float))))
 		return E_FAIL;

@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "StringHelper.h"
-#include "InteractionUIBinder.h"
+#include "InteractionBinder.h"
 
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
@@ -74,7 +74,13 @@ void CNpc::Update(_float fTimeDelta)
             }
 
             if (!dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")))->Get_Has_Script_Desc())
+            {
+                if (m_NpcDesc->iNpcID == 4) // »óÁ¡ npc
+                {
+                    pHUD->Open_Shop();
+                }
                 m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+            }
 
             Safe_Release(pHUD);
         }
@@ -196,13 +202,15 @@ HRESULT CNpc::Ready_Components()
     InteractionDesc.EndCallBackFunc = [&]() { End_Interaction(); };
     InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_Interaction(fTimeDelta, pActionObject); };
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionUIBinder"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
         return E_FAIL;
     m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(m_NpcDesc->iInteractionID));
     m_pInteractionCom->SetOwner(this);
+
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
     /* Com_CCT */
     CCharacterController::CCT_DESC Desc;

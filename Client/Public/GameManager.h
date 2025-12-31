@@ -55,6 +55,7 @@ public :
 	const CINEMATIC_DESC*				Find_CinematicData(_uint iCinematicIndex);
 	const vector<TRANSPORT_DESC>*		Find_TransportData();
 	const TRANSPORT_DESC*				Find_TransportData(_uint iAreaID);
+	const vector<SHOP_DESC>*			Get_ShopDatas();
 
 	const SCRIPT_DESC*					Get_ScriptData(const _wstring& szScriptTag);
 	map<_uint, BETA_SKILL_DESC>*		Get_AllBetaSkillDesc();

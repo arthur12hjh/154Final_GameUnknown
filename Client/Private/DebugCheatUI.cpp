@@ -381,6 +381,7 @@ void CDebugCheatUI::DrawGameSpeedDebug()
 
     if(ImGui::SliderFloat("Game Speed Ratio", &m_fGameSpeed, 0.001f, 3.f))
     {
+        //юс╫ц
        m_pGameInstance->SetGameSpeed(m_fGameSpeed);
     }
     if (ImGui::IsItemHovered())

@@ -19,7 +19,10 @@ void CNpcIdleState::Start(void* pArg, CState* pPreState)
 {
     CNpc* pNpc = static_cast<CNpc*>(m_pOwner);
 
-    pNpc->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_03_05_loop");
+    if(pNpc->Get_NpcDesc()->iNpcID == 1)
+        pNpc->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_03_05_loop");
+    else if (pNpc->Get_NpcDesc()->iNpcID == 4)
+        pNpc->Set_Animation("N_Digger_Idle");
 }
 
 void CNpcIdleState::Update(_float fTimeDelta)

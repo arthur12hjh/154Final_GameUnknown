@@ -313,6 +313,7 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 		pEffect->GetTransform()->Set_State(STATE::POSITION, m_pCharacter->GetTransform()->Get_State(STATE::POSITION) + XMVectorSet(AnimNotify.vNotifyPosition.x, AnimNotify.vNotifyPosition.y, AnimNotify.vNotifyPosition.z, 0));
 	}
 
+	m_pCharacter->CallNotify(PLAY_SFX, &AnimNotify);
 	return S_OK;
 }
 

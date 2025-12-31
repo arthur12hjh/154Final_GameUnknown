@@ -231,9 +231,10 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	//m_pSkillData.push(m_pGameManager->Find_SkillData(52));
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(42));
 	//SelectAttackData();
 
+	//EntranceAttack();
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -273,21 +274,14 @@ void CTask_ScarletAttack::NormalAttackPattern()
 
 	switch(pSkill_Data->iSkillID)
 	{
-	case 27 : case 30:
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
+	case 27 : case 30: case 45: case 46: case 52: 	case 23:
+		if (fDistance >= pSkill_Data->fRange)
 			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
 		break;
+
 	case 25: case 26:
 		if (fDistance <= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 4.f)
 			bIsSelectAttack = false;
-		break;
-
-	case 45: case 46: case 52:
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
-			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
-		break;
-	case 23:
-		m_pSkillData.push(m_pGameManager->Find_SkillData(22));
 		break;
 	}
 	
@@ -306,9 +300,18 @@ void CTask_ScarletAttack::EntranceAttack()
 	switch (ePhase)
 	{
 	case CBossBlackBoard::BOSS_PAHSE::FIRST:
-		m_pSkillData.push(m_pGameManager->Find_SkillData(20));
-		break;
+	{
+		auto pPhaseSkillData = m_pGameManager->Find_SkillData(20);
+		_float fDistance = m_pBlackBoard->GetTargetDistance();
+
+		if(fDistance > pPhaseSkillData->fRange * 2.f)
+			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
+		m_pSkillData.push(pPhaseSkillData);
+	}
+	break;
+
 	case CBossBlackBoard::BOSS_PAHSE::SECOND:
+		m_pSkillData.push(m_pGameManager->Find_SkillData(56));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
@@ -337,7 +340,8 @@ void CTask_ScarletAttack::CancelSkillData()
 
 	if (22 == pSkillData->iSkillID)
 	{
-		if(5.f >= fDistance)
+		auto NextSkillData = m_pSkillData.front();
+		if (NextSkillData->fRange >= fDistance)
 			SelectAttackData();
 	}
 }

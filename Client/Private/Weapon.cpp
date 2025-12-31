@@ -385,6 +385,14 @@ void CWeapon::Set_PlayerDesc(PLAYER_DESC* pPlayerDesc)
 	m_pPlayerDesc = pPlayerDesc;
 }
 
+void CWeapon::Set_TrailEffectVisible(_bool bFlag)
+{
+	for (_uint i = 0; i < 4; ++i)
+	{
+		m_pTrail[i]->Set_Visible(bFlag);
+	}
+}
+
 HRESULT CWeapon::Ready_Components()
 {
 	/* Com_Model */

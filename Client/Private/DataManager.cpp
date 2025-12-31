@@ -28,6 +28,7 @@ HRESULT CDataManager::Initalize()
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadScriptData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadNpcData(pArg); });
     CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadTransportData(pArg); });
+    CGameInstance::GetInstance()->Add_ThreadjobList([&](void* pArg) { LoadShopData(pArg); });
 
     return S_OK;
 }
@@ -266,11 +267,9 @@ map<_uint, CINEMATIC_DESC>* CDataManager::Get_CinematicDataMap()
     return &m_CinematicDatas;
 }
 
-void CDataManager::Refresh()
+const vector<SHOP_DESC>* CDataManager::Get_ShopDatas()
 {
-    m_AnimationNotifyDatas.clear();
-    if (FAILED(LoadAnimNotifyData()))
-        return;
+    return &m_ShopDatas;
 }
 
 HRESULT CDataManager::LoadNaytibaData(void* pArg)
@@ -908,6 +907,31 @@ HRESULT CDataManager::LoadTransportData(void* pArg)
 		desc.eTargetLevel = jInfo["eTargetLevel"];
 
         m_Transports.push_back(desc);
+    }
+
+    return S_OK;
+}
+
+HRESULT CDataManager::LoadShopData(void* pArg)
+{
+    THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+    Json Datas{};
+
+    CJsonParser::ReadJsonData("../../Client/Bin/DataFiles/ItemData/ShopData.json", Datas);
+
+    for (auto& iter : Datas["ShopDatas"].items())
+    {
+        _uint id = stoi(iter.key());
+
+        auto& jInfo = iter.value();
+
+        SHOP_DESC desc{};
+        desc.iID = id;
+		desc.iPrice = jInfo["iPrice"];
+        desc.szItemTag = UTF8ToWString(jInfo["szItemTag"]);
+        desc.szScript = UTF8ToWString(jInfo["szScript"]);
+
+        m_ShopDatas.push_back(desc);
     }
 
     return S_OK;

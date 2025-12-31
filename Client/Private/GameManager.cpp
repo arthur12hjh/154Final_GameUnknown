@@ -160,6 +160,11 @@ const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
     return m_pDataManager->Find_CinematicData(iCinematicIndex);
 }
 
+const vector<SHOP_DESC>* CGameManager::Get_ShopDatas()
+{
+    return m_pDataManager->Get_ShopDatas();
+}
+
 void CGameManager::EnableTransport(_uint iAreaID)
 {
     m_pDataManager->EnableTransport(iAreaID);

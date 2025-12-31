@@ -140,13 +140,36 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_TYPE::POINT;
+	/*LightDesc.eType = LIGHT_TYPE::POINT;
 	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	LightDesc.fRange = 50.f;
-	LightDesc.vPosition = _float4(200.f, 10.f, 200.f, 1.f);
+	
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;*/
+
+
+	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
+	Load_Light_Data();
+
+	/*LIGHT_DESC			LightDesc{};
+
+	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
+	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
+	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
+		return E_FAIL;*/
+
+	LightDesc.eType = LIGHT_TYPE::POINT;
+	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
+	LightDesc.vSpecular = LightDesc.vDiffuse;
+	LightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
+	LightDesc.fRange = 10.f;
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
@@ -555,7 +578,7 @@ HRESULT CLevel_Scarlet::Load_Light_Data()
 		return E_FAIL;
 	}
 
-	const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
+	/*const list<CLight*>* pLights = m_pGameInstance->GetAllLight();
 
 	if (pLights && !pLights->empty())
 	{
@@ -563,7 +586,7 @@ HRESULT CLevel_Scarlet::Load_Light_Data()
 		{
 			pLight->SetDead(true);
 		}
-	}
+	}*/
 
 	_uint iNumLights = 0;
 	ifs.read(reinterpret_cast<_char*>(&iNumLights), sizeof(_uint));

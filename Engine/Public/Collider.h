@@ -50,8 +50,9 @@ public:
 
 	void					ADD_HitObject(CGameObject* pObject);
 
-	void					ADD_HitObjectType(HIT_TYPE eHitType);
 	void					ADD_IgnoreObjectType(HIT_TYPE eHitType);
+	void					Remove_IgnoreObjectType(HIT_TYPE eHitType);
+
 	void					ADD_OnlyHitObjectType(HIT_TYPE eHitType);
 
 	void					Clear_HitObjectTypeList();

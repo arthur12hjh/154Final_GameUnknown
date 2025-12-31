@@ -63,7 +63,6 @@ void CBullet_Rock::Update(_float fTimeDelta)
 			_float fRatio = m_LerpTime.x / m_LerpTime.y;
 			if (0.7f >= fRatio)
 			{
-				
 				m_pTransformCom->Set_State(STATE::POSITION, BezierCurve(5, m_vLerpPoints, fRatio));
 			}
 			else
@@ -82,7 +81,7 @@ void CBullet_Rock::Late_Update(_float fTimeDelta)
 	if (false == m_bIsEnableCollider)
 		return;
 
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 8000.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3], 800.f))
 	{
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
@@ -199,7 +198,7 @@ HRESULT CBullet_Rock::ADD_Components(BULLET_DESC& pDesc)
         return E_FAIL;
 
     COBBCollider::OBB_COLLIDER_DESC pOBBDesc = {};
-    pOBBDesc.vSize = { 1.f, 1.f, 1.f };
+    pOBBDesc.vSize = { 2.f, 1.f, 1.f };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
         TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &pOBBDesc)))
