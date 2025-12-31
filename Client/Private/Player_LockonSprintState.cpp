@@ -49,7 +49,6 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintState::Update(_float fTimeDelta)
 			m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 1.f, false, -1.f, 1.f, true, true);
 
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 2.f);
-
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) &&
 			 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
@@ -69,9 +68,11 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintState::Update(_float fTimeDelta)
 			 m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
 			 m_eDirection == PLAYER_DIRECTION::RIGHT)
 	{
+
+		//?????
 		if (false == m_isSprintStart && false == m_isRunning)
 		{
-			m_pPlayer->Set_Animation("Proto_Battle_Sprint_Right", true, 1.2f, 0.f, false, -1.f, 4.f);
+			m_pPlayer->Set_Animation("Proto_Battle_Sprint_Right", true, 1.2f, 0.08f, false, -1.f, 4.f);
 			m_isRunning = true;
 		}
 		else if (PLAYER_DIRECTION::RIGHT != m_eDirection && false == m_isSprintStart && true == m_isRunning)
