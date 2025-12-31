@@ -162,6 +162,7 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
+    <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
@@ -292,6 +293,7 @@
     <ClInclude Include="..\public\ScarletBlackBoard.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
+    <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
@@ -493,6 +495,7 @@
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
+    <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
@@ -622,6 +625,7 @@
     <ClCompile Include="..\private\ScarletBlackBoard.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
+    <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />

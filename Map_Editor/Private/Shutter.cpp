@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Door.h"
+#include "Shutter.h"
 #include "GameInstance.h"
 
-CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CShutter::CShutter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CDesertObject{ pDevice, pContext }
 {
 }
 
-CDoor::CDoor(const CDoor& Prototype)
+CShutter::CShutter(const CShutter& Prototype)
     : CDesertObject{ Prototype }
 {
 }
 
-HRESULT CDoor::Initialize_Prototype()
+HRESULT CShutter::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CDoor::Initialize(void* pArg)
+HRESULT CShutter::Initialize(void* pArg)
 {
 
     DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
@@ -39,17 +39,17 @@ HRESULT CDoor::Initialize(void* pArg)
     return S_OK;
 }
 
-void CDoor::Priority_Update(_float fTimeDelta)
+void CShutter::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CDoor::Update(_float fTimeDelta)
+void CShutter::Update(_float fTimeDelta)
 {
     _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(worldMatrix);
 }
 
-void CDoor::Late_Update(_float fTimeDelta)
+void CShutter::Late_Update(_float fTimeDelta)
 {
     /*if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
@@ -65,7 +65,7 @@ void CDoor::Late_Update(_float fTimeDelta)
 #endif
 }
 
-HRESULT CDoor::Render()
+HRESULT CShutter::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
@@ -80,8 +80,6 @@ HRESULT CDoor::Render()
             return E_FAIL;
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-            return E_FAIL;
 
         if (FAILED(m_pShaderCom->Begin(0)))
             return E_FAIL;
@@ -93,7 +91,7 @@ HRESULT CDoor::Render()
     return S_OK;
 }
 
-HRESULT CDoor::Ready_Components(const _tchar* pComponentTag)
+HRESULT CShutter::Ready_Components(const _tchar* pComponentTag)
 {
     /* Com_Model */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), pComponentTag,
@@ -108,7 +106,7 @@ HRESULT CDoor::Ready_Components(const _tchar* pComponentTag)
     return S_OK;
 }
 
-HRESULT CDoor::Bind_ShaderResources()
+HRESULT CShutter::Bind_ShaderResources()
 {
     /*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -122,9 +120,9 @@ HRESULT CDoor::Bind_ShaderResources()
     return S_OK;
 }
 
-CDoor* CDoor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CShutter* CShutter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CDoor* pInstance = new CDoor(pDevice, pContext);
+    CShutter* pInstance = new CShutter(pDevice, pContext);
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
@@ -135,20 +133,20 @@ CDoor* CDoor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     return pInstance;
 }
 
-CDesertObject* CDoor::Clone(void* pArg)
+CDesertObject* CShutter::Clone(void* pArg)
 {
-    CDoor* pInstance = new CDoor(*this);
+    CShutter* pInstance = new CShutter(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Cloned : CDoor");
+        MSG_BOX("Failed to Cloned : CShutter");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CDoor::Free()
+void CShutter::Free()
 {
     __super::Free();
 

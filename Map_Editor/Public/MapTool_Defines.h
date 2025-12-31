@@ -122,7 +122,7 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region Deco_Statue, Door
-		DOOR_3A, DOOR_3C, DOOR_3D, STATUE_1A, STATUE_19B, STATUE_24B, STATUE_31B, STATUE_40B,
+		DOOR_3A, DOOR_SHUTTER, DOOR_CONTROLLER, STATUE_1A, STATUE_19B, STATUE_24B, STATUE_31B, STATUE_40B,
 #pragma endregion
 
 #pragma region Deco_Furniture

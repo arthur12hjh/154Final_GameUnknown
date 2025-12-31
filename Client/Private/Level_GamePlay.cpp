@@ -65,6 +65,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -592,6 +593,8 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	
 	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DisplayBox"), TEXT("Layer_DisplayBox")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Shutter"), TEXT("Layer_Shutter")))) return S_OK;
 #pragma endregion
 
 	ifs.close();
