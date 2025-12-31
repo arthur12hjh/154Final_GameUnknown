@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "Player.h"
 
 CBullet::CBullet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -86,6 +87,27 @@ void CBullet::Update_BulletCombinedMatrix()
     }
     else
         memcpy(&m_CombinedWorldMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
+}
+
+_bool CBullet::ReflectBullet(CGameObject* pObject)
+{
+    if (BULLET_TYPE::PROJECTILE == m_eBulletType)
+    {
+        auto pPlayer = dynamic_cast<CPlayer*>(pObject);
+        if (pPlayer)
+        {
+            if (pPlayer->Get_Desc()->isJustParryable)
+            {
+                XMStoreFloat3(&m_vProjectileDir, XMLoadFloat3(&m_vProjectileDir) * -1.f);
+                m_pParent = pObject;
+                m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
+                m_pColliderCom->Remove_IgnoreObjectType(HIT_TYPE::MONSTER);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 CGameObject* CBullet::Clone(void* pArg)

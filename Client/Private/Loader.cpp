@@ -1149,7 +1149,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationX(XMConvertToRadians(90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Cylinder");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Cylinder/Cylinder.fbx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Cylinder/Cylinder.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -55,11 +55,11 @@ protected :
 	_bool							m_bIsAttachment = { true };
 
 protected :
-	void						Update_BulletCombinedMatrix();
-
+	void							Update_BulletCombinedMatrix();
+	_bool							ReflectBullet(CGameObject* pObject);
 
 public:
-	virtual CGameObject*		Clone(void* pArg) override;
-	virtual void				Free() override;
+	virtual CGameObject*			Clone(void* pArg) override;
+	virtual void					Free() override;
 };
 NS_END

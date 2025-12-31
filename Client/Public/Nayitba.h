@@ -137,6 +137,9 @@ private :
 	void									Attack_Interaction(const AnimNotify* pNotify);
 	void									Change_Color(const AnimNotify* pNotify);
 	void									Draw_AttackLine(const AnimNotify* pNotify);
+	void									Play_SFXEffect(const AnimNotify* pNotify);
+
+	_bool									Compare_SFX_Name(const string& szSFXName);
 #pragma endregion
 
 #pragma region Damage Logic

@@ -69,7 +69,7 @@ HRESULT CAttackHitBox::Initialize(const HIT_BOX_DESC& pArg)
 	m_pTransformCom->Set_Scale(XMLoadFloat3(&pArg.vScale));
 
 	auto HitType = m_pColliderCom->GetCollierHitType();
-	m_pColliderCom->ADD_HitObjectType(HitType);
+	m_pColliderCom->Remove_IgnoreObjectType(HitType);
 
 	m_pColliderCom->SetColliderHitType(pArg.eHitBoxType);
 	m_pColliderCom->ADD_IgnoreObjectType(pArg.eHitBoxType);
