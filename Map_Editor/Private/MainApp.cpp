@@ -59,7 +59,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototypes()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::VILLAGE)))
+	if (FAILED(Start_Level(LEVEL::DESERT)))
 		return E_FAIL;
 
 	return S_OK;
