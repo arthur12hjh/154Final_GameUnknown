@@ -16,6 +16,7 @@
 #pragma region PartObject
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
+#include "NaytibaBeam_Part.h"
 #pragma endregion
 
 #pragma region Component
@@ -185,7 +186,12 @@ void CNaytiba::Late_Update(_float fTimeDelta)
 HRESULT CNaytiba::Render()
 {
 	for (auto& pPartObject : m_PartObjects)
+	{
+		if (TEXT("Part_Beam") == pPartObject.first)
+			continue;
+
 		pPartObject.second->Render();
+	}
 
 	return S_OK;
 }
@@ -229,7 +235,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (S_OK == m_pAIController->Damage(pArg))
 	{
 		// 여기서 몬스터 림라이트 처리
-		m_pPartBody->SetRimLightData(true, 10.f, 20.f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
+		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
 	}
 
 	return S_OK;
@@ -249,6 +255,9 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 
 	switch (NotiType)
 	{
+	case CNotify::PLAY_SFX:
+		Play_SFXEffect(pNotify);
+		break;
 	case CNotify::ACTIVE_COLLISION:
 		CreateHitBox(pNotify);
 		break;
@@ -268,7 +277,20 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 		Change_Color(pNotify);
 		break;
 	case CNotify::SET_VISIBLITY:
-		m_bIsActive = pNotify->iNumData01;
+	{
+		if("" == pNotify->szNotifyArg01)
+			m_bIsActive = pNotify->iNumData01;
+		else
+		{
+			_wstring szPartName = _wstring(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
+			auto partObject = m_PartObjects.find(szPartName.c_str());
+
+			if (partObject != m_PartObjects.end())
+			{
+				partObject->second->SetVisibility(VISIBILITY(!pNotify->iNumData01));
+			}
+		}
+	}
 		break;
 	}
 
@@ -706,6 +728,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 
 	Import_ModelPtr();
 
+	 // 무기랑 빔?
 	if (strcmp("None", m_pInitMonsterInfo->szLeftWeaponPrototypeName))
 	{
 		CNaytibaLeftWeaponPart::WEAPON_DESC LWeaponDesc = { };
@@ -731,6 +754,20 @@ HRESULT CNaytiba::ADD_PartObjects()
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
 		RWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
+			return E_FAIL;
+	}
+
+	if (10 == m_pInitMonsterInfo->iMonsetID)
+	{
+		CNaytibaBeam_Part::BEAM_DESC BeamDesc = { };
+		BeamDesc.bIsApplyTransform = true;
+		BeamDesc.pParentTransform = m_pTransformCom;
+		BeamDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
+		BeamDesc.vScale = { 0.02f, 0.02f, 1.f };
+		BeamDesc.vRotation = { XMConvertToRadians(90.f), 0.f, 0.f, 0.f };
+		BeamDesc.fSpeedPerSec = 5.f;
+
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_BeamPart"), TEXT("Part_Beam"), &BeamDesc)))
 			return E_FAIL;
 	}
 
@@ -1005,7 +1042,6 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	//	"szNotifyArg01" : "Prototype_GameObject_RockBullet"
 	//	"szNotifyArg02" : "RockBullet_Layer",
 	//	"szNotifyArg03" : "Bip001-R-Hand",
-
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
 	
@@ -1075,7 +1111,7 @@ void CNaytiba::ShootProjectile(const AnimNotify* pNotify)
 		if (iter->bIsHit())
 			iter->Set_Dead(true);
 		else
-			iter->Shoot_Projectile(vTargetPos, 10000.f);
+			iter->Shoot_Projectile(vTargetPos, 40.f);
 	}
 
 	m_pBulletList.clear();
@@ -1105,7 +1141,7 @@ void CNaytiba::Change_Color(const AnimNotify* pNotify)
 {
 	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
 	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
-	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
+	// pNotify->iNumData03 : 사라질지 말지
 	if (false == pNotify->iNumData01)
 	{
 		if (false == m_bIsActive)
@@ -1113,6 +1149,35 @@ void CNaytiba::Change_Color(const AnimNotify* pNotify)
 	}
 
 	m_pPartBody->SetPart_BodyColor(pNotify->iNumData01, pNotify->iNumData03 , CLINET_COLOR_PATTERN[pNotify->iNumData02]);
+}
+
+void CNaytiba::Draw_AttackLine(const AnimNotify* pNotify)
+{
+	auto pBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg01.c_str());
+	
+
+	_vector vStartPos = XMLoadFloat4x4(pBoneMatrix).r[3];
+	_vector vEndPos = vStartPos + m_pTransformCom->Get_State(STATE::LOOK) * pNotify->fNumData01;
+
+	
+}
+
+void CNaytiba::Play_SFXEffect(const AnimNotify* pNotify)
+{
+	if (Compare_SFX_Name(pNotify->szNotifyArg01))
+	{
+		m_pPartBody->SetRimLightData(true, 4.f, 3.f, { 0.8f ,0.8f, 0.8f, 1.f }, 0.4f);
+	}
+}
+
+_bool CNaytiba::Compare_SFX_Name(const string& szSFXName)
+{
+	if ("Prototype_Component_Effect_Power_Yellow" == szSFXName ||
+		"Prototype_Component_Effect_SheildBreak_Yellow" == szSFXName ||
+		"Prototype_Component_Effect_Scarlet_Yellow" == szSFXName)
+		return true;
+
+	return false;
 }
 
 CNaytiba* CNaytiba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

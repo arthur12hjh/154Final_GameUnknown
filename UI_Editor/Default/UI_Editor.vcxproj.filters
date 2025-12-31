@@ -72,6 +72,12 @@
     <Filter Include="999. CPP From Client\05. ETC">
       <UniqueIdentifier>{fdc9eb23-baec-4f26-bab5-a3212d906b3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Level\BeatSaber">
+      <UniqueIdentifier>{0943b98c-25d3-459a-832c-01a1dfc9e2b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999. CPP From Client\05. Beatsaber">
+      <UniqueIdentifier>{36e192cf-1969-420f-bb44-736fa841a473}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -139,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_Camera.h">
       <Filter>03. UI_Camera%28Player%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Level_Beatsaber.h">
+      <Filter>01.Level\BeatSaber</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -621,6 +630,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Client\Private\UIMouseInteraction.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Level_Beatsaber.cpp">
+      <Filter>01.Level\BeatSaber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,7 @@ private:
 
 	typedef struct tagItemSlotDesc : public SHOP_DESC
 	{
-		
+		_bool bSoldOut{ false };
 	}ITEM_SLOT_DESC;
 
 private:
@@ -45,6 +45,7 @@ private:
 	CUIInstanceBuffer*	m_pUIItemSlotBufferCom{ nullptr };
 	CUIInstanceBuffer*	m_pUIItemIconBufferCom{ nullptr };
 	CTexture*			m_pItemIconsTextureCom{ nullptr };
+	CTexture*			m_pItemLockTextureCom{ nullptr };
 
 	CMousePointer*		m_pMousePointer{ nullptr };
 
@@ -70,6 +71,8 @@ private:
 	void MouseAction(_float fTimeDelta);
 
 	void Apply_Item(CPlayer* pPlayer);
+
+	HRESULT Render_Text();
 
 public:
 	static CUIItemSlot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

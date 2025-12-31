@@ -62,10 +62,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
+	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -112,14 +111,14 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	//		return;
 	//}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}
+	}*/
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -434,7 +433,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//}
 	
 	Desc.iMonsterID = 10;
-	Desc.vPosition = { m_pGameInstance->Random(0.f, 30.f), 1.f, m_pGameInstance->Random(0.f, 30.f) };
+	Desc.vPosition = { 60.f, 1.f, 60.f };
 	Desc.bIsSuperMonster = false;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))

@@ -70,7 +70,7 @@ HRESULT CBlur::Render(CVIBuffer_Rect* pVIBuffer)
 	/* 블러 기록할 물체들만 뺴서 기록 */
 	if (0 < m_BlurObjects.size()) {
 		_uint2 vScreenSize = m_pGameInstance->GetScreenSize();
-		m_pGameInstance->Set_ScreenSize(vScreenSize.x * 0.5f, vScreenSize.y * 0.5f);
+		m_pGameInstance->Set_ScreenSize(vScreenSize.x / 2, vScreenSize.y / 2);
 
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Blur"))))
 			return E_FAIL;

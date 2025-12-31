@@ -186,6 +186,8 @@ void CSpriteParticle::Play()
 
 void CSpriteParticle::End()
 {
+	if (0 == m_fTime)
+		m_fTime = 0.1f;
 	m_tData.fEndTime = m_fTime;
 }
 
@@ -331,6 +333,9 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = 0;
 	m_CBData.fTimeDelta.w = 0;
+
+	m_CBData.vRotation.x = -1.f;
+	m_CBData.vRotation.w = m_tData.fCircleSpeed;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(SpriteConstBufferData) + 15) / 16 * 16;

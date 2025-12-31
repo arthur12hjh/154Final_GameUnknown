@@ -31,10 +31,10 @@ HRESULT CRimLight::Bind_RimLightShaderResources(CShader* pShader, const _char* p
 		pShader->Bind_RawValue(pRimColorTag, &m_tRimLightDesc.vRimLightColor, sizeof(_float4));
 
 	if (nullptr != pRimPowerTag)
-		pShader->Bind_RawValue(pRimPowerTag, &m_tRimLightDesc.vRimLightColor, sizeof(_float));
+		pShader->Bind_RawValue(pRimPowerTag, &m_tRimLightDesc.fRimLightPower, sizeof(_float));
 
 	if (nullptr != pRimLightIntensity)
-		pShader->Bind_RawValue(pRimLightIntensity, &m_tRimLightDesc.vRimLightColor, sizeof(_float));
+		pShader->Bind_RawValue(pRimLightIntensity, &m_tRimLightDesc.fRimLightIntensity, sizeof(_float));
 
 	if (nullptr != pCamPositionTag)
 		pShader->Bind_RawValue(pCamPositionTag, m_pGameInstance->Get_CamPosition(), sizeof(_float4));

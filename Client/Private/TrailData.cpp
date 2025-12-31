@@ -2,7 +2,7 @@
 #include "TrailData.h"
 #include "Trail.h"
 #include "TrailEffect.h"
-
+#include "EffectSRV.h"
 #include "GameInstance.h"
 
 CTrailData::CTrailData(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -24,6 +24,7 @@ HRESULT CTrailData::Initialize(void* pArg)
 {
 	m_pTrail = static_cast<CTrailEffect*>(pArg);
 	m_eTeam = OBJECT_TEAM::FRIENDLY;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 	return S_OK;
 }
 
@@ -80,6 +81,9 @@ HRESULT CTrailData::Bind_Texture(CShader* pShader)
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(pShader, "g_DissolveTexture", 0)))
 		return E_FAIL;
 
+	if (RENDER::BLUR == m_eRender) {
+		pShader->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
 	if (FAILED(pShader->Begin(m_tData.iBegin + m_iRenderCount)))
 		return E_FAIL;
 	m_iRenderCount++;

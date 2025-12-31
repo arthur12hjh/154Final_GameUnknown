@@ -36,6 +36,7 @@ HRESULT CUIItemSlot::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pMousePointer = dynamic_cast<CMousePointer*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Static_Level_Layer_Mouse"))->front());
+	Safe_AddRef(m_pMousePointer);
 
 	m_ItemSlotDescs.clear();
 	m_ItemSlotDescs.reserve(m_pGameManager->Get_ShopDatas()->size());
@@ -46,7 +47,7 @@ HRESULT CUIItemSlot::Initialize(void* pArg)
 		Desc.iID = m_pGameManager->Get_ShopDatas()->at(i).iID;
 		Desc.iPrice = m_pGameManager->Get_ShopDatas()->at(i).iPrice;
 		Desc.szItemTag = m_pGameManager->Get_ShopDatas()->at(i).szItemTag;
-		Desc.szScriptTag = m_pGameManager->Get_ShopDatas()->at(i).szScriptTag;
+		Desc.szScript = m_pGameManager->Get_ShopDatas()->at(i).szScript;
 		m_ItemSlotDescs.push_back(Desc);
 	}
 
@@ -70,7 +71,7 @@ void CUIItemSlot::Update(_float fTimeDelta)
 		{
 			_int iOwnGold = static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold - m_ItemSlotDescs[m_iCurrentItemIdx].iPrice;
 
-			if (iOwnGold >= 0)
+			if (iOwnGold >= 0 && !m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
 			{
 				static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold -= m_ItemSlotDescs[m_iCurrentItemIdx].iPrice;
 				Apply_Item(pPlayer);
@@ -110,6 +111,9 @@ HRESULT CUIItemSlot::Render()
 		return E_FAIL;
 
 	if (FAILED(ItemIcon_Render()))
+		return E_FAIL;
+
+	if (FAILED(Render_Text()))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -153,6 +157,11 @@ HRESULT CUIItemSlot::Ready_Components()
 	/* Com_Texture_UI_ItemIcons */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Item_Icons"),
 		TEXT("Com_Texture_UI_ItemIcons"), reinterpret_cast<CComponent**>(&m_pItemIconsTextureCom))))
+		return E_FAIL;
+
+	/* Com_Texture_UI_Interaction_Lock */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Lock"),
+		TEXT("Com_Texture_UI_Interaction_Lock"), reinterpret_cast<CComponent**>(&m_pItemLockTextureCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -456,21 +465,62 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 
 void CUIItemSlot::Apply_Item(CPlayer* pPlayer)
 {
+	if (m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+		return;
+
 	if (m_ItemSlotDescs[m_iCurrentItemIdx].iID == 0) // 포션 갯수
 	{
 		pPlayer->Get_Desc()->iMaxPotions += 1;
 		pPlayer->Get_Desc()->iCurrentPotions = pPlayer->Get_Desc()->iMaxPotions;
+		if (pPlayer->Get_Desc()->iMaxPotions >= 9)
+			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
 	}
 	if (m_ItemSlotDescs[m_iCurrentItemIdx].iID == 1) // 최대 체력
 	{
 		pPlayer->Get_Desc()->iMaxHealth += 10;
 		pPlayer->Get_Desc()->iCurrentHealth = pPlayer->Get_Desc()->iMaxHealth;
+		if (pPlayer->Get_Desc()->iMaxHealth >= 350)
+			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
 	}
 	if (m_ItemSlotDescs[m_iCurrentItemIdx].iID == 2) // 베타 포인트
 	{
 		pPlayer->Get_Desc()->iMaxBetaEnergy += 4;
 		pPlayer->Get_Desc()->iCurrentBetaEnergy = pPlayer->Get_Desc()->iMaxBetaEnergy;
+		if (pPlayer->Get_Desc()->iMaxBetaEnergy >= 40)
+			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
 	}
+}
+
+HRESULT CUIItemSlot::Render_Text()
+{
+	_wstring szText = TEXT("삐빗..");
+	
+	if (m_iCurrentItemIdx > -1)
+	{
+		szText = m_ItemSlotDescs[m_iCurrentItemIdx].szItemTag + TEXT("의 가격은 ") + to_wstring(m_ItemSlotDescs[m_iCurrentItemIdx].iPrice) + TEXT("G입니다.\n") + m_ItemSlotDescs[m_iCurrentItemIdx].szScript;
+
+		if(m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+			szText = TEXT("더 이상 구매가 불가능합니다.");
+	}
+
+	_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), szText.c_str(), true, 0.8f);
+
+	_float2 vPivot{
+		614.f,
+		711.f,
+	};
+
+	_vector vColor = XMVectorSet(
+		1.f,
+		1.f,
+		1.f,
+		1.f
+	);
+
+	m_pGameInstance->Render_Text(TEXT("KoPub"), szText.c_str(),
+		vPivot, vColor, 0.8f);
+
+	return S_OK;
 }
 
 CUIItemSlot* CUIItemSlot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -509,4 +559,5 @@ void CUIItemSlot::Free()
 	Safe_Release(m_pUIItemIconBufferCom);
 	
 	Safe_Release(m_pItemIconsTextureCom);
+	Safe_Release(m_pItemLockTextureCom);
 }

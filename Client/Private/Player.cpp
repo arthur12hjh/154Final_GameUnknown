@@ -208,25 +208,25 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
 
-	// [JU] Use_RushSkill 테스트(키보드 R키)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
-	{
-		auto pTransportData = m_pGameManager->Find_TransportData(1);
-		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+	//// [JU] Use_RushSkill 테스트(키보드 R키)
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	//{
+	//	auto pTransportData = m_pGameManager->Find_TransportData(1);
+	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
 
-		m_pTransformCom->Set_State(STATE::POSITION, vPos);
-		m_pCCT->Set_Position(vPos);
-	}
+	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
+	//	m_pCCT->Set_Position(vPos);
+	//}
 
-	// [JU] Use_RushSkill 테스트(키보드 R키)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	{
-		auto pTransportData = m_pGameManager->Find_TransportData(2);
-		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+	//// [JU] Use_RushSkill 테스트(키보드 R키)
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	//{
+	//	auto pTransportData = m_pGameManager->Find_TransportData(2);
+	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
 
-		m_pTransformCom->Set_State(STATE::POSITION, vPos);
-		m_pCCT->Set_Position(vPos);
-	}
+	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
+	//	m_pCCT->Set_Position(vPos);
+	//}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -346,7 +346,6 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-
 	m_fTestTimer += fTimeDelta;
 	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
@@ -565,7 +564,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 1000;
+	m_PlayerDesc.iOwnGold			= 5000;
 
 	return S_OK;
 }

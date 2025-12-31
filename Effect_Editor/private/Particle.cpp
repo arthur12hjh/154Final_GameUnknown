@@ -118,8 +118,6 @@ HRESULT CParticle::Render()
 void CParticle::Set_Components(PARTICLE_DATA tData)
 {
 	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pComputeShader);
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pSizeDiagramSRV);
 
@@ -140,8 +138,16 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	Set_Model(sztPrototype);
 	m_pVIBufferCom->Set_Model(m_pModelCom);
 	Safe_AddRef(m_pModelCom);
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_PARTICLE_DESC::Elements, VTX_NONEANIM_INSTANCE_PARTICLE_DESC::iNumElements);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	CShader* pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModelParticle.hlsl"), VTX_NONEANIM_INSTANCE_PARTICLE_DESC::Elements, VTX_NONEANIM_INSTANCE_PARTICLE_DESC::iNumElements);
+	if (nullptr != pShader) {
+		Safe_Release(m_pShaderCom);
+		m_pShaderCom = pShader;
+	}
+	CComputeShader* pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	if (nullptr != pComputeShader) {
+		Safe_Release(m_pComputeShader);
+		m_pComputeShader = pComputeShader;
+	}
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
 	m_tData = tData;
@@ -205,6 +211,96 @@ void CParticle::Set_Components(PARTICLE_DATA tData)
 	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
 		return;
 	
+	Safe_Release(pBuffer);
+	Ready_ComputeShader();
+}
+
+void CParticle::Set_Replay(PARTICLE_DATA tData)
+{
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pReadSource);
+	Safe_Release(m_pSizeDiagramSRV);
+
+	const char* pModelFilePath;
+	CVIBuffer_Instance_MeshParticle::MESH_PARTICLE_INSTANCE_DESC		Desc{};
+	Desc.iNumInstance = tData.iNumInstance;
+	Desc.vCenter = tData.fCenter;
+	Desc.vRange = tData.fRange;
+	Desc.vSize = tData.fSize;
+	Desc.vLifeTime = tData.fLifeTime;
+	Desc.vSpeed = tData.fSpeed;
+	Desc.isLoop = tData.bisLoop;
+	m_fLength = 0;
+	m_pVIBufferCom = CVIBuffer_Instance_MeshParticle::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom->Initialize(nullptr);
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, tData.szModel.c_str(), strlen(tData.szModel.c_str()), sztPrototype, 256);
+	Set_Model(sztPrototype);
+	m_pVIBufferCom->Set_Model(m_pModelCom);
+	Safe_AddRef(m_pModelCom);
+	m_pComputeShader->Reset();
+
+	m_tData = tData;
+	m_fTime = -m_tData.fDelayTime;
+	m_CBData.fTimeDelta.y = 0;
+	m_bisLoop = tData.bisLoop;
+	Set_Texture(0, m_tData.szMaskTexture.c_str());
+	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
+	Set_Texture(2, m_tData.szDissolveTexture.c_str());
+
+
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		break;
+	case 2:
+		m_eRender = RENDER::BLACKBLEND;
+		break;
+	case 3:
+		m_eRender = RENDER::BLUR;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		break;
+	case 5:
+		m_eRender = RENDER::METABALL;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		break;
+	}
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
 	Safe_Release(pBuffer);
 	Ready_ComputeShader();
 }
@@ -396,7 +492,7 @@ HRESULT CParticle::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
-	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), 0);
+	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), m_tData.fCircleSpeed);
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f};
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
@@ -473,7 +569,7 @@ void CParticle::Spread(_float fTimeDelta)
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), 0);
+	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), m_tData.fCircleSpeed);
 	// 버퍼 세팅
 	// Update_BufferResource 
 	// 매개변수 1 : 어떤 버퍼 타입에서 데이터를 가져올지

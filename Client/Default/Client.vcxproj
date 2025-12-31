@@ -229,6 +229,7 @@
     <ClInclude Include="..\public\Moon.h" />
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
+    <ClInclude Include="..\public\NaytibaBeam_Part.h" />
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
     <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
     <ClInclude Include="..\public\Note.h" />
@@ -558,6 +559,7 @@
     <ClCompile Include="..\private\Moon.cpp" />
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
+    <ClCompile Include="..\private\NaytibaBeam_Part.cpp" />
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
     <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
     <ClCompile Include="..\private\Note.cpp" />
@@ -834,6 +836,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_BeamShader.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Point_Drop.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute_Rect_Drop.hlsl" />

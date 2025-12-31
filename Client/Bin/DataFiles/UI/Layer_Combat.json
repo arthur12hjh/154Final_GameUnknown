@@ -580,7 +580,7 @@
                         "szUITag": "SkillSlot_2"
                     },
                     {
-                       "Shader": {
+                        "Shader": {
                             "bUseGlow": true,
                             "bUseTintColor": true,
                             "fGlowIntensity": 0.0,

@@ -20,10 +20,19 @@ public :
 	}NAYITBA_PART_BODY_DESC;
 	typedef struct NayitbaTrailDesc
 	{
+		const _float4x4* pRootMatrix = nullptr;
 		CTrailEffect*	pTrailEffect = {};
 		_bool			bisPlay = false;
+	}NAYITBA_TRAIL_DESC;
+	typedef struct NayitbaLineTrailDesc
+	{
 		const _float4x4* pRootMatrix = nullptr;
-	}NAYITBA_TRAIL_DESC;	
+		CTrailEffect* pTrailEffect = {};
+		_float			fSpeed;
+		_float			fPow;
+		_int			iDir;
+		_bool			bisPlay = false;
+	}NAYITBA_LINE_TRAIL_DESC;
 
 private:
 	CNayitbaPartBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -56,11 +65,13 @@ private:
 	CRimLight*											m_pRimLight = { nullptr };
 	vector<pair<CEffect*, _int>>						m_pEffects = {};
 	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
+	vector<pair<NAYITBA_LINE_TRAIL_DESC*, _int>>				m_pLineTrailEffects = {};
 	
 	CTexture*											m_pTexture = {};
 	_bool												m_isDeadEffect = { false };
 
 	_float												m_fDeadTime = {};
+	_float												m_fLineTime = {};
 	_bool												m_bisSetDeadEffect = { true };
 
 	_float												m_vDissolveRadius = { 30.f };
