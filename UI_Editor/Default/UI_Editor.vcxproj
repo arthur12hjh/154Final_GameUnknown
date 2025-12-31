@@ -153,6 +153,7 @@
     <ClInclude Include="..\ImgUI\imstb_truetype.h" />
     <ClInclude Include="..\Public\UIResourceStore.h" />
     <ClInclude Include="..\Public\UI_Camera.h" />
+    <ClInclude Include="..\Public\UI_Level_Beatsaber.h" />
     <ClInclude Include="..\Public\UI_Level_GamePlay.h" />
     <ClInclude Include="..\Public\UI_Level_Loading.h" />
     <ClInclude Include="..\Public\UI_Level_Logo.h" />
@@ -333,6 +334,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIResourceStore.cpp" />
     <ClCompile Include="..\Private\UI_Camera.cpp" />
+    <ClCompile Include="..\Private\UI_Level_Beatsaber.cpp" />
     <ClCompile Include="..\Private\UI_Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\UI_Level_Loading.cpp" />
     <ClCompile Include="..\Private\UI_Level_Logo.cpp" />

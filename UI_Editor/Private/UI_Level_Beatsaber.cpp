@@ -1,6 +1,5 @@
 #include "pch.h"
-#include "UI_Level_GamePlay.h"
-#include "UI_Level_Loading.h"
+#include "UI_Level_Beatsaber.h"
 
 #include "Actor.h"
 #include "UI_Camera.h"
@@ -10,12 +9,12 @@
 
 #include "GameManager.h"
 
-CUI_Level_GamePlay::CUI_Level_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
+CUI_Level_Beatsaber::CUI_Level_Beatsaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 	: CLevel { pDevice, pContext, ENUM_CLASS(eLevelID)}
 {
 }
 
-HRESULT CUI_Level_GamePlay::Initialize()
+HRESULT CUI_Level_Beatsaber::Initialize()
 {
 	LIGHT_DESC			LightDesc{};
 
@@ -47,8 +46,8 @@ HRESULT CUI_Level_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_UI(TEXT("Layer_UI"))))
-		return E_FAIL;
+	//if (FAILED(Ready_UI(TEXT("Layer_UI"))))
+	//	return E_FAIL;
 
 	/*auto pGameCharacter = m_pGameInstance->GetMainCamera();
 	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
@@ -57,7 +56,7 @@ HRESULT CUI_Level_GamePlay::Initialize()
 	return S_OK;
 }
 
-void CUI_Level_GamePlay::Update(_float fTimeDelta)
+void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
@@ -67,33 +66,23 @@ void CUI_Level_GamePlay::Update(_float fTimeDelta)
 		m_isOverlay = false;
 	}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
-	{
-		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-
-		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::BEATSABER_GAME))))
-			return;
-
-		return;
-	}
-
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}*/
+	}
 }
 
-HRESULT CUI_Level_GamePlay::Render()
+HRESULT CUI_Level_Beatsaber::Render()
 {
 	SetWindowText(g_hWnd, TEXT("게임플레이레벨이빈다"));
 	return S_OK;
 }
 
-HRESULT CUI_Level_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
+HRESULT CUI_Level_Beatsaber::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
 	CUI_Camera::UI_CAMERA_DESC			CameraDesc{};
 	CameraDesc.fFov = XMConvertToRadians(60.0f);
@@ -112,7 +101,7 @@ HRESULT CUI_Level_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
+HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 {
 	CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
 
@@ -151,7 +140,7 @@ HRESULT CUI_Level_GamePlay::Ready_UI(const _wstring& strLayerTag)
 	return S_OK;
 }
 
-HRESULT CUI_Level_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
+HRESULT CUI_Level_Beatsaber::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
@@ -183,20 +172,20 @@ HRESULT CUI_Level_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 }
 
 
-CUI_Level_GamePlay* CUI_Level_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
+CUI_Level_Beatsaber* CUI_Level_Beatsaber::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID)
 {
-	CUI_Level_GamePlay* pInstance = new CUI_Level_GamePlay(pDevice, pContext, eLevelID);
+	CUI_Level_Beatsaber* pInstance = new CUI_Level_Beatsaber(pDevice, pContext, eLevelID);
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX("Failed to Created : CUI_Level_GamePlay");
+		MSG_BOX("Failed to Created : CUI_Level_Beatsaber");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CUI_Level_GamePlay::Free()
+void CUI_Level_Beatsaber::Free()
 {
 	__super::Free();
 }
