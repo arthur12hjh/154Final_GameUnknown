@@ -55,24 +55,53 @@ void CLevel_Loading::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	_wstring szLayerTag = TEXT("Layer_Loading");
+
+	if(LEVEL::BEATSABER_GAME == m_eNextLevelID)
+		szLayerTag = TEXT("Layer_Loading_BeatSaber");
+
+
 	if (true == m_pLoader->isFinished()
-		&& !m_bLevelTransitioning
-		/*&& (LEVEL::LOGO == m_eNextLevelID || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F1))*/)
+		&& !m_bLevelTransitioning)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
+		if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
+		{
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
+			if(static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Get_UIBase_Desc().fAlpha <= 0.f)
+				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"), TEXT("Loading_Complite"));
 
-		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts"))->SetVisibility(VISIBILITY::HIDDEN);
-		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
-		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Stella_Symbol"))->SetVisibility(VISIBILITY::HIDDEN);
-		static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Loading_Dim"))->SetVisibility(VISIBILITY::HIDDEN);
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Set_Alpha(1.f);
+		}
+		else
+		{
+			static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
+			static_cast<CUIHUD*>(m_pHUD)->Anim_Stop(TEXT("Layer_Loading"), TEXT("LoadingBlur"));
 
-		m_bLevelTransitioning = true;
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts"))->SetVisibility(VISIBILITY::HIDDEN);
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Stella_Symbol"))->SetVisibility(VISIBILITY::HIDDEN);
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Loading_Dim"))->SetVisibility(VISIBILITY::HIDDEN);
+		}
+
+		if (LEVEL::LOGO == m_eNextLevelID || LEVEL::BEATSABER_GAME == m_eNextLevelID)
+		{
+			if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+			{
+				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(szLayerTag, TEXT("Loading_Overlay"), TEXT("Outro"));
+				m_bLevelTransitioning = true;
+			}
+		}
+		else
+		{
+			static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
+
+			m_bLevelTransitioning = true;
+		}
 	}
 
 	if (true == m_pLoader->isFinished()
 		&& m_bLevelTransitioning
-		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro")))
+		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(szLayerTag, TEXT("Loading_Overlay"), TEXT("Outro")))
 	{
 		m_pGameInstance->Clear_LevelResource();
 
@@ -113,12 +142,17 @@ HRESULT CLevel_Loading::Ready_Prototypes()
 
 	/* For.Prototype_Component_UI_Texture_LoadingBG */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_Component_UI_Texture_LoadingBG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_%d.dds"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_%d.dds"), 5))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_UI_Texture_LoadingBlock */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_Component_UI_Texture_LoadingBlock"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Loading/Loading_Block.dds"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_UI_Texture_LoadingComplite */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_Component_UI_Texture_LoadingComplite"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Loading/Loading_Complite.dds"), 1))))
 		return E_FAIL;
 
 	/*==============================================================================*/
@@ -164,26 +198,36 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 
 	SetHUD(pUIHUD);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
-		return E_FAIL;
+	if (m_eNextLevelID == LEVEL::BEATSABER_GAME)
+	{
+		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading_BeatSaber"))))
+			return E_FAIL;
 
-	pUIHUD->Set_Show_Debug_Rect(false);
+		pUIHUD->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Overlay"), TEXT("Intro"));
+	}
+	else
+	{
+		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
+			return E_FAIL;
 
-	CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
+		pUIHUD->Set_Show_Debug_Rect(false);
+
+		CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
 	
-	if (!pScript)
-		return E_FAIL;
+		if (!pScript)
+			return E_FAIL;
 
-	auto pGameManager = CGameManager::GetInstance();
+		auto pGameManager = CGameManager::GetInstance();
 
-	if (!pGameManager)
-		return E_FAIL;
+		if (!pGameManager)
+			return E_FAIL;
 
-	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
-	Safe_Release(pGameManager);
+		pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
+		Safe_Release(pGameManager);
 
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
+		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
+		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
+	}
 
 	return S_OK;
 }

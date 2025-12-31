@@ -595,9 +595,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIPuzzle\UICostumePuzzle\Unlock">
       <UniqueIdentifier>{7c215a2b-8a90-4162-a293-83008dec5297}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.Component\InteractionUIBinder">
-      <UniqueIdentifier>{dae06fee-d1a6-4739-88a0-a1122ba49845}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UILoadingBlock">
       <UniqueIdentifier>{5ed4bcd1-5791-4af0-b31b-53c90fd8304b}</UniqueIdentifier>
     </Filter>
@@ -3069,7 +3066,7 @@
     </ClCompile>
     <ClCompile Include="..\private\NaytibaBeam_Part.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Beam</Filter>
- </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp">
       <Filter>02.GameObjects\CinematicModel\CinematicModel_Dororong</Filter>
     </ClCompile>
