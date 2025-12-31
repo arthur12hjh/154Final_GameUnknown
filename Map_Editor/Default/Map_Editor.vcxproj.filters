@@ -569,7 +569,7 @@
     <ClInclude Include="..\public\DisplayBox.h">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Door.h">
+    <ClInclude Include="..\public\Shutter.h">
       <Filter>02.GameObjects\Maps\Desert\Door</Filter>
     </ClInclude>
   </ItemGroup>
@@ -884,7 +884,7 @@
     <ClCompile Include="..\private\DisplayBox.cpp">
       <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Door.cpp">
+    <ClCompile Include="..\private\Shutter.cpp">
       <Filter>02.GameObjects\Maps\Desert\Door</Filter>
     </ClCompile>
   </ItemGroup>

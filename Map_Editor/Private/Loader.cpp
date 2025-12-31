@@ -91,6 +91,7 @@
 #include "Interaction_NonAnim.h"
 #include "Desert_Grass.h"
 #include "DisplayBox.h"
+#include "Shutter.h"
 #pragma endregion
 
 
@@ -3070,15 +3071,6 @@ HRESULT CLoader::Loading_For_Desert_Deco_Garden_And_Poster(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-
-	// --- Poster Group ---
-	/* For.Prototype_Component_Model_Poster_1A */
-	/*pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_1A");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_1A.binx", PreTransformMatrix);
-	if (nullptr == pProtoDesc.pPrototype) 
-		return E_FAIL;
-	Desc->pAddObejct.push_back(pProtoDesc);*/
-
 	/* For.Prototype_Component_Model_Poster_2A */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Poster_2A");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Poster/Poster_2A.binx", PreTransformMatrix);
@@ -3147,21 +3139,21 @@ HRESULT CLoader::Loading_For_Desert_Deco_Door_And_Statue(void* pArg)
 	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* For.Prototype_Component_Model_Door_3A */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_3A");
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_3A");			// Layer_Architecture
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Door/Door_3A.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Model_Door_3C */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_3C");
+	/* For.Prototype_Component_Model_Shutter */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Shutter");			// Layer_Shutter
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Door/Door_3C.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
-	/* For.Prototype_Component_Model_Door_3D */
-	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_3D");
+	/* For.Prototype_Component_Model_Door_Controller */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Door_Controller");	// Layer_Interaction
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Door/Door_3D.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
@@ -3198,6 +3190,13 @@ HRESULT CLoader::Loading_For_Desert_Deco_Door_And_Statue(void* pArg)
 	/* For.Prototype_Component_Model_Statue_40B */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Statue_40B");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Deco/Statue/Statue_40B.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Shutter */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Shutter");
+	pProtoDesc.pPrototype = CShutter::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

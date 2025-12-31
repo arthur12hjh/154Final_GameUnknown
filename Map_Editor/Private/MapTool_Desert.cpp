@@ -1388,7 +1388,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				case DESESRT_RUIN_OBJECT::ITEM_BOX:
 					protoTag = TEXT("Prototype_GameObject_DisplayBox"); layerTag = TEXT("Layer_DisplayBox");
 					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_DisplayBox");
-					pInteractionDesc.iInteractionID = 5;
+					pInteractionDesc.iInteractionID = 9;
 					break;
 
 #pragma endregion
@@ -1875,6 +1875,23 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				case DESESRT_RUIN_OBJECT::XION_WALL_10D:
 					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Xion_Wall_10D");
+					break;
+#pragma endregion
+#pragma region Door
+				case DESESRT_RUIN_OBJECT::DOOR_CONTROLLER:
+					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
+					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_Controller");
+					pInteractionDesc.iInteractionID = 10;
+					break;
+
+				case DESESRT_RUIN_OBJECT::DOOR_SHUTTER:
+					protoTag = TEXT("Prototype_GameObject_Shutter"); layerTag = TEXT("Layer_Shutter");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Shutter");
+					break;
+
+				case DESESRT_RUIN_OBJECT::DOOR_3A:
+					protoTag = TEXT("Prototype_GameObject_Architecture"); layerTag = TEXT("Layer_Architecture");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Door_3A");
 					break;
 #pragma endregion
 
@@ -3798,7 +3815,7 @@ HRESULT CMapTool_Desert::Render()
 										"BOX_20B", "BOX_20C", "BOX_20D", "BOX_20E", "BOX_20F", "BOX_21A", "BOX_21B", "BOX_26A", "ITEM_BOX" };
 
 		const _char* xionDecoNames[] = { "GARDEN_1A", "GARDEN_1B", "GARDEN_1C", "RESTROOM_4A", "POSTER_1A", "POSTER_2A", "POSTER_2B", "POSTER_3A", "POSTER_3B", "POSTER_4A", "POSTER_4B", "POSTER_4C", "POSTER_4E",
-										 "STATUE_1A", "STATUE_19B", "STATUE_24B", "STATUE_31B", "STATUE_40B" };
+										 "STATUE_1A", "STATUE_19B", "STATUE_24B", "STATUE_31B", "STATUE_40B", "DOOR_3A", "DOOR_SHUTTER", "DOOR_CONTROOLER"};
 		const _char* xionDuctNames[] = { "DUCT_1A", "DUCT_1B", "DUCT_1C", "DUCT_1D", "DUCT_1E", "DUCT_1G", "DUCT_1H","DUCT_3A", "DUCT_3B", "DUCT_3C", "DUCT_4A", "DUCT_4B", "DUCT_4C", "DUCT_6A",
 										 "DUCT_8A", "DUCT_9A", "DUCT_9B", "DUCT_9C", "DUCT_9D", "DUCT_10A", "DUCT_13A" };
 		const _char* xionBuildingNames[] = { "XION_BUILDING_3A", "XION_BUILDING_4A", "XION_BUILDING_5A", "XION_BUILDING_6A", "XION_BUILDING_8","XION_BUILDING_9A",
@@ -3998,6 +4015,21 @@ HRESULT CMapTool_Desert::Render()
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::STATUE_40B;
 					m_CurrentLayerName = TEXT("Layer_Deco");
+				}
+				else if (nSelectedDecos == 18)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DOOR_3A;
+					m_CurrentLayerName = TEXT("Layer_Architecture");
+				}
+				else if (nSelectedDecos == 19)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DOOR_SHUTTER;
+					m_CurrentLayerName = TEXT("Layer_Shutter");
+				}
+				else if (nSelectedDecos == 20)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DOOR_CONTROLLER;
+					m_CurrentLayerName = TEXT("Layer_Interaction");
 				}
 
 			}
@@ -4808,6 +4840,7 @@ HRESULT CMapTool_Desert::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Lift_Platform_By_Layer(ofs, TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Save_Lift_Controller_By_Layer(ofs, TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Save_Interaction_Objects_By_Layer(ofs, TEXT("Layer_DisplayBox")))) return S_OK;
+	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Shutter")))) return S_OK;
 
 	ofs.close();
 
@@ -5041,6 +5074,7 @@ HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DisplayBox"), TEXT("Layer_DisplayBox")))) return S_OK;
+	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Shutter"), TEXT("Layer_Shutter")))) return S_OK;
 
 	ifs.close();
 
