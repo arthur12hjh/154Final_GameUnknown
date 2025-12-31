@@ -47,6 +47,7 @@ private:
 	CTexture* m_pTextureCom = { nullptr };
 	CTexture* m_pTextureCom_Red = { nullptr };
 	CTexture* m_pTextureCom_Green = { nullptr };
+	CTexture* m_pTextureCom_Blue = { nullptr };
 	
 	CTexture* m_pORMTextureCom = { nullptr };
 	CTexture* m_pORMTextureCom_Red = { nullptr };

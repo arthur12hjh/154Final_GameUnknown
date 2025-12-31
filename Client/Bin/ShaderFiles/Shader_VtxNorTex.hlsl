@@ -6,6 +6,7 @@ texture2D g_DiffuseTexture[1];
 texture2D g_DiffuseTexture_Base;
 texture2D g_DiffuseTexture_Red;
 texture2D g_DiffuseTexture_Green;
+texture2D g_DiffuseTexture_Blue;
 
 texture2D g_ORMTexture;
 texture2D g_MaskTexture;
@@ -96,6 +97,7 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 50.f);
     
     float2 vMaskUV;
     const float fTexelSize = 2048.f;
@@ -107,6 +109,8 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     vector vResult = lerp(vDiffuse, vDiffuse_Red, vMask.r);
     
     vResult = lerp(vResult, vDiffuse_Green, vMask.g);
+    
+    vResult = lerp(vResult, vDiffuse_Blue, vMask.b);
     
     Out.vDiffuse = vResult;
     
@@ -133,6 +137,7 @@ PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
     vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 50.f);
     
     float2 vMaskUV;
     const float fTexelSize = 2048.f;
@@ -144,6 +149,7 @@ PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
     vector vResult = lerp(vDiffuse, vDiffuse_Red, vMask.r);
     
     vResult = lerp(vResult, vDiffuse_Green, vMask.g);
+    vResult = lerp(vResult, vDiffuse_Blue, vMask.b);
     
     Out.vDiffuse = vResult;
     

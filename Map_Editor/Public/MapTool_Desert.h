@@ -110,6 +110,7 @@ public:
 	void Change_MaskMap_Black(_float3 vPickedPoint);
 	void Change_MaskMap_Red(_float3 vPickedPoint);
 	void Change_MaskMap_Green(_float3 vPickedPoint);
+	void Change_MaskMap_Blue(_float3 vPickedPoint);
 
 	void Set_Terrain(class CTerrain_Desert* pTerrain) {
 		m_pTerrain = pTerrain;
