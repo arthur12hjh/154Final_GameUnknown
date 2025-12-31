@@ -238,7 +238,7 @@ HRESULT CBody_Player::Ready_Components()
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 
-	OBBDesc.vSize = _float3(0.1f, 0.3f, 0.1f);
+	OBBDesc.vSize = _float3(0.25f, 0.5f, 0.25f);
 	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
