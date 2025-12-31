@@ -378,11 +378,10 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 
 void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
-	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -397,29 +396,6 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 			m_pFSM->Handle_Transition(Desc);
 		}
 	}
-
-	/* 실제 로직 */
-	//if (true == m_PlayerDesc.HasTarget)
-	//{
-	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
-	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
-	//	{
-	//		PLAYER_TRANSITION_DESC Desc;
-	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
-
-	//		m_pFSM->Handle_Transition(Desc);
-	//	}
-	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
-	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
-	//	{
-	//		PLAYER_TRANSITION_DESC Desc;
-	//		Desc.eNextState = PLAYER_STATE::REPULSE;
-
-	//		m_pFSM->Handle_Transition(Desc);
-	//	}
-	//}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -965,6 +941,20 @@ void CPlayer::LinkAttack_Nayitba()
 		//여기서 기가스 정보 꺼내와서 넘겨줘야함
 		TransitionDesc.pArg = &TargetDesc;
 		break;
+
+	// 일단 기본적으로 홍련 링크어택으로 들어가게 했어
+	// 2페이즈 그로기는 아래에 주석 처리한 SCARLET_PHASE2_LINKATTACK 임.
+	case 8:
+		TransitionDesc.eNextState = PLAYER_STATE::SCARLET_LINKATTACK;
+		TransitionDesc.pArg = &TargetDesc;
+		break;
+
+	// 
+	//case 8:
+	//	TransitionDesc.eNextState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
+	//	TransitionDesc.pArg = &TargetDesc;
+	//	break;
+
 	default:
 		return;
 	}

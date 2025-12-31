@@ -2116,6 +2116,12 @@
     <ClInclude Include="..\public\Shutter.h">
       <Filter>02.GameObjects\Map\Desert\Shutter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_ScarletPhase2tLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ScarletLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3093,6 +3099,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Shutter.cpp">
       <Filter>02.GameObjects\Map\Desert\Shutter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ScarletPhase2tLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -278,6 +278,8 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_RepulseState.h" />
+    <ClInclude Include="..\Public\Player_ScarletPhase2tLinkAttackState.h" />
+    <ClInclude Include="..\Public\Player_ScarletLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_TestState.h" />
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
@@ -611,6 +613,8 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_RepulseState.cpp" />
+    <ClCompile Include="..\Private\Player_ScarletPhase2tLinkAttackState.cpp" />
+    <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_TestState.cpp" />
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
