@@ -88,6 +88,10 @@ void    CTrailEffect::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, 
 
 HRESULT CTrailEffect::Render(CTrailData* pTrailData)
 {
+    //렌더 상태 제어
+    if (false == m_isVisible)
+        return S_OK;
+
     if (FAILED(Bind_ShaderResources(pTrailData->Get_Data())))
         return E_FAIL;
     if (FAILED(pTrailData->Bind_Texture(m_pShaderCom)))

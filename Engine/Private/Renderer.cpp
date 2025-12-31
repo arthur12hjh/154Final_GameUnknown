@@ -172,6 +172,8 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Bloom"), 750.0f, 150.0f, 300.f, 300.f)))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Distortion"), 150.0f, 150.0f, 300.f, 300.f)))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_ShadowBlurX"), 750.0f, 450.0f, 300.f, 300.f)))
 		return E_FAIL;
@@ -1135,6 +1137,8 @@ void CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_ShadowBlurX"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
+		return;
+	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Distortion"), m_pShader, m_pVIBuffer)))
 		return;
 	/* MRT에 포함된 렌더타겟들을 디버그로 직교투영을 통해 그려라. */
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))

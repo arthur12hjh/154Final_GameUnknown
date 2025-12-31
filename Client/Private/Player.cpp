@@ -346,7 +346,6 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-
 	m_fTestTimer += fTimeDelta;
 	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)

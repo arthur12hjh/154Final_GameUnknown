@@ -30,7 +30,9 @@ private:
 	_bool		m_isTurnLocked = { false };
 	_float4		m_vLastMoveLook = { 0.f, 0.f, 1.f, 0.f }; 
 	_float		m_fNoInputTimer = { 0.f };
-
+	_uint		m_iNoInputFrameCount = { 0 };
+	_bool		m_isAlreadyTurned = { false };
+	_bool		m_isMovable = { true };
 public:
 	static	CPlayer_BattleWalkState*		Create(void* pArg);
 	virtual	void					Free() override;
