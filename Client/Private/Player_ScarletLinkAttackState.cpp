@@ -1,19 +1,18 @@
 #include "pch.h"
 
-#include "Player_GigasLinkAttackState.h"
+#include "Player_ScarletLinkAttackState.h"
 
 #include "Player.h"
 #include "Nayitba.h" 
 #include "GameInstance.h"
 #include "GameManager.h"
 
-CPlayer_GigasLinkAttackState::CPlayer_GigasLinkAttackState()
-    : CPlayerState{}
+CPlayer_ScarletLinkAttackState::CPlayer_ScarletLinkAttackState()
+	: CPlayerState{}
 {
-
 }
 
-HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
+HRESULT CPlayer_ScarletLinkAttackState::Initialize(void* pArg)
 {
     SOCKETMATRIX_DESC* pSocketMatrixDesc = static_cast<SOCKETMATRIX_DESC*>(pArg);
 
@@ -21,18 +20,18 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
     m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
     m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
 
-    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
+    m_eState = PLAYER_STATE::SCARLET_LINKATTACK;
 
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
-    
+
     return S_OK;
 }
 
-void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
+void CPlayer_ScarletLinkAttackState::Start(void* pArg, _float fBlendRatio)
 {
     // 클래스의 상태를 변경해준다.
-    m_eState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
+    m_eState = PLAYER_STATE::SCARLET_LINKATTACK;
 
     DEFAULT_DAMAGE_DESC Desc;
     Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
@@ -40,10 +39,10 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     // 플레이어의 애니메이션을 변경해준다. 
     // 여기서 애니메이션 재생속도 조절가능해.
-    m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
 }
 
-PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
+PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
 {
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
@@ -63,7 +62,7 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
     return m_tNextState;
 }
 
-_float CPlayer_GigasLinkAttackState::End()
+_float CPlayer_ScarletLinkAttackState::End()
 {
     m_Desc->isSuperArmor = false;
     m_Desc->pPlayerController->Set_Active(true);
@@ -72,17 +71,17 @@ _float CPlayer_GigasLinkAttackState::End()
     return m_fNextBlendRatio;
 }
 
-CPlayer_GigasLinkAttackState* CPlayer_GigasLinkAttackState::Create(void* pArg)
+CPlayer_ScarletLinkAttackState* CPlayer_ScarletLinkAttackState::Create(void* pArg)
 {
-    CPlayer_GigasLinkAttackState* pState = new CPlayer_GigasLinkAttackState();
+	CPlayer_ScarletLinkAttackState* pState = new CPlayer_ScarletLinkAttackState();
 
-    if (FAILED(pState->Initialize(pArg)))
-        return nullptr;
+	if (FAILED(pState->Initialize(pArg)))
+		return nullptr;
 
-    return pState;
+	return pState;
 }
 
-void CPlayer_GigasLinkAttackState::Free()
+void CPlayer_ScarletLinkAttackState::Free()
 {
-    __super::Free();
+	__super::Free();
 }
