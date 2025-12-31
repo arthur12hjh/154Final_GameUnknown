@@ -1592,9 +1592,17 @@ PS_OUT PS_SHOP(PS_IN In)
     
     float4 Npc = g_Texture2.Sample(NoneSampler, NpcUV);
     
+    float2 ScriptBGUV = uv;
+    ScriptBGUV -= float2(1000.f / 1600.f, 880.f / 900.f);
+    ScriptBGUV /= float2(723.f / 1600.f, 209.f / 900.f);
+    ScriptBGUV += float2(1000.f / 1600.f, 880.f / 900.f);
+    
+    float4 ScriptBG = g_Texture3.Sample(NoneSampler, ScriptBGUV);
+    
     float4 result = BG;
     result = lerp(result, InnerFrame, InnerFrame.a);
     result = lerp(result, Npc, Npc.a);
+    result = lerp(result, ScriptBG, ScriptBG.a);
     
     Out.vColor = result * g_Alpha;
     

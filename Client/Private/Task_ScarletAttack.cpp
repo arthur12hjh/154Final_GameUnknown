@@ -231,9 +231,10 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	m_pSkillData.push(m_pGameManager->Find_SkillData(42));
-	SelectAttackData();
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(42));
+	//SelectAttackData();
 
+	EntranceAttack();
 	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -306,9 +307,18 @@ void CTask_ScarletAttack::EntranceAttack()
 	switch (ePhase)
 	{
 	case CBossBlackBoard::BOSS_PAHSE::FIRST:
-		m_pSkillData.push(m_pGameManager->Find_SkillData(20));
-		break;
+	{
+		auto pPhaseSkillData = m_pGameManager->Find_SkillData(20);
+		_float fDistance = m_pBlackBoard->GetTargetDistance();
+
+		if(fDistance > pPhaseSkillData->fRange * 2.f)
+			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
+		m_pSkillData.push(pPhaseSkillData);
+	}
+	break;
+
 	case CBossBlackBoard::BOSS_PAHSE::SECOND:
+		m_pSkillData.push(m_pGameManager->Find_SkillData(56));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
@@ -337,7 +347,14 @@ void CTask_ScarletAttack::CancelSkillData()
 
 	if (22 == pSkillData->iSkillID)
 	{
-		if(5.f >= fDistance)
+		_float fRange = 5.f;
+		if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		{
+			if(CBossBlackBoard::BOSS_PAHSE::FIRST == m_pBlackBoard->Get_BossPhase())
+				fRange = m_pGameManager->Find_SkillData(20)->fRange;
+		}
+
+		if (fRange >= fDistance)
 			SelectAttackData();
 	}
 }
@@ -1202,8 +1219,8 @@ void CTask_ScarletAttack::Clear_ScarletAttackTask()
 	if (m_pBlackBoard->IsPhaseLastAttack())
 		m_pBlackBoard->SetPhaseLastAttack(false);
 
-	if (m_pBlackBoard->bIsEnableEntarnceAttack())
-		m_pBlackBoard->SetEntarnceAttack(false);
+	//if (m_pBlackBoard->bIsEnableEntarnceAttack())
+	//	m_pBlackBoard->SetEntarnceAttack(false);
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)

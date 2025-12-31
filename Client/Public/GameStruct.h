@@ -607,7 +607,7 @@ namespace Client
 		_uint iID;
 		_uint iPrice;
 		_wstring szItemTag;
-		_wstring szScriptTag;
+		_wstring szScript;
 	}SHOP_DESC;
 
 	typedef	struct BeatSaberCharacterDesc
