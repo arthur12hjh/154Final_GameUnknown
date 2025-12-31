@@ -145,7 +145,7 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 			_uint iIndexHigh;
 			_float fPosLengh = 0.f;
 			for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
-				_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
+				_float u = 1 - min(((iIndex + m_iNumRemove) * 0.5f) / (m_iNumPresent * 0.5f), 1.f);
 				iIndexLow = iIndex;
 				iIndexHigh = iIndex + 1;
 

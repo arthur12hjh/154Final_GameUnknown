@@ -922,7 +922,7 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -947,7 +947,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -956,13 +956,13 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -987,7 +987,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -996,9 +996,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
@@ -1042,7 +1042,7 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1067,7 +1067,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1076,13 +1076,13 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1107,7 +1107,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1116,9 +1116,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
@@ -1162,7 +1162,7 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1187,7 +1187,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1196,13 +1196,13 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1227,7 +1227,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1236,9 +1236,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
@@ -1584,7 +1584,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001-L-Hand",
+                "szSocketTag": "Bip001-Head",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -1642,7 +1642,7 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1667,7 +1667,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1676,9 +1676,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
@@ -1762,7 +1762,7 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1787,7 +1787,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -1796,9 +1796,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {

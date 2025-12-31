@@ -2,6 +2,7 @@
 #include "ColorChange.h"
 
 #include "GameInstance.h"
+#include "Texture.h"
 
 CColorChange::CColorChange(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CReserveDeferred { pDevice, pContext }
@@ -18,7 +19,8 @@ HRESULT CColorChange::Initialize(void* pArg)
     m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_ColorChange.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
     if (nullptr == m_pShaderCom)
         return E_FAIL;
-
+    m_pGlassTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/ScreenTexture/Screen_Glass.dds"), 1);
+    m_fTime = 0.f;
     return S_OK;
 }
 
@@ -26,6 +28,10 @@ HRESULT CColorChange::Initialize(void* pArg)
 void CColorChange::Bind_Resources(const _wstring& strRTTag)
 {
     //여기서 필요한 리소스들 바인딩해주고..
+
+
+    if (FAILED(m_pGlassTexture->Bind_ShaderResource(m_pShaderCom, "g_GlassTexture", 0)))
+        return;
 
     //END로 바인딩해야 월드매트릭스 반환해줌.
     if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", m_pGameInstance->Get_Renderer_Matrix(D3DTS::END))))
@@ -37,6 +43,10 @@ void CColorChange::Bind_Resources(const _wstring& strRTTag)
 
     //컬러만 바인딩하자.
     if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
+        return;
+    float time = m_fTime * 2.5f;
+    //컬러만 바인딩하자.
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &time, sizeof(_float))))
         return;
     // 씬 텍스쳐 바인딩.
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strRTTag, m_pShaderCom, "g_SceneTexture")))
@@ -67,4 +77,6 @@ CColorChange* CColorChange::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 void CColorChange::Free()
 {
     __super::Free();
+    Safe_Release(m_pShaderCom);
+    Safe_Release(m_pGlassTexture);
 }

@@ -2,8 +2,9 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector g_vColor;
+float g_fTime;
 
-texture2D g_SceneTexture;
+texture2D g_SceneTexture, g_GlassTexture;
 
 struct VS_IN_DEFERRED
 {
@@ -48,8 +49,33 @@ PS_OUT_DEFERRED PS_MAIN(PS_IN_DEFERRED In)
     PS_OUT_DEFERRED Out;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord);
-    //¿œ¥‹ ∫”∞‘ «ÿ∫Ω
-    Out.vBackBuffer *= float4(1.f, 0.2f, 0.2f, 1.f);
+    
+    //float4 vGlass = g_GlassTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
+    //vGlass = 1 - vGlass;
+    //if (vGlass.r == 0)
+    //    return Out;
+    //
+    //float2 vCenteredUV = In.vTexcoord - float2(0.5f, 0.5f);
+    //float fDistortionFactor = 1 + vGlass.g * vGlass.r * vGlass.r;
+    //fDistortionFactor = clamp(fDistortionFactor, 0.2f, 2.0f);
+    //
+    //vCenteredUV *= fDistortionFactor;
+    //vCenteredUV += float2(0.5f, 0.5f);
+    float2 center = float2(0.5, 0.5);
+
+    float2 dir = In.vTexcoord - center;
+    float len = length(dir);
+    
+    float crackMask = 1 - g_GlassTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0).r;
+    
+    float strength = saturate(1 - len) * 0.1;
+
+    float2 distortedUV = In.vTexcoord + -normalize(dir) * strength * crackMask * abs(sin(g_fTime));
+    
+    
+    
+    Out.vBackBuffer = g_SceneTexture.Sample(ClampSampler, distortedUV);
+    
     
     return Out;   
 }

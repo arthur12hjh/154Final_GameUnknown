@@ -6,7 +6,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 185,
+                "iNotifyKeyFrame": 184,
                 "iNumData01": 42,
                 "iNumData02": 1,
                 "iNumData03": 4,
@@ -46,7 +46,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 163,
+                "iNotifyKeyFrame": 130,
                 "iNumData01": 42,
                 "iNumData02": 1,
                 "iNumData03": 4,
@@ -86,7 +86,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 150,
+                "iNotifyKeyFrame": 120,
                 "iNumData01": 0,
                 "iNumData02": 8,
                 "iNumData03": 0,
@@ -166,7 +166,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 0,
+                "iNotifyKeyFrame": 5,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -184,7 +184,7 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Play_SFX",
-                "szSocketTag": "Bip001-L-Hand",
+                "szSocketTag": "Bip001-Head",
                 "vNotifyPosition": [
                     0.0,
                     0.0,
@@ -206,7 +206,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 154,
+                "iNotifyKeyFrame": 115,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 1,
@@ -246,7 +246,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 168,
+                "iNotifyKeyFrame": 137,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 1,
@@ -286,7 +286,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 179,
+                "iNotifyKeyFrame": 168,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 1,
@@ -366,7 +366,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 156,
+                "iNotifyKeyFrame": 125,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -446,7 +446,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 146,
+                "iNotifyKeyFrame": 115,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -486,7 +486,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 171,
+                "iNotifyKeyFrame": 168,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -522,11 +522,11 @@
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 154,
+                "iNotifyKeyFrame": 125,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -547,7 +547,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -556,17 +556,17 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 165,
+                "iNotifyKeyFrame": 132,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -587,7 +587,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -596,17 +596,17 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 179,
+                "iNotifyKeyFrame": 180,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -627,7 +627,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -636,17 +636,17 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 188,
+                "iNotifyKeyFrame": 186,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -667,7 +667,7 @@
                 "szSocketTag": "Bip001-Pelvis",
                 "vNotifyPosition": [
                     0.0,
-                    -0.20000000298023224,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -676,9 +676,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    6.0,
-                    6.0,
-                    6.0
+                    3.0,
+                    3.0,
+                    3.0
                 ]
             }
         ],
