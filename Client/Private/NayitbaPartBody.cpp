@@ -479,8 +479,7 @@ void CNayitbaPartBody::Play_DeadEffect()
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
-    if(XMVector3Equal(XMLoadFloat4(&vColor), XMVectorZero()))
-        m_vPatternColor = vColor;
+    m_vPatternColor = vColor;
 
     /*m_bIsChangeColorDissolve = bIsDissolve;
 
@@ -496,7 +495,7 @@ void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _fl
        }
     }*/
 
-    SetRimLightData(bIsEnable, 10.f, 60.f, vColor, INFINITY);
+    SetRimLightData(bIsEnable, 1.f, 0.5f, vColor, INFINITY);
 }
 
 void CNayitbaPartBody::SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime)
