@@ -25,18 +25,20 @@ public:
 	virtual void Set_Desc(void* pArg) = 0;
 	//하위 객체단에서 다형성으로 처리.
 	virtual void Bind_Resources(const _wstring& strRTTag) = 0;
-
+	void	Update(_float fTimeDelta) { m_fTime += fTimeDelta; };
 	void Set_ShaderPassIdx(_uint iIdx) { m_iShaderPassIdx = iIdx; }
-	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
+	void Set_Active(_bool bFlag) { m_isActive = bFlag; if (m_isActive) m_fTime = 0; }
 	_bool Get_Active() { return m_isActive; }
+	_float Get_Time() { return m_fTime; }
 protected:
 	ID3D11DeviceContext* m_pContext = { nullptr };
-	ID3D11Device*		 m_pDevice = { nullptr };
+	ID3D11Device* m_pDevice = { nullptr };
 
 	class CGameInstance* m_pGameInstance = { nullptr };
-	class CShader*		 m_pShaderCom = { nullptr };
+	class CShader* m_pShaderCom = { nullptr };
 	_uint				 m_iShaderPassIdx = { 0 };
 	_bool				 m_isActive = { false };
+	_float				m_fTime = { 0 };
 
 public:
 	virtual void Free() override;

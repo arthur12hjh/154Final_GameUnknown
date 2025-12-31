@@ -339,6 +339,20 @@ void CParticle_Setting::Delete_Particle()
     }
 }
 
+void CParticle_Setting::Copy_Particle()
+{
+    CParticle::PARTICLE_DATA tParticleData = m_tParticleData;
+    CParticle* pParticle = CParticle::Create(m_pDevice, m_pContext);
+    pParticle->Initialize(nullptr);
+
+    pParticle->Set_Components(tParticleData);
+    pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+
+    m_iSelectParticle = m_pParticles.size();
+    m_pParticles.push_back(pParticle);
+    m_tParticleData = m_pParticles[m_iSelectParticle]->Get_Data();
+}
+
 void CParticle_Setting::Add_SpriteParticle()
 {
     CSpriteParticle::SPRITE_PARTICLE_DATA tSpriteParticleData;
@@ -421,6 +435,21 @@ void CParticle_Setting::Delete_SpriteParticle()
     }
 }
 
+void CParticle_Setting::Copy_SpriteParticle()
+{
+    CSpriteParticle::SPRITE_PARTICLE_DATA tSpriteParticleData = m_tSpriteParticleData;
+
+    CSpriteParticle* pParticle = CSpriteParticle::Create(m_pDevice, m_pContext);
+    pParticle->Initialize(nullptr);
+
+    pParticle->Set_Components(tSpriteParticleData);
+    pParticle->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+
+    m_iSelectSpriteParticle = m_pSpriteParticles.size();
+    m_pSpriteParticles.push_back(pParticle);
+    m_tSpriteParticleData = m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data();
+}
+
 void CParticle_Setting::Add_MeshEffect()
 {
     CMeshEffect::MeshEffectData		MeshDesc{};
@@ -483,6 +512,21 @@ void CParticle_Setting::Delete_MeshEffect()
         Safe_Release(m_pMeshs[0]);
         m_pMeshs.clear();
     }
+}
+
+void CParticle_Setting::Copy_MeshEffect()
+{
+    CMeshEffect::MeshEffectData		MeshDesc = m_tMeshData;
+
+    CMeshEffect* pMeshEffect = CMeshEffect::Create(m_pDevice, m_pContext);
+    pMeshEffect->Initialize(nullptr);
+
+    pMeshEffect->Set_Components(MeshDesc);
+    pMeshEffect->Set_ParentMat(m_pTransform->Get_WorldMatrixPtr());
+
+    m_iSelectMesh = m_pMeshs.size();
+    m_pMeshs.push_back(pMeshEffect);
+    m_tMeshData = m_pMeshs[m_iSelectMesh]->Get_Data();
 }
 
 void CParticle_Setting::Add_TrailEffectData()
@@ -1256,6 +1300,29 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_bisReplay = true;
                 m_fTime = 0.f;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Replay(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Replay(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Replay(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_pMeshs[m_iSelectMesh]->Set_Replay(m_pMeshs[m_iSelectMesh]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("All ReCompile", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
                 }
                 for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
@@ -1269,9 +1336,15 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
 
             ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
+            if (ImGui::Button("ReCompile", btn)) {
                 m_bisReplay = true;
                 m_pMeshs[m_iSelectMesh]->Set_Components(m_pMeshs[m_iSelectMesh]->Get_Data());
+                ImGui::End();
+                return;
+            }
+
+            if (ImGui::Button("Copy", btn)) {
+                Copy_MeshEffect();
                 ImGui::End();
                 return;
             }
@@ -1544,6 +1617,30 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_bisReplay = true;
                 m_fTime = 0.f;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Replay(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Replay(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Replay(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Replay(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("All ReCompile", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
                 }
                 for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
@@ -1557,10 +1654,15 @@ void CParticle_Setting::Update(_float fTimeDelta)
             }
 
             ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
+            if (ImGui::Button("ReCompile", btn)) {
                 m_bisReplay = true;
                 m_fTime = 0.f;
                 m_pSpriteParticles[m_iSelectSpriteParticle]->Set_Components(m_pSpriteParticles[m_iSelectSpriteParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("Copy", btn)) {
+                Copy_SpriteParticle();
                 ImGui::End();
                 return;
             }
@@ -1993,6 +2095,30 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 m_fTime = 0.f;
                 m_bisReplay = true;
                 for (_uint i = 0; i < m_pParticles.size(); ++i) {
+                    m_pParticles[i]->Set_Replay(m_pParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
+                    m_pSpriteParticles[i]->Set_Replay(m_pSpriteParticles[i]->Get_Data());
+                }
+                for (_uint i = 0; i < m_pMeshs.size(); ++i) {
+                    m_pMeshs[i]->Set_Replay(m_pMeshs[i]->Get_Data());
+                }
+                ImGui::End();
+                return;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Replay", btn)) {
+                m_bisReplay = true;
+                m_fTime = 0.f;
+                m_pParticles[m_iSelectParticle]->Set_Replay(m_pParticles[m_iSelectParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("All ReCompile", btn)) {
+                m_fTime = 0.f;
+                m_bisReplay = true;
+                for (_uint i = 0; i < m_pParticles.size(); ++i) {
                     m_pParticles[i]->Set_Components(m_pParticles[i]->Get_Data());
                 }
                 for (_uint i = 0; i < m_pSpriteParticles.size(); ++i) {
@@ -2004,12 +2130,16 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 ImGui::End();
                 return;
             }
-
             ImGui::SameLine();
-            if (ImGui::Button("Replay", btn)) {
+            if (ImGui::Button("ReCompile", btn)) {
                 m_bisReplay = true;
                 m_fTime = 0.f;
                 m_pParticles[m_iSelectParticle]->Set_Components(m_pParticles[m_iSelectParticle]->Get_Data());
+                ImGui::End();
+                return;
+            }
+            if (ImGui::Button("Copy", btn)) {
+                Copy_Particle();
                 ImGui::End();
                 return;
             }
@@ -2102,7 +2232,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
 
 
                 if (ImGui::TreeNode("Size Diagram")) {
-                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tMeshData.fSizeDiagrams.size() - 1);
+                    m_iSelectSize = min(m_iSelectSize, (_uint)m_tParticleData.fSizeDiagrams.size() - 1);
                     if (m_iSelectSize < m_tParticleData.fSizeDiagrams.size()) {
                         _float time = 1.f / 100;
                         _float fMax = 5;

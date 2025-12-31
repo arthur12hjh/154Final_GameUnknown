@@ -61,7 +61,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintEndState::Update(_float fTimeDelta)
         m_tNextState.eNextState = PLAYER_STATE::BETA_CHARGINGSLASH;
 
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-        0.12f <= fAnimationRatio)
+        0.15f <= fAnimationRatio)
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_E) ||

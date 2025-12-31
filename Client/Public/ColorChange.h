@@ -5,7 +5,8 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
-NS_END 
+class CTexture;
+NS_END
 
 /* 
 #####################################
@@ -82,6 +83,8 @@ private:
 	_float4 m_vColor = { 1.f, 0.f, 0.f, 0.f };
 	//강도 설정
 	_float  m_fIntensity = { 0 };
+
+	CTexture* m_pGlassTexture = {};
 
 public:
 	static CColorChange* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

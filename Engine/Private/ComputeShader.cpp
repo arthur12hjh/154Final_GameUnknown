@@ -336,6 +336,31 @@ HRESULT CComputeShader::Bind_Sampler(UINT iSlot, ID3D11SamplerState* pSamp)
     return S_OK;
 }
 
+HRESULT CComputeShader::Reset()
+{
+    for (auto& pInputBuffer : m_pInputBuffer)
+        Safe_Release(pInputBuffer);
+    m_pInputBuffer.clear();
+
+    for (auto& pOutputBuffer : m_pOutputBuffer)
+        Safe_Release(pOutputBuffer);
+    m_pOutputBuffer.clear();
+
+    for (auto& pCBBuffer : m_pCBuffer)
+        Safe_Release(pCBBuffer);
+    m_pCBuffer.clear();
+
+    for (auto& pSRV : m_pSRVs)
+        Safe_Release(pSRV);
+    m_pSRVs.clear();
+
+    for (auto& pUAV : m_pUAVs)
+        Safe_Release(pUAV);
+    m_pUAVs.clear();
+    return S_OK;
+}
+
+
 HRESULT		CComputeShader::LoadShader(const WCHAR* szShaderFilePath, const char* szStartFunName)
 {
     ID3DBlob* pBlobVS = nullptr;

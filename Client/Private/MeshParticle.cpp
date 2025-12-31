@@ -3,6 +3,8 @@
 #include "VIBuffer_Instance_MeshParticle.h"
 #include "GameInstance.h"
 
+#include "EffectSRV.h"
+
 CMeshParticle::CMeshParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -101,6 +103,7 @@ HRESULT CMeshParticle::Initialize(void* pArg)
 
 	if (FAILED(Ready_ComputeShader()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 	return S_OK;
 }
 
@@ -209,6 +212,8 @@ void CMeshParticle::Play()
 
 void CMeshParticle::End()
 {
+	if (0 == m_fTime)
+		m_fTime = 0.1f;
 	m_tData.fEndTime = m_fTime;
 }
 
@@ -316,6 +321,10 @@ HRESULT CMeshParticle::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
 	return S_OK;
 }
 
@@ -338,7 +347,7 @@ HRESULT CMeshParticle::Ready_ComputeShader()
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
 	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f };
-	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), 0);
+	m_CBData.vRotation = _float4(XMConvertToRadians(m_tData.fMeshRotation.x), XMConvertToRadians(m_tData.fMeshRotation.y), XMConvertToRadians(m_tData.fMeshRotation.z), m_tData.fCircleSpeed);
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;

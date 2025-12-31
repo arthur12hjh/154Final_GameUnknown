@@ -4,6 +4,50 @@
 #include "Engine_Shader_Defines.hlsli"
 #include "Shader_Deferred_Defines.hlsli"
 
+float4 GetWorldPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, matrix ProjMatrixInv, matrix ViewMatrixInv)
+{
+    // 좌표 복구
+    float4 vDepthDesc = DepthTexture.Sample(DefaultSampler, vTexcoord);
+    float fViewZ = vDepthDesc.y * fFar;
+
+    /* 좌표변환은 틀린거 없고.. */
+    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vector vPosition;
+    vPosition.x = vTexcoord.x * 2.f - 1.f;
+    vPosition.y = vTexcoord.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    vPosition = vPosition * fViewZ;
+    /* 로컬위치 * 월드 * 뷰  */
+    vPosition = mul(vPosition, ProjMatrixInv);
+    /* 로컬위치 * 월드   */
+    vPosition = mul(vPosition, ViewMatrixInv);
+    
+    return vPosition;
+}
+
+float4 GetViewPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, matrix ProjMatrixInv)
+{
+    // 좌표 복구
+    float4 vDepthDesc = DepthTexture.Sample(DefaultSampler, vTexcoord);
+    float fViewZ = vDepthDesc.y * fFar;
+
+    /* 좌표변환은 틀린거 없고.. */
+    /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vector vPosition;
+    vPosition.x = vTexcoord.x * 2.f - 1.f;
+    vPosition.y = vTexcoord.y * -2.f + 1.f;
+    vPosition.z = vDepthDesc.x;
+    vPosition.w = 1.f;
+    /* 로컬위치 * 월드 * 뷰 * 투영  */
+    vPosition = vPosition * fViewZ;
+    /* 로컬위치 * 월드 * 뷰  */
+    vPosition = mul(vPosition, ProjMatrixInv);
+    
+    return vPosition;
+}
+
 inline float BayerDither(float2 pixelPos)
 {
     uint x = (uint) pixelPos.x & 3; // % 4
@@ -15,8 +59,8 @@ inline float BayerDither(float2 pixelPos)
 
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
-    /*
-    float fSum = 0.0f;
+/*
+        float fSum = 0.0f;
     
     float2 vTexcoord;
     
@@ -24,7 +68,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
-    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
+    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f) * 2.f;
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
     float fBias = 0.0002f;
@@ -50,7 +94,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     fSum /= 9.0f;
     return lerp(1.0f, 0.6f, fSum);
     */
-    
+   
     float2 vTexcoord;
     
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
@@ -60,7 +104,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.0002f;
+    float fBias = 0.0005f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
@@ -69,24 +113,23 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
 
     vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord, iSlice));
 
-    return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.6f : 1.f;
+    return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.5f : 1.f;
 }
 
 inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
 { 
-/*
-        float2 vTexcoord;
+    float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     float fSum = 0.0f;
-    float fBias = 0.0002f;
+    float fBias = 0.0005f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;
     
     //_uint2 m_vStaticShadowMapSize = { 16384, 8192 };
-    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f); // 그림자맵 해상도에 맞게 조정
+    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f) * 2.f; // 그림자맵 해상도에 맞게 조정
 
     // PCF 3x3 샘플
     for (int x = -1; x <= 1; ++x)
@@ -94,18 +137,18 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
         for (int y = -1; y <= 1; ++y)
         {
             float2 vOffset = float2(x, y) * fTexelSize;
-            vector vShadowDepth = ShadowTexure.SampleLevel(ClampSampler, float2(vTexcoord + vOffset), 0);
+            vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float2(vTexcoord + vOffset));
             fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
         }
     }
     
     fSum /= 9.0f; // 평균 (3x3)
-    return lerp(1.0f, 0.6f, fSum); // 그림자 강도 적용
-    */
+    return lerp(1.0f, 0.5f, fSum); // 그림자 강도 적용
+    
     
     //################################# NONE PCF
-    
-    float2 vTexcoord;
+    /*
+        float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
@@ -117,7 +160,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float2(vTexcoord));
     
     return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.6f : 1.f;
-    
+    */
 }
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)
@@ -136,28 +179,21 @@ inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
     return vGlowColor;
 }
 
-/* 배럴 왜곡 이용해서 구현한거임. 내부 로직 바꾸고 싶으면 일단 디코로 따로 말해줘*/
 inline float4 Calc_Distortion(vector vBackBuffer, texture2D SceneTexture, texture2D DistortionTexture, float2 vTexcoord)
-{       
-    /* 디스토션 렌더타겟 텍스쳐 샘플링 */
-    float4 vDistortion = DistortionTexture.Sample(DefaultSampler, vTexcoord);
-    
-    /* r 성분을 디스토션할 성분으로 잡아놨으니까, r이 0이라면 리턴. */
-    if(vDistortion.r == 0)
+{
+    float4 vDistortion = DistortionTexture.SampleLevel(DefaultSampler, vTexcoord, 0);
+    if (vDistortion.r == 0)
         return vBackBuffer;
  
-    // 0 ~ 1 -> -0.5 ~ 0.5
     float2 vCenteredUV = vTexcoord - float2(0.5f, 0.5f);
     float fDistortionFactor = 1 + vDistortion.g * vDistortion.r * vDistortion.r;
-    //너무 낮은값 쓰면 찢어지는 효과 남. (같은 픽셀 계속 디스토션 돌려서)
     fDistortionFactor = clamp(fDistortionFactor, 0.2f, 2.0f);
 
     vCenteredUV *= fDistortionFactor;
     vCenteredUV += float2(0.5f, 0.5f);
     
-    float4 vResult = SceneTexture.Sample(MirrorSampler, vCenteredUV);
+    float4 vResult = SceneTexture.Sample(DefaultSampler, vCenteredUV);
 
-    // 원래 색과 섞음.
     //float fFade = (vDistortion.r > 0.0f) ? 1.0f : 0.0f;
     //vResult.rgb = lerp(vScene.rgb, vResult.rgb, 0.8f * fFade);
     
@@ -171,13 +207,21 @@ float4 Calc_Fog(vector vBackBuffer, texture2D FogTexture, vector vFogColor, floa
     return fFogPower * vBackBuffer + (1 - fFogPower) * vFogColor;
 }
 
+float4 Calc_VolumeFog(vector vBackBuffer, texture2D FogTexture , float2 vTexCoord)
+{
+    float4 vFog = FogTexture.Sample(DefaultSampler, vTexCoord);
+    float3 vResult = vBackBuffer.rgb * vFog.a + vFog.rgb;
+    
+    return float4(vResult, vBackBuffer.a);
+}
+
 /* 블룸 커브 수식 3개. HALO3 에서 나왔다는데 일단 가져옴..*/
 float GetBloomCurve(float fIntensity)
 {
     float fResult = fIntensity;
     fIntensity *= 2.0f;
 
-    fResult = max(0, fIntensity - 1.4f) * 0.5; // default gThreshold = 1.26
+    fResult = max(0, fIntensity - 1.45f) * 0.5; // default gThreshold = 1.26
 
 
     return fResult * 0.5f;
@@ -328,3 +372,4 @@ PS_OUT_LIGHT PBR_Light(
     return Out;
 }
 #endif
+

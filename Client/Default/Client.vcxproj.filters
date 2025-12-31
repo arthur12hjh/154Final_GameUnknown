@@ -544,9 +544,6 @@
     <Filter Include="97.ShaderFiles\Instancing\Point">
       <UniqueIdentifier>{6b8d34e8-e1fe-4ba5-84ea-2b06f3953435}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.ShaderFiles\Mouse">
-      <UniqueIdentifier>{a64cf4b1-122b-46bb-aa9a-8ef964bb91fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97.ShaderFiles\UI">
       <UniqueIdentifier>{f5f6432b-dd3f-416a-8347-49d423449d53}</UniqueIdentifier>
     </Filter>
@@ -811,21 +808,6 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss">
       <UniqueIdentifier>{f97ca5fb-ddf9-4168-a366-d0ba9237f4c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator">
-      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
-      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
-      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
-      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
-      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\BlackBoard">
       <UniqueIdentifier>{d5da7608-8e93-477b-ae52-9dd4cfb15e3d}</UniqueIdentifier>
     </Filter>
@@ -1062,6 +1044,24 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\BeatSaberCharacter\PartObject">
       <UniqueIdentifier>{2fce043b-6862-43fa-a4a1-18e11a9e75f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator">
+      <UniqueIdentifier>{524c4f87-a827-4fa1-99e1-e2028f0db016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\PhaseChange">
+      <UniqueIdentifier>{c692de83-027b-421b-a0ca-c411e3936ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive">
+      <UniqueIdentifier>{21b479ea-6658-4cca-ad51-3b076fb8878c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\AttackDelay">
+      <UniqueIdentifier>{60de5eae-e39e-4588-b8ce-2255e9e9eeac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\Find_Target">
+      <UniqueIdentifier>{de353520-1b5f-491a-8b3d-13f0b8f3545f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Beam">
+      <UniqueIdentifier>{facad163-da4d-4f91-b1f9-6765290ac9c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TestModel\LinkAttackTester\Part\Body">
       <UniqueIdentifier>{aae9242d-32a7-4645-82b5-10ac2707e901}</UniqueIdentifier>
@@ -2095,6 +2095,9 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h">
       <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NaytibaBeam_Part.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Beam</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CinematicModel_Dororong.h">
       <Filter>02.GameObjects\CinematicModel\CinematicModel_Dororong</Filter>
     </ClInclude>
@@ -3064,6 +3067,9 @@
     <ClCompile Include="..\private\Camera_BeatSaber.cpp">
       <Filter>02.GameObjects\Camera\Camera_BeatSaber</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\NaytibaBeam_Part.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Beam</Filter>
+ </ClCompile>
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp">
       <Filter>02.GameObjects\CinematicModel\CinematicModel_Dororong</Filter>
     </ClCompile>
@@ -3105,9 +3111,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl">
       <Filter>97.ShaderFiles\Instancing\Point\Mouse</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
-      <Filter>97.ShaderFiles\UI</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
       <Filter>02.GameObjects\Character\Player\02. Parts\Face\ShaderFile</Filter>
     </FxCompile>
@@ -3134,6 +3137,12 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_ColorChange.hlsl">
       <Filter>07. ReserveDeferred\ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl">
+      <Filter>97.ShaderFiles\UI</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_BeamShader.hlsl">
+      <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

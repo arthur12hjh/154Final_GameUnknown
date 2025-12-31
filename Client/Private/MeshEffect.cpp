@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 
+#include "EffectSRV.h"
+
 CMeshEffect::CMeshEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -54,7 +56,7 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
-
+	m_bisEnd = false;
 
 
 	ID3D11Buffer* pBuffer = nullptr;
@@ -85,6 +87,7 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	m_pEffectSRV = CEffectSRV::GetInstance();
 
 	return S_OK;
 }
@@ -100,6 +103,9 @@ void CMeshEffect::Update(_float fTimeDelta)
 	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime)) {
 		m_isDead = true;
 		return;
+	}
+	if (m_bisEnd) {
+		m_tData.fColor.w = Lerp(m_tData.fColor.w , 0.f, m_tData.fEndTime - m_fTime);
 	}
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
@@ -131,6 +137,12 @@ HRESULT CMeshEffect::Render()
 	}
 	m_iRenderCount++;
 	return S_OK;
+}
+
+void CMeshEffect::End()
+{
+	m_tData.fEndTime = m_fTime + 1.f;
+	m_bisEnd = true;
 }
 
 HRESULT CMeshEffect::Ready_Components()
@@ -217,6 +229,9 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
+	if (RENDER::BLUR == m_eRender) {
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
+	}
 	return S_OK;
 }
 

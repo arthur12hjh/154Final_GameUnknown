@@ -297,6 +297,7 @@ popd</Command>
     <ClInclude Include="..\public\VIBuffer_Rect_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
     <ClInclude Include="..\Public\VolumeFog.h" />
+    <ClInclude Include="..\Public\WaveTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\AIController.cpp" />
@@ -420,6 +421,7 @@ popd</Command>
     <ClCompile Include="..\private\VIBuffer_Rect_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
     <ClCompile Include="..\Private\VolumeFog.cpp" />
+    <ClCompile Include="..\Private\WaveTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl" />

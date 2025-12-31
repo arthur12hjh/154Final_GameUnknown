@@ -43,6 +43,8 @@ public :
 
 	const vector<SHOP_DESC>*							Get_ShopDatas();
 
+	void												Refresh();
+
 private:
 	//스킬 데이터
 	map<_uint, CHARACTER_SKILL_DESC>					m_pSkillDatas = {};
