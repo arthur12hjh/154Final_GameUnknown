@@ -19,9 +19,6 @@ public:
 	virtual _float End() override;
 
 private:
-	vector<_bool>						m_isEndList;
-	_int								m_iAnimationIndex;
-
 	const _float4x4* m_pSocketMatrix = { nullptr };
 	const _float4x4* m_pParentTransformMatrix = { nullptr };
 
