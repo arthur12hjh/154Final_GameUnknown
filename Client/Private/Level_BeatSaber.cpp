@@ -18,26 +18,26 @@ HRESULT CLevel_BeatSaber::Initialize()
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
     m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
 
-    if (FAILED(Ready_Lights()))
-        return E_FAIL;
+    //if (FAILED(Ready_Lights()))
+    //    return E_FAIL;
 
-    if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-        return E_FAIL;
+    //if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+    //    return E_FAIL;
 
-    if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
-        return E_FAIL;
+    //if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
+    //    return E_FAIL;
 
-    if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
-        return E_FAIL;
+    //if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
+    //    return E_FAIL;
 
-    if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-        return E_FAIL;
+ /*   if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+        return E_FAIL;*/
 
-    if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+   /* if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
         return E_FAIL;
 
     if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
-        return E_FAIL;
+        return E_FAIL;*/
 
     return S_OK;
 }
@@ -76,13 +76,11 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
         return;
     }
 
+
+
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
     {
-        if (m_pHUD)
-            dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-
-        if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::BEATSABER_GAME, false))))
-            return;
+        Play_GameBGM(TEXT("SoundTest.mp3"), 0.5f);
 
         return;
     }
@@ -206,6 +204,30 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
 HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
 {
     return S_OK;
+}
+
+
+
+void CLevel_BeatSaber::Play_GameBGM(const TCHAR* szBGMName, _float fVolume)
+{
+    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    m_pGameInstance->Manager_PlayBGM(szBGMName, fVolume, 0,
+       [&](FMOD_CHANNELCONTROL* channelcontrol,
+            FMOD_CHANNELCONTROL_TYPE controltype,
+            FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
+            void* commanddata1,
+            void* commanddata2)
+        {
+            Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+        });
+}
+
+FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+{
+    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+
+    return FMOD_RESULT::FMOD_OK;
 }
 
 HRESULT CLevel_BeatSaber::Load_Light_Data()

@@ -69,7 +69,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_ClientDeferred()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
+	if (FAILED(Start_Level(LEVEL::BEATSABER_GAME)))
 		return E_FAIL;		
 
 

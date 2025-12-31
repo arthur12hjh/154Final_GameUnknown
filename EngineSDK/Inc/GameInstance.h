@@ -249,9 +249,9 @@ public:
 
 #pragma region Sound Manager
 	// 효과음 및 배경음악 선택적 재생
-	void			Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume);
+	void			Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount = INFINITE, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack = nullptr);
 	// 배경음악 재생
-	void			Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume);
+	void			Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount = INFINITE, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack = nullptr);
 
 	// 특정 채널의 사운드를 정지
 	void			Manager_StopSound(CHANNELID eID);
@@ -261,6 +261,12 @@ public:
 
 	//	특정 채널의 사운드볼륨을 바꾸는 기능
 	void			Manager_SetChannelVolume(CHANNELID eID, float fVolume);
+
+
+	_uint			Get_BGMLength(const TCHAR* pSoundKey);
+	_uint			Get_ChannelLength(CHANNELID eChannelID);
+
+	_float			Get_ChannelRatio(CHANNELID eChannelID);
 #pragma endregion
 
 #pragma region Effect Resource Manager

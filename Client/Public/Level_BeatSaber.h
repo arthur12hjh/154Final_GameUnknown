@@ -21,11 +21,14 @@ public:
 	virtual void				Update(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
+	void						Play_GameBGM(const TCHAR* szBGMName, _float fVolume);
+
 private :
 	_float						m_fTime = 10;
 	_bool						m_bChangeLevel{ false };
 	_bool						m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 	_bool						m_isOverlay{ true };
+
 private:
 	HRESULT						Ready_Lights();
 	HRESULT						Ready_Layer_BackGround(const _wstring& strLayerTag);
@@ -34,6 +37,7 @@ private:
 	HRESULT						Ready_Layer_Camera(const _wstring& strLayerTag);
 	HRESULT						Ready_Layer_Player(const _wstring& strLayerTag);
 	HRESULT						Ready_Layer_UI(const _wstring& strLayerTag);
+	FMOD_RESULT	 	 			Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2);
 
 	//HRESULT Load_Map_Data();
 	//HRESULT Load_Map_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
