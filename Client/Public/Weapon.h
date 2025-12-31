@@ -41,7 +41,8 @@ public:
 	void						EnableCollider(_bool bIsEnable);
 
 	void						Set_PlayerDesc(PLAYER_DESC* pPlayerDesc);
-	void						Set_TrailEffectVisible(_bool bFlag); 
+	void						Set_TrailVisible(_bool bFlag) { m_bIsTrail = bFlag; }
+
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 
@@ -61,7 +62,7 @@ private:
 	_bool						m_bisGigasSpark = FALSE;
 
 	_bool						m_bIsEnableCollider = { false };
-
+	_bool						m_isTrailVisible = { false };
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };
 	
