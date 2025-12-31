@@ -23,7 +23,6 @@ void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;
 
-    static_cast<CWeapon*>(m_pPlayer->Get_PartObject(TEXT("Part_Weapon")))->Set_TrailEffectVisible(true);
     m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
     m_pPlayer->SetSkillDataID(1000);
@@ -138,7 +137,7 @@ _float CPlayer_LightAttackState::End()
 {
     m_pPlayer->SetSkillDataID(-1);
 
-    static_cast<CWeapon*>(m_pPlayer->Get_PartObject(TEXT("Part_Weapon")))->Set_TrailEffectVisible(false);
+    static_cast<CWeapon*>(m_pPlayer->Get_PartObject(TEXT("Part_Weapon")))->Set_TrailVisible(false);
 
     return m_fNextBlendRatio;
 }

@@ -228,9 +228,6 @@ PS_OUT PS_MAIN_PONYTAIL(PS_IN In)
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
-    vMtrlDiffuse.a = vMtrlOpacity.r;
-    if (vMtrlDiffuse.a < 0.1f)
-        discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -329,7 +326,7 @@ technique11 DefaultTechnique
     // 5
     pass Ponytail
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

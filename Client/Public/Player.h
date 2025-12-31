@@ -89,13 +89,14 @@ private:
 	void Update_ReactionSkills(_float fTimeDelta); 
 	void Update_ReactionSkillInput(_float fTimeDelta);
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
 
 	void CreateHitBox(const AnimNotify* pNotify);
 
 private:
 	void Execution_Nayitba();
 	void LinkAttack_Nayitba();
-
+	
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

@@ -277,11 +277,15 @@ HRESULT CPlayer::Render_MotionBlur()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
+	if (true == m_PlayerDesc.isInvincible)
+		return S_OK;
+
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
 	// Interaction 아니라면 따로 뻈음.
 	// 안에서 플레이어 모션 제어 중
+	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
@@ -330,7 +334,7 @@ void CPlayer::Attack_Interaction(void* pArg)
 	// 프레임 단위 판정이니까.. 키 입력을 프레임 단위로 판정해야되나?
 	_uint iFrame = pNotifyDesc->iFrameCnt;
 
-	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame * 10.f;
+	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame;
 	m_PlayerDesc.eReactionType = eType;
 }
 
@@ -354,6 +358,14 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_fTestTimer = 0.f;
 	}
 
+	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield)
+		//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	{
+		m_PlayerDesc.iCurrentShield += 4;
+		m_fTestTimer = 0.f;
+	}
+
+
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
@@ -361,14 +373,6 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
 	}
 }
 
@@ -779,8 +783,6 @@ void CPlayer::Update_ReactionSkills(_float fTimeDelta)
 void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
 {
 	//무적이면 충돌처리 안하게 처리
-	if (true == m_PlayerDesc.isInvincible)
-		return;
 
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
@@ -794,10 +796,6 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	memcpy(&HitDesc.vHitPoint, &pDamageDesc->vHitPoint, sizeof(_float3));
 	memcpy(&HitDesc.vImpactDir, &pDamageDesc->vImpactDir, sizeof(_float3));
 	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
-
-	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-	if (0 >= m_PlayerDesc.iCurrentHealth)
-		m_PlayerDesc.iCurrentHealth = 0.f;
 
 	PLAYER_TRANSITION_DESC Desc{};
 	CHARACTER_SKILL_DESC SkillDescCopy{};
@@ -876,6 +874,31 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		break;
 	}
 
+}
+
+/* 실드 연산 로직 */
+void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
+{
+	_uint fOriginDamage = pSkillDesc->iSkillDamage;
+	_float fShieldDamage = { 0 };
+	_float fRemainDamage = { 0 };
+
+	_float fHealthDamage = { 0 };
+
+	fShieldDamage = ceil(fOriginDamage * 0.3f);
+
+	m_PlayerDesc.iCurrentShield -= fShieldDamage;
+	if (0 >= m_PlayerDesc.iCurrentShield)
+	{
+		fRemainDamage = fabsf(m_PlayerDesc.iCurrentShield);
+		m_PlayerDesc.iCurrentShield = 0.f;
+	}
+
+	//실제로 적용된 데미지만 뺴준다.
+	fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
+	m_PlayerDesc.iCurrentHealth -= fHealthDamage;
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
 }
 
 void CPlayer::CreateHitBox(const AnimNotify* pNotify)

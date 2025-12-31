@@ -150,7 +150,11 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 	m_vPosition = PxVec3(vPos.x, vPos.y, vPos.z);
 
 	//무브 자체는 시뮬레이션에서 안 돌아간다고함..
+
 	PxVec3 MoveSum = m_vPosition - m_vPrePosition + vTargetDeltaMove;
+
+	if (false == m_isGravity)
+		MoveSum += PxVec3(0.f, -1.f, 0.f)* MoveSum.magnitude() * 0.15f;
 
 	PxControllerFilters ControllerFilter;
 	ControllerFilter.mFilterCallback = static_cast<PxQueryFilterCallback*>(m_pQueryFilterCallback);
@@ -158,7 +162,9 @@ void CCharacterController::Update_PxPosition(_float fTimeDelta, class CTransform
 	ControllerFilter.mCCTFilterCallback = static_cast<CCTFilterCallback*>(m_pCCTFilterCallback);
 
 	PxExtendedVec3 vPrevPos = m_pController->getFootPosition();
+
 	PxU32 ResultFlag = m_pController->move(MoveSum, 0.001f, fTimeDelta, ControllerFilter);
+	
 	PxExtendedVec3 vNewPos = m_pController->getFootPosition();
 	m_vPrePosition = PxVec3((float)vNewPos.x, (float)vNewPos.y, (float)vNewPos.z);
 	pOwnerTransform->Set_State(STATE::POSITION, XMVectorSet((_float)vNewPos.x, (_float)vNewPos.y, (_float)vNewPos.z, 1.f));
@@ -210,7 +216,7 @@ HRESULT CCharacterController::Ready_CapsuleController(CCT_DESC* pDesc)
 	CCTDesc.height = pDesc->vSize.y;      // 캡슐 높이
 	CCTDesc.position = PxExtendedVec3(pDesc->vStartPos.x, pDesc->vStartPos.y, pDesc->vStartPos.z);
 	CCTDesc.material = m_pMaterial;    // PxMaterial*
-	CCTDesc.contactOffset = 0.4f;                // 충돌 감지 오프셋
+	CCTDesc.contactOffset = 0.3f;                // 충돌 감지 오프셋
 	CCTDesc.stepOffset = pDesc->fStepOffset;                // 계단 올라갈 수 있는 높이
 	CCTDesc.slopeLimit = cosf(PxPi / 3.f + PxPi / 18.f);      // 오르막 각도 제한
 	CCTDesc.density = 10.0f;

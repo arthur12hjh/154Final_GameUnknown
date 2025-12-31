@@ -37,6 +37,16 @@ void CRigidBody::Set_Simulation(_bool bFlag)
 	}
 }
 
+void CRigidBody::Set_AngularDamping(_float fValue)
+{
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setAngularDamping(fValue);
+}
+
+void CRigidBody::Set_LinearDamping(_float fValue)
+{
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setLinearDamping(fValue);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
     return S_OK;
