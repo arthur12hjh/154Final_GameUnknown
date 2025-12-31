@@ -3,7 +3,7 @@
 
 namespace Client
 {
-#define COLOR_PATTERN_SCARLET	XMFLOAT4(3.98f, 2.5f, 4.40f, 1.f)
+#define COLOR_PATTERN_SCARLET	XMFLOAT4(1.99f, 1.25f, 2.20f, 1.f)
 #define COLOR_PATTERN_GIGAS		XMFLOAT4(1.f, 1.f , 1.f, 1.f)
 
 #define COLOR_PATTERN_RED		XMFLOAT4(1.f, 0.f , 0.f, 1.f)

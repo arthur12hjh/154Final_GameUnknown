@@ -479,8 +479,7 @@ void CNayitbaPartBody::Play_DeadEffect()
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
-    if(XMVector3Equal(XMLoadFloat4(&vColor), XMVectorZero()))
-        m_vPatternColor = vColor;
+    m_vPatternColor = vColor;
 
     /*m_bIsChangeColorDissolve = bIsDissolve;
 
