@@ -59,6 +59,10 @@ private:
 	class CTrailEffect* m_pTrail;
 	_uint				m_iRenderCount = {};
 
+	ID3D11DepthStencilView* m_pOriginalDSV = { nullptr };
+	ID3D11Resource* m_resourse = { nullptr };
+	ID3D11ShaderResourceView* m_pRSV = { nullptr };
+
 private:
 	HRESULT							Ready_Components();
 	HRESULT							Bind_ShaderResources();

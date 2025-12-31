@@ -98,8 +98,6 @@ HRESULT CSpriteParticle::Render()
 void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 {
 	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pComputeShader);
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pReadSource);
 	Safe_Release(m_pSizeDiagramSRV);
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
@@ -114,10 +112,104 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
 	m_pVIBufferCom->Initialize(nullptr);
 	
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
-	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	CShader* pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxSpriteParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements);
+	if (nullptr != pShader) {
+		Safe_Release(m_pShaderCom);
+		m_pShaderCom = pShader;
+	}
+
+	CComputeShader* pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute_Spread.hlsl"), tData.szCS.c_str(), tData.iNumInstance);
+	if (nullptr != pShader) {
+		Safe_Release(m_pComputeShader);
+		m_pComputeShader = pComputeShader;
+	}
 	//m_pComputeShader = pComputeShader;
 	//m_pShaderCom = pShaderCom;
+	m_tData = tData;
+	m_fTime = -m_tData.fDelayTime;
+	m_bisLoop = tData.bisLoop;
+	m_fLength = 0.f;
+	Set_Texture(0, m_tData.szMaskTexture.c_str());
+	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
+	Set_Texture(2, m_tData.szNormalTexture.c_str());
+
+	if (m_tData.bisSpectrum) {
+		m_CBData.iLoopAndCount.x = 2;
+	}
+
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		break;
+	case 2:
+		m_eRender = RENDER::BLACKBLEND;
+		break;
+	case 3:
+		m_eRender = RENDER::BLUR;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		break;
+	case 5:
+		m_eRender = RENDER::METABALL;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		break;
+	}
+
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
+	Safe_Release(pBuffer);
+	Ready_ComputeShader();
+}
+
+void CSpriteParticle::Set_Replay(SPRITE_PARTICLE_DATA tData)
+{
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pReadSource);
+	Safe_Release(m_pSizeDiagramSRV);
+	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
+	Desc.iNumInstance = tData.iNumInstance;
+	Desc.vCenter = tData.fCenter;
+	Desc.vPivot = tData.fPivot;
+	Desc.vRange = tData.fRange;
+	Desc.vSize = tData.fSize;
+	Desc.vLifeTime = tData.fLifeTime;
+	Desc.vSpeed = tData.fSpeed;
+	Desc.isLoop = tData.bisLoop;
+	m_pVIBufferCom = CVIBuffer_Point_Instance::Create(m_pDevice, m_pContext, &Desc);
+	m_pVIBufferCom->Initialize(nullptr);
+	m_pComputeShader->Reset();
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
 	m_bisLoop = tData.bisLoop;
@@ -347,7 +439,7 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
 
-	//if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender) {
 		ID3D11Texture2D* pDepthTexture = nullptr;
 		D3D11_TEXTURE2D_DESC texDesc = {};
 		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -379,7 +471,7 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 			return E_FAIL;
 		Safe_Release(pDepthTexture);
 		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pRSV);
-	//}
+	}
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
@@ -413,6 +505,8 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 	m_CBData.iLoopAndCount.y = iNumData;
 	m_CBData.fTimeDelta.z = m_tData.fEndTime;
 	m_CBData.fTimeDelta.w = 0;
+	m_CBData.vRotation.x = -1.f;
+	m_CBData.vRotation.w = m_tData.fCircleSpeed;
 
 	D3D11_BUFFER_DESC BufferDesc = {};
 	BufferDesc.ByteWidth = (sizeof(PointConstBufferData) + 15) / 16 * 16;

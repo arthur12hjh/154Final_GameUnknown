@@ -22,6 +22,8 @@ HRESULT CMeshEffect::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+	m_pContext->OMGetRenderTargets(1, nullptr, &m_pOriginalDSV);
+	m_pOriginalDSV->GetResource(&m_resourse);
 	return S_OK;
 }
 
@@ -66,7 +68,6 @@ HRESULT CMeshEffect::Render()
 
 void CMeshEffect::Set_Components(MESH_DATA tData)
 {
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pSizeDiagramSRV);
 	m_tData = tData;
 	m_fTime = -m_tData.fDelayTime;
@@ -107,7 +108,79 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 		break;
 	}
 
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+	CShader* pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxMeshEffect.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements);
+	if (nullptr != pShader) {
+		Safe_Release(m_pShaderCom);
+		m_pShaderCom = pShader;
+	}
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC BufferDesc = {};
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.ByteWidth = sizeof(_float3) * m_tData.fSizeDiagrams.size();
+	BufferDesc.StructureByteStride = sizeof(_float3);
+	BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	D3D11_SUBRESOURCE_DATA ConstBufferSubResource = {};
+	ConstBufferSubResource.pSysMem = m_tData.fSizeDiagrams.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, &ConstBufferSubResource, &pBuffer)))
+		return;
+
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Buffer.FirstElement = 0;
+	SRVDesc.Buffer.NumElements = m_tData.fSizeDiagrams.size();
+	if (FAILED(m_pDevice->CreateShaderResourceView(pBuffer, &SRVDesc, &m_pSizeDiagramSRV)))
+		return;
+
+	Safe_Release(pBuffer);
+}
+
+void CMeshEffect::Set_Replay(MESH_DATA tData)
+{
+	Safe_Release(m_pSizeDiagramSRV);
+	m_tData = tData;
+	m_fTime = -m_tData.fDelayTime;
+	m_pTransformCom->Set_Scale(m_tData.fScale.x, m_tData.fScale.y, m_tData.fScale.z);
+	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
+	m_pTransformCom->Rotation(XMConvertToRadians(m_tData.fRotation.x), XMConvertToRadians(m_tData.fRotation.y), XMConvertToRadians(m_tData.fRotation.z));
+
+	_tchar sztPrototype[256] = { 0, };
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_tData.szModel.c_str(), strlen(m_tData.szModel.c_str()), sztPrototype, 256);
+	Set_Model(sztPrototype);
+	Set_Texture(0, m_tData.szMaskTexture.c_str());
+	Set_Texture(1, m_tData.szDiffuseTexture.c_str());
+	Set_Texture(2, m_tData.szDissolveTexture.c_str());
+
+
+	switch (m_tData.iSelectRender)
+	{
+	case 0:
+		m_eRender = RENDER::NONBLEND;
+		break;
+	case 1:
+		m_eRender = RENDER::NONLIGHT;
+		break;
+	case 2:
+		m_eRender = RENDER::BLACKBLEND;
+		break;
+	case 3:
+		m_eRender = RENDER::BLUR;
+		break;
+	case 4:
+		m_eRender = RENDER::GLOW;
+		break;
+	case 5:
+		m_eRender = RENDER::METABALL;
+		break;
+	case 6:
+		m_eRender = RENDER::DISTORTION;
+		break;
+	}
 
 	ID3D11Buffer* pBuffer = nullptr;
 	D3D11_BUFFER_DESC BufferDesc = {};
@@ -278,6 +351,41 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
 
+
+	if (RENDER::BLUR == m_eRender) {
+		ID3D11Texture2D* pDepthTexture = nullptr;
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		texDesc.Width = 1600;
+		texDesc.Height = 900;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.Usage = D3D11_USAGE_DEFAULT;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = 0;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, nullptr, &pDepthTexture)))
+			return E_FAIL;
+
+		m_pContext->CopyResource(pDepthTexture, m_resourse);
+
+		Safe_Release(m_pRSV);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		if (FAILED(m_pDevice->CreateShaderResourceView(pDepthTexture, &srvDesc, &m_pRSV)))
+			return E_FAIL;
+		Safe_Release(pDepthTexture);
+		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pRSV);
+	}
+
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 	return S_OK;
 }
@@ -316,4 +424,10 @@ void CMeshEffect::Free()
 	Safe_Release(m_pSizeDiagramSRV);
 	for (_uint i = 0; i < 3; ++i)
 		Safe_Release(m_pTexture[i]);
+
+
+
+	Safe_Release(m_pOriginalDSV);
+	Safe_Release(m_resourse);
+	Safe_Release(m_pRSV);
 }

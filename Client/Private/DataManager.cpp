@@ -272,6 +272,13 @@ const vector<SHOP_DESC>* CDataManager::Get_ShopDatas()
     return &m_ShopDatas;
 }
 
+void CDataManager::Refresh()
+{
+    m_AnimationNotifyDatas.clear();
+    if (FAILED(LoadAnimNotifyData()))
+        return;
+}
+
 HRESULT CDataManager::LoadNaytibaData(void* pArg)
 {
     THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);

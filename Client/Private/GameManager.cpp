@@ -193,6 +193,11 @@ map<_uint, CINEMATIC_DESC>* CGameManager::Get_CinematicDataMap()
 
 #ifdef _DEBUG
 
+void CGameManager::Refresh()
+{
+    m_pDataManager->Refresh();
+}
+
 void CGameManager::Save_CameraAnimationData()
 {
     m_pDataManager->Save_CameraAnimationData();

@@ -2,6 +2,7 @@
 #include "Client_Defines.h"
 #include "PartObject.h"
 #include "TrailData.h"
+#include "WaveTrail.h"
 
 NS_BEGIN(Engine)
 class CVIBuffer_Rect;
@@ -10,9 +11,13 @@ class CTexture;
 NS_END
 
 NS_BEGIN(Client)
-
 class CTrailEffect : public CGameObject
 {
+public:
+    typedef struct tagTrailData : public CWaveTrail::WAVETRAILHIGHLOW {
+        _bool bisLine;
+        _bool bisLong;
+    }TRAIL_DATA;
 private:
     CTrailEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     CTrailEffect(const CTrailEffect& Prototype);
@@ -39,6 +44,7 @@ private:
     vector<CTrailData*> m_pTrailDatas = {};
     vector< CTrailData::TRAIL_DATA> m_tDatas = {};
     CShader* m_pShaderCom = { nullptr };
+    CWaveTrail* m_pWaveTrail = { nullptr };
     CTrail* m_pTrail = { nullptr };
     _float  m_fTime;
     _bool   m_isVisible = { true };
