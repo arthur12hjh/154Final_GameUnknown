@@ -59,6 +59,13 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
     m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
 
 
+    if (true == isAnimationFinished)
+    {
+        m_tNextState.isChangeMode = true;
+        m_tNextState.eMode = PLAYER_MODE::BATTLE;
+        m_tNextState.eNextState = PLAYER_STATE::IDLE;
+    }
+
     return m_tNextState;
 }
 
