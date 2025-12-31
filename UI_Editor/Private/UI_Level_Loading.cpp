@@ -7,6 +7,7 @@
 
 #include "UI_Level_Logo.h"
 #include "UI_Level_GamePlay.h"
+#include "UI_Level_Beatsaber.h"
 
 #include "UIHUD.h"
 #include "UIPanel.h"
@@ -86,6 +87,9 @@ void CUI_Level_Loading::Update(_float fTimeDelta)
 		case LEVEL::GAMEPLAY:
 			pNewLevel = CUI_Level_GamePlay::Create(m_pDevice, m_pContext, m_eNextLevelID);
 			break;
+		case LEVEL::BEATSABER_GAME:
+			pNewLevel = CUI_Level_Beatsaber::Create(m_pDevice, m_pContext, m_eNextLevelID);
+			break;
 		}
 
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
@@ -110,7 +114,7 @@ HRESULT CUI_Level_Loading::Ready_Prototypes()
 
 	/* For.Prototype_Component_UI_Texture_LoadingBG */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOADING), TEXT("Prototype_Component_UI_Texture_LoadingBG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_%d.dds"), 3))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_%d.dds"), 5))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_UI_Texture_LoadingBlock */
@@ -160,25 +164,35 @@ HRESULT CUI_Level_Loading::Ready_Layer_BackGround()
 
 	SetHUD(pUIHUD);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
-		return E_FAIL;
+	if (m_eNextLevelID == LEVEL::BEATSABER_GAME)
+	{
+		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading_BeatSaber"))))
+			return E_FAIL;
 
-	CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
+		pUIHUD->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Overlay"), TEXT("Intro"));
+	}
+	else
+	{
+		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
+			return E_FAIL;
 
-	if (!pScript)
-		return E_FAIL;
+		CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
 
-	auto pGameManager = CGameManager::GetInstance();
+		if (!pScript)
+			return E_FAIL;
 
-	if (!pGameManager)
-		return E_FAIL;
+		auto pGameManager = CGameManager::GetInstance();
 
-	pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
-	Safe_Release(pGameManager);
+		if (!pGameManager)
+			return E_FAIL;
 
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
+		pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
+		Safe_Release(pGameManager);
 
-	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
+		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
+		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
+	}
+
 
 	/*pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_0"), TEXT("Loading_BeapBeap"));
 	pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Block_1"), TEXT("Loading_BeapBeap"), 0.3f);

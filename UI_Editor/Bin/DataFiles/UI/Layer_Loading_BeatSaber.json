@@ -1,0 +1,174 @@
+[
+    {
+        "Children": [
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 3,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+                    "szTextureComTag": "Com_Texture_UI_LoadingBG"
+                },
+                "fAlpha": 0.15,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Loading_Overlay_1-1",
+                "szUITag": "Loading_BG"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 3,
+                    "iTextureIndex": 4,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+                    "szTextureComTag": "Com_Texture_UI_LoadingBG"
+                },
+                "Shader": {
+                    "bUseGlow": true,
+                    "fGlowIntensity": 0.3,
+                    "fGlowSpread": 0.0
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "LoadingBlur_1-3",
+                "szUITag": "LoadingBlur"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 3,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingComplite",
+                    "szTextureComTag": "Com_Texture_UI_LoadingComplite"
+                },
+                "Shader": {
+                    "bUseGlow": true,
+                    "fGlowIntensity": 0.0,
+                    "fGlowSpread": 0.0
+                },
+                "fAlpha": 0.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 290.0,
+                "fRotation": 0.0,
+                "fSizeX": 610.0,
+                "fSizeY": 170.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 2,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Loading_Complite",
+                        "szPrefabTag": "Loading_Complite"
+                    }
+                ],
+                "szLayerTag": "Layer_Loading_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "LoadingBlur_1-4",
+                "szUITag": "Loading_Complite"
+            },
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 700.0,
+                "fOffsetY": 400.0,
+                "fRotation": 0.0,
+                "fSizeX": 66.0,
+                "fSizeY": 20.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 1,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_Loading_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Loading_Block",
+                "szUIID": "UI_Loading_Block_1-5",
+                "szUITag": "UI_Loading_Block"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+                    "szTextureComTag": "Com_Texture_UI_LoadingBG"
+                },
+                "fAlpha": 0.800000011920929,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 99,
+                "iDrawType": 1,
+                "iLevel": 1,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Intro",
+                        "szPrefabTag": "FadeOut_3"
+                    },
+                    {
+                        "szAnimTag": "Outro",
+                        "szPrefabTag": "FadeIn_3"
+                    }
+                ],
+                "szLayerTag": "Layer_Loading_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "Logo_Panel_Loading_Overlay_1-6",
+                "szUITag": "Loading_Overlay"
+            }
+        ],
+        "TextureDesc": {
+            "iPass": 0,
+            "iTextureIndex": 0,
+            "szProtoTag": "Prototype_Component_UI_Texture_LoadingBG",
+            "szTextureComTag": "Com_Texture_UI_LoadingBG"
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 0,
+        "iDrawType": 1,
+        "iLevel": 1,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_Loading_BeatSaber",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_Loading_BeatSaber_Panel_0",
+        "szUITag": "Loading_BeatSaber_Panel"
+    }
+]
