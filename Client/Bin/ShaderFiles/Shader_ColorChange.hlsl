@@ -66,16 +66,16 @@ PS_OUT_DEFERRED PS_MAIN(PS_IN_DEFERRED In)
     float2 dir = In.vTexcoord - center;
     float len = length(dir);
     
-    float crackMask = 1 - g_GlassTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0).r;
+    float crackMask = g_GlassTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0).r;
     
     float strength = saturate(1 - len) * 0.1;
 
-    float2 distortedUV = In.vTexcoord + -normalize(dir) * strength * crackMask * abs(sin(g_fTime));
+    float2 distortedUV = In.vTexcoord + -normalize(dir) * strength * crackMask * sin(g_fTime * 2.5);
     
     
     
     Out.vBackBuffer = g_SceneTexture.Sample(ClampSampler, distortedUV);
-    
+    Out.vBackBuffer = lerp(Out.vBackBuffer, 1 - Out.vBackBuffer, saturate(sin(-g_fTime * 2.5)));
     
     return Out;   
 }

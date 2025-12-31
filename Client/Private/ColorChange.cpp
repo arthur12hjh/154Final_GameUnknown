@@ -44,9 +44,8 @@ void CColorChange::Bind_Resources(const _wstring& strRTTag)
     //컬러만 바인딩하자.
     if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_vColor, sizeof(_float4))))
         return;
-    float time = m_fTime * 2.5f;
     //컬러만 바인딩하자.
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &time, sizeof(_float))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
         return;
     // 씬 텍스쳐 바인딩.
     if (FAILED(m_pGameInstance->Bind_RenderTarget(strRTTag, m_pShaderCom, "g_SceneTexture")))
