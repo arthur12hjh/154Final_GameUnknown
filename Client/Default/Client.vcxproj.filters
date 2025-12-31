@@ -1099,6 +1099,12 @@
     <Filter Include="30.ImGui\LightTool">
       <UniqueIdentifier>{4bc73f0a-b3c9-4138-a70a-0d5ff04fee58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Face">
+      <UniqueIdentifier>{363a5071-bcac-4778-88d3-3133d53dae54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Ending">
+      <UniqueIdentifier>{64c96af5-1cba-4cd4-b039-af5df2d27611}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2104,6 +2110,12 @@
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NaytibaFace.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Ending.h">
+      <Filter>01.Levels\Ending</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3075,6 +3087,12 @@
     </ClCompile>
     <ClCompile Include="..\private\LightTool.cpp">
       <Filter>30.ImGui\LightTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\NaytibaFace.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Ending.cpp">
+      <Filter>01.Levels\Ending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

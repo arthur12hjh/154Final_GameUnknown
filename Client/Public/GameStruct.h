@@ -300,6 +300,7 @@ namespace Client
 
 		char				szRightWeaponPrototypeName[256];
 		char				szRightBoneName[256];
+		char				szFaceName[256];
 
 		NAYTIBA_TYPE		eNaytiba_Type;
 		AI_TYPE				eAI_Type;
