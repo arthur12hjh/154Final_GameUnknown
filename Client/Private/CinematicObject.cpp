@@ -29,6 +29,11 @@ HRESULT CCinematicObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CCinematicObject::Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference)
+{
+	return S_OK;
+}
+
 CCinematicObject* CCinematicObject::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCinematicObject* pInstance = new CCinematicObject(pDevice, pContext);

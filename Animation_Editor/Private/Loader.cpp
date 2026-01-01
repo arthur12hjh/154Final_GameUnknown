@@ -11,6 +11,8 @@
 #include "Weapon.h"
 #include "Weapon_Scarlet.h"
 #include "Scabbard_Scarlet.h"
+#include "Bottle_Scarlet.h"
+#include "Glass_Scarlet.h"
 #include "Sky.h"
 #include "ModelTerrain.h"
 
@@ -328,6 +330,16 @@ HRESULT CLoader::Loading_For_Editor()
 		CScabbard_Scarlet::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Bottle_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Bottle_Scarlet"),
+		CBottle_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Glass_Scarlet */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Glass_Scarlet"),
+		CGlass_Scarlet::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Character */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Character"),
 		CCharacter::Create(m_pDevice, m_pContext))))
@@ -443,7 +455,27 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::EDITOR);
+
+	/* For.Prototype_Component_Model_Bottle_Scarlet */
+	_matrix	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bottle_Scarlet");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Bottle/CH_M_Scarlet_Bottle.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Glass_Scarlet */
+	PreTransformMatrix = XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Glass_Scarlet");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Glass/CH_M_Scarlet_Glass.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(L
+	// EVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))
 	//	return E_FAIL;
 

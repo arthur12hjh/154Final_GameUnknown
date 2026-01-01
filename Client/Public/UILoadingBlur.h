@@ -23,11 +23,16 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void Set_NextLevelID(_uint iLevelID) { m_iNextLevelID = iLevelID; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
 	virtual HRESULT Execute(const UI_EVENT_DESC& EventDesc) override;
 	virtual void CallbackEvent(void* pArg) override;
+
+private:
+	_uint m_iNextLevelID = 0;
 
 public:
 	static CUILoadingBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

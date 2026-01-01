@@ -1,0 +1,24 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "GlowIntensity",
+            "vEndParam": [
+                0.1,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.5,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.5,
+    "isBeapBeap": true,
+    "isInfluenceChildren": true,
+    "isLoop": true,
+    "szAnimTag": "Loading_Complite"
+}

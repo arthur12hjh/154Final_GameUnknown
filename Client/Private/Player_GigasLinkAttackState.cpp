@@ -25,7 +25,7 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
 
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
-    
+
     return S_OK;
 }
 

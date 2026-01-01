@@ -150,6 +150,7 @@
     <ClInclude Include="..\Public\Body_Extra.h" />
     <ClInclude Include="..\Public\Body_Gigas.h" />
     <ClInclude Include="..\Public\Body_Scarlet.h" />
+    <ClInclude Include="..\Public\Bottle_Scarlet.h" />
     <ClInclude Include="..\Public\Camera_AnimationEditor.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Character_Manager.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="..\Public\Face_Character.h" />
     <ClInclude Include="..\Public\Face_Scarlet.h" />
     <ClInclude Include="..\Public\Gigas.h" />
+    <ClInclude Include="..\Public\Glass_Scarlet.h" />
     <ClInclude Include="..\Public\Grid.h" />
     <ClInclude Include="..\Public\Hair_Character.h" />
     <ClInclude Include="..\Public\imconfig.h" />
@@ -195,6 +197,7 @@
     <ClCompile Include="..\Private\Body_Extra.cpp" />
     <ClCompile Include="..\Private\Body_Gigas.cpp" />
     <ClCompile Include="..\Private\Body_Scarlet.cpp" />
+    <ClCompile Include="..\Private\Bottle_Scarlet.cpp" />
     <ClCompile Include="..\Private\Camera_AnimationEditor.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\Character_Manager.cpp" />
@@ -204,6 +207,7 @@
     <ClCompile Include="..\Private\Face_Character.cpp" />
     <ClCompile Include="..\Private\Face_Scarlet.cpp" />
     <ClCompile Include="..\Private\Gigas.cpp" />
+    <ClCompile Include="..\Private\Glass_Scarlet.cpp" />
     <ClCompile Include="..\Private\Grid.cpp" />
     <ClCompile Include="..\Private\Hair_Character.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">

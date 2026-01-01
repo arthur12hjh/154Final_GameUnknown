@@ -195,9 +195,11 @@
     <ClInclude Include="..\public\Desert_Architecture.h" />
     <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
+    <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
     <ClInclude Include="..\public\DryGrass3.h" />
+    <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\Giwajip.h" />
     <ClInclude Include="..\public\Giwajip2.h" />
     <ClInclude Include="..\public\Grass.h" />
@@ -306,9 +308,11 @@
     <ClCompile Include="..\private\Desert_Architecture.cpp" />
     <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
+    <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />
     <ClCompile Include="..\private\DryGrass3.cpp" />
+    <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\Giwajip.cpp" />
     <ClCompile Include="..\private\Giwajip2.cpp" />
     <ClCompile Include="..\private\Grass.cpp" />

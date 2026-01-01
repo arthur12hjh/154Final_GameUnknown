@@ -40,6 +40,10 @@ private:
 	JOINT_CHAIN_DESC m_tRootDesc = {};
 	JOINT_CHAIN_DESC m_tJointDesc = {};
 
+private:
+	void Set_RootJoint();
+	void Set_ChildJoint(class CRigidBody* pRigidBody);
+
 public:
 	static CJointChain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg);

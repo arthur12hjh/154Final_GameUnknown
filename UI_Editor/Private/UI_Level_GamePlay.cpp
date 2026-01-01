@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UI_Level_GamePlay.h"
+#include "UI_Level_Loading.h"
 
 #include "Actor.h"
 #include "UI_Camera.h"
@@ -66,14 +67,24 @@ void CUI_Level_GamePlay::Update(_float fTimeDelta)
 		m_isOverlay = false;
 	}
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
+	{
+		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+
+		if (FAILED(m_pGameInstance->Change_Level(CUI_Level_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::BEATSABER_GAME))))
+			return;
+
+		return;
+	}
+
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}
+	}*/
 }
 
 HRESULT CUI_Level_GamePlay::Render()

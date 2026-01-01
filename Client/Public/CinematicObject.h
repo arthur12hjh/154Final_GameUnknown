@@ -30,6 +30,8 @@ public:
 
 	_wstring Get_ObjectTag() const { return m_szObjectTag; }
 
+	virtual HRESULT Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference);
+
 protected:
 	_wstring m_szObjectTag;
 
