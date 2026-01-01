@@ -19,11 +19,53 @@
                 "iActiveIndex": 2,
                 "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
             },
+            {
+                "eState": 4,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 1101,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 5.0,
+                "iActiveIndex": 1102,
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 7.5,
+                "iActiveIndex": 1103,
+                "szObjectTag": "ActionCamera_GigasMeetGigas03"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 9.5,
+                "iActiveIndex": 1105,
+                "szObjectTag": "ActionCamera_GigasMeetGigas04"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 10.5,
+                "iActiveIndex": 1106,
+                "szObjectTag": "ActionCamera_GigasMeetGigas06"
+            },
 	{
                 "eState": 6,
                 "fTrackPosition": 18.0,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
+            },
+            {
+                "eState": 2,
+                "fTrackPosition": 18.3,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
             },
 	{
                 "eState": 7,

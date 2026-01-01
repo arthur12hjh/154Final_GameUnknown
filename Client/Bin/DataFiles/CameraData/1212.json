@@ -1,0 +1,24 @@
+[
+  {
+    "iCameraAnimationID": 1212,
+    "iCameraAnimationFlag": 66050,
+    "fBaseFOV": 45.0,
+    "szCameraAnimationName": "",
+    "vBaseCameraPivot": [762.379,-12.660,661.177],
+    "vBaseBonePosition": [729.793,13.438,633.664],
+    "vBaseBoneRotation": [0.0,0.0,0.0],
+    "FOVTrackList": [
+      { "fTrackPosition": 0.0, "vTrackValue": [45.0,45.0,45.0], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 },
+      { "fTrackPosition": 4.0, "vTrackValue": [45.0,45.0,45.0], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 }
+    ],
+    "BonePositionTrackList": [
+      { "fTrackPosition": 0.0, "vTrackValue": [729.793,13.438,633.664], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 },
+      { "fTrackPosition": 4.0, "vTrackValue": [730.516,13.438,632.808], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 }
+    ],
+    "PivotTrackList": [
+      { "fTrackPosition": 0.0, "vTrackValue": [762.379,-12.660,661.177], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 },
+      { "fTrackPosition": 4.0, "vTrackValue": [759.318,-12.660,664.262], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 }
+    ],
+    "BoneRotationTrackList": []
+  }
+]
