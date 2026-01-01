@@ -1099,6 +1099,15 @@
     <Filter Include="30.ImGui\LightTool">
       <UniqueIdentifier>{4bc73f0a-b3c9-4138-a70a-0d5ff04fee58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Face">
+      <UniqueIdentifier>{363a5071-bcac-4778-88d3-3133d53dae54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Ending">
+      <UniqueIdentifier>{64c96af5-1cba-4cd4-b039-af5df2d27611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner">
+      <UniqueIdentifier>{a80cb650-fb27-4097-91cc-6096a30630f5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\DisplayBox">
       <UniqueIdentifier>{80d2f063-5793-4bf6-b85d-fb0454e18428}</UniqueIdentifier>
     </Filter>
@@ -2110,6 +2119,15 @@
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\NaytibaFace.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Ending.h">
+      <Filter>01.Levels\Ending</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BeatSaberSpawner.h">
+      <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\DisplayBox.h">
       <Filter>02.GameObjects\Actor\Interaction\DisplayBox</Filter>
     </ClInclude>
@@ -3094,6 +3112,15 @@
     <ClCompile Include="..\private\LightTool.cpp">
       <Filter>30.ImGui\LightTool</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\NaytibaFace.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Ending.cpp">
+      <Filter>01.Levels\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberSpawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
+   </ClCompile>
     <ClCompile Include="..\private\DisplayBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\DisplayBox</Filter>
     </ClCompile>

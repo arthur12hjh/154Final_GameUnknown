@@ -56,6 +56,7 @@
 
 #include "NayitbaPartBody.h"
 #include "NaytibaBeam_Part.h"
+#include "NaytibaFace.h"
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
 
@@ -97,6 +98,7 @@
 #include "BeatSaberCharacter.h"
 #include "BeatSaberCharacterBody.h"
 #include "BeatSaberFsm.h"
+#include "BeatSaberSpawner.h"
 #include "Note.h"
 #pragma endregion
 
@@ -703,6 +705,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_NpcBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_NpcBody"),
 		CNpcBody::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Nayitba_Face */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Face"),
+		CNaytibaFace::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Nayitba_Body */
@@ -7467,6 +7474,13 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Dororong */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_BeatSaberSpawner");
+	pProtoDesc.pPrototype = CBeatSaberSpawner::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

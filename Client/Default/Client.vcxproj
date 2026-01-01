@@ -119,7 +119,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/Debug/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;fmodL_vc.lib;fmod_vc.lib;fmodL_vc.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -148,7 +148,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/Release/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;fmodL_vc.lib;fmod_vc.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -159,6 +159,7 @@
     <ClInclude Include="..\public\Actor.h" />
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
+    <ClInclude Include="..\public\BeatSaberSpawner.h" />
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="..\Public\InteractionBinder.h" />
     <ClInclude Include="..\Public\Iron_Floor.h" />
     <ClInclude Include="..\public\Item.h" />
+    <ClInclude Include="..\public\Level_Ending.h" />
     <ClInclude Include="..\public\Level_Scarlet.h" />
     <ClInclude Include="..\Public\Lift_Body.h" />
     <ClInclude Include="..\Public\Lift_Controller.h" />
@@ -231,6 +233,7 @@
     <ClInclude Include="..\Public\Nayitba.h" />
     <ClInclude Include="..\Public\NayitbaPartBody.h" />
     <ClInclude Include="..\public\NaytibaBeam_Part.h" />
+    <ClInclude Include="..\public\NaytibaFace.h" />
     <ClInclude Include="..\public\NaytibaLeftWeaponPart.h" />
     <ClInclude Include="..\public\NaytibaRightWeaponPart.h" />
     <ClInclude Include="..\public\Note.h" />
@@ -494,6 +497,7 @@
     <ClCompile Include="..\private\Actor.cpp" />
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
+    <ClCompile Include="..\private\BeatSaberSpawner.cpp" />
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
@@ -541,6 +545,7 @@
     <ClCompile Include="..\Private\InteractionBinder.cpp" />
     <ClCompile Include="..\Private\Iron_Floor.cpp" />
     <ClCompile Include="..\private\Item.cpp" />
+    <ClCompile Include="..\private\Level_Ending.cpp" />
     <ClCompile Include="..\private\Level_Scarlet.cpp" />
     <ClCompile Include="..\Private\Lift_Body.cpp" />
     <ClCompile Include="..\Private\Lift_Controller.cpp" />
@@ -565,6 +570,7 @@
     <ClCompile Include="..\Private\Nayitba.cpp" />
     <ClCompile Include="..\Private\NayitbaPartBody.cpp" />
     <ClCompile Include="..\private\NaytibaBeam_Part.cpp" />
+    <ClCompile Include="..\private\NaytibaFace.cpp" />
     <ClCompile Include="..\private\NaytibaLeftWeaponPart.cpp" />
     <ClCompile Include="..\private\NaytibaRightWeaponPart.cpp" />
     <ClCompile Include="..\private\Note.cpp" />

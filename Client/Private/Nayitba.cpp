@@ -16,6 +16,7 @@
 #pragma region PartObject
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
+#include "NaytibaFace.h"
 #include "NaytibaBeam_Part.h"
 #pragma endregion
 
@@ -77,7 +78,7 @@ HRESULT CNaytiba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
-	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
+	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szHeadBoneName);
 	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
 	return S_OK;
@@ -729,6 +730,16 @@ HRESULT CNaytiba::ADD_PartObjects()
 	Import_ModelPtr();
 
 	 // 무기랑 빔?
+	if (strcmp("None", m_pInitMonsterInfo->szFaceName))
+	{
+		CNaytibaFace::NAYTIBA_FACE_DESC FaceDesc = { };
+		FaceDesc.pParentTransform = m_pTransformCom;
+		FaceDesc.vScale = { 1.f, 1.f, 1.f };
+		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szFaceName, FaceDesc.szFaceJsonDataName);
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Face"), TEXT("Part_Face"), &FaceDesc)))
+			return E_FAIL;
+	}
+
 	if (strcmp("None", m_pInitMonsterInfo->szLeftWeaponPrototypeName))
 	{
 		CNaytibaLeftWeaponPart::WEAPON_DESC LWeaponDesc = { };

@@ -20,6 +20,7 @@ namespace Client
 		SCARLET,
 		BEATSABER_GAME,
 		LEVEL_PROB,
+		ENDING,
 		END };
 }
 

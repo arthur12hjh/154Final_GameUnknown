@@ -10,7 +10,7 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,0,11
 10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,0,4,3,10
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,0,1,2,11
-12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,1,138
+12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,4,138
 13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,0,5,3,11
 14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,1,136
 20,M_Scarlet_AirDashCut,None,None,20,15,"1, 1, 2",0,0,1,4,136
