@@ -1,15 +1,14 @@
 #pragma once
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "Actor.h"
 
 NS_BEGIN(Engine)
 class CCollider;
 class CModel;
-class CRigidBody;
 NS_END
 
 NS_BEGIN(Client)
-class CVirtual_Wall : public CGameObject
+class CVirtual_Wall : public CActor
 {
 private:
 	CVirtual_Wall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -27,8 +26,9 @@ public:
 	virtual HRESULT			Render() override;
 
 private:
-	class CCollider* m_pCollider = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
+	CCollider* m_pCollider = { nullptr };
+
+	_bool		m_bIsReady = { false };
 
 private:
 	HRESULT					Ready_Components();

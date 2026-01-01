@@ -13,6 +13,7 @@
 #include "Instance_Desert.h"
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
+#include "Npc.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -111,7 +112,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				CLift_Platform::LIFT_PLATFORM_DESC pLiftPlatformDesc = {};
 
 				Nayitba_Desc MonsterDesc = {};
-
+				CNpc::NPC_DESC NpcDesc = {};
 
 				switch (m_eCurrentObject)
 				{
@@ -1913,6 +1914,16 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 7;
 					break;
 #pragma endregion
+#pragma region NPC
+				case DESESRT_RUIN_OBJECT::NPC_SCARLET:
+					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
+					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_Scarlet_Body"); NpcDesc.iNpcID = 1;
+					break;
+				case DESESRT_RUIN_OBJECT::NPC_SHOP:
+					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
+					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_D1G-g2r_Body"); NpcDesc.iNpcID = 4;
+					break;
+#pragma endregion 
 
 #pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
@@ -1940,6 +1951,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_PLATFORM)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pLiftPlatformDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -2339,7 +2354,9 @@ HRESULT CMapTool_Desert::Render()
 	}
 
 	_int nSelectedCharacter = -1;
+	_int nSelectedNpc = -1;
 	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5", "Monster7"};
+	const _char* npcNames[] = { "NPC_SCARLET", "NPC_SHOP" };
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
@@ -2371,6 +2388,19 @@ HRESULT CMapTool_Desert::Render()
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
 
+		}
+		if (ImGui::ListBox("##NPC", &nSelectedNpc, npcNames, IM_ARRAYSIZE(npcNames), 7))
+		{
+			if (nSelectedNpc == 0)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_SCARLET;
+				m_CurrentLayerName = TEXT("Layer_Npc");
+			}
+			else if (nSelectedNpc == 1)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_SHOP;
+				m_CurrentLayerName = TEXT("Layer_Npc");
+			}
 		}
 	}
 
@@ -4858,6 +4888,7 @@ HRESULT CMapTool_Desert::Save_Monster_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Monsters_By_Layer(ofs, TEXT("Layer_Monster")))) return S_OK;
+	if (FAILED(Save_Npcs_By_Layer(ofs, TEXT("Layer_Npc")))) return S_OK;
 
 	ofs.close();
 
@@ -5046,6 +5077,41 @@ HRESULT CMapTool_Desert::Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLa
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CNpc* pNpc = dynamic_cast<CNpc*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pNpc))
+			{
+				SAVEDNPCINFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _tchar* pTag = pNpc->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pNpc->Get_NpcID();
+				info.iNpcID = pId;
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDNPCINFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 {
 	std::ifstream ifs(szFilePath, std::ios::binary);
@@ -5091,6 +5157,8 @@ HRESULT CMapTool_Desert::Load_Monster_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Load_Monsters_By_Layer(ifs, TEXT("Prototype_GameObject_SpawnBox"), TEXT("Layer_Monster")))) return S_OK;
+	if (FAILED(Load_Npcs_By_Layer(ifs, TEXT("Prototype_GameObject_Npc"), TEXT("Layer_Npc")))) return S_OK;
+
 	ifs.close();
 
 	return S_OK;
@@ -5276,6 +5344,38 @@ HRESULT CMapTool_Desert::Load_Monsters_By_Layer(ifstream& ifs, const _tchar* pro
 				}
 			}
 		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Npcs_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDNPCINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDNPCINFO));
+
+		CNpc::NPC_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iNpcID = info.iNpcID;
+		Desc.pComponentTag = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
 	}
 
 	return S_OK;

@@ -241,6 +241,9 @@
     <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox">
       <UniqueIdentifier>{52fff525-3a7e-4dfa-8cab-f4a6f9df315a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\NPC">
+      <UniqueIdentifier>{74f1a3e5-140a-4499-937a-ec0afb225ff5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -572,6 +575,9 @@
     <ClInclude Include="..\public\Shutter.h">
       <Filter>02.GameObjects\Maps\Desert\Door</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Npc.h">
+      <Filter>02.GameObjects\Maps\Desert\NPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -886,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Shutter.cpp">
       <Filter>02.GameObjects\Maps\Desert\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc.cpp">
+      <Filter>02.GameObjects\Maps\Desert\NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
