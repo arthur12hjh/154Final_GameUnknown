@@ -39,8 +39,6 @@ HRESULT CDeco::Initialize(void* pArg)
     //_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     //m_pCullingCollider->UpdateColiision(worldMatrix);
     
-    m_bIsOccluderDisabled = true;
-
 	return S_OK;
 }
 
@@ -50,7 +48,7 @@ void CDeco::Priority_Update(_float fTimeDelta)
 
 void CDeco::Update(_float fTimeDelta)
 {
-    //SetCullingCollider(m_iObjectID);
+    SetCullingCollider(m_iObjectID);
     _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(worldMatrix);
 }
@@ -64,7 +62,7 @@ void CDeco::Late_Update(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
+	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -295,6 +293,66 @@ void CDeco::SetCullingCollider(_uint iObjectID)
         break;
     case 55: // Duct_13A (3, 3, 1.5)
         pCullingCollider->SetCollision({ 0.f, 2.9f, 0.f }, {}, { 3.f, 3.f, 1.5f }); 
+        break;
+    case 56: // Statue_1A (2.3, 3.5, 1.5)
+        pCullingCollider->SetCollision({ -0.2f, 3.3f, 0.15f }, {}, { 2.3f, 3.5f, 1.5f }); 
+        break;
+    case 57: // Statue_19B (27, 31, 15)
+        pCullingCollider->SetCollision({ -7.f, 30.f, -2.f }, {}, { 27.f, 31.f, 15.f }); 
+        break;
+    case 58: // Statue_24B (5.5, 5.5, 3.3)
+        pCullingCollider->SetCollision({ 0.f, 5.f, 0.f }, {}, { 5.5f, 5.5f, 3.3f }); 
+        break;
+    case 59: // Statue_31B (4.5, 2.5, 2.3)
+        pCullingCollider->SetCollision({ 0.f, 2.3f, 0.f }, {}, { 4.5f, 2.5f, 2.3f }); 
+        break;
+    case 60: // Statue_40B (2.3, 3.5, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 3.15f, 0.f }, {}, { 2.3f, 3.3f, 1.5f }); 
+        break;
+    case 61: // Furniture_7A (1.5, 1.2, 0.7)
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.5f, 1.1f, 0.7f }); 
+        break;
+    case 62: // Furniture_9A (1.4, 1, 1)
+        pCullingCollider->SetCollision({ 0.f, 0.8f, 0.f }, {}, { 1.4f, 0.9f, 1.f }); 
+        break;
+    case 63: // Furniture_47A (0.8, 1.4, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 0.8f, 1.4f, 0.8f }); 
+        break;
+    case 64: // Furniture_50A (0.2, 0.5, 0.2)
+        pCullingCollider->SetCollision({ 0.f, 0.4f, 0.f }, {}, { 0.2f, 0.5f, 0.2f }); 
+        break;
+    case 65: // Furniture_50B (0.2, 0.4, 0.2)
+        pCullingCollider->SetCollision({ 0.f, 0.3f, 0.f }, {}, { 0.2f, 0.4f, 0.2f }); 
+        break;
+    case 66: // Furniture_50C (0.2, 0.4, 0.2)
+        pCullingCollider->SetCollision({ 0.f, 0.3f, 0.f }, {}, { 0.2f, 0.4f, 0.2f }); 
+        break;
+    case 67: // Furniture_50D (0.15, 0.25, 0.15)
+        pCullingCollider->SetCollision({ 0.f, 0.2f, 0.f }, {}, { 0.15f, 0.25f, 0.15f }); 
+        break;
+    case 68: // Furniture_51A (0.7, 1.5, 0.4)
+        pCullingCollider->SetCollision({ 0.f, 0.3f, 0.f }, {}, { 0.7f, 1.5f, 0.4f }); 
+        break;
+    case 69: // Furniture_57A (1, 0.6, 0.55)
+        pCullingCollider->SetCollision({ 0.f, 0.5f, 0.f }, {}, { 1.f, 0.6f, 0.55f }); 
+        break;
+    case 70: // Furniture_59A (1.3, 1.2, 1.3)
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.3f, 1.2f, 1.3f }); 
+        break;
+    case 71: // Furniture_77A (1.8, 1.4, 1)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 1.8f, 1.4f, 1.f }); 
+        break;
+    case 72: // Furniture_79A (0.8, 1.4, 0.8)
+        pCullingCollider->SetCollision({ 0.f, 1.2f, 0.f }, {}, { 0.8f, 1.4f, 0.8f }); 
+        break;
+    case 73: // Furniture_83A (1.5, 1.1, 1.5)
+        pCullingCollider->SetCollision({ 0.f, 1.05f, 0.f }, {}, { 1.5f, 1.1f, 1.5f }); 
+        break;
+    case 74: // Furniture_87B (0.5, 0.5, 0.7)
+        pCullingCollider->SetCollision({ 0.f, 0.47f, 0.f }, {}, { 0.5f, 0.5f, 0.7f }); 
+        break;
+    case 75: // Furniture_87D (0.5, 0.5, 0.7)
+        pCullingCollider->SetCollision({ 0.f, 0.47f, 0.f }, {}, { 0.5f, 0.5f, 0.7f }); 
         break;
     case 80: // Lamp_47A
         pCullingCollider->SetCollision({ 0.f, 4.f, 1.f }, {}, { 2.f, 4.f, 2.f });
@@ -539,6 +597,33 @@ _uint CDeco::Object_Number(const _tchar* pComponentTag)
         if (!wcscmp(pSuffix, TEXT("10A"))) return 54;
         if (!wcscmp(pSuffix, TEXT("13A"))) return 55;
     }
+    // 5. Statue 시리즈 (56 ~ 60)
+    else if (wcsstr(pComponentTag, TEXT("Statue"))) {
+        if (!wcscmp(pSuffix, TEXT("1A")))  return 56;
+        if (!wcscmp(pSuffix, TEXT("19B"))) return 57;
+        if (!wcscmp(pSuffix, TEXT("24B"))) return 58;
+        if (!wcscmp(pSuffix, TEXT("31B"))) return 59;
+        if (!wcscmp(pSuffix, TEXT("40B"))) return 60;
+    }
+    // 6. Furniture 시리즈 (61 ~ 75)
+    else if (wcsstr(pComponentTag, TEXT("Furniture"))) {
+        if (!wcscmp(pSuffix, TEXT("7A")))  return 61;
+        if (!wcscmp(pSuffix, TEXT("9A")))  return 62;
+        if (!wcscmp(pSuffix, TEXT("47A"))) return 63;
+        if (!wcscmp(pSuffix, TEXT("50A"))) return 64;
+        if (!wcscmp(pSuffix, TEXT("50B"))) return 65;
+        if (!wcscmp(pSuffix, TEXT("50C"))) return 66;
+        if (!wcscmp(pSuffix, TEXT("50D"))) return 67;
+        if (!wcscmp(pSuffix, TEXT("51A"))) return 68;
+        if (!wcscmp(pSuffix, TEXT("57A"))) return 69;
+        if (!wcscmp(pSuffix, TEXT("59A"))) return 70;
+        if (!wcscmp(pSuffix, TEXT("77A"))) return 71;
+        if (!wcscmp(pSuffix, TEXT("79A"))) return 72;
+        if (!wcscmp(pSuffix, TEXT("83A"))) return 73;
+        if (!wcscmp(pSuffix, TEXT("87B"))) return 74;
+        if (!wcscmp(pSuffix, TEXT("87D"))) return 75;
+    }
+
     // 1. Lamp, Poster, Wheel, Base
     else if (wcsstr(pComponentTag, TEXT("Lamp"))) {
         if (!wcscmp(pSuffix, TEXT("47A"))) return 80;

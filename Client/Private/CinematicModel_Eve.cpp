@@ -398,7 +398,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_FirstMeet()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_EVE_01", FALSE, 1.8f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_EVE_01", FALSE, 1.8f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
 
@@ -411,7 +411,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_GoodBye()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_b", FALSE, 2.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_b", FALSE, 2.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
 
@@ -570,10 +570,6 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta)
 		else if (m_iAnimationSequence == 2)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_d", FALSE, 2.f, 0.12f, FALSE);
-		}
-		else if (m_iAnimationSequence == 3)
-		{
-			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_e", FALSE, 2.f, 0.12f, FALSE);
 		}
 
 	}

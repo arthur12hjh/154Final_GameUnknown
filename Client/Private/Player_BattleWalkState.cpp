@@ -43,7 +43,7 @@ void CPlayer_BattleWalkState::Start(void* pArg, _float fBlendRatio)
     // Turn 트리거 (입력 있을 때만 트리거)
     if (false == m_isTurning && false == m_isTurnLocked && fDot <= fTurnDotThreshold)
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run_Turn_L", false, 1.5f, 0.f, false, -1.f, 3.f, true);
+        m_pPlayer->Set_Animation("Proto_Battle_Run_Turn_L", false, 1.5f, 0.12f, false, -1.f, 3.5f, true);
         m_isTurning = true;
         m_isTurnLocked = true;
         m_isMovable = false;

@@ -19,8 +19,6 @@ public:
 		return m_pNavigationCom; // 이미 멤버 변수로 가지고 있으니 바로 리턴
 	}
 
-	void Set_MapTool(class CMapTool_Desert* pMapTool) { m_pMaptool = pMapTool; }
-
 private:
 	CTerrain_Desert(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTerrain_Desert(const CTerrain_Desert& Prototype);
@@ -34,10 +32,10 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void Change_Height_Rect(_vector PickingPos, _float fHeight, _float fRadius);
+	/*void Change_Height_Rect(_vector PickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Flat(_vector PickingPos, _float fHeight, _float fRadius);
 	void Change_Height_Sculpt(_vector vPickingPos, _float fAmount, _float fRadius, _float fMaxHeight);
-	void Change_Height_Smooth(_vector vPickingPos, _float fFactor, _float fRadius);
+	void Change_Height_Smooth(_vector vPickingPos, _float fFactor, _float fRadius);*/
 
 	_float Get_Height_In_World_Space(_float fWorldX, _float fWorldZ);
 
@@ -47,6 +45,7 @@ private:
 	CTexture* m_pTextureCom = { nullptr };
 	CTexture* m_pTextureCom_Red = { nullptr };
 	CTexture* m_pTextureCom_Green = { nullptr };
+	CTexture* m_pTextureCom_Blue = { nullptr };
 	CTexture* m_pMaskCom = { nullptr };
 
 
@@ -55,8 +54,6 @@ private:
 	CTexture* m_pORMTextureCom_Red = { nullptr };
 	CTexture* m_pORMTextureCom_Green = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
-
-	class CMapTool_Desert* m_pMaptool = { nullptr };
 
 private:
 	HRESULT Ready_Components();

@@ -175,6 +175,10 @@ HRESULT CTerrain_Desert::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Green"),
 		TEXT("Com_Texture_Green"), reinterpret_cast<CComponent**>(&m_pTextureCom_Green))))
 		return E_FAIL;
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Blue"),
+		TEXT("Com_Texture_Blue"), reinterpret_cast<CComponent**>(&m_pTextureCom_Blue))))
+		return E_FAIL;
 
 	/* Com_NormalTexture */
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_Terrain_Desert_Normal"),
@@ -226,6 +230,8 @@ HRESULT CTerrain_Desert::Bind_ShaderResources()
 	if (FAILED(m_pTextureCom_Red->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Red")))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom_Green->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Green")))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom_Blue->Bind_ShaderResources(m_pShaderCom, "g_DiffuseTexture_Blue")))
 		return E_FAIL;
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
@@ -287,6 +293,7 @@ void CTerrain_Desert::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pTextureCom_Red);
 	Safe_Release(m_pTextureCom_Green);
+	Safe_Release(m_pTextureCom_Blue);
 	Safe_Release(m_pMaskCom);
 	Safe_Release(m_pNormalTextureCom);
 	Safe_Release(m_pShaderCom);
