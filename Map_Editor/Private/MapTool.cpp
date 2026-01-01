@@ -1398,7 +1398,6 @@ HRESULT CMapTool::Save_Map_Objects(const _char* szFilePath)
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_CM_Rock13")))) return S_OK;
-	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Moon")))) return S_OK;
 	if (FAILED(Save_Objects_By_Layer(ofs, TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ofs.close();
@@ -1536,7 +1535,6 @@ HRESULT CMapTool::Load_Map_Objects(const _char* szFilePath)
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock11"), TEXT("Layer_CM_Rock11")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
-	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Moon"), TEXT("Layer_Moon")))) return S_OK;
 	if (FAILED(Load_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ifs.close();

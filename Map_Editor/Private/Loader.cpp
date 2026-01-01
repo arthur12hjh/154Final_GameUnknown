@@ -92,6 +92,7 @@
 #include "Desert_Grass.h"
 #include "DisplayBox.h"
 #include "Shutter.h"
+#include "Npc.h"
 #pragma endregion
 
 
@@ -2698,6 +2699,29 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 	/* For.Prototype_GameObject_Desert_Grass */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Desert_Grass");
 	pProtoDesc.pPrototype = CDesert_Grass::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Var02_Body */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_D1G-g2r_Body");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Character/NPC/CH_NPC_05/CH_NPC_05_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_Component_Model_Scarlet_Body */
+	PreTransformMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Body");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Npc */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc");
+	pProtoDesc.pPrototype = CNpc::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

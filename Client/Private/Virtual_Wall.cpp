@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CVirtual_Wall::CVirtual_Wall(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-    CGameObject(pDevice, pContext)
+    CActor(pDevice, pContext)
 {
 }
 
 CVirtual_Wall::CVirtual_Wall(const CVirtual_Wall& Prototype) :
-    CGameObject(Prototype)
+    CActor(Prototype)
 {
 }
 
@@ -23,10 +23,11 @@ HRESULT CVirtual_Wall::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    if (FAILED(Ready_Components()))
-        return E_FAIL;
+    /*if (FAILED(Ready_Components()))
+        return E_FAIL;*/
 
-    m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+    //_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+    //m_pCollider->UpdateColiision(worldMatrix);
 
     return S_OK;
 }
@@ -37,6 +38,16 @@ void CVirtual_Wall::Priority_Update(_float fTimeDelta)
 
 void CVirtual_Wall::Update(_float fTimeDelta)
 {
+    if (m_bIsReady == false)
+    {
+        if (FAILED(Ready_Components()))
+            return;
+
+        m_bIsReady = true;
+    }
+    m_pCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+
 }
 
 void CVirtual_Wall::Late_Update(_float fTimeDelta)
@@ -44,7 +55,7 @@ void CVirtual_Wall::Late_Update(_float fTimeDelta)
     //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-    //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+    m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif
 }
 
@@ -55,10 +66,16 @@ HRESULT CVirtual_Wall::Render()
 
 HRESULT CVirtual_Wall::Ready_Components()
 {
-    _float3 Com_Size = m_pTransformCom->Get_Scale();
+    COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+    OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
+    OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+        TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pCollider), &OBBDesc)))
+        return E_FAIL;
 
     PxUserData tUserData;
-    tUserData.szActorTag = TEXT("KIMETIC_Actor2");
+    tUserData.szActorTag = TEXT("Wall_Actor2");
 
     //리지드 바디 Desc 세팅. 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
     CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
@@ -73,8 +90,10 @@ HRESULT CVirtual_Wall::Ready_Components()
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
     RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-    RigidBodyDesc.vSize = Com_Size;
+    RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
     RigidBodyDesc.fMass = { 0.3f };
+    _float3 vRigidSize = RigidBodyDesc.vSize;
+    RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.9f, vRigidSize.y * 16.f, vRigidSize.z * 4.f);
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -114,6 +133,5 @@ void CVirtual_Wall::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pRigidBody);
     Safe_Release(m_pCollider);
 }

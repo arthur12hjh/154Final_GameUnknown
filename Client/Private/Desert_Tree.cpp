@@ -78,7 +78,7 @@ HRESULT CDesert_Tree::Render()
 			return E_FAIL;
 
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(8)))
 			return E_FAIL;
 
 
