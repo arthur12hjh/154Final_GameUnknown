@@ -316,11 +316,18 @@ HRESULT CMainApp::Ready_Mouse()
 
 HRESULT CMainApp::Ready_ClientDeferred()
 {
+	CColorChange::EFFECT_SCREEN_DESC eScreenDesc;
+	eScreenDesc.fEndTime = 0.628f;
+	eScreenDesc.iPass = 0;
 	/* 테스트용으로 ColorChange 추가. */
-	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange_2"), CColorChange::Create(m_pDevice, m_pContext, nullptr))))
+	//eScreenDesc.fEndTime = 1.57f;
+	eScreenDesc.fEndTime = 0.628f * 1.5f;
+	eScreenDesc.iPass = 1;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange_2"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
 	return S_OK;

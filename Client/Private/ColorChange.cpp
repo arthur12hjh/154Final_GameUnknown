@@ -21,6 +21,11 @@ HRESULT CColorChange::Initialize(void* pArg)
         return E_FAIL;
     m_pGlassTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/ScreenTexture/Screen_Glass.dds"), 1);
     m_fTime = 0.f;
+
+    EFFECT_SCREEN_DESC* pDesc = static_cast<EFFECT_SCREEN_DESC*>(pArg);
+    m_iShaderPassIdx = pDesc->iPass;
+    m_fEndTime = pDesc->fEndTime;
+
     return S_OK;
 }
 
@@ -28,7 +33,6 @@ HRESULT CColorChange::Initialize(void* pArg)
 void CColorChange::Bind_Resources(const _wstring& strRTTag)
 {
     //여기서 필요한 리소스들 바인딩해주고..
-
 
     if (FAILED(m_pGlassTexture->Bind_ShaderResource(m_pShaderCom, "g_GlassTexture", 0)))
         return;

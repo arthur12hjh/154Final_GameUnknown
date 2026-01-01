@@ -25,6 +25,14 @@ void CReserveDeferred::Render(class CVIBuffer* pVIBuffer)
 	pVIBuffer->Render();
 }
 
+_bool CReserveDeferred::Update(_float fTimeDelta)
+{
+	m_fTime += fTimeDelta;
+	if (m_fEndTime < m_fTime)
+		m_isActive = false;
+	return m_isActive;
+}
+
 void CReserveDeferred::Free()
 {
 	__super::Free();
