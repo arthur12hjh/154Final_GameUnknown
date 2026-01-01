@@ -179,13 +179,15 @@ _bool CBossBlackBoard::IsCurrentPhaseLastAttackAction()
     return   m_ChangePhaseRatio[iPhaseIndex].second.bIsLastAttack;
 }
 
-void CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
+_bool CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 {
     m_eExcution = eExcution;
     if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
     {
         static_cast<CNaytiba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
     }
+
+    return true;
 }
 
 _bool CBossBlackBoard::bIsExcution()
