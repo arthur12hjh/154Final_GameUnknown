@@ -295,6 +295,7 @@ namespace Client
 		char				szAnimationName[256];
 		char				szMonsterName[256];
 
+		char				szHeadBoneName[256];
 		char				szLeftWeaponPrototypeName[256];
 		char				szLeftBoneName[256];
 
@@ -582,6 +583,16 @@ namespace Client
 		_bool					bIsEnableMove;
 		_uint					eTargetLevel;
 	} TRANSPORT_DESC;
+
+	enum class NOTE_TYPE { HIT, OVERLAP, END };
+	typedef struct Note_Data_Desc
+	{
+		NOTE_TYPE				NoteType;
+		DIRECTION				eDirection;
+
+		_float					fSpawnRatio;
+		_float2					vBoundAnimFrame;
+	}NOTE_DATA_DESC;
 
 	typedef struct MotionTimeDesc
 	{

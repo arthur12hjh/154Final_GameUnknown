@@ -163,6 +163,8 @@ HRESULT CMonsterMimesisController::Damage(void* pArg)
 					{
 						bIsHitAble = false;
 					}
+					else
+						m_vAttackTime = { 0.f, 0.7f };
 				}
 			}
 		}
@@ -272,7 +274,9 @@ void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
 
 				CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
 				if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+				{
 					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
+				}
 				else
 					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
 			}

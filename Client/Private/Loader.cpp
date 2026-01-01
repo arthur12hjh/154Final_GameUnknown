@@ -98,6 +98,7 @@
 #include "BeatSaberCharacter.h"
 #include "BeatSaberCharacterBody.h"
 #include "BeatSaberFsm.h"
+#include "BeatSaberSpawner.h"
 #include "Note.h"
 #pragma endregion
 
@@ -6470,6 +6471,13 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Dororong */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_BeatSaberSpawner");
+	pProtoDesc.pPrototype = CBeatSaberSpawner::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

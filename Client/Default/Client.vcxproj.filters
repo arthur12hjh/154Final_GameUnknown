@@ -1105,6 +1105,9 @@
     <Filter Include="01.Levels\Ending">
       <UniqueIdentifier>{64c96af5-1cba-4cd4-b039-af5df2d27611}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner">
+      <UniqueIdentifier>{a80cb650-fb27-4097-91cc-6096a30630f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2116,6 +2119,9 @@
     <ClInclude Include="..\public\Level_Ending.h">
       <Filter>01.Levels\Ending</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BeatSaberSpawner.h">
+      <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3093,6 +3099,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Ending.cpp">
       <Filter>01.Levels\Ending</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BeatSaberSpawner.cpp">
+      <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

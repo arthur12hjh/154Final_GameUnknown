@@ -163,7 +163,6 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 	m_pFsm->Change_State(TEXT("Idle"));
 #pragma endregion
 
-
 	return S_OK;
 }
 
@@ -224,8 +223,8 @@ void CBeatSaberCharacter::BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, 
 		_bool bIsSuccess = { false };
 		if (pNoteData.eDirection == m_CharacterDesc.eDirection)
 		{
-			_float fAnimRatio = m_pBodyModelCom->Get_AnimationRatio();
-			if (pNoteData.vBoundAnimRatio.x <= fAnimRatio && fAnimRatio <= pNoteData.vBoundAnimRatio.y)
+			_float fAnimFrame = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
+			if (pNoteData.vBoundAnimFrame.x <= fAnimFrame && fAnimFrame <= pNoteData.vBoundAnimFrame.y)
 			{
 				// ¼º°ø
 				m_CharacterDesc.iScore += 100;

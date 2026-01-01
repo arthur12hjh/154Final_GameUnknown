@@ -6,7 +6,8 @@
 
 #include "UIHUD.h"
 #include "Level_Loading.h"
-#include "Note.h"
+#include "StringHelper.h"
+#include "BeatSaberSpawner.h"
 
 CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID) :
     CLevel(pDevice, pContext, ENUM_CLASS(eLevelID))
@@ -18,26 +19,32 @@ HRESULT CLevel_BeatSaber::Initialize()
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
     m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
 
-    //if (FAILED(Ready_Lights()))
-    //    return E_FAIL;
+    if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
+        return E_FAIL;
 
-    //if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-    //    return E_FAIL;
+    if (FAILED(Ready_Lights()))
+        return E_FAIL;
 
-    //if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
-    //    return E_FAIL;
+    if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+        return E_FAIL;
 
-    //if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
-    //    return E_FAIL;
+    if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
+        return E_FAIL;
 
- /*   if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
-        return E_FAIL;*/
+    if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
+        return E_FAIL;
 
-   /* if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
+    if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+        return E_FAIL;
+
+    if (FAILED(Ready_Layer_BeatSpawner(TEXT("Layer_BeatSaberSpawner"))))
+        return E_FAIL;
+
+    if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
         return E_FAIL;
 
     if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
-        return E_FAIL;*/
+        return E_FAIL;
 
     return S_OK;
 }
@@ -46,23 +53,15 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 {
     __super::Update(fTimeDelta);
 
-    if(m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
-    {
-        CNote::NOTE_DESC NoteDesc = {};
-        NoteDesc.bIsApplyTransform = true;
-        NoteDesc.vScale = { 1.f, 1.f, 1.f };
-        NoteDesc.vPosition = { 22.f, 1.f, 60.f };
-        NoteDesc.fNoteSpeed = 2.f;
-        NoteDesc.vTargetPoint = { 22.f, 1.f, 22.f };
-
-        m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
-            ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc);
-    }
-
     if (m_isOverlay && m_pHUD)
     {
         static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
         m_isOverlay = false;
+    }
+
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
+    {
+        Play_GameBGM(TEXT("Test"), 1.f);
     }
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
@@ -75,8 +74,6 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 
         return;
     }
-
-
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
     {
@@ -206,13 +203,57 @@ HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
     return S_OK;
 }
 
+HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
+{
+    CGameObject::GAMEOBJECT_DESC Desc = {};
+    Desc.bIsApplyTransform = true;
+    Desc.vScale = { 1.f, 1.f, 1.f };
+    Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
+    Desc.vPosition = { 20.f, 1.f, 20.f };
+    Desc.fRotationPerSec = XMConvertToRadians(180.0f);
+    Desc.fSpeedPerSec = 10.f;
 
+    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberSpawner"),
+        ENUM_CLASS(LEVEL::BEATSABER_GAME), strLayerTag, &Desc)))
+        return E_FAIL;
 
-void CLevel_BeatSaber::Play_GameBGM(const TCHAR* szBGMName, _float fVolume)
+    return S_OK;
+}
+
+HRESULT CLevel_BeatSaber::Load_SongList(const char* szDataFile)
+{
+    WCHAR            szKeyName[MAX_PATH] = {};
+    NOTE_DATA_NAME Data = {};
+
+    vector<string> DataList;
+    CStringHelper::CSVRead(szDataFile, DataList);
+
+    _uint iLastIndex = (_uint)DataList.size();
+    for (_uint i = 3; i < iLastIndex;)
+    {
+        CStringHelper::ConvertUTFToWide(DataList[i++].c_str(), szKeyName);
+        CStringHelper::ConvertUTFToWide(DataList[i++].c_str(), Data.SongFileName);
+        strcpy_s(Data.NoteFileName, DataList[i++].c_str());
+
+        m_SongList.emplace(szKeyName, Data);
+    }
+
+    return S_OK;
+}
+
+void CLevel_BeatSaber::Play_GameBGM(const wstring& szFileTag, _float fVolume)
 {
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    m_pGameInstance->Manager_PlayBGM(szBGMName, fVolume, 0,
-       [&](FMOD_CHANNELCONTROL* channelcontrol,
+    NOTE_DATA_NAME* pData = Get_FindSongFile(szFileTag);
+    if (nullptr == pData)
+        return;
+
+    auto pList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_BeatSaberSpawner"));
+    if (nullptr == pList)
+        return;
+
+    m_pGameInstance->Manager_PlayBGM(pData->SongFileName, fVolume, 0,
+        [&](FMOD_CHANNELCONTROL* channelcontrol,
             FMOD_CHANNELCONTROL_TYPE controltype,
             FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
             void* commanddata1,
@@ -220,6 +261,17 @@ void CLevel_BeatSaber::Play_GameBGM(const TCHAR* szBGMName, _float fVolume)
         {
             Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
         });
+
+    static_cast<CBeatSaberSpawner*>(pList->front())->Load_BeatData(pData->NoteFileName);
+}
+
+CLevel_BeatSaber::NOTE_DATA_NAME* CLevel_BeatSaber::Get_FindSongFile(const wstring& szFileTag)
+{
+    auto iter = m_SongList.find(szFileTag);
+    if (iter == m_SongList.end())
+        return nullptr;
+
+    return &iter->second;
 }
 
 FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)

@@ -12,6 +12,12 @@ public:
 		_float4x4	    worldMatrix;
 	}SAVEDOBJECTINFO;
 
+	typedef struct NoteDataFile
+	{
+		WCHAR			SongFileName[MAX_PATH];
+		char			NoteFileName[MAX_PATH];
+	}NOTE_DATA_NAME;
+
 private:
 	CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
 	virtual ~CLevel_BeatSaber() = default;
@@ -21,13 +27,14 @@ public:
 	virtual void				Update(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
-	void						Play_GameBGM(const TCHAR* szBGMName, _float fVolume);
-
+	void						Play_GameBGM(const wstring& szFileTag, _float fVolume);
+	
 private :
-	_float						m_fTime = 10;
-	_bool						m_bChangeLevel{ false };
-	_bool						m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
-	_bool						m_isOverlay{ true };
+	map<const wstring, NOTE_DATA_NAME>			m_SongList = {};
+	_float										m_fTime = 10;
+	_bool										m_bChangeLevel{ false };
+	_bool										m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
+	_bool										m_isOverlay{ true };
 
 private:
 	HRESULT						Ready_Lights();
@@ -37,6 +44,10 @@ private:
 	HRESULT						Ready_Layer_Camera(const _wstring& strLayerTag);
 	HRESULT						Ready_Layer_Player(const _wstring& strLayerTag);
 	HRESULT						Ready_Layer_UI(const _wstring& strLayerTag);
+
+	HRESULT						Ready_Layer_BeatSpawner(const _wstring& strLayerTag);
+	HRESULT						Load_SongList(const char* szDataFile);
+
 	FMOD_RESULT	 	 			Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2);
 
 	//HRESULT Load_Map_Data();
@@ -44,6 +55,7 @@ private:
 	//HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT						Load_Light_Data();
+	NOTE_DATA_NAME*				Get_FindSongFile(const wstring& szFileTag);
 
 public:
 	static CLevel_BeatSaber*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);

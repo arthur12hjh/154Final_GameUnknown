@@ -38,7 +38,6 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
         MSG_BOX("Not Bind Attacker");
         return;
     }
-
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _vector vAttackerPos = pDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
 
@@ -61,6 +60,9 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
                     break;
                 case ATTACK_DIRECTION::ATK_RIGHT:
                     szAnimationName += "_Rw";
+                    break;
+                default:
+                    szAnimationName += "_Dw";
                     break;
                 }
             }

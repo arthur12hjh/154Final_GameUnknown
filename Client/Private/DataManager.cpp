@@ -288,7 +288,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
     CStringHelper::CSVRead("../Bin/DataFiles/AIData/NaytibaData.csv", BossDataList);
 
     size_t iMaxSize = BossDataList.size();
-    for (auto i = 24; i < iMaxSize;)
+    for (auto i = 25; i < iMaxSize;)
     {
         NAYTIBA_NETWORK_DESC BossDesc = {};
         BossDesc.iMonsetID = atoi(BossDataList[i++].c_str());
@@ -297,6 +297,7 @@ HRESULT CDataManager::LoadNaytibaData(void* pArg)
         strcpy_s(BossDesc.szAnimationName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szMonsterName, BossDataList[i++].c_str());
         
+        strcpy_s(BossDesc.szHeadBoneName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szLeftWeaponPrototypeName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szLeftBoneName, BossDataList[i++].c_str());
         strcpy_s(BossDesc.szRightWeaponPrototypeName, BossDataList[i++].c_str());
