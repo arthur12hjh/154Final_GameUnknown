@@ -50,8 +50,11 @@ HRESULT CCamera_Action::Initialize(void* pArg)
 
 void CCamera_Action::Priority_Update(_float fTimeDelta)
 {
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
+
     _vector vFOVPosition;
-    
+
     // 우리가 채널형식으로 정의할건 m_vFOVTracks와 m_vPivotTracks이다
     // 근데 말이죵, CAMERA_SOURCE_TYPE이 WORLD면 BonePosition이랑 BoneRotation을 들고와서 내꺼로 써먹는당
     // 먼저 FOV부터
@@ -87,12 +90,16 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
 
     _matrix TransformMatrix = Calculate_CombinedMatrix();
 
-    m_pTransformCom->Set_State(STATE::RIGHT, TransformMatrix.r[0]);
-    m_pTransformCom->Set_State(STATE::UP, TransformMatrix.r[1]);
-    m_pTransformCom->Set_State(STATE::LOOK, TransformMatrix.r[2]);
     m_pTransformCom->Set_State(STATE::POSITION, TransformMatrix.r[3]);
 
-    if(m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
+    if (m_fCurrentAnimationTime == 0.f)
+    {
+        // 초기화 == seconds power fire ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+        m_pTransformCom->Set_State(STATE::RIGHT, XMVectorSet(1.f, 0.f, 0.f, 0.f));
+        m_pTransformCom->Set_State(STATE::UP, XMVectorSet(0.f, 1.f, 0.f, 0.f));
+        m_pTransformCom->Set_State(STATE::LOOK, XMVectorSet(0.f, 0.f, 1.f, 0.f));
+    }
+    else if(m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
         m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&vPivot));
     else if (m_CameraSource.eType == CAMERA_SOURCE_TYPE::LOOK_PIVOT)
     {
@@ -100,10 +107,10 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
     }
     else
     {
+        m_pTransformCom->Set_State(STATE::RIGHT, TransformMatrix.r[0]);
+        m_pTransformCom->Set_State(STATE::UP, TransformMatrix.r[1]);
+        m_pTransformCom->Set_State(STATE::LOOK, TransformMatrix.r[2]);
     }
-
-    if (false == m_pGameInstance->IsMainCamera(this))
-        return;
 
     __super::Bind_Matrices(fTimeDelta);
 

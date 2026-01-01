@@ -32,7 +32,42 @@ void CSound_Manager::Free()
 	m_pSystem->close();
 }
 
-void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume)
+// 함수 호출규약 STDCALL 형식 호출한 녀석이 책임진다는
+// 규약떄문에 클라이언트에서 전역함수를 선언하고 포인터를 사용하려고 하면
+// 계속 nullptr이 나오는거였음 조심하자
+FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+{
+	switch (controltype)
+	{
+	case FMOD_CHANNELCONTROL_CHANNEL:
+	{
+		auto pChannel = (FMOD::Channel*)(channelcontrol);
+		void* pUserData = nullptr;
+		FMOD::Sound* pSound = {};
+		pChannel->getCurrentSound(&pSound);
+		pChannel->getUserData(&pUserData);
+
+		if (pUserData)
+		{
+			auto pUserCalllBack = static_cast<function<void(FMOD_CHANNELCONTROL * channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)>*>(pUserData);
+			(*pUserCalllBack)(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+		}
+
+	}
+	break;
+	case FMOD_CHANNELCONTROL_CHANNELGROUP:
+		break;
+	case FMOD_CHANNELCONTROL_MAX:
+		break;
+	case FMOD_CHANNELCONTROL_FORCEINT:
+		break;
+	default:
+		return FMOD_RESULT::FMOD_ERR_BADCOMMAND;
+	}
+	return  FMOD_RESULT::FMOD_OK;
+}
+
+void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
 	map<TCHAR*, FMOD::Sound*>::iterator iter;
 
@@ -53,10 +88,21 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 		printf("playSound error: %s\n", FMOD_ErrorString(res));
 	}
 	m_pChannelArr[eID]->setVolume(fVolume);
+	if (INFINITE != iLoopCount)
+	{
+		m_pChannelArr[eID]->setLoopCount(iLoopCount);
+		if (pFinishedCallBack)
+		{
+			m_pFinishedFunction[eID] = pFinishedCallBack;
+			m_pChannelArr[eID]->setCallback(Finished_BGMSoundCallBack);
+			m_pChannelArr[eID]->setUserData(&m_pFinishedFunction[eID]);
+		}
+	}
+
 	m_pSystem->update();
 }
 
-void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume)
+void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
 	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
@@ -70,6 +116,18 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume)
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[CHANNELID::BGM]);
 	m_pChannelArr[CHANNELID::BGM]->setMode(FMOD_LOOP_NORMAL);
 	m_pChannelArr[CHANNELID::BGM]->setVolume(fVolume);
+	if (INFINITE != iLoopCount)
+	{
+		m_pChannelArr[CHANNELID::BGM]->setLoopCount(iLoopCount);
+		if (pFinishedCallBack)
+		{
+			m_pFinishedFunction[CHANNELID::BGM] = pFinishedCallBack;
+			m_pChannelArr[CHANNELID::BGM]->setCallback(Finished_BGMSoundCallBack);
+			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_pFinishedFunction[CHANNELID::BGM]);
+		}
+			
+	}
+
 	m_pSystem->update();
 }
 
@@ -88,6 +146,49 @@ void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 {
 	m_pChannelArr[eID]->setVolume(fVolume);
 	m_pSystem->update();
+}
+
+void CSound_Manager::Tick(_float fTimeDelta)
+{
+	m_pSystem->update();
+}
+
+_uint CSound_Manager::Get_BGMLength(const TCHAR* pSoundKey)
+{
+	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
+		{
+			return !lstrcmp(pSoundKey, iter.first);
+		});
+
+	if (iter == m_mapSound.end())
+		return 0;
+	
+	_uint	iLength = {};
+
+	iter->second->getLength(&iLength, FMOD_TIMEUNIT_MS);
+	return iLength;
+}
+
+_uint CSound_Manager::Get_ChannelLength(CHANNELID eChannelID)
+{
+	FMOD::Sound* pCurSound = nullptr;
+	_uint iLength{};
+
+	m_pChannelArr[ENUM_CLASS(eChannelID)]->getCurrentSound(&pCurSound);
+	pCurSound->getLength(&iLength, FMOD_TIMEUNIT_MS);
+	return iLength;
+}
+
+_float CSound_Manager::Get_ChannelRatio(CHANNELID eChannelID)
+{
+	FMOD::Sound* pCurSound = nullptr;
+	_uint iPosition{}, iLength{};
+
+	m_pChannelArr[ENUM_CLASS(eChannelID)]->getCurrentSound(&pCurSound);
+	pCurSound->getLength(&iLength, FMOD_TIMEUNIT_MS);
+
+	m_pChannelArr[ENUM_CLASS(eChannelID)]->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
+	return (_float)iPosition / (_float)iLength;
 }
 
 void CSound_Manager::LoadSoundFile()

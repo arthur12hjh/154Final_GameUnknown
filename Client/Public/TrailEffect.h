@@ -24,9 +24,6 @@ private:
     virtual ~CTrailEffect() = default;
 
 public:
-    void    Set_Visible(_bool bFlag) { m_isVisible = bFlag; }
-
-public:
     virtual HRESULT Initialize_Prototype(const _char* szFile);
     virtual HRESULT Initialize(void* pArg) override;
     void    Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMakeTrail = false);
@@ -47,7 +44,6 @@ private:
     CWaveTrail* m_pWaveTrail = { nullptr };
     CTrail* m_pTrail = { nullptr };
     _float  m_fTime;
-    _bool   m_isVisible = { true };
 
 private:
     HRESULT							Ready_Components(void* pArg);

@@ -14,20 +14,17 @@ class CRimLight;
 class CNote final: public CGameObject
 {
 public:
-	enum class NOTE_TYPE { HIT, OVERLAP,END };
-
 	typedef struct Note_Desc : public GAMEOBJECT_DESC
 	{
-		_float3				vTargetPoint;
-		_float				fNoteSpeed;
-	}NOTE_DESC;
+		_float3					vTargetPoint;
+		_float					fNoteSpeed;
 
-	typedef struct Note_Data_Desc
-	{
 		NOTE_TYPE				NoteType;
 		DIRECTION				eDirection;
-		_float2					vBoundAnimRatio = { 0.f ,1.f };
-	}NOTE_DATA_DESC;
+
+		_float					fSpawnRatio;
+		_float2					vBoundAnimFrame;
+	}NOTE_DESC;
 
 protected:
 	CNote(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

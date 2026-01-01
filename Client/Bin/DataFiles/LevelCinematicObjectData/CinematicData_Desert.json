@@ -40,5 +40,33 @@
         "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
         "vRotation": [0.0, 0.0, 0.0, 1.0],
         "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_GigasMeetGigas03",
+        "eType": 1,
+        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_GigasMeetGigas04",
+        "eType": 1,
+        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_GigasMeetGigas05",
+        "eType": 1,
+        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
+    },
+    {
+        "szObjectTag": "ActionCamera_GigasMeetGigas06",
+        "eType": 1,
+        "vPosition": [735.7230224609375, 6.138000011444092, 607.8989868164063],
+        "vRotation": [0.0, 0.0, 0.0, 1.0],
+        "vScale": [1.0, 1.0, 1.0]
     }
 ]

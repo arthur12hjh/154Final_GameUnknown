@@ -1,0 +1,24 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.3,
+    "isBeapBeap": false,
+    "isLoop": false,
+    "isInfluenceChildren": true,
+    "szAnimTag": "Cinema_Outro"
+}

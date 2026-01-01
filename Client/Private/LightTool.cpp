@@ -43,6 +43,10 @@ void CLightTool::Update(_float fTimeDelta)
 
 void CLightTool::Setting_Light(_float fTimeDelta)
 {	
+#ifdef _DEBUG
+
+
+
 	// 마우스 좌클릭 이벤트 체크
 	if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::RBUTTON)))
 	{
@@ -121,6 +125,7 @@ void CLightTool::Setting_Light(_float fTimeDelta)
 
 		m_pSelectedLight->SetLightInfo(newLightDesc);
 	}
+#endif // _DEBUG
 
 	return;
 }
@@ -131,6 +136,10 @@ void CLightTool::Late_Update(_float fTimeDelta)
 
 HRESULT CLightTool::Render()
 {
+#ifdef _DEBUG
+
+
+
 	//ImGui::SetNextWindowSize(ImVec2(300.f, 600.f), ImGuiCond_Once);
 
 	//ImGui::Begin("Light Editor");
@@ -484,12 +493,14 @@ HRESULT CLightTool::Render()
 	}
 
 	//ImGui::End();
-
+#endif // _DEBUG
 	return S_OK;
 }
 
 HRESULT CLightTool::Save_Light_Objects()
 {
+#ifdef _DEBUG
+
 	if (m_pLights == nullptr || m_pLights->empty())
 	{
 		OutputDebugStringW(L"No Lights to save.\n");
@@ -558,11 +569,15 @@ HRESULT CLightTool::Save_Light_Objects()
 	}
 
 	ofs.close();
+#endif // _DEBUG
+
 	return S_OK;
 }
 
 HRESULT CLightTool::Load_Light_Objects()
 {
+#ifdef _DEBUG
+
 	std::ifstream ifs("../Bin/DataFiles/LightData.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
@@ -592,13 +607,14 @@ HRESULT CLightTool::Load_Light_Objects()
 	}
 
 	ifs.close();
-
+#endif // _DEBUG
 	return S_OK;
 }
 
 
 void CLightTool::Update_Light_Properties()
 {
+#ifdef _DEBUG
 	if (m_pSelectedLight == nullptr) return;
 
 	LIGHT_DESC newDesc = *m_pSelectedLight->Get_LightDesc();
@@ -625,10 +641,13 @@ void CLightTool::Update_Light_Properties()
 	}
 
 	m_pSelectedLight->SetLightInfo(newDesc);
+#endif // _DEBUG
+
 }
 
 void CLightTool::Load_Selected_Light_Desc()
 {
+#ifdef _DEBUG
 	if (m_pSelectedLight == nullptr) return;
 
 	const LIGHT_DESC& desc = *m_pSelectedLight->Get_LightDesc();
@@ -641,6 +660,7 @@ void CLightTool::Load_Selected_Light_Desc()
 	m_fFalloff = desc.fFalloff;
 	m_fTheta = XMConvertToDegrees(desc.fTheta);
 	m_fPhi = XMConvertToDegrees(desc.fPhi);
+#endif
 }
 
 

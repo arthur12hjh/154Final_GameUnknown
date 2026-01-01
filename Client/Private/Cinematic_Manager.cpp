@@ -44,6 +44,8 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         return S_OK;
     }
 
+    Active_CinematicCameraQueue();
+
     m_fCinematicTimer += fTimeDelta * m_pGameInstance->GetGameSpeedfRatio();
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
     {
@@ -239,7 +241,6 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 {
     _tchar szText[MAX_PATH];
     _wstring strObjectName;
-    CCamera* pCamera = nullptr;
     list<CGameObject*>* pObjectList = nullptr;
 
     switch (CinematicNodeDesc.eState)
@@ -271,15 +272,11 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
             strObjectName = szText;
 
-            _float4x4 PrePosMatrix = {};
-
-            m_pGameInstance->SetMainCamera(szText, &PrePosMatrix);
-            pCamera = m_pGameInstance->GetMainCamera();
-
 			m_ActionCameraMap.find(strObjectName)->second->Initialize_CameraAnimationData(CinematicNodeDesc.iActiveIndex);
+            
+			Add_CinematicCameraQueue(strObjectName);
 
-            Safe_Release(pCamera);
-            break;
+            break;  
         case CINEMATICNODE_STATE::DEACTIVE_CHARACTER:
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
 			pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
@@ -297,14 +294,14 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::FADE_IN:
         {
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("Cinematic_Overlay"), TEXT("CInema_Outro"));
             Safe_Release(pHUD);
             break;
         }
         case CINEMATICNODE_STATE::FADE_OUT:
         {
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("Cinematic_Overlay"), TEXT("CInema_Intro"));
             Safe_Release(pHUD);
             break;
         }
@@ -344,6 +341,25 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 
             break;
     }
+}
+
+void CCinematicManager::Add_CinematicCameraQueue(_wstring szText)
+{
+	m_CinematicCameraQueue.push(szText);
+}
+
+void CCinematicManager::Active_CinematicCameraQueue()
+{
+    if (m_CinematicCameraQueue.empty())
+        return;
+
+    _float4x4 PrePosMatrix = {};
+    CCamera* pCamera = nullptr;
+
+    m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
+    pCamera = m_pGameInstance->GetMainCamera();
+	m_CinematicCameraQueue.pop();
+    Safe_Release(pCamera);
 }
 
 CCinematicManager* CCinematicManager::Create()

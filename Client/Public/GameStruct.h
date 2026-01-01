@@ -94,7 +94,7 @@ namespace Client
 		AERIAL_ATTACK, //미구현
 
 		// 링크 어택 모음
-		GIGAS_LINKATTACK,
+		GIGAS_LINKATTACK, SCARLET_LINKATTACK, SCARLET_PHASE2_LINKATTACK,
 
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
@@ -295,11 +295,13 @@ namespace Client
 		char				szAnimationName[256];
 		char				szMonsterName[256];
 
+		char				szHeadBoneName[256];
 		char				szLeftWeaponPrototypeName[256];
 		char				szLeftBoneName[256];
 
 		char				szRightWeaponPrototypeName[256];
 		char				szRightBoneName[256];
+		char				szFaceName[256];
 
 		NAYTIBA_TYPE		eNaytiba_Type;
 		AI_TYPE				eAI_Type;
@@ -439,7 +441,7 @@ namespace Client
 		vector<SCRIPT_DATA> Scripts;
 	}SCRIPT_DESC;
 
-
+			
 
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
@@ -459,8 +461,8 @@ namespace Client
 	/// 110n : 도로롱 조우
 	/// 111n : 기가스 조우
 	/// 112n : 기가스 처형
-	/// 113n : 사막에서 홍련 조우
-	/// 120n : 마을에서 홍련 이별
+	/// 120n : 사막에서 홍련 조우
+	/// 125n : 마을에서 홍련 이별
 	/// 13nn : 홍련 조우
 	/// 14nn : 홍련 페이즈 변경
 	/// 15nn : 홍련 처형
@@ -581,6 +583,16 @@ namespace Client
 		_bool					bIsEnableMove;
 		_uint					eTargetLevel;
 	} TRANSPORT_DESC;
+
+	enum class NOTE_TYPE { HIT, OVERLAP, END };
+	typedef struct Note_Data_Desc
+	{
+		NOTE_TYPE				NoteType;
+		DIRECTION				eDirection;
+
+		_float					fSpawnRatio;
+		_float2					vBoundAnimFrame;
+	}NOTE_DATA_DESC;
 
 	typedef struct MotionTimeDesc
 	{

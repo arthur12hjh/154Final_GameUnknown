@@ -19,7 +19,10 @@ namespace Engine
 #define PHYSX_KINEMATIC (1 << 5)
 #define PHYSX_NONTERRAIN  (1 << 6)
 #define PHYSX_TERRAIN   (1 << 7)
-#define PHYSX_CUSTOM_3  (1 << 8)
+#define PHYSX_CUSTOM_1  (1 << 8)
+#define PHYSX_CUSTOM_2  (1 << 9)
+#define PHYSX_CUSTOM_3  (1 << 10)
+#define PHYSX_CUSTOM_4  (1 << 11)
 
 #define CASCADE_LEVEL 5
 

@@ -56,6 +56,7 @@
 
 #include "NayitbaPartBody.h"
 #include "NaytibaBeam_Part.h"
+#include "NaytibaFace.h"
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
 
@@ -97,6 +98,7 @@
 #include "BeatSaberCharacter.h"
 #include "BeatSaberCharacterBody.h"
 #include "BeatSaberFsm.h"
+#include "BeatSaberSpawner.h"
 #include "Note.h"
 #pragma endregion
 
@@ -574,6 +576,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
+	//잠깐바꿔놓음
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.binx");
 
 	//// 크리스마스
@@ -704,6 +707,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CNpcBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Nayitba_Face */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Face"),
+		CNaytibaFace::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Nayitba_Body */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Body"),
 		CNayitbaPartBody::Create(m_pDevice, m_pContext))))
@@ -803,6 +811,22 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Bottle_Scarlet */
+	_matrix	PreTransformMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bottle_Scarlet");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Bottle/CH_M_Scarlet_Bottle.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Glass_Scarlet */
+	PreTransformMatrix = XMMatrixScaling(0.017f, 0.017f, 0.017f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Glass_Scarlet");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Glass/CH_M_Scarlet_Glass.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
@@ -7450,6 +7474,13 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Dororong */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_BeatSaberSpawner");
+	pProtoDesc.pPrototype = CBeatSaberSpawner::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

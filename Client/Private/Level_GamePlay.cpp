@@ -53,11 +53,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
-
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
+
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -99,18 +99,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	//{
-	//	CNayitba::NAYITBA_DESC Desc = {};
-	//	Desc.bIsApplyTransform = true;
-	//	Desc.vScale = { 1.f, 1.f, 1.f };
-
-	//	Desc.iMonsterID = 8;
-	//	Desc.vPosition = { 60.f, 1.f, 60.f };
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
-	//		return;
-	//}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	{
+		CGameManager::GetInstance()->Play_Cinematic(126);
+	}
 
 	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
@@ -120,6 +112,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
 	}*/
+
+
 
 	if (m_isOverlay && m_pHUD)
 	{

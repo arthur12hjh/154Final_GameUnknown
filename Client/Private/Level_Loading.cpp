@@ -81,6 +81,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Stella_Symbol"))->SetVisibility(VISIBILITY::HIDDEN);
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Loading_Dim"))->SetVisibility(VISIBILITY::HIDDEN);
+			m_bLevelTransitioning = true;
 		}
 
 		if (LEVEL::LOGO == m_eNextLevelID || LEVEL::BEATSABER_GAME == m_eNextLevelID)
@@ -90,12 +91,6 @@ void CLevel_Loading::Update(_float fTimeDelta)
 				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(szLayerTag, TEXT("Loading_Overlay"), TEXT("Outro"));
 				m_bLevelTransitioning = true;
 			}
-		}
-		else
-		{
-			static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
-
-			m_bLevelTransitioning = true;
 		}
 	}
 
@@ -223,8 +218,6 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 			return E_FAIL;
 
 		pScript->Begin_Script(pGameManager->Get_ScriptData(TEXT("Loading")));
-		Safe_Release(pGameManager);
-
 		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Intro"));
 		pUIHUD->Anim_Play(TEXT("Layer_Loading"), TEXT("LoadingBlur"), TEXT("Loading_FX"));
 	}
