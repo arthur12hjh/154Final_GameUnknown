@@ -243,7 +243,7 @@ HRESULT CLevel_BeatSaber::Load_SongList(const char* szDataFile)
 
 void CLevel_BeatSaber::Play_GameBGM(const wstring& szFileTag, _float fVolume)
 {
-    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    m_pGameInstance->Manager_StopAll();
     NOTE_DATA_NAME* pData = Get_FindSongFile(szFileTag);
     if (nullptr == pData)
         return;
