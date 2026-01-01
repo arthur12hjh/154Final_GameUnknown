@@ -17,6 +17,7 @@
 #include "NayitbaPartBody.h"
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
+#include "CinematicPartBody.h"
 
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
@@ -89,6 +90,9 @@ HRESULT CCinematicModel_Scarlet::Initialize(void* pArg)
 
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
+
+	m_pBottle->Set_Render(FALSE);
+	m_pGlass->Set_Render(FALSE);
 
 	//m_pColliderCom->SetOwner(this);
 	m_vRotationQuaternion = _float3(741.8724f, 3.0678f, 596.6966f);
@@ -219,6 +223,23 @@ HRESULT CCinematicModel_Scarlet::PlayCinematicObject(const CINEMATIC_NODE_DESC& 
 	return S_OK;
 }
 
+HRESULT CCinematicModel_Scarlet::Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference)
+{
+	_TCHAR szPartTag[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg01.c_str(), szPartTag);
+	
+	auto pPartObject = static_cast<CCinematicPartBody*>(Find_PartObject(szPartTag));
+
+	pPartObject->Reset_SocketMatrix(const_cast<_float4x4*>(m_pBodyModelCom->Get_BoneMatrixPtr(NotifyReference.szNotifyArg02.c_str())));
+
+	pPartObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&NotifyReference.vNotifyPosition), 1.f));
+	pPartObject->GetTransform()->Rotation(XMConvertToRadians(NotifyReference.vNotifyRotation.x),
+		XMConvertToRadians(NotifyReference.vNotifyRotation.y),
+		XMConvertToRadians(NotifyReference.vNotifyRotation.z));
+
+	return S_OK;
+}
+
 HRESULT CCinematicModel_Scarlet::Ready_Components()
 {
 	///* Com_Collider_AABB */
@@ -269,6 +290,41 @@ HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 
 	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
+	CCinematicPartBody::BODY_CINEMATIC_DESC	BottleDesc{};
+	BottleDesc.szModelTag = TEXT("Prototype_Component_Model_Bottle_Scarlet");
+	BottleDesc.pSocketMatrix = nullptr;
+	BottleDesc.isSetTransform = FALSE;
+	BottleDesc.vPartPosition = {0.f, 0.f, 0.12f};
+	BottleDesc.vPartRotation = {270.f, 0.f, 0.f};
+	BottleDesc.vPartScale = { 1.f, 1.f, 1.f };
+	BottleDesc.pParentTransform = m_pTransformCom;
+	BottleDesc.fSpeedPerSec = 5.f;
+
+	/* Part_Bottle */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicPartBody"),
+		TEXT("Part_Bottle"), &BottleDesc)))
+		return E_FAIL;
+
+	m_pBottle = static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Bottle")));
+
+	CCinematicPartBody::BODY_CINEMATIC_DESC	GlassDesc{};
+	GlassDesc.szModelTag = TEXT("Prototype_Component_Model_Glass_Scarlet");
+	GlassDesc.pSocketMatrix = nullptr;
+	GlassDesc.isSetTransform = FALSE;
+	GlassDesc.vPartPosition = { -0.015f, -0.0f, -0.01f };
+	GlassDesc.vPartRotation = { 270.f, 0.f, 0.f };
+	GlassDesc.vPartScale = { 1.f, 1.f, 1.f };
+	GlassDesc.pParentTransform = m_pTransformCom;
+	GlassDesc.fSpeedPerSec = 5.f;
+
+	/* Part_Glass */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicPartBody"),
+		TEXT("Part_Glass"), &GlassDesc)))
+		return E_FAIL;
+
+	m_pGlass = static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Glass")));
+
+
 	return S_OK;
 }
 
@@ -304,6 +360,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Enter()
 	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_01", FALSE, 1.f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(258.315f, 21.822f, 331.387f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(258.315f, 21.822f, 332.387f, 1.f));
+	m_pBottle->Set_Render(TRUE);
+	m_pGlass->Set_Render(TRUE);
 
 	return S_OK;
 }
@@ -317,6 +375,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_PhaseChange
 	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+	m_pBottle->Set_Render(FALSE);
+	m_pGlass->Set_Render(FALSE);
 
 	return S_OK;
 }
@@ -329,6 +389,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Finish()
 	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_Scarlet_01", FALSE, 2.f, 0.f, FALSE, 1400.f);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
+	m_pBottle->Set_Render(FALSE);
+	m_pGlass->Set_Render(FALSE);
 
 	return S_OK;
 }
@@ -378,7 +440,7 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelt
 	if (isFinished)
 	{
 		++m_iAnimationSequence;
-		if (m_iAnimationSequence == 4)
+		if (m_iAnimationSequence == 2)
 		{
 			m_bIsActive = FALSE;
 			m_iCinematicCode = -1;
@@ -386,14 +448,6 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelt
 		else if (m_iAnimationSequence == 1)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_c", FALSE, 2.f, 0.12f, FALSE);
-		}
-		else if (m_iAnimationSequence == 2)
-		{
-			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_d", FALSE, 2.f, 0.12f, FALSE);
-		}
-		else if (m_iAnimationSequence == 3)
-		{
-			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_e", FALSE, 2.f, 0.12f, FALSE);
 		}
 
 	}
@@ -430,6 +484,8 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Enter(_float fTim
 		}
 		else if (m_iAnimationSequence == 1)
 		{
+			m_pBottle->Set_Render(FALSE);
+			m_pGlass->Set_Render(FALSE);
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_03", FALSE, 1.f, 0.f, FALSE);	
 			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(257.977f, 4.039f, 256.289f, 1.f));
 			m_pTransformCom->LookAt(XMVectorSet(257.977f, 4.039f, 255.289f, 1.f));
@@ -462,6 +518,7 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_PhaseChange(_floa
 		}
 		else if (m_iAnimationSequence == 1)
 		{
+			m_pBottle->Set_Render(TRUE);
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI02", FALSE, 3.f, 0.12f, FALSE);
 		}
 		else if (m_iAnimationSequence == 2)

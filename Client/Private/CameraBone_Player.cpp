@@ -134,7 +134,7 @@ void CCameraBone_Player::Update(_float fTimeDelta)
 		{
 			m_isAnimationPlayed = FALSE;
 
-			m_pModelCom->Set_Animation("CameraBone_Idle");
+			m_pModelCom->Set_Animation("CameraBone_Idle", TRUE, 1.f, 0.2f);
 				
 			CCamera* pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
 			pCamera->Set_MainCamera(TEXT("PlayerCamera"));
@@ -187,7 +187,7 @@ void CCameraBone_Player::Initilaize_CameraAnimationData(const CAMERA_ANIMATION_D
 
 	strcpy_s(m_szAnimationTag, CameraAnimationData.szCameraAnimationName);
 	
-	m_pModelCom->Set_Animation(m_szAnimationTag, FALSE, 1.f, 0.f, TRUE);
+	m_pModelCom->Set_Animation(m_szAnimationTag, FALSE, 1.f, 0.2f, TRUE);
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CameraAnimationData.vBaseBonePosition), 1.f));
 	for (const auto& pPositionTrack : CameraAnimationData.BonePositionTrackList)
 	{

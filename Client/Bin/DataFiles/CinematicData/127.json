@@ -19,18 +19,73 @@
                 "iActiveIndex": 10,
                 "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
             },
+            {
+                "eState": 4,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 1601,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 2.0,
+                "iActiveIndex": 1602,
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 8.0,
+                "iActiveIndex": 1603,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 10.5,
+                "iActiveIndex": 1604,
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 17.5,
+                "iActiveIndex": 1605,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 20.5,
+                "iActiveIndex": 1606,
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
+            },
+            {
+                "eState": 3,
+                "fTrackPosition": 23.5,
+                "iActiveIndex": 1607,
+                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+            },
 	{
                 "eState": 6,
-                "fTrackPosition": 50.0,
+                "fTrackPosition": 27.5,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
+            {
+                "eState": 2,
+                "fTrackPosition": 27.8,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Player"
+            },
 	{
                 "eState": 7,
-                "fTrackPosition": 50.4,
+                "fTrackPosition": 27.9,
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             }
+
         ],
         "iCinematicID": 127,
         "szCinematicName": "ScarletGoodBye"

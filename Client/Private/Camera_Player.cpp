@@ -51,6 +51,8 @@ HRESULT CCamera_Player::Initialize(void* pArg)
 
 void CCamera_Player::Priority_Update(_float fTimeDelta)
 {
+    fTimeDelta = min(fTimeDelta, 0.016f);
+
     if (m_bIsPositionInitialized == FALSE)
     {
         Set_CameraDestination();
