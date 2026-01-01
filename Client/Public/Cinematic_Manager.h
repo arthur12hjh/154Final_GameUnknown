@@ -56,9 +56,13 @@ private:
 	_bool						m_bIsCinematicSkip = false;
 	function<void()>			m_FinishedCinematic = {nullptr};
 
+	queue<_wstring>				m_CinematicCameraQueue;
 
 private:
 	void						Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
+
+	void						Add_CinematicCameraQueue(_wstring szText);
+	void						Active_CinematicCameraQueue();
 
 	HRESULT						Reset_Cinematic();
 

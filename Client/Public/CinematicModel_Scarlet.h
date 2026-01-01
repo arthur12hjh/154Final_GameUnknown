@@ -36,9 +36,14 @@ public:
 	virtual HRESULT ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 
+	virtual HRESULT Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference) override;
+
+
 private:
-	CPartObject*		m_pWeapon = { nullptr };
-	CPartObject*		m_pScabbard = { nullptr };
+	CPartObject*					m_pWeapon = { nullptr };
+	CPartObject*					m_pScabbard = { nullptr };
+	class CCinematicPartBody*		m_pBottle = { nullptr };
+	class CCinematicPartBody*		m_pGlass = { nullptr };
 
 	_float3		m_vRotationQuaternion = {};
 	_float		m_fMoveTime = 0.f;

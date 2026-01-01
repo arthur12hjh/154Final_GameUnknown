@@ -34,8 +34,6 @@ HRESULT CMapTool::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 		m_pTerrain = nullptr; // 안전하게 nullptr로 설정
 	}
 
-	
-
 	return S_OK;
 }
 

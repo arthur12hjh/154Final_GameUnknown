@@ -24,6 +24,7 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
     BODY_CINEMATIC_DESC* pDesc = static_cast<BODY_CINEMATIC_DESC*>(pArg);
 
     m_szModelTag = pDesc->szModelTag;
+    m_pSocketMatrix = const_cast<_float4x4*>(pDesc->pSocketMatrix);
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -31,18 +32,50 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
+    if(pDesc->isSetTransform)
+    {
+        m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&pDesc->vPartPosition), 1.f));
+        m_pTransformCom->Rotation(XMConvertToRadians(pDesc->vPartRotation.x),
+            XMConvertToRadians(pDesc->vPartRotation.y),
+            XMConvertToRadians(pDesc->vPartRotation.z));
+        m_pTransformCom->Set_Scale(XMVectorSetW(XMLoadFloat3(&pDesc->vPartScale), 1.f));
+	}
+
+    m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+    m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+    //m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+    m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+
+
     return S_OK;
 }
 
 void CCinematicPartBody::Priority_Update(_float fTimeDelta)
 {
+    //m_pTransformCom->Set_Scale(XMVectorSet(1.f, 1.f, 1.f, 1.f));
+
+    //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.5f, 1.f));
+
     Update_PreCombinedMatrix();
 }
 
 void CCinematicPartBody::Update(_float fTimeDelta)
 {
-    XMStoreFloat4x4(&m_CombinedWorldMatrix,
-        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+    if (m_pSocketMatrix == nullptr)
+    {
+        XMStoreFloat4x4(&m_CombinedWorldMatrix,
+            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+    }
+    else
+    {
+        _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+        for (size_t i = 0; i < 3; i++)
+            SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+
+        XMStoreFloat4x4(&m_CombinedWorldMatrix,
+            XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+    }
 }
 
 void CCinematicPartBody::Late_Update(_float fTimeDelta)
@@ -53,23 +86,12 @@ HRESULT CCinematicPartBody::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
+
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
     for (size_t i = 0; i < iNumMeshes; i++)
     {
-        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+        if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
             return E_FAIL;
 
         if (FAILED(m_pShaderCom->Begin(0)))
@@ -78,6 +100,8 @@ HRESULT CCinematicPartBody::Render()
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;
     }
+
+    //m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 0), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
 
     return S_OK;
 }
@@ -97,15 +121,13 @@ HRESULT CCinematicPartBody::Render_Shadow()
 
     for (size_t i = 0; i < iNumMeshes; i++)
     {
-        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-            return E_FAIL;
-
-        if (FAILED(m_pShaderCom->Begin(1)))
+        if (FAILED(m_pShaderCom->Begin(6)))
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;
     }
+
     return S_OK;
 }
 
@@ -142,6 +164,11 @@ HRESULT CCinematicPartBody::Render_MotionBlur()
     return S_OK;
 }
 
+void CCinematicPartBody::Reset_SocketMatrix(_float4x4* pSocketMatrix)
+{
+	m_pSocketMatrix = pSocketMatrix;
+}
+
 HRESULT CCinematicPartBody::Bind_ShaderResources()
 {
     if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
@@ -167,7 +194,7 @@ HRESULT CCinematicPartBody::Ready_Components()
         return E_FAIL;
 
     /* Com_Shader */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
         TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
         return E_FAIL;
 

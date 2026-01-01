@@ -163,6 +163,7 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
+    <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
@@ -280,6 +281,8 @@
     <ClInclude Include="..\Public\Player_ParrySuccessState.h" />
     <ClInclude Include="..\Public\Player_Parts.h" />
     <ClInclude Include="..\Public\Player_RepulseState.h" />
+    <ClInclude Include="..\Public\Player_ScarletPhase2tLinkAttackState.h" />
+    <ClInclude Include="..\Public\Player_ScarletLinkAttackState.h" />
     <ClInclude Include="..\Public\Player_SheatheHairpin.h" />
     <ClInclude Include="..\Public\Player_TestState.h" />
     <ClInclude Include="..\Public\Player_SupplyBoxInteractionState.h" />
@@ -295,6 +298,7 @@
     <ClInclude Include="..\public\ScarletBlackBoard.h" />
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
+    <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
@@ -497,6 +501,7 @@
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
+    <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
@@ -614,6 +619,8 @@
     <ClCompile Include="..\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\Private\Player_Parts.cpp" />
     <ClCompile Include="..\Private\Player_RepulseState.cpp" />
+    <ClCompile Include="..\Private\Player_ScarletPhase2tLinkAttackState.cpp" />
+    <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp" />
     <ClCompile Include="..\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\Private\Player_TestState.cpp" />
     <ClCompile Include="..\Private\Player_SupplyBoxInteractionState.cpp" />
@@ -628,6 +635,7 @@
     <ClCompile Include="..\private\ScarletBlackBoard.cpp" />
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
+    <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />

@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Character.h"
 #include "Effect.h"
+#include "CinematicObject.h"
 #include "AttackHitBox.h"
 
 #include "Camera_Action.h"
@@ -149,6 +150,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::SET_VISIBLITY:
 		return m_pCharacter->CallNotify(CNotify::SET_VISIBLITY, &AnimNotify);
 		break;
+	case CNotify::SET_CINEMATIC_OBJECT:
+		return Set_Cinematic_Object(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -176,6 +180,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
 	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
 	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
+	if (szNotifyTag == "Set_Cinematic_Object")			return SET_CINEMATIC_OBJECT;
 
 	return NOTIFY_TYPE::END;
 }
@@ -349,6 +354,16 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
 
 	Safe_Release(pCamera);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Set_Cinematic_Object(const ANIM_NOTIFY& AnimNotify)
+{
+	if (dynamic_cast<CCinematicObject*>(m_pCharacter) == nullptr)
+		return S_OK;	// E_FAIL로 플래그 받고싶으면 나중에 설정 ㄱㄱ
+	
+	dynamic_cast<CCinematicObject*>(m_pCharacter)->Set_Cinematic_Object(AnimNotify);
 
 	return S_OK;
 }

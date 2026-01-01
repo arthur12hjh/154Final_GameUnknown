@@ -64,8 +64,8 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	//Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	////Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/Test.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -99,18 +99,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	//{
-	//	CNayitba::NAYITBA_DESC Desc = {};
-	//	Desc.bIsApplyTransform = true;
-	//	Desc.vScale = { 1.f, 1.f, 1.f };
-
-	//	Desc.iMonsterID = 8;
-	//	Desc.vPosition = { 60.f, 1.f, 60.f };
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
-	//		return;
-	//}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	{
+		CGameManager::GetInstance()->Play_Cinematic(126);
+	}
 
 	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
@@ -120,6 +112,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
 	}*/
+
+
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -593,6 +587,8 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	
 	if (FAILED(Load_Lift_Platform_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Platform"), TEXT("Layer_Lift_Platform")))) return S_OK;
 	if (FAILED(Load_Lift_Controller_By_Layer(ifs, TEXT("Prototype_GameObject_Lift_Controller"), TEXT("Layer_Lift_Controller")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_DisplayBox"), TEXT("Layer_DisplayBox")))) return S_OK;
+	if (FAILED(Load_Map_Desert_Format(ifs, TEXT("Prototype_GameObject_Shutter"), TEXT("Layer_Shutter")))) return S_OK;
 #pragma endregion
 
 	ifs.close();

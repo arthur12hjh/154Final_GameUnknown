@@ -7,7 +7,7 @@
                 "fTrackPosition": 0.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    259.1470031738281,
+                    258.1470031738281,
                     23.791000366210938,
                     328.00799560546875
                 ]
@@ -18,7 +18,7 @@
                 "fTrackPosition": 4.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    259.1470031738281,
+                    258.1470031738281,
                     23.791000366210938,
                     328.00799560546875
                 ]
@@ -31,9 +31,9 @@
                 "fTrackPosition": 0.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    30.0,
-                    30.0,
-                    30.0
+                    60.0,
+                    60.0,
+                    60.0
                 ]
             },
             {
@@ -42,9 +42,9 @@
                 "fTrackPosition": 12.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    30.0,
-                    30.0,
-                    30.0
+                    60.0,
+                    60.0,
+                    60.0
                 ]
             }
         ],
@@ -55,7 +55,7 @@
                 "fTrackPosition": 0.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    262.0509948730469,
+                    261.0509948730469,
                     26.216999053955078,
                     337.2640075683594
                 ]
@@ -66,18 +66,18 @@
                 "fTrackPosition": 12.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
-                    262.0509948730469,
+                    261.0509948730469,
                     26.216999053955078,
                     337.2640075683594
                 ]
             }
         ],
-        "fBaseFOV": 30.0,
+        "fBaseFOV": 60.0,
         "iCameraAnimationFlag": 66050,
         "iCameraAnimationID": 1315,
         "szCameraAnimationName": "",
         "vBaseBonePosition": [
-            259.1470031738281,
+            258.1470031738281,
             23.791000366210938,
             328.00799560546875
         ],
@@ -87,7 +87,7 @@
             0.0
         ],
         "vBaseCameraPivot": [
-            262.0509948730469,
+            261.0509948730469,
             26.216999053955078,
             337.2640075683594
         ]

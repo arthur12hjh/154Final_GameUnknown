@@ -1108,6 +1108,12 @@
     <Filter Include="02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner">
       <UniqueIdentifier>{a80cb650-fb27-4097-91cc-6096a30630f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Actor\Interaction\DisplayBox">
+      <UniqueIdentifier>{80d2f063-5793-4bf6-b85d-fb0454e18428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Shutter">
+      <UniqueIdentifier>{ee9bce94-827e-4034-a137-da06a8414ebf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2122,6 +2128,18 @@
     <ClInclude Include="..\public\BeatSaberSpawner.h">
       <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DisplayBox.h">
+      <Filter>02.GameObjects\Actor\Interaction\DisplayBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shutter.h">
+      <Filter>02.GameObjects\Map\Desert\Shutter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ScarletPhase2tLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_ScarletLinkAttackState.h">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3102,6 +3120,18 @@
     </ClCompile>
     <ClCompile Include="..\private\BeatSaberSpawner.cpp">
       <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
+   </ClCompile>
+    <ClCompile Include="..\private\DisplayBox.cpp">
+      <Filter>02.GameObjects\Actor\Interaction\DisplayBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shutter.cpp">
+      <Filter>02.GameObjects\Map\Desert\Shutter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ScarletPhase2tLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp">
+      <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

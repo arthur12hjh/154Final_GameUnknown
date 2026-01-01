@@ -94,7 +94,7 @@ namespace Client
 		AERIAL_ATTACK, //미구현
 
 		// 링크 어택 모음
-		GIGAS_LINKATTACK,
+		GIGAS_LINKATTACK, SCARLET_LINKATTACK, SCARLET_PHASE2_LINKATTACK,
 
 		DRAW_HAIRPIN, SHEATHE_HAIRPIN,
 
@@ -441,7 +441,7 @@ namespace Client
 		vector<SCRIPT_DATA> Scripts;
 	}SCRIPT_DESC;
 
-
+			
 
 	// Camera_Action, Camera_CutScene 전용 Json Data
 	///
@@ -461,8 +461,8 @@ namespace Client
 	/// 110n : 도로롱 조우
 	/// 111n : 기가스 조우
 	/// 112n : 기가스 처형
-	/// 113n : 사막에서 홍련 조우
-	/// 120n : 마을에서 홍련 이별
+	/// 120n : 사막에서 홍련 조우
+	/// 125n : 마을에서 홍련 이별
 	/// 13nn : 홍련 조우
 	/// 14nn : 홍련 페이즈 변경
 	/// 15nn : 홍련 처형

@@ -174,7 +174,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
         _vector vCross = XMVector3Cross(vPlayerLook, vCameraLook);
         _float fCrossY = XMVectorGetY(vCross);
 
-        m_pPlayer->Set_Animation("Proto_Battle_Sprint_Turn_L", false, 1.5f, 0.f, false, -1.f, 2.5f, true);
+        m_pPlayer->Set_Animation("Proto_Battle_Sprint_Turn_L", false, 1.5f, 0.f, false, -1.f, 3.5f, true);
         m_isTurning = true;
         m_isTurnLocked = true;
         m_isMovable = false;

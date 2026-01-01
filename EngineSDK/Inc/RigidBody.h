@@ -53,7 +53,6 @@
 		virtual ~CRigidBody() = default;
 
 	public:
-		void  Set_Ridable(_bool bFlag) { m_isRidable = bFlag; }
 		_bool IsRidable() { return m_isRidable; }
 	
 		PxRigidActor* Get_PxRigidBody() { return m_pPxRigidBody; }
@@ -63,7 +62,6 @@
 		RIGIDBODY_TYPE Get_Type() { return m_eType; }
 		RIGIDBODY_SHAPE Get_Shape() { return m_eShape; }
 		_bool isSimulateSync() { return m_isSimulateSync; }
-		void Set_DeltaMove(PxVec3 vDelta) { m_vDeltaMove = vDelta; }
 		PxTransform Get_ShapeLocalPose() const { return m_ShapeLocalPose; }
 
 		PxVec3 Get_DeltaMove() 
@@ -76,7 +74,10 @@
 		// 리지드 바디의 활성화 여부를 세팅합니다.
 		// 끌때는 false 넣어주고, 켤떄는 True 넣어주면 돼요.
 		void Set_Simulation(_bool bFlag);
-
+		void Set_DeltaMove(PxVec3 vDelta) { m_vDeltaMove = vDelta; }
+		void Set_Ridable(_bool bFlag) { m_isRidable = bFlag; }
+		void Set_AngularDamping(_float fValue);
+		void Set_LinearDamping(_float fValue);
 	public:
 		virtual HRESULT Initialize_Prototype() override;
 		virtual HRESULT Initialize(void* pArg) override;

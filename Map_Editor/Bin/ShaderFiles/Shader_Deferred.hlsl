@@ -291,33 +291,12 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     Out = PBR_Light(N, -V, L.xyz, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     
     Out.vShade *= fAtt;
+    Out.vSpecular *= fAtt;
+    
     Out.vShade.rgb *= AOStr;
 
-    // ORSS라면, SSS 추가
-    if (isORSS)
-    {
-        float3 base = Out.vShade.rgb;
-
-        float luma = dot(base, float3(0.299f, 0.587f, 0.114f));
-        float3 bloodHue = float3(1.0f, 0.7f, 0.7f);
-        float3 bloodColor = bloodHue * luma;
-
-        float ndl = saturate(dot(N, L.xyz));
-        float edge = pow(1.0f - ndl, 1.2f);
-        float sss = saturate(A * g_SSSAOTexture.Sample(DefaultSampler, In.vTexcoord).g);
-        float w = saturate(sss * edge * 0.35f);
-
-        float3 result = lerp(base, bloodColor, w);
-        Out.vShade.rgb = result;
-
-        // 역광 SSS BackScatter
-        float back = saturate(dot(-N, L.xyz));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
-
-        Out.vShade.rgb += backSSS;
-    }
-
+    //점조명은 ORSS 적용 X
+    
     return Out;
 }
 
