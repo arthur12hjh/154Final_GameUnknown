@@ -10,6 +10,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Client)
+class CEffectSRV;
 //texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 class CMeshEffect final : public CGameObject
 {
@@ -57,17 +58,22 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
+	void    End();
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTexture[3] = {};
+
+	CEffectSRV* m_pEffectSRV = { nullptr };
+
 	_float		m_fTime = {};
 	_uint			m_iRenderCount = {};
 	MESH_EFFECT_DATA	m_tData;
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 	RENDER			m_eRender;
+	_bool			m_bisEnd = {};
 
 private:
 	HRESULT							Ready_Components();

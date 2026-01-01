@@ -208,25 +208,25 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
 
-	// [JU] Use_RushSkill 테스트(키보드 R키)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
-	{
-		auto pTransportData = m_pGameManager->Find_TransportData(1);
-		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+	//// [JU] Use_RushSkill 테스트(키보드 R키)
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
+	//{
+	//	auto pTransportData = m_pGameManager->Find_TransportData(1);
+	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
 
-		m_pTransformCom->Set_State(STATE::POSITION, vPos);
-		m_pCCT->Set_Position(vPos);
-	}
+	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
+	//	m_pCCT->Set_Position(vPos);
+	//}
 
-	// [JU] Use_RushSkill 테스트(키보드 R키)
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	{
-		auto pTransportData = m_pGameManager->Find_TransportData(2);
-		_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
+	//// [JU] Use_RushSkill 테스트(키보드 R키)
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
+	//{
+	//	auto pTransportData = m_pGameManager->Find_TransportData(2);
+	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
 
-		m_pTransformCom->Set_State(STATE::POSITION, vPos);
-		m_pCCT->Set_Position(vPos);
-	}
+	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
+	//	m_pCCT->Set_Position(vPos);
+	//}
 
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
@@ -277,11 +277,15 @@ HRESULT CPlayer::Render_MotionBlur()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
+	if (true == m_PlayerDesc.isInvincible)
+		return S_OK;
+
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
 	// Interaction 아니라면 따로 뻈음.
 	// 안에서 플레이어 모션 제어 중
+	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
@@ -330,7 +334,7 @@ void CPlayer::Attack_Interaction(void* pArg)
 	// 프레임 단위 판정이니까.. 키 입력을 프레임 단위로 판정해야되나?
 	_uint iFrame = pNotifyDesc->iFrameCnt;
 
-	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame * 10.f;
+	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame;
 	m_PlayerDesc.eReactionType = eType;
 }
 
@@ -346,7 +350,6 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-
 	m_fTestTimer += fTimeDelta;
 	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
@@ -354,6 +357,14 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
+
+	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield)
+		//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	{
+		m_PlayerDesc.iCurrentShield += 4;
+		m_fTestTimer = 0.f;
+	}
+
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
 	{
@@ -363,23 +374,14 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
 	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD3))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), true);
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD4))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange_2"), false);
-	}
 }
 
 void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
-	//ATK_INTERACTION_TYPE::PERFECT_DOGE == m_pPlayerDesc->eReactionType
 	// 락온 중이라면
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -394,29 +396,6 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 			m_pFSM->Handle_Transition(Desc);
 		}
 	}
-
-	/* 실제 로직 */
-	//if (true == m_PlayerDesc.HasTarget)
-	//{
-	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_W) &&
-	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-	//		ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
-	//	{
-	//		PLAYER_TRANSITION_DESC Desc;
-	//		Desc.eNextState = PLAYER_STATE::BLINK_START;
-
-	//		m_pFSM->Handle_Transition(Desc);
-	//	}
-	//	if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S) &&
-	//		true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-	//		ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
-	//	{
-	//		PLAYER_TRANSITION_DESC Desc;
-	//		Desc.eNextState = PLAYER_STATE::REPULSE;
-
-	//		m_pFSM->Handle_Transition(Desc);
-	//	}
-	//}
 }
 
 HRESULT CPlayer::Ready_Components()
@@ -780,8 +759,6 @@ void CPlayer::Update_ReactionSkills(_float fTimeDelta)
 void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
 {
 	//무적이면 충돌처리 안하게 처리
-	if (true == m_PlayerDesc.isInvincible)
-		return;
 
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
@@ -795,10 +772,6 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	memcpy(&HitDesc.vHitPoint, &pDamageDesc->vHitPoint, sizeof(_float3));
 	memcpy(&HitDesc.vImpactDir, &pDamageDesc->vImpactDir, sizeof(_float3));
 	memcpy(&HitDesc.vAttackerPos, &vAttackerPos, sizeof(_float4));
-
-	m_PlayerDesc.iCurrentHealth -= pSkillDesc->iSkillDamage;
-	if (0 >= m_PlayerDesc.iCurrentHealth)
-		m_PlayerDesc.iCurrentHealth = 0.f;
 
 	PLAYER_TRANSITION_DESC Desc{};
 	CHARACTER_SKILL_DESC SkillDescCopy{};
@@ -879,6 +852,31 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 
 }
 
+/* 실드 연산 로직 */
+void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
+{
+	_uint fOriginDamage = pSkillDesc->iSkillDamage;
+	_float fShieldDamage = { 0 };
+	_float fRemainDamage = { 0 };
+
+	_float fHealthDamage = { 0 };
+
+	fShieldDamage = ceil(fOriginDamage * 0.3f);
+
+	m_PlayerDesc.iCurrentShield -= fShieldDamage;
+	if (0 >= m_PlayerDesc.iCurrentShield)
+	{
+		fRemainDamage = fabsf(m_PlayerDesc.iCurrentShield);
+		m_PlayerDesc.iCurrentShield = 0.f;
+	}
+
+	//실제로 적용된 데미지만 뺴준다.
+	fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
+	m_PlayerDesc.iCurrentHealth -= fHealthDamage;
+	if (0 >= m_PlayerDesc.iCurrentHealth)
+		m_PlayerDesc.iCurrentHealth = 0.f;
+}
+
 void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 {
 	CAttackHitBox::HIT_BOX_DESC HitBoxDesc = {};
@@ -943,6 +941,20 @@ void CPlayer::LinkAttack_Nayitba()
 		//여기서 기가스 정보 꺼내와서 넘겨줘야함
 		TransitionDesc.pArg = &TargetDesc;
 		break;
+
+	// 일단 기본적으로 홍련 링크어택으로 들어가게 했어
+	// 2페이즈 그로기는 아래에 주석 처리한 SCARLET_PHASE2_LINKATTACK 임.
+	case 8:
+		TransitionDesc.eNextState = PLAYER_STATE::SCARLET_LINKATTACK;
+		TransitionDesc.pArg = &TargetDesc;
+		break;
+
+	// 
+	//case 8:
+	//	TransitionDesc.eNextState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
+	//	TransitionDesc.pArg = &TargetDesc;
+	//	break;
+
 	default:
 		return;
 	}

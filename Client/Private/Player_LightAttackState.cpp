@@ -2,6 +2,8 @@
 #include "Player_LightAttackState.h"
 
 #include "Player.h"
+#include "PartObject.h"
+#include "Weapon.h"
 #include "GameInstance.h"
 
 CPlayer_LightAttackState::CPlayer_LightAttackState()
@@ -40,10 +42,13 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         fAnimationRatio >= m_fLimitProgress * 1.5f)
     {
         m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+            m_tNextState.eNextState = PLAYER_STATE::SPRINT;
     }
 
     else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-        fAnimationRatio >= m_fLimitProgress)
+        fAnimationRatio >= m_fLimitProgress * 1.5f + 0.05f)
     {
         m_tNextState.eNextState = PLAYER_STATE::EVADE;
     }
@@ -131,6 +136,8 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 _float CPlayer_LightAttackState::End()
 {
     m_pPlayer->SetSkillDataID(-1);
+
+    static_cast<CWeapon*>(m_pPlayer->Get_PartObject(TEXT("Part_Weapon")))->Set_TrailVisible(false);
 
     return m_fNextBlendRatio;
 }

@@ -54,6 +54,8 @@ public:
 
 	HRESULT									Bind_Sampler(UINT iSlot, ID3D11SamplerState* pSamp);
 
+	// 이펙트 툴에서 다시 재생하기위한 리셋
+	HRESULT									Reset();
 private:
 	ID3D11ComputeShader*					m_pComputeShaderCom = nullptr;
 	vector<ID3D11Buffer*>					m_pCBuffer = {};

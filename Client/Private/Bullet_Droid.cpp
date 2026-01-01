@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "Character.h"
 
+#include "Player.h"
 #include "Effect.h"
 
 CBullet_Droid::CBullet_Droid(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -183,8 +184,11 @@ void CBullet_Droid::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
-	//m_pEffect->Set_Dead(true);
-	Set_Dead(true);
+	if (ReflectBullet(pHitActor))
+	{
+		//m_pEffect->Set_Dead(true);
+		Set_Dead(true);
+	}
 }
 
 CBullet_Droid* CBullet_Droid::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

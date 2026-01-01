@@ -52,6 +52,9 @@
 #include "Player_BlinkState.h" // 블링크 시작 
 #include "Player_BlinkAttackState.h" // 이동 & 블링크 공격
 
+#include "Player_ScarletLinkAttackState.h"
+#include "Player_ScarletPhase2tLinkAttackState.h"
+
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
 	, m_pGameManager { CGameManager::GetInstance() }
@@ -300,6 +303,20 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		case PLAYER_MODE::IDLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
 		case PLAYER_MODE::BATTLE: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
 		case PLAYER_MODE::LOCKON: return CPlayer_GigasLinkAttackState::Create(tDesc.pArg);
+		}
+	case PLAYER_STATE::SCARLET_LINKATTACK:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_ScarletLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_ScarletLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ScarletLinkAttackState::Create(tDesc.pArg);
+		}
+	case PLAYER_STATE::SCARLET_PHASE2_LINKATTACK:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_ScarletPhase2tLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_ScarletPhase2tLinkAttackState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: return CPlayer_ScarletPhase2tLinkAttackState::Create(tDesc.pArg);
 		}
 		break;
 		

@@ -64,19 +64,19 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 	else if(false == m_isBackStep && fAnimationRatio < 0.33f)
 		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 1.8f);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
-		fAnimationRatio >= m_fMaxRatio)
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
 	{
-		if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+		if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
-			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) &&
+			fAnimationRatio >= m_fMaxRatio - 0.08f)
 			m_tNextState.eNextState = PLAYER_STATE::SPRINT;
-		else
+		else if(fAnimationRatio >= m_fMaxRatio)
 			m_tNextState.eNextState = PLAYER_STATE::EVADE;
 	}
 
-	else if (fAnimationRatio >= m_fMaxRatio &&
+	if (fAnimationRatio >= m_fMaxRatio &&
 		(m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 			m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||

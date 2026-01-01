@@ -16,6 +16,39 @@ void CPlayer_BattleSprintState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::SPRINT;
     m_isSprintStart = true;
 
+    ////Jump Run Start로 시작.
+    //// Turn 트리거 (입력 있을 때만 트리거)
+    //_vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
+    //_vector vPlayerLook = XMVector3Normalize(XMVectorSetY(m_Desc->pPlayerTransform->Get_State(STATE::LOOK), 0.f));
+    //_float fTurnDotThreshold = -0.85f;
+
+    //_float fDirX{}, fDirY{};
+
+    //if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
+    //    fDirY += 1.f;
+    //if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+    //    fDirY -= 1.f;
+    //if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+    //    fDirX += 1.f;
+    //if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+    //    fDirX -= 1.f;
+
+    //m_fRadian = atan2f(fDirX, fDirY);
+
+    //_matrix matRot = XMMatrixRotationY(m_fRadian);
+    //vCameraLook = XMVector3Normalize(XMVectorSetY(XMVector3TransformNormal(vCameraLook, matRot), 0.f));
+
+    //_float fDot = XMVectorGetX(XMVector3Dot(vPlayerLook, vCameraLook));
+    //// Turn 트리거 (입력 있을 때만 트리거)
+    //if (false == m_isTurning && false == m_isTurnLocked && fDot <= fTurnDotThreshold)
+    //{
+    //    m_pPlayer->Set_Animation("Proto_Battle_Sprint_Turn_L", false, 1.5f, 0.f, false, -1.f, 0.f, true);
+    //    m_isTurning = true;
+    //    m_isTurnLocked = true;
+    //    m_isMovable = false;
+    //    m_isSprintStart = false;
+    //}
+
     if(false == m_isLanding)
         m_pPlayer->Set_Animation("Proto_Battle_Sprint_Start", false, 1.2f, 0.05f);
     else if (true == m_isLanding)
@@ -141,7 +174,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleSprintState::Update(_float fTimeDelta)
         _vector vCross = XMVector3Cross(vPlayerLook, vCameraLook);
         _float fCrossY = XMVectorGetY(vCross);
 
-        m_pPlayer->Set_Animation("Proto_Battle_Sprint_Turn_L", false, 1.5f, 0.f, false, -1.f, 2.5f, true);
+        m_pPlayer->Set_Animation("Proto_Battle_Sprint_Turn_L", false, 1.5f, 0.f, false, -1.f, 3.5f, true);
         m_isTurning = true;
         m_isTurnLocked = true;
         m_isMovable = false;

@@ -120,6 +120,9 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 
 void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 {
+	// 여기서 특정 스킬 행동 초기화해야하면 하자
+	CancelSkillData();
+
 	if (m_TimeLineDatas.empty())
 		return;
 
@@ -208,8 +211,6 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 			pDesc.bIsEnter = true;
 		}
 	
-		// 여기서 특정 스킬 행동 초기화해야하면 하자
-		CancelSkillData();
 		AttackLerpMove(fTimeDelta);
 	}
 }
@@ -231,37 +232,37 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	//m_pSkillData.push(m_pGameManager->Find_SkillData(42));
-	//SelectAttackData();
+	m_pSkillData.push(m_pGameManager->Find_SkillData(33));
+	SelectAttackData();
 
-	EntranceAttack();
-	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
-	{
-		if (m_pBlackBoard->bIsEnableEntarnceAttack())
-		{
-			EntranceAttack();
-		}
-		else
-		{
-			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
-			if (false == m_pBlackBoard->IsParryAttack())
-			{
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
-					SecondPhaseNormalAttack();
-				else
-					NormalAttackPattern();
-			}
-		}
-	}
-	else
-	{
-		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
-		SelectAttackData();
-	}*/
+	//EntranceAttack();
+	//if (false == m_pBlackBoard->IsPhaseLastAttack())
+	//{
+	//	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+	//	{
+	//		EntranceAttack();
+	//	}
+	//	else
+	//	{
+	//		CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+	//		if (false == m_pBlackBoard->IsParryAttack())
+	//		{
+	//			if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+	//				SecondPhaseNormalAttack();
+	//			else
+	//				NormalAttackPattern();
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(34));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(35));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(36));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(51));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+	//	SelectAttackData();
+	//}
 
 	return true;
 }
@@ -274,21 +275,14 @@ void CTask_ScarletAttack::NormalAttackPattern()
 
 	switch(pSkill_Data->iSkillID)
 	{
-	case 27 : case 30:
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
+	case 27 : case 30: case 45: case 46: case 52: 	case 23:
+		if (fDistance >= pSkill_Data->fRange)
 			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
 		break;
+
 	case 25: case 26:
 		if (fDistance <= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 4.f)
 			bIsSelectAttack = false;
-		break;
-
-	case 45: case 46: case 52:
-		if (fDistance >= m_pBlackBoard->GetBossDefaultInfo()->fAttackRange * 1.5f)
-			m_pSkillData.push(m_pGameManager->Find_SkillData(22));
-		break;
-	case 23:
-		m_pSkillData.push(m_pGameManager->Find_SkillData(22));
 		break;
 	}
 	
@@ -343,18 +337,12 @@ void CTask_ScarletAttack::BackStepPattern()
 void CTask_ScarletAttack::CancelSkillData()
 {
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
-	auto pSkillData = m_pOwner->GetSkillData();
+	auto pSkillData = m_pBlackBoard->GetAttackData();
 
 	if (22 == pSkillData->iSkillID)
 	{
-		_float fRange = 5.f;
-		if (m_pBlackBoard->bIsEnableEntarnceAttack())
-		{
-			if(CBossBlackBoard::BOSS_PAHSE::FIRST == m_pBlackBoard->Get_BossPhase())
-				fRange = m_pGameManager->Find_SkillData(20)->fRange;
-		}
-
-		if (fRange >= fDistance)
+		auto NextSkillData = m_pSkillData.front();
+		if (NextSkillData->fRange >= fDistance)
 			SelectAttackData();
 	}
 }
@@ -404,8 +392,6 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 		m_pSkillData.push(m_pGameManager->Find_SkillData(45)); // Blink Combo1
 		m_pSkillData.push(m_pGameManager->Find_SkillData(46)); // Blink Combo2
 	}
-
-
 
 	SelectAttackData();
 }
@@ -1219,8 +1205,8 @@ void CTask_ScarletAttack::Clear_ScarletAttackTask()
 	if (m_pBlackBoard->IsPhaseLastAttack())
 		m_pBlackBoard->SetPhaseLastAttack(false);
 
-	//if (m_pBlackBoard->bIsEnableEntarnceAttack())
-	//	m_pBlackBoard->SetEntarnceAttack(false);
+	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		m_pBlackBoard->SetEntarnceAttack(false);
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)

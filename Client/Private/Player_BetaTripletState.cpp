@@ -42,7 +42,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
         
         if (false == m_isEffectActed)
         {
-            m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+            //m_pGameInstance->Shake_Camera(0.2f, 0.2f);
             m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.5f);
             m_isEffectActed = true;
         }

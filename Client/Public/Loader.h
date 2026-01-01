@@ -89,6 +89,15 @@ private:
 	HRESULT Loading_For_Desert_Deco_Vehicle_And_Wheel(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Building_And_Trash(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Sign_And_Crane(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Boxes(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Duct(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Garden_And_Poster(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Door_And_Statue(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Furniture(void* pArg);
+
+	HRESULT Loading_For_Desert_Stair(void* pArg);
+	HRESULT Loading_For_Desert_Xion_Wall(void* pArg);
+	HRESULT Loading_For_Desert_Xion_Building(void* pArg);
 
 	HRESULT Loading_For_Desert_Environment_Tree1(void* pArg);
 	HRESULT Loading_For_Desert_Environment_Tree2(void* pArg);

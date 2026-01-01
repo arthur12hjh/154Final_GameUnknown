@@ -207,8 +207,10 @@ HRESULT CNpc::Ready_Components()
         return E_FAIL;
     m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(m_NpcDesc->iInteractionID));
     m_pInteractionCom->SetOwner(this);
+
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
+    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
     /* Com_CCT */
     CCharacterController::CCT_DESC Desc;

@@ -12,6 +12,7 @@ class CShader;
 NS_END
 
 NS_BEGIN(Client)
+class CEffectSRV;
 
 class CMeshParticle final : public CGameObject
 {
@@ -107,6 +108,10 @@ private:
 	MeshConstBufferData			m_CBData = {};
 	ID3D11Buffer* m_pReadSource = { nullptr };
 	CModel* m_pModelCom = { nullptr };
+
+
+	CEffectSRV* m_pEffectSRV = { nullptr };
+
 	MESH_PARTICLE_DATA	m_tData;
 	_uint			m_iCount = {};
 	_uint			m_iBegin = {};

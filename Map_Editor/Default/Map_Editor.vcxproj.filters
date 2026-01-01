@@ -235,6 +235,12 @@
     <Filter Include="02.GameObjects\Maps\Scarlet\Buildings\Wall\Virtual_Wall">
       <UniqueIdentifier>{3184e327-178c-47f9-b412-54af6a261b6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Door">
+      <UniqueIdentifier>{c3154361-66d3-42d8-81c9-032de7aaa356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox">
+      <UniqueIdentifier>{52fff525-3a7e-4dfa-8cab-f4a6f9df315a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -560,6 +566,12 @@
     <ClInclude Include="..\public\MapTool_Desert.h">
       <Filter>96.IMGUI\Map\Desert</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DisplayBox.h">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shutter.h">
+      <Filter>02.GameObjects\Maps\Desert\Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -868,6 +880,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Virtual_Wall.cpp">
       <Filter>02.GameObjects\Maps\Scarlet\Buildings\Wall\Virtual_Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DisplayBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Interaction\Anim\FloatingBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shutter.cpp">
+      <Filter>02.GameObjects\Maps\Desert\Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

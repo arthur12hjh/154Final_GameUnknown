@@ -235,7 +235,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (S_OK == m_pAIController->Damage(pArg))
 	{
 		// 여기서 몬스터 림라이트 처리
-		m_pPartBody->SetRimLightData(true, 10.f, 20.f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
+		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
 	}
 
 	return S_OK;
@@ -255,6 +255,9 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 
 	switch (NotiType)
 	{
+	case CNotify::PLAY_SFX:
+		Play_SFXEffect(pNotify);
+		break;
 	case CNotify::ACTIVE_COLLISION:
 		CreateHitBox(pNotify);
 		break;
@@ -1108,7 +1111,7 @@ void CNaytiba::ShootProjectile(const AnimNotify* pNotify)
 		if (iter->bIsHit())
 			iter->Set_Dead(true);
 		else
-			iter->Shoot_Projectile(vTargetPos, 10000.f);
+			iter->Shoot_Projectile(vTargetPos, 40.f);
 	}
 
 	m_pBulletList.clear();
@@ -1138,7 +1141,7 @@ void CNaytiba::Change_Color(const AnimNotify* pNotify)
 {
 	// pNotify->iNumData01 : 컬러를 활성화할지 끌지 
 	// pNotify->iNumData02 : 패턴 색상팔레트 인덱스
-	// pNotify->iNumData03 : 디졸프먹으면서 사라질지 말지
+	// pNotify->iNumData03 : 사라질지 말지
 	if (false == pNotify->iNumData01)
 	{
 		if (false == m_bIsActive)
@@ -1157,6 +1160,24 @@ void CNaytiba::Draw_AttackLine(const AnimNotify* pNotify)
 	_vector vEndPos = vStartPos + m_pTransformCom->Get_State(STATE::LOOK) * pNotify->fNumData01;
 
 	
+}
+
+void CNaytiba::Play_SFXEffect(const AnimNotify* pNotify)
+{
+	if (Compare_SFX_Name(pNotify->szNotifyArg01))
+	{
+		m_pPartBody->SetRimLightData(true, 4.f, 3.f, { 0.8f ,0.8f, 0.8f, 1.f }, 0.4f);
+	}
+}
+
+_bool CNaytiba::Compare_SFX_Name(const string& szSFXName)
+{
+	if ("Prototype_Component_Effect_Power_Yellow" == szSFXName ||
+		"Prototype_Component_Effect_SheildBreak_Yellow" == szSFXName ||
+		"Prototype_Component_Effect_Scarlet_Yellow" == szSFXName)
+		return true;
+
+	return false;
 }
 
 CNaytiba* CNaytiba::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

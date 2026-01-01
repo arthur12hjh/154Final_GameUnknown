@@ -15,10 +15,10 @@ CTrail::CTrail(const CTrail& Prototype)
 	Safe_AddRef(m_pIB);
 }
 
-HRESULT CTrail::Initialize_Prototype()
+HRESULT CTrail::Initialize_Prototype(_int iNum)
 {
-	m_iNumPositions = 50;
-	m_iNumVertices = 250;
+	m_iNumPositions = iNum;
+	m_iNumVertices = iNum * 5;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
@@ -89,6 +89,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 				memset(m_pPostions, 0, 0);
 			}
 		}
+
 		m_iNumPresent = 0;
 		memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
 		_vector vHighPositions[4]{};
@@ -108,7 +109,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 					vHighPositions[j] = m_pPostions[i - j * 2 + 1];
 					vLowPositions[j] = m_pPostions[i - j * 2];
 				}
-
+		
 				vHighPositions[0] = vHighPositions[1];
 				vLowPositions[0] = vLowPositions[1];
 			}
@@ -118,13 +119,13 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 					vLowPositions[j] = m_pPostions[i - j * 2];
 				}
 			}
-
+		
 			_float fLength = XMVectorGetX(XMVector3Length(vHighPositions[2] - vHighPositions[1]));
 			_int iNum = 1;
 			if (1 < fLength)
 				iNum = fLength;
 			for (int i = 0; i < 4 * iNum; ++i) {
-				fValue = (_float)i / ((4 * iNum) - 1);
+				fValue = (_float)i / ((4 * iNum));
 				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
 				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
 				m_iNumPresent += 2;
@@ -234,7 +235,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		if (1 < fLength)
 			iNum = fLength;
 		for (int i = 0; i < 4 * iNum; ++i) {
-			fValue = (_float)i / ((4 * iNum) - 1);
+			fValue = (_float)i / ((4 * iNum));
 			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
 			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
 			m_iNumPresent += 2;
@@ -318,11 +319,11 @@ HRESULT CTrail::Initialize(void* pArg)
 	return S_OK;
 }
 
-CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CTrail* CTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum)
 {
 	CTrail* pInstance = new CTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iNum)))
 	{
 		MSG_BOX("Failed to Created : CTrail");
 		Safe_Release(pInstance);

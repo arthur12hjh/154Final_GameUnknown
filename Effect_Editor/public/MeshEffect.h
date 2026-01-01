@@ -57,6 +57,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void	Set_Components(MESH_DATA tData);
+	void	Set_Replay(MESH_DATA tData);
 	void	Update(MESH_DATA tData);
 	MESH_DATA	Get_Data() { return m_tData; }
 	string	Get_TextureName(_int iIndex) { return m_szFile[iIndex]; }
@@ -77,6 +78,9 @@ private:
 	_float4x4		m_CombinedWorldMatrix = {};
 	ID3D11ShaderResourceView* m_pSizeDiagramSRV = { nullptr };
 	RENDER	m_eRender = {};
+	ID3D11DepthStencilView* m_pOriginalDSV = { nullptr };
+	ID3D11Resource* m_resourse = { nullptr };
+	ID3D11ShaderResourceView* m_pRSV = { nullptr };
 
 private:
 	HRESULT							Ready_Components();
