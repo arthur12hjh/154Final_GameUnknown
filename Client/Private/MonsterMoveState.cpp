@@ -123,16 +123,7 @@ void CMonsterMoveState::Update_Caution(_float fTimeDelta)
     _vector vOwnerLook = m_pOwner->GetTransform()->Get_State(STATE::LOOK);
     _float fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
 
-    if (m_pOwnerInfo->fAttackRange * 0.3f > fDistance)
-    {
-        if (DIRECTION::BACK != m_vMoveDirection)
-        {
-            m_bIsFinished = true;
-            m_bIsEnableChange = true;
-            return;
-        }
-    }
-    else if(m_pOwnerInfo->fAttackRange * 5.f <= fDistance)
+    if(m_pOwnerInfo->fAttackRange * 5.f <= fDistance)
     {
         m_bIsFinished = true;
         m_bIsEnableChange = true;
@@ -306,20 +297,16 @@ void CMonsterMoveState::Compute_MoveDirection()
     _vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
     _float fDistance = XMVectorGetX(XMVector3Length(m_pTarget->GetTransform()->Get_State(STATE::POSITION) - vOwnerPos));
 
-    _float fSafeDistance = m_pOwnerInfo->fAttackRange * 0.6f;
-    if (fSafeDistance < fDistance)
+    _float fRandom = m_pGameInstance->Random(0.f, 100.f);
+    if (50 <= fRandom)
     {
-        _float fRandom = m_pGameInstance->Random(0.f, 100.f);
-        if (50 <= fRandom)
-        {
-            m_vMoveDirection = DIRECTION::RIGHT;
-        }
-        else
-        {
-            m_vMoveDirection = DIRECTION::LEFT;
-        }
-        m_fMoveSpeed = 2.0f;
+        m_vMoveDirection = DIRECTION::RIGHT;
     }
+    else
+    {
+        m_vMoveDirection = DIRECTION::LEFT;
+    }
+    m_fMoveSpeed = 2.0f;
 }
 
 CMonsterMoveState* CMonsterMoveState::Create(void* pArg)

@@ -252,6 +252,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	// 안에서 플레이어 모션 제어 중
 	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
+	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
 	return S_OK;
 }
@@ -333,11 +334,11 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
 	}
 }
 

@@ -57,8 +57,7 @@ void CShaderManager::Update(_float fTimeDelta)
 
     for (auto iter : m_ReserveDeferredShaders)
     {
-        if (true == iter.second->Get_Active()) {
-            iter.second->Update(fTimeDelta);
+        if (true == iter.second->Get_Active() && iter.second->Update(fTimeDelta)) {
             m_pGameInstance->Reserve_Deferred(iter.second);
         }
     }
