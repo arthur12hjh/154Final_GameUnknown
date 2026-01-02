@@ -295,6 +295,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 		if (ImGui::Selectable("Tentacle")) { iCurrentIndex = 11; }
 		if (ImGui::Selectable("DroidTurret")) { iCurrentIndex = 12; }
 		if (ImGui::Selectable("NPC05")) { iCurrentIndex = 13; }
+		if (ImGui::Selectable("Beholder")) { iCurrentIndex = 14; }
 		ImGui::EndPopup();
 	}
 
@@ -346,6 +347,9 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		case 13:
 			Create_Extra(TEXT("Prototype_Component_Model_NPC05"));
+			break;
+		case 14:
+			Create_Extra(TEXT("Prototype_Component_Model_Beholder"));
 			break;
 		}
 
