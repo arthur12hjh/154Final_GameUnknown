@@ -144,7 +144,6 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 		Pair.second->Update_PxTransform(
 			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 	}
-}
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
