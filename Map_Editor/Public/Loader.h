@@ -70,6 +70,7 @@ private:
 	HRESULT Loading_For_Desert_Environment_Tree1(void* pArg);
 	HRESULT Loading_For_Desert_Environment_Tree2(void* pArg);
 	HRESULT Loading_For_Desert_Environment_Grass1(void* pArg);
+	HRESULT Loading_For_Desert_Monster(void* pArg);
 
 	HRESULT Loading_For_Desert_Deco_Boxes(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Duct(void* pArg);

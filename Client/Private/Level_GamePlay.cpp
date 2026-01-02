@@ -66,7 +66,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
-	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert2.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -803,7 +803,6 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Format(std::ifstream& ifs, const _t
 		CNaytiba::NAYITBA_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
-		//Desc.vScale = { 1.f, 1.f, 1.f };
 		Desc.iMonsterID = info.iMonsterId;
 
 		_vector vScale = {};
