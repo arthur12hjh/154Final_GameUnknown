@@ -807,10 +807,20 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
 
+
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Scarlet"));
+
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.binx");
+
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
+
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Scarlet")))->Import_Texture(0, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_ORSS.dds",
+		"g_ORSSTexture", TRUE);
+
 
 	/* For.Prototype_Component_Model_Bottle_Scarlet */
 	_matrix	PreTransformMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -827,6 +837,15 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Shader_Scarlet_Face */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Scarlet_Face");
+	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Scarlet_Face.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+
 
 	return S_OK;
 }

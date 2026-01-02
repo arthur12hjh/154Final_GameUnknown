@@ -231,8 +231,19 @@ HRESULT CNayitbaPartBody::Render()
                 }
                 else
                 {
-                    if (FAILED(m_pShaderCom->Begin(0)))
-                        return E_FAIL;
+                    if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_CH_M_NA_961_Hair") == 0)
+                    {
+                        //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_OpacityTexture", aiTextureType_OPACITY, 0)))
+                        //    return E_FAIL;
+
+                        if (FAILED(m_pShaderCom->Begin(10)))
+                            return E_FAIL;
+                    }
+                    else
+                    {
+                        if (FAILED(m_pShaderCom->Begin(0)))
+                            return E_FAIL;
+                    }
                 }
                 
             }

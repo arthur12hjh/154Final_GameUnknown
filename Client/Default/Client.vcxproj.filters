@@ -1111,6 +1111,9 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
       <UniqueIdentifier>{44f47e13-04ea-4fdd-9f4f-87279de045d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles">
+      <UniqueIdentifier>{6bef3bb2-ca9e-4956-95a3-38d6144a3081}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03.Effects\TrailEffect">
       <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
     </Filter>
@@ -2122,9 +2125,6 @@
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\NaytibaFace.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_Ending.h">
       <Filter>01.Levels\Ending</Filter>
     </ClInclude>
@@ -2145,6 +2145,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Task_GorillaHit.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaFace.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3206,6 +3209,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_BeamShader.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
