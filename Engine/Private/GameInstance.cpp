@@ -177,6 +177,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 		}
 	}
 
+	m_pSoundManager->Tick(fTimeDelta);
 	Kill_Objects();
 
 	m_pInput_Device->UpdateKeyFrame();
@@ -977,14 +978,14 @@ void CGameInstance::SwapFrame()
 #pragma endregion
 
 #pragma region Sound Manager
-void CGameInstance::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume)
+void CGameInstance::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	m_pSoundManager->Manager_PlaySound(pSoundKey, eID, fVolume);
+	m_pSoundManager->Manager_PlaySound(pSoundKey, eID, fVolume, iLoopCount, pFinishedCallBack);
 }
 
-void CGameInstance::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume)
+void CGameInstance::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	m_pSoundManager->Manager_PlayBGM(pSoundKey, fVolume);
+	m_pSoundManager->Manager_PlayBGM(pSoundKey, fVolume, iLoopCount, pFinishedCallBack);
 }
 
 void CGameInstance::Manager_StopSound(CHANNELID eID)
@@ -1000,6 +1001,21 @@ void CGameInstance::Manager_StopAll()
 void CGameInstance::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 {
 	m_pSoundManager->Manager_SetChannelVolume(eID, fVolume);
+}
+
+_uint CGameInstance::Get_BGMLength(const TCHAR* pSoundKey)
+{
+	return m_pSoundManager->Get_BGMLength(pSoundKey);
+}
+
+_uint CGameInstance::Get_ChannelLength(CHANNELID eChannelID)
+{
+	return m_pSoundManager->Get_ChannelLength(eChannelID);
+}
+
+_float CGameInstance::Get_ChannelRatio(CHANNELID eChannelID)
+{
+	return m_pSoundManager->Get_ChannelRatio(eChannelID);
 }
 
 #pragma endregion
@@ -1178,6 +1194,13 @@ HRESULT CGameInstance::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 {
 	return m_pPhysx_Manager->Add_Terrain_ToPhysx(pTerrainVIBuffer);
 }
+
+#ifdef _DEBUG
+void CGameInstance::Set_PVDRender_Off()
+{
+	m_pPhysx_Manager->Set_PVDRender_Off();
+}
+#endif
 
 #pragma endregion
 

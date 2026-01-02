@@ -25,7 +25,7 @@
 #include "Task_CutScene.h"
 
 #include "Task_Groggy.h"
-#include "Task_Hit.h"
+#include "Task_ScarletHit.h"
 #include "Task_Theshold.h"
 #pragma endregion
 
@@ -105,7 +105,7 @@ HRESULT CScarletBehaviorTree::Ready_TreeNodes()
         return E_FAIL;
 
     pHitReactionSelector->Bind_BehaviorNode(CTask_Theshold::Create(this));
-    pHitReactionSelector->Bind_BehaviorNode(CTask_Hit::Create(this));
+    pHitReactionSelector->Bind_BehaviorNode(CTask_ScarletHit::Create(this));
     pHitReactionSelector->Bind_BehaviorNode(CTask_Groggy::Create(this));
 
     auto ActionSelect = CSelectNode::Create(this);

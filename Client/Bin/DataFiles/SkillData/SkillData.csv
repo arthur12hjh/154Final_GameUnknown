@@ -5,14 +5,14 @@ ID,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePul
 4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,3,2,11
 5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,0,1,2,11
 6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,0,1,2,11
-7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,0,1,11
-8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,0,1,11
+7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,0,5,11
+8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,0,5,11
 9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,0,11
 10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,0,4,3,10
 11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,0,1,2,11
-12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,1,138
+12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,4,138
 13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,0,5,3,11
-14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,1,136
+14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,5,136
 20,M_Scarlet_AirDashCut,None,None,20,15,"1, 1, 2",0,0,1,4,136
 21,M_Scarlet_SwingApproach,None,None,20,15,"1, 1, 2",4,0,1,0,136
 22,M_Scarlet_SwingCombo1,None,None,20,15,"1, 1, 2",0,0,1,3,136

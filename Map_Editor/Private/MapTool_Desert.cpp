@@ -13,6 +13,8 @@
 #include "Instance_Desert.h"
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
+#include "Npc.h"
+#include "SpawnBox.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -110,8 +112,8 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				CLift_Controller::LIFT_CONTROLLER_DESC pLiftControllerDesc = {};
 				CLift_Platform::LIFT_PLATFORM_DESC pLiftPlatformDesc = {};
 
-				Nayitba_Desc MonsterDesc = {};
-
+				CSpawnBox::MONSTER_DESC MonsterDesc = {};
+				CNpc::NPC_DESC NpcDesc = {};
 
 				switch (m_eCurrentObject)
 				{
@@ -1897,22 +1899,52 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 
 #pragma region Monster
 				case DESESRT_RUIN_OBJECT::GORILLA:
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 1;
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_Gorilla"); MonsterDesc.iMonsterID = 1;
 					break;
-				case DESESRT_RUIN_OBJECT::SPAWN_BOX4:
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 4;
+				case DESESRT_RUIN_OBJECT::BEHOLDER:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_Beholder"); MonsterDesc.iMonsterID = 2;
 					break;
-				case DESESRT_RUIN_OBJECT::SPAWN_BOX5:
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 5;
+				case DESESRT_RUIN_OBJECT::BARNACLE_A:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_BanacleA"); MonsterDesc.iMonsterID = 3;
 					break;
-				case DESESRT_RUIN_OBJECT::SPAWN_BOX7:
-					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster");
-					pDesc.pComponentTag = nullptr; MonsterDesc.iMonsterID = 7;
+				case DESESRT_RUIN_OBJECT::STATUE_A:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_StatueA"); MonsterDesc.iMonsterID = 4;
+					break;
+				case DESESRT_RUIN_OBJECT::STATUE_B:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_StatueB"); MonsterDesc.iMonsterID = 5;
+					break;
+				case DESESRT_RUIN_OBJECT::SUNFLOWER:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_SunFlower"); MonsterDesc.iMonsterID = 6;
+					break;
+				case DESESRT_RUIN_OBJECT::ANTLION:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_Minion11"); MonsterDesc.iMonsterID = 7;
+					break;
+				case DESESRT_RUIN_OBJECT::TENTACLE:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_Tentacle"); MonsterDesc.iMonsterID = 9;
+					break;
+				case DESESRT_RUIN_OBJECT::DROIDTURRET:
+					protoTag = TEXT("Prototype_GameObject_SpawnBox"); layerTag = TEXT("Layer_Monster"); pDesc.pComponentTag == nullptr;
+					MonsterDesc.pComponentTag = TEXT("Prototype_Component_Model_DroidTurret"); MonsterDesc.iMonsterID = 10;
 					break;
 #pragma endregion
+#pragma region NPC
+				case DESESRT_RUIN_OBJECT::NPC_SCARLET:
+					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
+					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_Scarlet_Body"); NpcDesc.iNpcID = 1;
+					break;
+				case DESESRT_RUIN_OBJECT::NPC_SHOP:
+					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
+					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_D1G-g2r_Body"); NpcDesc.iNpcID = 4;
+					break;
+#pragma endregion 
 
 #pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
@@ -1940,6 +1972,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::LIFT_PLATFORM)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pLiftPlatformDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -2339,7 +2375,10 @@ HRESULT CMapTool_Desert::Render()
 	}
 
 	_int nSelectedCharacter = -1;
-	const _char* characterNames[] = { "Player", "Gorilla", "Monster4", "Monster5", "Monster7"};
+	_int nSelectedNpc = -1;
+	const _char* characterNames[] = { "Player", "Gorilla", "BEHOLDER", "BARNACLE_A", "STATUE_A", "STATUE_B", 
+									  "SUNFLOWER", "ANTLION", "TENTACLE", "DROIDTURRET" };
+	const _char* npcNames[] = { "NPC_SCARLET", "NPC_SHOP" };
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
@@ -2357,20 +2396,57 @@ HRESULT CMapTool_Desert::Render()
 			}
 			else if (nSelectedCharacter == 2)
 			{
-				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX4;
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::BEHOLDER;
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
 			else if (nSelectedCharacter == 3)
 			{
-				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX5;
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::BARNACLE_A;
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
 			else if (nSelectedCharacter == 4)
 			{
-				m_eCurrentObject = DESESRT_RUIN_OBJECT::SPAWN_BOX7;
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::STATUE_A;
 				m_CurrentLayerName = TEXT("Layer_Monster");
 			}
-
+			else if (nSelectedCharacter == 5)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::STATUE_B;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 6)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::SUNFLOWER;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 7)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::ANTLION;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 8)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::TENTACLE;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+			else if (nSelectedCharacter == 9)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::DROIDTURRET;
+				m_CurrentLayerName = TEXT("Layer_Monster");
+			}
+		}
+		if (ImGui::ListBox("##NPC", &nSelectedNpc, npcNames, IM_ARRAYSIZE(npcNames), 7))
+		{
+			if (nSelectedNpc == 0)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_SCARLET;
+				m_CurrentLayerName = TEXT("Layer_Npc");
+			}
+			else if (nSelectedNpc == 1)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_SHOP;
+				m_CurrentLayerName = TEXT("Layer_Npc");
+			}
 		}
 	}
 
@@ -4858,6 +4934,7 @@ HRESULT CMapTool_Desert::Save_Monster_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Monsters_By_Layer(ofs, TEXT("Layer_Monster")))) return S_OK;
+	if (FAILED(Save_Npcs_By_Layer(ofs, TEXT("Layer_Npc")))) return S_OK;
 
 	ofs.close();
 
@@ -5025,20 +5102,58 @@ HRESULT CMapTool_Desert::Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLa
 	{
 		for (auto pObject : *pObj)
 		{
-			CSpawnBox* pSpawnBox = dynamic_cast<CSpawnBox*>(pObject);
+			CSpawnBox* pMonster = dynamic_cast<CSpawnBox*>(pObject);
 			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
 
-			if (pTransform && (pSpawnBox))
+			if (pTransform && (pMonster))
 			{
 				SAVEDMONSTERINFO info;
 				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
 				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
 				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
 
-				const _uint pId = pSpawnBox->Get_MonsterID();
-				info.iMonsterId = pId;
+				const _tchar* pTag = pMonster->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pMonster->Get_MonsterID();
+				info.iMonsterID = pId;
 
 				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDMONSTERINFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CNpc* pNpc = dynamic_cast<CNpc*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pNpc))
+			{
+				SAVEDNPCINFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				const _tchar* pTag = pNpc->Get_ComponentTag();
+				wcsncpy_s(info.szComponentTag, 256, pTag, _TRUNCATE);
+
+				const _uint pId = pNpc->Get_NpcID();
+				info.iNpcID = pId;
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDNPCINFO));
 			}
 		}
 	}
@@ -5091,6 +5206,8 @@ HRESULT CMapTool_Desert::Load_Monster_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Load_Monsters_By_Layer(ifs, TEXT("Prototype_GameObject_SpawnBox"), TEXT("Layer_Monster")))) return S_OK;
+	if (FAILED(Load_Npcs_By_Layer(ifs, TEXT("Prototype_GameObject_Npc"), TEXT("Layer_Npc")))) return S_OK;
+
 	ifs.close();
 
 	return S_OK;
@@ -5241,41 +5358,55 @@ HRESULT CMapTool_Desert::Load_Monsters_By_Layer(ifstream& ifs, const _tchar* pro
 		SAVEDMONSTERINFO info;
 		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDMONSTERINFO));
 
-		NAYITBA_DESC Desc = {};
-		Desc.iMonsterID = info.iMonsterId;
+		CSpawnBox::MONSTER_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iMonsterID = info.iMonsterID;
+		Desc.pComponentTag = info.szComponentTag;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
 
 		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
 			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
 
-		if (SUCCEEDED(hr))
-		{
-			list<CGameObject*>* pObjs = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
-			if (pObjs && !pObjs->empty())
-			{
-				CGameObject* pObj = pObjs->back();
-				CTransform* pTransform = dynamic_cast<CTransform*>(pObj->Find_Component(TEXT("Com_Transform")));
-				if (pTransform)
-				{
-					_matrix matWorld = XMLoadFloat4x4(&info.worldMatrix);
+	return S_OK;
+}
 
-					_vector vScale = {};
-					_vector vRotation = {};
-					_vector vPosition = {};
-					XMMatrixDecompose(&vScale, &vRotation, &vPosition, matWorld);
+HRESULT CMapTool_Desert::Load_Npcs_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
 
-					_matrix matScale = XMMatrixScaling(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
-					_matrix matRotation = XMMatrixRotationQuaternion(vRotation);
-					_matrix matTranslation = XMMatrixTranslationFromVector(vPosition);
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDNPCINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDNPCINFO));
 
-					// 순서: Scale * Rotation * Translation (SRT 순서)
-					_matrix matFinalWorld = matScale * matRotation * matTranslation;
+		CNpc::NPC_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.iNpcID = info.iNpcID;
+		Desc.pComponentTag = info.szComponentTag;
 
-					_float4x4* pWorldMatrixDest = const_cast<_float4x4*>(pTransform->Get_WorldMatrixPtr());
-					XMStoreFloat4x4(pWorldMatrixDest, matFinalWorld);
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
 
-				}
-			}
-		}
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
 	}
 
 	return S_OK;

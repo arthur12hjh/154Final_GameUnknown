@@ -78,6 +78,7 @@
 		void Set_Ridable(_bool bFlag) { m_isRidable = bFlag; }
 		void Set_AngularDamping(_float fValue);
 		void Set_LinearDamping(_float fValue);
+		void Set_CCD(_bool bFlag);
 	public:
 		virtual HRESULT Initialize_Prototype() override;
 		virtual HRESULT Initialize(void* pArg) override;

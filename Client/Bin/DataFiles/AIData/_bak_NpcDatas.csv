@@ -1,4 +1,0 @@
- ID,Name,ProtoTypeModel,Controller ProtoType,Extents,TeamNumber,InteractionID,ScriptCount,ScriptTags
-1,Scarlet,Prototype_Component_Model_Scarlet_Body,Prototype_Component_NpcInteractionController,"2.4, 2.4, 2.4",0,7,2,"NpcTest, NpcTest2"
-2,Adam,M_Beholder,None,"1, 1, 1",0,7,1,NpcTest
-3,Bolt,M_BarnacleA,None,"1, 1, 1",0,7,1,NpcTest
