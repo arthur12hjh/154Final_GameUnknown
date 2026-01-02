@@ -215,16 +215,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	if (m_bIsActive == TRUE)
-	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 
-		_float fDist = XMVectorGetX(XMVector3Length(m_pTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
-		if (fDist < 100.f)
-			m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
-	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -235,28 +226,17 @@ void CPlayer::Late_Update(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render();
-
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_Shadow()
 {
-	for (auto& pPartObject : m_PartObjects)
-	{
-		if(pPartObject.first != TEXT("Part_Hair"))
-			pPartObject.second->Render_Shadow();
-	}
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_MotionBlur()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_MotionBlur();
-
 	return S_OK;
 }
 

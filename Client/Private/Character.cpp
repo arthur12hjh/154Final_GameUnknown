@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Character.h"
+#include "PartObject.h"
 #include "GameManager.h"
 
 #include "Notify.h"
@@ -118,6 +119,22 @@ _vector CCharacter::Get_Position()
 const _float4x4* CCharacter::Get_WorldMatrixPtr()
 {
 	return m_pTransformCom->Get_WorldMatrixPtr();
+}
+
+void CCharacter::SetActive(_bool bIsActive)
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->SetActive(bIsActive);
+
+	m_bIsActive = bIsActive;
+}
+
+void CCharacter::SetActive()
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->SetActive();
+
+	m_bIsActive = !m_bIsActive;
 }
 
 void CCharacter::SetActionEnable(_bool bFlag)

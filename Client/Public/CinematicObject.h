@@ -37,6 +37,9 @@ protected:
 
 	_int m_iCinematicCode = -1;
 
+	_bool m_bIsDoFActivated = FALSE;
+	_float m_fDoFTimeAcc = 0.f;
+
 public:
 	static CCinematicObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

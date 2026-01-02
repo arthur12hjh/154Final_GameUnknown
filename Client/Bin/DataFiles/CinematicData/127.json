@@ -58,14 +58,8 @@
             {
                 "eState": 3,
                 "fTrackPosition": 20.5,
-                "iActiveIndex": 1606,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 23.5,
                 "iActiveIndex": 1607,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+                "szObjectTag": "ActionCamera_GigasMeetGigas02"
             },
 	{
                 "eState": 6,
