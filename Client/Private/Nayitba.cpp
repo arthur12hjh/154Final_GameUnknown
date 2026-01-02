@@ -822,7 +822,7 @@ void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)
 {
 	if (0 >= m_MonsterInfo.iCurrentHealth || bIsForce)
 	{
-		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
+		//m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
 		auto pCurHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 		if(pCurHUD)
