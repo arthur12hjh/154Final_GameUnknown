@@ -50,7 +50,8 @@ public:
 	typedef struct SavedMonsterInfo
 	{
 		_float4x4	    worldMatrix;
-		_uint			iMonsterId = 0;
+		_tchar			szComponentTag[256];
+		_uint			iMonsterID = 0;
 	}SAVEDMONSTERINFO;
 
 	typedef struct SavedNpcInfo
@@ -68,10 +69,10 @@ public:
 
 	}MODEL_INSTANCE_LOAD_DESC;
 
-	typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
+	/*typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_uint						iMonsterID = {};
-	}NAYITBA_DESC;
+	}NAYITBA_DESC;*/
 
 public:
 	CMapTool_Desert();

@@ -40,6 +40,7 @@ public:
 	typedef struct SavedMonsterInfo
 	{
 		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
 		_uint			iMonsterId = 0;
 	}SAVEDMONSTERINFO;
 
