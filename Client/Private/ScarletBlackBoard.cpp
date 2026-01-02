@@ -33,6 +33,22 @@ _bool CScarletBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 
 	if (BOSS_PAHSE::SECOND != m_eBossPhase)
 		return true;
+	else
+	{
+		m_eCurState = CBossBlackBoard::BOSS_STATE::IDLE;
+
+		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
+		static_cast<CNaytiba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
+		m_bIsReflectExcution = true;
+	}
+
+	return false;
+}
+
+_bool CScarletBlackBoard::UnconditionallyAttack()
+{
+	if (m_bIsPhaseLastAttack || m_bIsReflectExcution)
+		return true;
 
 	return false;
 }
@@ -45,6 +61,11 @@ void CScarletBlackBoard::SetEntarnceAttack(_bool bIsflag)
 _bool CScarletBlackBoard::bIsEnableEntarnceAttack()
 {
 	return m_bIsEntarnceAttack;
+}
+
+void CScarletBlackBoard::SetRefelctExcution(_bool bIsflag)
+{
+	m_bIsReflectExcution = bIsflag;
 }
 
 CScarletBlackBoard* CScarletBlackBoard::Create(void* pArg)

@@ -190,6 +190,14 @@ _bool CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
     return true;
 }
 
+_bool CBossBlackBoard::UnconditionallyAttack()
+{
+    if (m_bIsPhaseLastAttack)
+        return true;
+
+    return false;
+}
+
 _bool CBossBlackBoard::bIsExcution()
 {
     if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)

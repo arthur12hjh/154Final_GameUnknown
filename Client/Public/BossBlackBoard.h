@@ -39,6 +39,7 @@ protected :
 public:
 	virtual HRESULT						Initialize(void* pArg) override;
 	virtual	_bool						EnterExcution(NAYITBA_EXECUTION_TYPE eExcution);
+	virtual _bool						UnconditionallyAttack();
 
 public :
 	// 보스 타겟 세팅

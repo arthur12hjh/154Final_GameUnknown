@@ -406,6 +406,7 @@
     <ClInclude Include="..\Public\TargetComponent.h" />
     <ClInclude Include="..\public\Task_CutScene.h" />
     <ClInclude Include="..\public\Task_Dead.h" />
+    <ClInclude Include="..\public\Task_GorillaHit.h" />
     <ClInclude Include="..\public\Task_ScarletAttack.h" />
     <ClInclude Include="..\public\Task_ScarletDead.h" />
     <ClInclude Include="..\public\Task_ScarletMove.h" />
@@ -413,7 +414,7 @@
     <ClInclude Include="..\Public\Task_Theshold.h" />
     <ClInclude Include="..\Public\Task_GorillaAttack.h" />
     <ClInclude Include="..\public\Task_Groggy.h" />
-    <ClInclude Include="..\Public\Task_Hit.h" />
+    <ClInclude Include="..\Public\Task_ScarletHit.h" />
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
@@ -759,6 +760,7 @@
     <ClCompile Include="..\Private\TargetComponent.cpp" />
     <ClCompile Include="..\private\Task_CutScene.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp" />
+    <ClCompile Include="..\private\Task_GorillaHit.cpp" />
     <ClCompile Include="..\private\Task_ScarletAttack.cpp" />
     <ClCompile Include="..\private\Task_ScarletDead.cpp" />
     <ClCompile Include="..\private\Task_ScarletMove.cpp" />
@@ -766,7 +768,7 @@
     <ClCompile Include="..\Private\Task_Theshold.cpp" />
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp" />
     <ClCompile Include="..\private\Task_Groggy.cpp" />
-    <ClCompile Include="..\Private\Task_Hit.cpp" />
+    <ClCompile Include="..\Private\Task_ScarletHit.cpp" />
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />
