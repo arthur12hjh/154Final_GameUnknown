@@ -47,6 +47,11 @@ void CRigidBody::Set_LinearDamping(_float fValue)
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setLinearDamping(fValue);
 }
 
+void CRigidBody::Set_CCD(_bool bFlag)
+{
+	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, bFlag);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
     return S_OK;

@@ -342,6 +342,11 @@ public:
 	HRESULT		Add_CCT_ToPhysx(class CGameObject* pGameObject, class CCharacterController* pCCT);
 	HRESULT		Add_RigidBody_ToPhysx(class CGameObject* pGameObject, class CRigidBody* pRigidBody);
 	HRESULT		Add_Terrain_ToPhysx(class CVIBuffer_Terrain* pTerrainVIBuffer);
+
+#ifdef _DEBUG
+	void Set_PVDRender_Off();
+#endif
+
 #pragma endregion
 
 #pragma region MODEL_PARSER
