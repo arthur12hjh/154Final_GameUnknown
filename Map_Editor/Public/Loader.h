@@ -81,6 +81,7 @@ private:
 	HRESULT Loading_For_Desert_Stair(void* pArg);
 	HRESULT Loading_For_Desert_Xion_Wall(void* pArg);
 	HRESULT Loading_For_Desert_Xion_Building(void* pArg);
+	HRESULT Loading_For_Sky_Texture(void* pArg);
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
