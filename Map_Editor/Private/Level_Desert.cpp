@@ -40,8 +40,8 @@ HRESULT CLevel_Desert::Initialize()
 		return E_FAIL;
 
 
-	/*if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;*/
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_Sky"))))
+		return E_FAIL;
 
 
 
@@ -100,7 +100,8 @@ HRESULT CLevel_Desert::Ready_Lights()
 HRESULT CLevel_Desert::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
 	CDesertObject::DesertObjectDesc pDesc = {};
-	pDesc.pComponentTag = TEXT("Prototype_Component_Texture_Sky_Desert6");
+	//pDesc.pComponentTag = TEXT("Prototype_Component_Texture_Sky_Desert6");
+	pDesc.pComponentTag = TEXT("Prototype_Component_Texture_galaxy+X");
 
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_GameObject_Sky_Desert"),
 		ENUM_CLASS(LEVEL::DESERT), strLayerTag, &pDesc)))
