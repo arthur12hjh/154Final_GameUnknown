@@ -1195,6 +1195,13 @@ HRESULT CGameInstance::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
 	return m_pPhysx_Manager->Add_Terrain_ToPhysx(pTerrainVIBuffer);
 }
 
+#ifdef _DEBUG
+void CGameInstance::Set_PVDRender_Off()
+{
+	m_pPhysx_Manager->Set_PVDRender_Off();
+}
+#endif
+
 #pragma endregion
 
 #pragma region BINPARSER

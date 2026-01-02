@@ -53,10 +53,15 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
 
     _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
-    m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
-    m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
-    m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
-    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+
+    //240 프레임 이상은 본 안따라가게 처리?
+    if (!(240 <= m_pPlayer->Get_iTrackPosition()))
+    {
+        m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
+        m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
+        m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
+        m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+    }
 
 
     if (true == isAnimationFinished)
