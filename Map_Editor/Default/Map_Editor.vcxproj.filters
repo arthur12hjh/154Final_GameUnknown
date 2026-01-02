@@ -244,6 +244,12 @@
     <Filter Include="02.GameObjects\Maps\Desert\NPC">
       <UniqueIdentifier>{74f1a3e5-140a-4499-937a-ec0afb225ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Dororong_Saber">
+      <UniqueIdentifier>{b62b8684-a44f-4b3c-95a7-eac652bd140e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Dororong_Saber\Pad">
+      <UniqueIdentifier>{167eda96-4bf4-4d54-90ef-31a610070737}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -578,6 +584,9 @@
     <ClInclude Include="..\public\Npc.h">
       <Filter>02.GameObjects\Maps\Desert\NPC</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Pad.h">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Pad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -895,6 +904,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Npc.cpp">
       <Filter>02.GameObjects\Maps\Desert\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pad.cpp">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Pad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

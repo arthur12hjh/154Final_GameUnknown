@@ -185,6 +185,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Building(pArg); });
 
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Sky_Texture(pArg); });
 
 		hr = Loading_For_Desert();
 		m_strMessage = TEXT("로딩 완료.");
@@ -288,12 +289,6 @@ HRESULT CLoader::Loading_For_Village()
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Sky"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky1.bin", PreTransformMatrix))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Model_Fiona */
-	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Fiona/Fiona.bin", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Stone1 */
@@ -3780,6 +3775,16 @@ HRESULT CLoader::Loading_For_Desert_Xion_Building(void* pArg)
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_For_Sky_Texture(void* pArg)
+{
+	/* For.Prototype_Component_Texture_Sky_Desert */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_galaxy+X"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/galaxy+X.png"), 1))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CLoader::Loading_For_Desert_Building_Ruin(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
@@ -4624,11 +4629,13 @@ HRESULT CLoader::Loading_For_Desert()
 		return E_FAIL;
 
 	PreTransformMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Sky_Desert"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Sky_Desert"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
+		return E_FAIL;*/
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Model_Sky_Desert"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Sky/Sky4.fbx", PreTransformMatrix))))
 		return E_FAIL;
-
-
 
 	while (m_pGameInstance->IsWorkThread())
 		int a = 10;
