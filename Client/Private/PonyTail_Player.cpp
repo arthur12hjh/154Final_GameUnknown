@@ -110,7 +110,12 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 		Pair.second->Update_PxTransform(
 			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true); 
 	}
-	
+
+	if (m_bIsActive)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	}
 	
 #ifdef _DEBUG
 	m_pJointChain->Update(fTimeDelta);

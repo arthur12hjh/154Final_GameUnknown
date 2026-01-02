@@ -39,7 +39,7 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 	{
 	case 9 :
 		m_szAnimationName = m_pMonsterDefaultData->szAnimationName;
-		m_szAnimationName = "_Dead_S";
+		m_szAnimationName += "_Dead_S";
 		m_bIsNoneDeadAnim = false;
 		break;
 	default :

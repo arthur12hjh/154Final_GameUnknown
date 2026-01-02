@@ -117,6 +117,11 @@ _uint CModel::Get_AnimationKeyFrameIndex() const
     return m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition();
 }
 
+_float CModel::Get_fTrackPosition() const
+{
+    return m_Animations[m_iCurrentAnimIndex]->Get_fTrackPosition();
+}
+
 const _float4x4* CModel::Get_BoneMatrixPtr(const _char* pBoneName)
 {
     AddCount_PartialBone(pBoneName);
