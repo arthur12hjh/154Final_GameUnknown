@@ -58,6 +58,10 @@ public:
 
 	const _float4x4*				Get_WorldMatrixPtr();
 
+	virtual void SetActive(_bool bIsActive)override;
+
+	virtual void SetActive()override;
+
 protected :
 	_bool							m_bIsActionEnabled = { true };
 	const _float4x4*				m_pSocketMatrix = { nullptr };

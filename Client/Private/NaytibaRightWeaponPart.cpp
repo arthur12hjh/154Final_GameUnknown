@@ -24,6 +24,9 @@ HRESULT CNaytibaRightWeaponPart::Initialize(void* pArg)
 	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
 
 	m_pSocketMatrix = pDesc->pSocketMatrix;
+	
+	SetVisibility(VISIBILITY::VISIBLE);
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -36,6 +39,7 @@ HRESULT CNaytibaRightWeaponPart::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
 	m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f));
+
 
 	return S_OK;
 }
@@ -66,8 +70,12 @@ void CNaytibaRightWeaponPart::Late_Update(_float fTimeDelta)
 		MyMatrix * SocketMatrix * ParentMatrix);
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	if (m_eVisibility == VISIBILITY::VISIBLE)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+	}
+
 }
 
 HRESULT CNaytibaRightWeaponPart::Render()

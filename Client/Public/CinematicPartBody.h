@@ -11,6 +11,7 @@ public:
 	{
 		const _float4x4* pSocketMatrix = nullptr;
 		_wstring szModelTag;
+		_bool isAnim = TRUE;
 		_bool isSetTransform = FALSE;
 		_float3 vPartPosition = {};
 		_float3 vPartRotation = {};
@@ -40,6 +41,8 @@ public:
 private:
 	_wstring											m_szModelTag;
 	_float4x4*											m_pSocketMatrix = { nullptr };
+
+	_bool												m_bIsAnim = TRUE;
 
 private:
 	HRESULT												Bind_ShaderResources();

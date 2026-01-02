@@ -26,6 +26,8 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
     m_szModelTag = pDesc->szModelTag;
     m_pSocketMatrix = const_cast<_float4x4*>(pDesc->pSocketMatrix);
 
+    m_bIsAnim = pDesc->isAnim;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -84,21 +86,44 @@ void CCinematicPartBody::Late_Update(_float fTimeDelta)
 
 HRESULT CCinematicPartBody::Render()
 {
+    if (m_bIsActive == FALSE)
+        return S_OK;
+
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
 
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-    for (size_t i = 0; i < iNumMeshes; i++)
+    
+    if (m_bIsAnim)
     {
-        if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
-            return E_FAIL;
+        for (size_t i = 0; i < iNumMeshes; i++)
+        {
+            if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+                return E_FAIL;
 
-        if (FAILED(m_pShaderCom->Begin(0)))
-            return E_FAIL;
+            if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
+                return E_FAIL;
 
-        if (FAILED(m_pModelCom->Render(i)))
-            return E_FAIL;
+            if (FAILED(m_pShaderCom->Begin(0)))
+                return E_FAIL;
+
+            if (FAILED(m_pModelCom->Render(i)))
+                return E_FAIL;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < iNumMeshes; i++)
+        {
+            if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
+                return E_FAIL;
+
+            if (FAILED(m_pShaderCom->Begin(0)))
+                return E_FAIL;
+
+            if (FAILED(m_pModelCom->Render(i)))
+                return E_FAIL;
+        }
     }
 
     //m_pGameInstance->Render_Text(TEXT("KoPub"), m_szRotationAngle, _float2(g_iWinSizeX / 2 - 180, 0), XMVectorSet(1.f, 1.f, 1.f, 0.1f));
@@ -108,6 +133,9 @@ HRESULT CCinematicPartBody::Render()
 
 HRESULT CCinematicPartBody::Render_Shadow()
 {
+    if (m_bIsActive == FALSE)
+        return S_OK;
+
     if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
         return E_FAIL;
 
@@ -119,14 +147,32 @@ HRESULT CCinematicPartBody::Render_Shadow()
 
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-    for (size_t i = 0; i < iNumMeshes; i++)
+    if (m_bIsAnim)
     {
-        if (FAILED(m_pShaderCom->Begin(6)))
-            return E_FAIL;
+        for (size_t i = 0; i < iNumMeshes; i++)
+        {
+            if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+                return E_FAIL;
 
-        if (FAILED(m_pModelCom->Render(i)))
-            return E_FAIL;
+            if (FAILED(m_pShaderCom->Begin(1)))
+                return E_FAIL;
+
+            if (FAILED(m_pModelCom->Render(i)))
+                return E_FAIL;
+        }
     }
+    else
+    {
+        for (size_t i = 0; i < iNumMeshes; i++)
+        {
+            if (FAILED(m_pShaderCom->Begin(6)))
+                return E_FAIL;
+
+            if (FAILED(m_pModelCom->Render(i)))
+                return E_FAIL;
+        }
+    }
+
 
     return S_OK;
 }
@@ -149,16 +195,24 @@ HRESULT CCinematicPartBody::Render_MotionBlur()
 
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-    for (size_t i = 0; i < iNumMeshes; i++)
+
+    if (m_bIsAnim)
     {
-        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-            return E_FAIL;
+        for (size_t i = 0; i < iNumMeshes; i++)
+        {
+            if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+                return E_FAIL;
 
-        if (FAILED(m_pShaderCom->Begin(4)))
-            return E_FAIL;
+            if (FAILED(m_pShaderCom->Begin(4)))
+                return E_FAIL;
 
-        if (FAILED(m_pModelCom->Render(i)))
-            return E_FAIL;
+            if (FAILED(m_pModelCom->Render(i)))
+                return E_FAIL;
+        }
+    }
+    else
+    {
+
     }
 
     return S_OK;
@@ -193,10 +247,20 @@ HRESULT CCinematicPartBody::Ready_Components()
         TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
         return E_FAIL;
 
-    /* Com_Shader */
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
-        TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-        return E_FAIL;
+    if (m_bIsAnim)
+    {
+        /* Com_Shader */
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+            TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+            return E_FAIL;
+    }
+    else
+    {
+        /* Com_Shader */
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+            TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+            return E_FAIL;
+    }
 
     return S_OK;
 }

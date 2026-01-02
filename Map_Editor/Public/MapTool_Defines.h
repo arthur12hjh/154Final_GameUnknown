@@ -146,7 +146,7 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region Spawner
-		GORILLA, SPAWN_BOX4, SPAWN_BOX5, SPAWN_BOX7,
+		GORILLA, BEHOLDER, BARNACLE_A, STATUE_A, STATUE_B, SUNFLOWER, ANTLION, TENTACLE, DROIDTURRET,
 #pragma endregion
 
 #pragma region Xion_Building
