@@ -100,7 +100,11 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
-	if ((0 < m_tData.fEndTime && m_tData.fEndTime <= m_fTime)) {
+	if (m_tData.fDelayTime > m_fTime)
+	{
+		return;
+	}
+	else if ((0 < m_tData.fEndTime && m_tData.fEndTime + 1.f <= m_fTime)) {
 		m_isDead = true;
 		return;
 	}
@@ -141,7 +145,7 @@ HRESULT CMeshEffect::Render()
 
 void CMeshEffect::End()
 {
-	m_tData.fEndTime = m_fTime + 1.f;
+	m_tData.fEndTime = m_fTime;
 	m_bisEnd = true;
 }
 
@@ -191,6 +195,9 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTime, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fEndTime", &m_tData.fEndTime, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &m_tData.fColor, sizeof(_float4))))

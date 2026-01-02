@@ -53,8 +53,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;*/
 
 	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 	//	return E_FAIL;
@@ -399,12 +399,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	//Desc.iMonsterID = 1;
-	//Desc.vPosition = { 62.f, 1.f, 62.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
-	//
+	Desc.iMonsterID = 1;
+	Desc.vPosition = { 62.f, 1.f, 62.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
+	
 	/*Desc.iMonsterID = 3;
 	{
 		for (_uint i = 0; i < 10; ++i)
@@ -427,12 +427,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	}
 	//}
 	
-	Desc.iMonsterID = 10;
-	Desc.vPosition = { 60.f, 1.f, 60.f };
-	Desc.bIsSuperMonster = false;
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 9;
+	//Desc.vPosition = { 60.f, 1.f, 60.f };
+	//Desc.bIsSuperMonster = false;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 
 	/*Desc.iMonsterID = 10;
@@ -467,11 +467,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	Desc.iMonsterID = 8;
-	Desc.vPosition = { 1000.f, 1.f, 1000.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 8;
+	//Desc.vPosition = { 1000.f, 1.f, 1000.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 
 	return S_OK;
@@ -550,7 +550,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 		return E_FAIL;
 	
 	pTriggerBoxDesc.iTriggerCode = 123;
-	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 358.814f };
+	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 362.814f };
 
 	//  도로롱 조우
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),

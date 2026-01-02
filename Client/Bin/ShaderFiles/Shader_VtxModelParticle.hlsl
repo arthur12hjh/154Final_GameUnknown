@@ -314,6 +314,33 @@ PS_OUT PS_SPRITE(PS_IN In, bool bisFront : SV_IsFrontFace)
     return Out;
 }
 
+PS_OUT PS_WHITE(PS_IN In)
+{
+    PS_OUT Out;
+    if (In.vLifeTime.x <= 0 || In.vLifeTime.x > In.vLifeTime.y)
+        discard;
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    
+    float threshold = hole[index] / 32.0;
+    if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+        discard;
+    
+    float3 normal = normalize(In.vNormal);
+    
+    Out.vDiffuse = float4(1, 1, 1, 1);
+
+    Out.vNormal = float4(normal * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(0, 0, 0, 0);
+    Out.vEmissive = vMtrlDiffuse * g_vColor;
+    
+    return Out;
+}
+
 struct PS_OUT_NONE_NORMAL
 {
     float4 vDiffuse : SV_TARGET0;
@@ -356,5 +383,16 @@ technique11 Tech
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SPRITE();
+    }
+    // idx 2
+    pass MeshWhite
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_WHITE();
     }
 }

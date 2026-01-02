@@ -215,16 +215,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	if (m_bIsActive == TRUE)
-	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 
-		_float fDist = XMVectorGetX(XMVector3Length(m_pTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
-		if (fDist < 100.f)
-			m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
-	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -235,28 +226,17 @@ void CPlayer::Late_Update(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render();
-
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_Shadow()
 {
-	for (auto& pPartObject : m_PartObjects)
-	{
-		if(pPartObject.first != TEXT("Part_Hair"))
-			pPartObject.second->Render_Shadow();
-	}
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_MotionBlur()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_MotionBlur();
-
 	return S_OK;
 }
 
@@ -272,6 +252,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	// 안에서 플레이어 모션 제어 중
 	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
+	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
 	return S_OK;
 }
@@ -353,11 +334,11 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
 	}
 }
 

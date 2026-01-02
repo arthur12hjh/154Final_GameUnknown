@@ -65,7 +65,7 @@ public:
 	const _float4x4*		Get_WorldMatrixPtr() const { return &m_WorldMatrix; }
 
 protected:
-	COLLIDER					m_eType = {};
+	COLLIDER					m_eType = {}; 
 	HIT_TYPE					m_eHitType = {};
 	
 	list<CGameObject*>			m_OldHitList = {};

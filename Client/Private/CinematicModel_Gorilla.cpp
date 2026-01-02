@@ -231,7 +231,7 @@ HRESULT CCinematicModel_Gorilla::Initialize_Cinematic_GorillaFinish()
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("M_Gorilla_Finish02_nonbreak_v03", FALSE, 1.5f);
+	m_pBodyModelCom->Set_Animation("M_Gorilla_Finish02_nonbreak_v03", FALSE, 1.5f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
 
@@ -295,7 +295,7 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 		}
 		else if (m_iAnimationSequence == 1)
 		{
-			m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_NA05_01", FALSE, 1.f, 0.12f, FALSE);
+			m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_NA05_01", FALSE, 1.f, 0.12f, TRUE);
 		}
 		else if (m_iAnimationSequence == 2)
 		{
@@ -320,6 +320,40 @@ HRESULT CCinematicModel_Gorilla::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	_float fCurrentTrackPosition = m_pBodyModelCom->Get_fTrackPosition();
+
+	if (true == m_bIsDoFActivated)
+	{
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+
+		m_pGameInstance->Set_DoFInfo(fFocusDist);
+
+		m_fDoFTimeAcc += fTimeDelta;
+	}
+
+	if (fCurrentTrackPosition >= 426.f
+		&& fCurrentTrackPosition < 550.f
+		&& m_bIsDoFActivated == FALSE)
+	{
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+		_float fMaxDist = 5.f;
+		_float fIntensity = 1.5f;
+
+		m_pGameInstance->Active_DoF(true, 1.f);
+		m_pGameInstance->Set_DoFInfo(fFocusDist, fMaxDist, fIntensity);
+
+		m_bIsDoFActivated = TRUE;
+
+	}else if (fCurrentTrackPosition >= 550.f
+		&& m_bIsDoFActivated == TRUE)
+	{
+		m_pGameInstance->Active_DoF(false, 1.f);
+		m_fDoFTimeAcc = 0.f;
+		m_bIsDoFActivated = FALSE;
+	}
 
 	if (isFinished)
 	{
