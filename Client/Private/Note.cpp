@@ -155,32 +155,32 @@ void CNote::SettingNoteDirection()
     case 0 :
         m_NoteData.eDirection = DIRECTION::LEFT;
         m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
-        m_NoteData.vBoundAnimRatio = { 8.f, 10.f };
+        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
         break;
     case 1:
         m_NoteData.eDirection = DIRECTION::RIGHT;
         m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
-        m_NoteData.vBoundAnimRatio = { 28.f, 30.f };
+        m_NoteData.vBoundAnimFrame = { 28.f, 30.f };
         break;
     case 2:
         m_NoteData.eDirection = DIRECTION::RIGHT_FRONT;
         m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 40.f, 40.f);
-        m_NoteData.vBoundAnimRatio = { 38.f, 40.f };
+        m_NoteData.vBoundAnimFrame = { 38.f, 40.f };
         break;
     case 3:
         m_NoteData.eDirection = DIRECTION::LEFT_FRONT;
         m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 40.f, 40.f);
-        m_NoteData.vBoundAnimRatio = { 38.f, 40.f };
+        m_NoteData.vBoundAnimFrame = { 38.f, 40.f };
         break;
     case 4:
         m_NoteData.eDirection = DIRECTION::LEFT_BACK;
         m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
-        m_NoteData.vBoundAnimRatio = { 8.f, 10.f };
+        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
         break;
     case 5:
         m_NoteData.eDirection = DIRECTION::RIGHT_BACK;
         m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
-        m_NoteData.vBoundAnimRatio = { 28.f, 30.f };
+        m_NoteData.vBoundAnimFrame = { 28.f, 30.f };
         break;
     }
 }

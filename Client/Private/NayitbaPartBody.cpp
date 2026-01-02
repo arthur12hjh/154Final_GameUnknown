@@ -55,8 +55,14 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     if (m_bIsRimLight && m_fRimLightTime.y < INFINITY)
     {
         m_fRimLightTime.x += fTimeDelta;
+        _vector vLerpColor = XMVectorLerp(XMLoadFloat4(&m_MonsterLimLightDesc.vRimLightColor), XMLoadFloat4(&m_vLerpEndRimLight), m_fRimLightTime.x / m_fRimLightTime.y);
+        XMStoreFloat4(&m_MonsterLimLightDesc.vRimLightColor, vLerpColor);
+
+
         if (m_fRimLightTime.x >= m_fRimLightTime.y)
+        {
             m_bIsRimLight = false;
+        }
     }
 
     if (m_bIsEnableCollider)
@@ -502,9 +508,13 @@ void CNayitbaPartBody::SetRimLightData(_bool bIsEnable, _float fRimLightIntensit
 {
     m_bIsRimLight = bIsEnable;
     m_fRimLightTime = { 0.f, DurTime };
+
     m_MonsterLimLightDesc.fRimLightIntensity = fRimLightIntensity;
     m_MonsterLimLightDesc.fRimLightPower = fRimLightPower;
-    m_MonsterLimLightDesc.vRimLightColor = vRimLightColor;
+    m_MonsterLimLightDesc.vRimLightColor = {};
+    //m_MonsterLimLightDesc.vRimLightColor = vRimLightColor;
+    m_vLerpEndRimLight = vRimLightColor;
+
 }
 
 HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
@@ -614,9 +624,14 @@ HRESULT CNayitbaPartBody::End_ShaderResources()
 
 void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
+    if (nullptr == pHitActor)
+        return;
+
     auto pCharacter = static_cast<CCharacter*>(pHitActor);
 
     DEFAULT_DAMAGE_DESC DamageDesc = {};
+    if (nullptr == m_pParent)
+        return;
     DamageDesc.pAttacker = m_pParent;
     DamageDesc.vHitDir = vHitDir;
     DamageDesc.vHitPoint = vHitPoint;

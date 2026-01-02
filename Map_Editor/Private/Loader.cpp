@@ -92,6 +92,7 @@
 #include "Desert_Grass.h"
 #include "DisplayBox.h"
 #include "Shutter.h"
+#include "Npc.h"
 #pragma endregion
 
 
@@ -172,6 +173,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree1(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Tree2(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Environment_Grass1(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Monster(pArg); });
 
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Boxes(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Deco_Duct(pArg); });
@@ -2702,6 +2704,109 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Var02_Body */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_D1G-g2r_Body");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Character/NPC/CH_NPC_05/CH_NPC_05_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_Component_Model_Scarlet_Body */
+	PreTransformMatrix = XMMatrixScaling(3.5f, 3.5f, 3.5f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Scarlet_Body");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Npc */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc");
+	pProtoDesc.pPrototype = CNpc::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Desert_Monster(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
+
+	_matrix PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	/* For.Prototype_Component_Model_Beholder */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Beholder");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Beholder/CH_M_NA_51.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	/* For.Prototype_Component_Model_SunFlower */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_SunFlower");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/SunFlower/SunFlower.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	/* For.Prototype_Component_Model_Minion11 */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Minion11");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Minion/11/Minion11.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_BanacleA */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_BanacleA");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Banacle/CH_M_NA_08.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_Tentacle */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tentacle");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Tentacle/Tentacle.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_DroidTurret */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_DroidTurret");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/DroidTurret/TurretDroid.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_StatueA */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueA");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Statue/A/CH_M_NA_40.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Model_StatueB */
+	PreTransformMatrix = XMMatrixScaling(2.8f, 2.8f, 2.8f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_StatueB");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Monster/Statue/B/CH_M_NA_40_B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Gorilla");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Gorilla/SuperGorilla_v01.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }

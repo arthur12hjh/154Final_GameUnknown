@@ -65,7 +65,7 @@ private:
 	CRimLight*											m_pRimLight = { nullptr };
 	vector<pair<CEffect*, _int>>						m_pEffects = {};
 	vector<pair<NAYITBA_TRAIL_DESC*, _int>>				m_pTrailEffects = {};
-	vector<pair<NAYITBA_LINE_TRAIL_DESC*, _int>>				m_pLineTrailEffects = {};
+	vector<pair<NAYITBA_LINE_TRAIL_DESC*, _int>>		m_pLineTrailEffects = {};
 	
 	CTexture*											m_pTexture = {};
 	_bool												m_isDeadEffect = { false };
@@ -84,6 +84,8 @@ private:
 	_bool												m_bIsChangeBodyColor = { false };
 	_bool												m_bIsChangeColorDissolve = { false };
 	_bool												m_bIsRimLight = { false };
+
+	_float4												m_vLerpEndRimLight = {};
 	_float2												m_fRimLightTime = {};
 	RIMLIGHT_DESC										m_MonsterLimLightDesc = {};
 

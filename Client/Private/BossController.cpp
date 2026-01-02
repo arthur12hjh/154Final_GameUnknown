@@ -150,6 +150,12 @@ HRESULT CBossController::Damage(void* pArg)
                         {
                             bIsHitAble = false;
                         }
+                        else
+                        {
+                            m_pBlackBoard->SetAttackDelay(0.7f);
+                            m_pBlackBoard->ClearAttackTimer();
+
+                        }
                     }
                 }
                 else
@@ -163,7 +169,7 @@ HRESULT CBossController::Damage(void* pArg)
         else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
         {
             if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
-                m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                bIsHitAble = m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
             else
             {
                 bIsHitAble = false;

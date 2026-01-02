@@ -162,6 +162,8 @@ HRESULT CMonsterController::Damage(void* pDesc)
 					{
 						bIsHitAble = false;
 					}
+					else
+						m_vAttackTime = { 0.f, 0.7f };
 				}
 			}
 		}

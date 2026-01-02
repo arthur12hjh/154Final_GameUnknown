@@ -15,13 +15,12 @@ HRESULT CDeco_AttackDelay::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 		return E_FAIL;
 
 	m_pBlackBoard = static_cast<CBossBlackBoard*>(m_pOwnerTree->GetBlackBoard());
-
 	return S_OK;
 }
 
 CBehaviorNode::NODE_STATE CDeco_AttackDelay::Update(_float fTimeDelta)
 {
-	if (false == m_pBlackBoard->IsPhaseLastAttack())
+	if (false == m_pBlackBoard->UnconditionallyAttack())
 	{
 		if (false == m_pBlackBoard->IsAttackEnable() || m_pBlackBoard->bIsExcution())
 		{

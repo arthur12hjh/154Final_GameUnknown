@@ -97,7 +97,7 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
-    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 80.f);
     
     float2 vMaskUV;
     const float fTexelSize = 2048.f;
@@ -137,7 +137,7 @@ PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
     vector vDiffuse = g_DiffuseTexture_Base.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Red = g_DiffuseTexture_Red.Sample(DefaultSampler, In.vTexcoord * 50.f);
     vector vDiffuse_Green = g_DiffuseTexture_Green.Sample(DefaultSampler, In.vTexcoord * 50.f);
-    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    vector vDiffuse_Blue = g_DiffuseTexture_Blue.Sample(DefaultSampler, In.vTexcoord * 80.f);
     
     float2 vMaskUV;
     const float fTexelSize = 2048.f;
