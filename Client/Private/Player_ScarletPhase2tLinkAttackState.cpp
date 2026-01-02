@@ -39,7 +39,7 @@ void CPlayer_ScarletPhase2tLinkAttackState::Start(void* pArg, _float fBlendRatio
 
     // 플레이어의 애니메이션을 변경해준다. 
     // 여기서 애니메이션 재생속도 조절가능해.
-    m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 2.f, 0.f, FALSE, -1.f, 0.f, TRUE);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTimeDelta)

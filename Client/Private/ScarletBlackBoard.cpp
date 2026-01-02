@@ -31,9 +31,7 @@ _bool CScarletBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 	if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
 		static_cast<CNaytiba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
 
-	if (BOSS_PAHSE::SECOND != m_eBossPhase)
-		return true;
-	else
+	if (BOSS_PAHSE::SECOND == m_eBossPhase)
 	{
 		m_eCurState = CBossBlackBoard::BOSS_STATE::IDLE;
 
@@ -42,7 +40,7 @@ _bool CScarletBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
 		m_bIsReflectExcution = true;
 	}
 
-	return false;
+	return true;
 }
 
 _bool CScarletBlackBoard::UnconditionallyAttack()
