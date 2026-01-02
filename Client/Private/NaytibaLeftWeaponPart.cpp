@@ -29,6 +29,9 @@ HRESULT CNaytibaLeftWeaponPart::Initialize(void* pArg)
 	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
 
 	m_pSocketMatrix = pDesc->pSocketMatrix;
+
+    SetVisibility(VISIBILITY::VISIBLE);
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -71,8 +74,11 @@ void CNaytibaLeftWeaponPart::Late_Update(_float fTimeDelta)
 		MyMatrix * SocketMatrix * ParentMatrix);
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    if (m_eVisibility == VISIBILITY::VISIBLE)
+    {
+        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    }
 
 	m_fLineTime += fTimeDelta;
 	for (auto TrailEffect : m_pTrailEffects)

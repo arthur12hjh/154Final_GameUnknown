@@ -359,7 +359,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
-	m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_EVE_01", FALSE, 1.f);
+	m_pBodyModelCom->Set_Animation("MV_Quest_Sub_033_Gorilla_EVE_01", FALSE, 1.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(760.197f, 2.022f, 700.319f, 1.f));
 
@@ -372,7 +372,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
-	m_pBodyModelCom->Set_Animation("Eve_Gorilla_Finish01_v05_w01_export_fixB", FALSE, 1.5f);
+	m_pBodyModelCom->Set_Animation("Eve_Gorilla_Finish01_v05_w01_export_fixB", FALSE, 1.5f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(742.f, 2.8678f, 597.f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(742.f, 2.8678f, 608.6966f, 1.f));
 
@@ -385,7 +385,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Dororong_Meet()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_eve_01", FALSE, 1.35f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_eve_01", FALSE, 1.35f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(684.761f, 31.453f, 383.506f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(684.761f, 31.453f, 382.506f, 1.f));
 
@@ -424,7 +424,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Enter()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_EVE_01", FALSE, 1.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_EVE_01", FALSE, 1.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(251.874f, 8.f, 235.907f, 1.f));
 
@@ -437,7 +437,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_PhaseChange()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_eve_ani01", FALSE, 2.f, 0.f, false);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_eve_ani01", FALSE, 2.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
 
@@ -450,7 +450,7 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Finish()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_EVE_01", FALSE, 2.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_QTE_Step1_EVE_01", FALSE, 2.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
 
@@ -531,6 +531,38 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta)
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+
+
+	if (m_fMoveTime >= 19.f
+		&& m_fMoveTime < 20.5f)
+	{
+		if (m_bIsDoFActivated == FALSE)
+		{
+			_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+				m_pTransformCom->Get_State(STATE::POSITION)));
+			_float fMaxDist = 5.f;
+			_float fIntensity = 1.5f;
+
+			m_pGameInstance->Active_DoF(true, 0.2f);
+			m_pGameInstance->Set_DoFInfo(fFocusDist, fMaxDist, fIntensity);
+
+			m_bIsDoFActivated = TRUE;
+		}
+
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+
+		m_pGameInstance->Set_DoFInfo(fFocusDist);
+
+		m_fDoFTimeAcc += fTimeDelta;
+	} else if (m_fMoveTime >= 20.5f
+		&& m_bIsDoFActivated == TRUE)
+	{
+		m_pGameInstance->Active_DoF(false, 0.2f);
+		m_fDoFTimeAcc = 0.f;
+		m_bIsDoFActivated = FALSE;
+	}
 
 	if (isFinished)
 	{

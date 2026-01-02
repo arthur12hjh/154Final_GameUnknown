@@ -294,6 +294,7 @@ HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 	BottleDesc.szModelTag = TEXT("Prototype_Component_Model_Bottle_Scarlet");
 	BottleDesc.pSocketMatrix = nullptr;
 	BottleDesc.isSetTransform = FALSE;
+	BottleDesc.isAnim = FALSE;
 	BottleDesc.vPartPosition = {0.f, 0.f, 0.12f};
 	BottleDesc.vPartRotation = {270.f, 0.f, 0.f};
 	BottleDesc.vPartScale = { 1.f, 1.f, 1.f };
@@ -311,6 +312,7 @@ HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 	GlassDesc.szModelTag = TEXT("Prototype_Component_Model_Glass_Scarlet");
 	GlassDesc.pSocketMatrix = nullptr;
 	GlassDesc.isSetTransform = FALSE;
+	GlassDesc.isAnim = FALSE;
 	GlassDesc.vPartPosition = { -0.015f, -0.0f, -0.01f };
 	GlassDesc.vPartRotation = { 270.f, 0.f, 0.f };
 	GlassDesc.vPartScale = { 1.f, 1.f, 1.f };
@@ -348,6 +350,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_GoodBye()
 	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_b2", FALSE, 2.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+	static_cast<CNaytibaLeftWeaponPart*>(Find_PartObject(TEXT("Part_WeaponL")))->SetVisibility(VISIBILITY::HIDDEN);
+	static_cast<CNaytibaRightWeaponPart*>(Find_PartObject(TEXT("Part_WeaponR")))->SetVisibility(VISIBILITY::HIDDEN);
 
 	return S_OK;
 }
@@ -357,11 +361,13 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Enter()
 	m_bIsActive = TRUE;
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_01", FALSE, 1.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Entrance_Scarlet_01", FALSE, 1.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(258.315f, 21.822f, 331.387f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(258.315f, 21.822f, 332.387f, 1.f));
 	m_pBottle->Set_Render(TRUE);
 	m_pGlass->Set_Render(TRUE);
+	m_bIsDoFActivated = FALSE;
+	m_fDoFTimeAcc = 0.f;
 
 	return S_OK;
 }
@@ -372,11 +378,13 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_PhaseChange
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	//m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f, 0.12f, false, -1.f, 30.f);
-	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f);
+	m_pBodyModelCom->Set_Animation("MV_Nikke_Scarlet_Phase2_seq_Scarlet_ANI01", FALSE, 3.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(251.874f, 8.f, 234.907f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
 	m_pBottle->Set_Render(FALSE);
 	m_pGlass->Set_Render(FALSE);
+	m_bIsDoFActivated = FALSE;
+	m_fDoFTimeAcc = 0.f;
 
 	return S_OK;
 }
@@ -391,6 +399,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Finish()
 	m_pTransformCom->LookAt(XMVectorSet(252.874f, 8.f, 234.907f, 1.f));
 	m_pBottle->Set_Render(FALSE);
 	m_pGlass->Set_Render(FALSE);
+	m_bIsDoFActivated = FALSE;
+	m_fDoFTimeAcc = 0.f;
 
 	return S_OK;
 }
@@ -426,7 +436,6 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDe
 			m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_04", FALSE, 2.f, 0.f, FALSE);
 			//m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
 		}
-
 	}
 
 	return S_OK;
@@ -460,14 +469,53 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Enter(_float fTim
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
 
-	if (m_iAnimationSequence == 1)
-	{
-		_uint iCurrentKeyFrameIndex = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
 
-		if (iCurrentKeyFrameIndex > 1129
-			&& iCurrentKeyFrameIndex <= 1169)
+	if (true == m_bIsDoFActivated)
+	{
+		_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+			m_pTransformCom->Get_State(STATE::POSITION)));
+
+		m_pGameInstance->Set_DoFInfo(fFocusDist);
+
+		m_fDoFTimeAcc += fTimeDelta;
+	}
+
+	if (m_iAnimationSequence == 0)
+	{
+		_float fCurrentTrackPosition = m_pBodyModelCom->Get_fTrackPosition();
+
+		if (fCurrentTrackPosition >= 734.f
+			&& fCurrentTrackPosition < 820.f
+			&& m_bIsDoFActivated == FALSE)
 		{
-			_float fRatio = (iCurrentKeyFrameIndex - 1129) / 40;
+			_float fFocusDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+				m_pTransformCom->Get_State(STATE::POSITION)));
+			_float fMaxDist = 3.f;
+			_float fIntensity = 1.5f;
+
+			m_pGameInstance->Active_DoF(true, 1.f);
+			m_pGameInstance->Set_DoFInfo(fFocusDist, fMaxDist, fIntensity);
+
+			m_bIsDoFActivated = TRUE;
+
+		}
+		else if (fCurrentTrackPosition >= 850.f
+			&& m_bIsDoFActivated == TRUE)
+		{
+			m_pGameInstance->Active_DoF(false, 1.f);
+			m_fDoFTimeAcc = 0.f;
+			m_bIsDoFActivated = FALSE;
+		}
+
+	}
+	else if (m_iAnimationSequence == 1)
+	{
+		_float fCurrentTrackPosition = m_pBodyModelCom->Get_fTrackPosition();
+
+		if (fCurrentTrackPosition > 1129.f
+			&& fCurrentTrackPosition <= 1169.f)
+		{
+			_float fRatio = (fCurrentTrackPosition - 1129.f) / 40.f;
 			_vector vPosition = XMVectorLerp(XMVectorSet(257.977f, 4.039f, 256.289f, 1.f), XMVectorSet(257.977f, 8.f, 256.289f, 1.f), fRatio);
 
 			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
@@ -507,6 +555,16 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_PhaseChange(_floa
 
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	if (m_iAnimationSequence == 3)
+	{
+		_float fCurrentTrackPosition = m_pBodyModelCom->Get_fTrackPosition();
+
+		if (fCurrentTrackPosition >= 444.f)
+		{
+			m_pBottle->SetActive(FALSE);
+		}
+	}
 
 	if (isFinished)
 	{	

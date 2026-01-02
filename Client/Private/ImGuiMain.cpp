@@ -73,6 +73,9 @@ void CImGuiMain::Update(_float fTimeDelta)
 	if (ImGui::Button("Show Hierarchy"))
 		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_Hierarchy"), VISIBILITY::VISIBLE);
 
+	if (ImGui::Button("Show Cinematic"))
+		m_pImGuiManager->SetImGuiObjectVisiblilty(TEXT("ImGui_CinematicMaker"), VISIBILITY::VISIBLE);
+
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 	if (pHUD)

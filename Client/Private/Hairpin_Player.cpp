@@ -62,6 +62,12 @@ void CHairpin_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
+	if (m_bIsActive)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	}
+
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 }
 
