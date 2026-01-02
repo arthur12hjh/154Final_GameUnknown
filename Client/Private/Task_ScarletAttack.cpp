@@ -232,7 +232,7 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	m_pSkillData.push(m_pGameManager->Find_SkillData(33));
+	m_pSkillData.push(m_pGameManager->Find_SkillData(27));
 	SelectAttackData();
 
 	//EntranceAttack();

@@ -1682,7 +1682,13 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_LineArea");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Scarlet_LineArea.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
-	
+
+
+	/* For.Prototype_Component_Effect_Scarlet_LineArea */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Turret_Laser");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Turret_Laser.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	
 
 

@@ -153,6 +153,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::SET_CINEMATIC_OBJECT:
 		return Set_Cinematic_Object(AnimNotify);
 		break;
+	case CNotify::PLAY_SCREEN:
+		return Notify_Play_Screen(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -181,7 +184,8 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
 	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 	if (szNotifyTag == "Set_Cinematic_Object")			return SET_CINEMATIC_OBJECT;
-
+	if (szNotifyTag == "Play_Screen")					return PLAY_SCREEN;
+	
 	return NOTIFY_TYPE::END;
 }
 
@@ -365,6 +369,15 @@ HRESULT CNotify::Set_Cinematic_Object(const ANIM_NOTIFY& AnimNotify)
 	
 	dynamic_cast<CCinematicObject*>(m_pCharacter)->Set_Cinematic_Object(AnimNotify);
 
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Play_Screen(const ANIM_NOTIFY& AnimNotify)
+{
+	_TCHAR szNotifyTag[MAX_PATH];
+	CStringHelper::ConvertUTFToWide(AnimNotify.szSocketTag.c_str(), szNotifyTag);
+
+	m_pGameManager->Set_Active_ReserveDeferred(szNotifyTag, true);
 	return S_OK;
 }
 

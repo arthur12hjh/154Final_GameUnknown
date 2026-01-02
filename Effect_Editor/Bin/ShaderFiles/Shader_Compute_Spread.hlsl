@@ -2476,10 +2476,6 @@ void Random_Rotation(uint3 Gid : SV_GroupID,
     g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
     if (0 > g_Out[DTid.x].vLifeTime.x)
     {
-        if (0 == viLoopAndCount.x && 2 != vfisSphere.x)
-            return;
-        if (4 == viLoopAndCount.x)
-            return;
         g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
         vDir = normalize(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0));
         if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
@@ -2526,73 +2522,10 @@ void Random_Rotation(uint3 Gid : SV_GroupID,
     }
     if (!bisStart && 0 == g_Out[DTid.x].vLifeTime.x)
     {
-        vDir = normalize(float4(Input[DTid.x].vfRoot.xyz - vfPivot.xyz, 0));
-        if (0 >= length(Input[DTid.x].vfRoot.xyz - vfPivot.xyz))
-            vDir.xyzw = 0;
-        int i = vfisSphere.x;
-        switch (i)
-        {
-            case 0:{
-                    g_Out[DTid.x].vfStart = Input[DTid.x].vfRoot;
-                    g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
-                    g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-                    bisStart = true;
-                }
-                break;
-            case 1:{
-                    g_Out[DTid.x].vfStart = float4((vDir * vfisSphere.y).xyz, 1);
-                    g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
-                    g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
-                    bisStart = true;
-                }
-                break;
-            case 2:{
-                    if (0 == viLoopAndCount.x)
-                    {
-                        g_Out[DTid.x].vLifeTime.x = float(DTid.x + 1) / viLoopAndCount.y * -vfCircle.y;
-                        return;
-                    }
-                }
-                break;
-        }
-
-    }
-    switch (int(vfisSphere.x))
-    {
-        case 0:
-            if (bisStart)
-            {
-                g_Out[DTid.x].vTranslation = g_Out[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
-            }
-            else
-            {
-                g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * vfTimeDelta.x;
-            }
-            break;
-        case 1:
-            if (bisStart)
-            {
-                g_Out[DTid.x].vTranslation = g_Out[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
-            }
-            else
-            {
-                g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * vfTimeDelta.x;
-            }
-            break;
-        case 2:
-            if (bisStart)
-            {
-                g_Out[DTid.x].vTranslation = g_Out[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * g_Out[DTid.x].vLifeTime.x;
-            }
-            else
-            {
-                if (2 == vfisSphere.x)
-                {
-                    vDir = normalize(float4(Input[DTid.x].vTranslation.xyz - g_Out[DTid.x].vfStart.xyz, 0));
-                }
-                g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + vDir * Input[DTid.x].vfSpeed.x * vfTimeDelta.x;
-            }
-            break;
+        g_Out[DTid.x].vfStart = Input[DTid.x].vfRoot;
+        g_Out[DTid.x].vTranslation = g_Out[DTid.x].vfStart;
+        g_Out[DTid.x].vLifeTime.x = -Random(DTid.x, 0, Input[DTid.x].vLifeTime.y);
+        g_Out[DTid.x].vLifeTime.y += g_Out[DTid.x].vLifeTime.y + g_Out[DTid.x].vLifeTime.x + 1;
     }
     float t = g_Out[DTid.x].vLifeTime.x / g_Out[DTid.x].vLifeTime.y;
     float fGravity = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * vfGravity.x
@@ -2602,7 +2535,7 @@ void Random_Rotation(uint3 Gid : SV_GroupID,
     
     g_Out[DTid.x].vTranslation.xyz += normalize(g_WorldMatrix._12_22_32) * fGravity * vfTimeDelta.x;
 
-    g_Out[DTid.x].vLook = float4(normalize(float3(Random(DTid.x, -1, 1), Random(DTid.x + viLoopAndCount.y, -1, 1), Random(DTid.x + viLoopAndCount.y * 2, -1, 1))) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
+    g_Out[DTid.x].vLook = float4(normalize(float3(Random(DTid.x, -1, 1), Random(DTid.x + viLoopAndCount.y, -2, 2), Random(DTid.x + viLoopAndCount.y * 2, -1, 1))) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
 
     
     g_Out[DTid.x].vRight = float4(normalize(cross(float3(0, 1, 0), g_Out[DTid.x].vLook.xyz)) * Input[DTid.x].vfSize * length(g_WorldMatrix._11_12_13), 0);
@@ -2628,7 +2561,7 @@ void Random_Rotation(uint3 Gid : SV_GroupID,
         look = normalize(look);
         
         g_Out[DTid.x].vRight.xyz = right * Input[DTid.x].vfSize;
-        g_Out[DTid.x].vUp.xyz = up * Input[DTid.x].vfSize;
+        g_Out[DTid.x].vUp.xyz = up * 30;
         g_Out[DTid.x].vLook.xyz = look * Input[DTid.x].vfSize;
     }
         

@@ -320,14 +320,19 @@ HRESULT CMainApp::Ready_ClientDeferred()
 	eScreenDesc.fEndTime = 0.628f;
 	eScreenDesc.iPass = 0;
 	/* 테스트용으로 ColorChange 추가. */
-	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Break"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
-	//eScreenDesc.fEndTime = 1.57f;
 	eScreenDesc.fEndTime = 0.628f * 1.5f;
 	eScreenDesc.iPass = 1;
 
-	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("ColorChange_2"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Power_Break"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
+		return E_FAIL;
+
+	eScreenDesc.fEndTime = 1.57f;
+	eScreenDesc.iPass = 1;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Slash_World"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
 	return S_OK;

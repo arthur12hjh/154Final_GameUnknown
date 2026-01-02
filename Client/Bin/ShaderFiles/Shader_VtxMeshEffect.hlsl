@@ -820,6 +820,141 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_LOOP_BLOOM(PS_IN In)
     return Out;
 }
 
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_LASER(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    MaskTexcoord.x += (1 - In.vTexcoord.y * g_fDiffuseUVSize.y);
+    Out.vColor = g_vColor;
+    //Out.vColor.rgb *= g_DiffuseTexture.Sample( DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y));
+    
+    float2 tex = MaskTexcoord + float2(g_fTime * g_fDiffuseUVSpeed.x, g_fTime * g_fDiffuseUVSpeed.y);
+    
+    float2 uv = MaskTexcoord;
+    
+    float3 noise = g_DiffuseTexture.Sample(YMirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float4 col = g_DissolveTexture.Sample(YMirrorSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(YMirrorSampler, uvDistorted).r;
+    
+    Out.vColor.rgb *= col.rgb;
+    
+    Out.vColor.a *= mask;
+    
+    // * saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 3));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 3));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r);
+    //if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + g_fTime * 2)
+    //    discard;
+    
+    if (0 >= Out.vColor.a)
+        discard;
+    return Out;
+}
+// * max((abs(1 - saturate(g_fTime * 3))) * 4, 0.8)
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_LASER_BLOOM(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    MaskTexcoord.x += (1 - In.vTexcoord.y * g_fDiffuseUVSize.y);
+    Out.vColor = g_vColor;
+    float2 tex = MaskTexcoord + float2(g_fTime * g_fDiffuseUVSpeed.x, g_fTime * g_fDiffuseUVSpeed.y);
+    
+    float2 uv = MaskTexcoord;
+    
+    float3 noise = g_DiffuseTexture.Sample(YMirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float4 col = g_DissolveTexture.Sample(YMirrorSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(YMirrorSampler, uvDistorted).r;
+    
+    Out.vColor.rgb *= col.rgb;
+    Out.vColor.rgb *= Out.vColor.a * mask; // * saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.rgb *= g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r);
+    if (0 >= Out.vColor.a)
+        discard;
+    Out.vColor.rgb = saturate(pow(Out.vColor.rgb * 10, 2));
+    Out.vColor.rgb *= Out.vColor.a;
+    Out.vColor.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_LASER_LIGHTNING(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    MaskTexcoord.x += (1 - In.vTexcoord.y * g_fDiffuseUVSize.y);
+    Out.vColor = g_vColor;
+    
+    float mask = g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r;
+    
+    Out.vColor.a *= mask;
+    
+    // * saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 3));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 3));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r);
+    //if (g_DissolveTexture.Sample(MirrorSampler, float2(DissolveTexcoord.x, DissolveTexcoord.y)).r + (1 - abs(MaskTexcoord.x * 1.1)) < abs(MaskTexcoord.x) + g_fTime * 2)
+    //    discard;
+    
+    if (0.7 >= Out.vColor.a)
+        discard;
+    return Out;
+}
+// * max((abs(1 - saturate(g_fTime * 3))) * 4, 0.8)
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_LASER_LIGHTNING_BLOOM(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    MaskTexcoord.x += (1 - In.vTexcoord.y * g_fDiffuseUVSize.y);
+    Out.vColor = g_vColor;
+    
+    float mask = g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r;
+    
+    Out.vColor.a *= mask;
+    
+    Out.vColor.rgb *= Out.vColor.a * mask; // * saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.rgb *= g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y));
+    //Out.vColor.a *= saturate(pow((1 - abs(In.vTexcoord.y)) * 2, 5));
+    //Out.vColor.a *= saturate(g_MaskTexture.Sample(YMirrorSampler, MaskTexcoord).r);
+    if (0.7 >= Out.vColor.a)
+        discard;
+    Out.vColor.rgb = saturate(pow(Out.vColor.rgb * 10, 2));
+    Out.vColor.rgb *= Out.vColor.a;
+    Out.vColor.a = 1;
+    return Out;
+}
+
 BlendState BS_BlendAlphaMax
 {
     BlendEnable[0] = true;
@@ -1035,5 +1170,45 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_CIRCLE_SLASH_LOOP_BLOOM();
+    }
+    // idx 20
+    pass Laser
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_BlendAlphaMax, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LASER();
+    }
+    // idx 21
+    pass Laser_Bloom
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LASER_BLOOM();
+    }
+    // idx 22
+    pass Laser_Lightning
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LASER_LIGHTNING();
+    }
+    // idx 23
+    pass Laser_Lightning_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_LASER_LIGHTNING_BLOOM();
     }
 }
