@@ -229,9 +229,6 @@
     <Filter Include="06.Event\Notify">
       <UniqueIdentifier>{6f937a3e-d046-49f5-b4c3-1e76e77743aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.Effects\TrailEffect">
-      <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.Effects\Particle\SpriteParticle">
       <UniqueIdentifier>{825607c9-65e0-47b8-8f40-d8a65e218117}</UniqueIdentifier>
     </Filter>
@@ -309,9 +306,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Building\Building_Ruin">
       <UniqueIdentifier>{65b52173-7b4e-46fa-8da2-419f846bfc83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03.Effects\TrailEffect\TrailData">
-      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Levels\Scarlet">
       <UniqueIdentifier>{e36c3514-947c-4060-a97a-b4aa551ab48f}</UniqueIdentifier>
@@ -1116,6 +1110,12 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
       <UniqueIdentifier>{44f47e13-04ea-4fdd-9f4f-87279de045d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\TrailEffect">
+      <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Effects\TrailEffect\TrailData">
+      <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

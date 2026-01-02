@@ -64,8 +64,8 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -427,7 +427,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	}
 	//}
 	
-	Desc.iMonsterID = 10;
+	Desc.iMonsterID = 2;
 	Desc.vPosition = { 60.f, 1.f, 60.f };
 	Desc.bIsSuperMonster = false;
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
