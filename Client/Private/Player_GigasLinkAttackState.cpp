@@ -24,7 +24,9 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
     m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
 
     m_Desc->isSuperArmor = true;
-    m_Desc->pPlayerController->Set_Active(false);
+    
+    m_Desc->pPlayerController->Set_Active(true);
+    m_Desc->pPlayerController->Set_CCTCollision(false);
 
     return S_OK;
 }
@@ -50,6 +52,8 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 {
     m_isEndList[m_iAnimationIndex] = m_pPlayer->Play_Animation(fTimeDelta);
+    _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
+
     if (true == m_isEndList[0])
     {
         m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_E", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
@@ -68,18 +72,21 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
         m_Desc->pLinkAttackTarget->Damaged(&Desc);
     }
 
-    _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+    _matrix	SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
     for (size_t i = 0; i < 3; i++)
         SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
     _matrix CombinedMatrix = XMMatrixRotationY(XMConvertToRadians(90.f)) * XMMatrixRotationX(XMConvertToRadians(270.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
-    m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
-    m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
-    m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
-    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+    //현재 포지션보다 높다면
+    if (0 == m_iAnimationIndex && 0.75f <= fAnimationRatio)
+        m_isFlagActivated = true;
 
+    if (true == m_isFlagActivated)
+        CombinedMatrix.r[3].m128_f32[1] = m_fStartY;
+
+    m_Desc->pPlayerTransform->Set_WorldMatrix(CombinedMatrix);
 
     return m_tNextState;
 }
@@ -87,8 +94,10 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 _float CPlayer_GigasLinkAttackState::End()
 {
     m_Desc->isSuperArmor = false;
-    m_Desc->pPlayerController->Set_Active(true);
     m_Desc->pLinkAttackTarget = nullptr;
+
+    m_Desc->pPlayerController->Set_Active(true);
+    m_Desc->pPlayerController->Set_CCTCollision(true);
 
     return m_fNextBlendRatio;
 }

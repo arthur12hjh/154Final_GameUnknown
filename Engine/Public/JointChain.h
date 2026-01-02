@@ -17,7 +17,7 @@ public:
 
 	HRESULT Set_Root(class CRigidBody* pRigidBody);
 	HRESULT Add_Joint(class CRigidBody* pRigidBody);
-	HRESULT Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, const PxTransform& tLocalPose);
+	//HRESULT Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, const PxTransform& tLocalPose);
 
 	void* Get_RootDesc() { return &m_tRootDesc; }
 	void* Get_JointDesc() { return &m_tJointDesc; }

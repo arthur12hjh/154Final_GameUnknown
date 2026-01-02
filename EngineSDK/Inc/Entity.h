@@ -31,7 +31,8 @@ public:
 	_bool				IsAnmiationFinished();
 	void				Set_AnimationIndex(_int iAnimIndex, _bool isLoop = true);
 	_float				Get_AnimationRatio();
-
+	//_float				Get_fTrackPosition();
+	_uint				Get_iTrackPosition();
 	void				Set_Animation(const _char* szAnimationTag,
 		_bool isLoop = true,
 		_float fAnimationPlayRate = 1.f,

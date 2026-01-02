@@ -142,6 +142,7 @@ HRESULT CJointChain::Add_Joint(CRigidBody* pRigidBody)
     return S_OK;
 }
 
+/*
 HRESULT CJointChain::Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, const PxTransform& tLocalPose)
 {
     if (nullptr == pChild)
@@ -208,7 +209,7 @@ HRESULT CJointChain::Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, co
 
     return S_OK;
 }
-
+*/
 
 void CJointChain::Update(_float fTimeDelta)
 {

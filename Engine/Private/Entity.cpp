@@ -95,6 +95,16 @@ _float CEntity::Get_AnimationRatio()
     return m_pBodyModelCom->Get_AnimationRatio();
 }
 
+//_float CEntity::Get_fTrackPosition()
+//{
+//    //return m_pBodyModelCom->Get_fTrackP;
+//}
+
+_uint CEntity::Get_iTrackPosition()
+{
+    return m_pBodyModelCom->Get_AnimationKeyFrameIndex();
+}
+
 HRESULT CEntity::Import_ModelPtr()
 {
 

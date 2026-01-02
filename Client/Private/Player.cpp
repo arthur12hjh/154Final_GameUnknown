@@ -208,26 +208,6 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
 
-	//// [JU] Use_RushSkill 테스트(키보드 R키)
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
-	//{
-	//	auto pTransportData = m_pGameManager->Find_TransportData(1);
-	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
-
-	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
-	//	m_pCCT->Set_Position(vPos);
-	//}
-
-	//// [JU] Use_RushSkill 테스트(키보드 R키)
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	//{
-	//	auto pTransportData = m_pGameManager->Find_TransportData(2);
-	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
-
-	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
-	//	m_pCCT->Set_Position(vPos);
-	//}
-
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
@@ -239,6 +219,11 @@ void CPlayer::Late_Update(_float fTimeDelta)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+
+		_float fDist = XMVectorGetX(XMVector3Length(m_pTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+
+		if (fDist < 100.f)
+			m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
@@ -432,6 +417,9 @@ HRESULT CPlayer::Ready_Components()
 
 	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 
+#ifdef _DEBUG
+	m_pGameInstance->Set_PVDRender_Off();
+#endif
 	return S_OK;
 }
 
@@ -777,25 +765,26 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	CHARACTER_SKILL_DESC SkillDescCopy{};
 	Default_Damage_Desc DamageDesc = {};
 	//만약 그랩스킬이라면
+	//폐기했으니까 무시
 	switch (pSkillDesc->eSkillType)
 	{
 	case SKILL_TYPE::INTERACTION_SKILL:
 		{
-		memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
+		//memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
 
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::GRAB;
-		Desc.pArg = &SkillDescCopy;
+		//Desc.isChangeMode = false;
+		//Desc.eNextState = PLAYER_STATE::GRAB;
+		//Desc.pArg = &SkillDescCopy;
 
-		//공격한 녀석의 본 이름 & 객체 포인터 들고옴
-		auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
-		m_PlayerDesc.pGrabBone = pNayitba->Get_BodyModelCom()
-			->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
+		////공격한 녀석의 본 이름 & 객체 포인터 들고옴
+		//auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+		//m_PlayerDesc.pGrabBone = pNayitba->Get_BodyModelCom()
+		//	->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
 
-		m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
+		//m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
 
-		pNayitba->ActionSuccess(nullptr);
-		m_pFSM->Handle_Transition(Desc);
+		//pNayitba->ActionSuccess(nullptr);
+		//m_pFSM->Handle_Transition(Desc);
 		}
 		break;
 	default:
