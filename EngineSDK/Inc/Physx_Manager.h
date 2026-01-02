@@ -41,6 +41,14 @@ public:
 	/* 피직스 트랜스폼 변환함수. 어지간하면 건드리기 ㄴㄴ */
 	_matrix		Convert_PxTransform_ToMatrix(PxTransform Transform);
 
+#ifdef _DEBUG 
+public:
+	//디버그용임 건들지마세요
+	void Set_PVDRender_Off() {
+		m_pPxCCTManager->setDebugRenderingFlags(PxControllerDebugRenderFlag::eNONE);
+	}
+#endif
+
 private:
 	class PxDefaultContactCallback* m_pSceneEventCallback = { nullptr };
 	/* 모든 Physx 모듈을 사용하려면 필요한 인스턴스. 다렉의 Device나 현재 프레임워크의 GameInstance 같은 녀석.*/
