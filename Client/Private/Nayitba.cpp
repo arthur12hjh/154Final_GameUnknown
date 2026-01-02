@@ -1068,17 +1068,26 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	_vector vLook = m_pTransformCom->Get_State(STATE::LOOK);
 
 	 _float fRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, XMVector3Normalize(vTargetPos - vOwnerPos))));
+	 _float fLength = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 	 if (0 < XMVectorGetX(XMVector3Dot(vOwnerPos, vTargetPos)))
 	 {
 		 if (fRadian <= XMConvertToRadians(pNotify->fNumData01))
 		 {
-			XMStoreFloat3(&pBulletDesc.vTargetPoint, m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION));
+			 _vector vBulletTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
+			 vBulletTargetPos.m128_f32[1] += 2.f;
+
+			XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
 			bTraceBullet = false;
 		 }
 	 }
 
 	 if (bTraceBullet)
-		 XMStoreFloat3(&pBulletDesc.vTargetPoint, vOwnerPos + vLook * 20.f);
+	 {
+		 _vector vBulletTargetPos = vOwnerPos + vLook * 50.f;
+		 vBulletTargetPos.m128_f32[1] += 2.f;
+		 XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
+	 }
+		 
 
 	m_pBulletList.clear();
 	_uint iLevel = ENUM_CLASS(LEVEL::GAMEPLAY);

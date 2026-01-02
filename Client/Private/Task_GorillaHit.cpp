@@ -53,6 +53,7 @@ CBehaviorNode::NODE_STATE CTask_GorillaHit::Update(_float fTimeDelta)
 	}
 
 	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
+
 	if (m_pOwner->Play_Animation(fTimeDelta))
 	{
 		m_pHit_Data = nullptr;

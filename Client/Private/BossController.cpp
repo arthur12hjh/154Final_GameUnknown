@@ -81,6 +81,7 @@ HRESULT CBossController::Damage(void* pArg)
         pNayitba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_HP, (long long)RecoveryHealth);
     }
 
+  
     if (10 >= m_pBlackBoard->GetBossInfo()->iCurrentHealth)
     {
         // 이거 죽는모션 나옴 죽으면 
@@ -106,6 +107,10 @@ HRESULT CBossController::Damage(void* pArg)
         // 여기서 피격을 입력으로 피격 무조건 실행하게 하고 데미지도 들어가는데
         // 일단 입력을 넘기고 어떤 상태이냐에 대한 예외처리를 하자
         _bool bIsHitAble = true;
+
+        if (m_pBlackBoard->bIsExcution())
+            bIsHitAble = false;
+
         if (CBossBlackBoard::BOSS_STATE::ATTACK == m_pBlackBoard->GetCurState())
         {
             // 나중에 여러 속성 추가할 예정

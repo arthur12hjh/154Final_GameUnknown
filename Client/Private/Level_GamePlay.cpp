@@ -53,8 +53,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;*/
 
 	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 	//	return E_FAIL;
@@ -64,9 +64,9 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
-	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
+	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert2.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -399,12 +399,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	//Desc.iMonsterID = 1;
-	//Desc.vPosition = { 62.f, 1.f, 62.f };
-	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-	//	return E_FAIL;
-	//
+	Desc.iMonsterID = 1;
+	Desc.vPosition = { 62.f, 1.f, 62.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+		return E_FAIL;
+	
 	/*Desc.iMonsterID = 3;
 	{
 		for (_uint i = 0; i < 10; ++i)
@@ -427,12 +427,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	//	}
 	//}
 	
-	Desc.iMonsterID = 9;
-	Desc.vPosition = { 60.f, 1.f, 60.f };
-	Desc.bIsSuperMonster = false;
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 9;
+	//Desc.vPosition = { 60.f, 1.f, 60.f };
+	//Desc.bIsSuperMonster = false;
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 
 	/*Desc.iMonsterID = 10;
@@ -467,11 +467,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;*/
 
-	Desc.iMonsterID = 8;
-	Desc.vPosition = { 1000.f, 1.f, 1000.f };
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+	//Desc.iMonsterID = 8;
+	//Desc.vPosition = { 1000.f, 1.f, 1000.f };
+	//if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
+	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
+	//	return E_FAIL;
 
 
 	return S_OK;
