@@ -344,6 +344,9 @@ void CTask_ScarletAttack::CancelSkillData()
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	auto pSkillData = m_pBlackBoard->GetAttackData();
 
+	if (nullptr == pSkillData)
+		return;
+
 	if (22 == pSkillData->iSkillID)
 	{
 		auto NextSkillData = m_pSkillData.front();
