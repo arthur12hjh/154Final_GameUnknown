@@ -203,6 +203,11 @@ void CBossController::ActionSuccess(void* pArg)
 
 }
 
+_bool CBossController::bIsLinkAttack()
+{
+    return m_pBlackBoard->bIsExcution();
+}
+
 _bool CBossController::bIsLastAttack()
 {
     return  m_pBlackBoard->IsPhaseLastAttack();

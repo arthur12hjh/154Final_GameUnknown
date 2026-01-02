@@ -122,7 +122,10 @@ void CNaytiba::Update(_float fTimeDelta)
 	_matrix SpineMatrix = XMLoadFloat4x4(m_pLockOnMatrix);
 
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
+	{
 		m_pAIController->Update(fTimeDelta);
+
+	}
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
@@ -220,8 +223,18 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	VisibleStatusUI(0.f);
 	if (S_OK == m_pAIController->Damage(pArg))
 	{
-		// 여기서 몬스터 림라이트 처리
-		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f}, 0.4f);
+		_uint RimLightIndex = 0;
+		if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+		{
+			CBossController* pBossController = static_cast<CBossController*>(m_pAIController);
+			if (pBossController->bIsLinkAttack())
+				RimLightIndex = 1;
+				
+		}
+		
+		// 몬스터 림라이트 처리
+		if (0 == RimLightIndex)
+			m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	}
 
 	return S_OK;
@@ -458,6 +471,9 @@ void CNaytiba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 void CNaytiba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
 	m_eExcution = eExcution;
+
+	if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == m_eExcution)
+		m_pPartBody->SetRimLightData(true, 2.5f, 0.5f, { 0.18f, 0.04f, 0.04f, 1.f }, 5.f);
 }
 
 void CNaytiba::EnablePhysxController(_bool bEnable)
