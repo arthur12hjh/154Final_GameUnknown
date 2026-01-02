@@ -34,7 +34,7 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    if(pDesc->isSetTransform)
+    if (pDesc->isSetTransform)
     {
         m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&pDesc->vPartPosition), 1.f));
         m_pTransformCom->Rotation(XMConvertToRadians(pDesc->vPartRotation.x),
@@ -47,7 +47,6 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
     m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
     //m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
     m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
-
 
     return S_OK;
 }

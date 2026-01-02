@@ -736,6 +736,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 		CNaytibaFace::NAYTIBA_FACE_DESC FaceDesc = { };
 		FaceDesc.pParentTransform = m_pTransformCom;
 		FaceDesc.vScale = { 1.f, 1.f, 1.f };
+		FaceDesc.pBodyModelCom = static_cast<CModel*>(m_pPartBody->Find_Component(TEXT("Com_Model")));
 		CStringHelper::ConvertUTFToWide(m_pInitMonsterInfo->szFaceName, FaceDesc.szFaceJsonDataName);
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Face"), TEXT("Part_Face"), &FaceDesc)))
 			return E_FAIL;
