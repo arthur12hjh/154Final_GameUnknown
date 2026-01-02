@@ -9,11 +9,11 @@ class CBossBlackBoard;
 struct Default_Damage_Desc;
 struct Character_Skill_Desc;
 
-class CTask_Hit : public CTask
+class CTask_GorillaHit final : public CTask
 {
-protected:
-	CTask_Hit();
-	virtual ~CTask_Hit() = default;
+private :
+	CTask_GorillaHit();
+	virtual ~CTask_GorillaHit() = default;
 
 public:
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree) override;
@@ -32,13 +32,12 @@ private:
 	_float3								m_vImpactDir = {};
 	_float								m_fImpactForce = {};
 
-private :
+private:
 	void								Refresh_HitMotion();
-
 	void								Damaged_Attack(const Character_Skill_Desc* pData, _vector vDir);
 
 public:
-	static	CTask_Hit*					Create(CBehaviorTree* pOwnerTree);
+	static	CTask_GorillaHit*			Create(CBehaviorTree* pOwnerTree);
 	virtual	void						Free() override;
 
 };

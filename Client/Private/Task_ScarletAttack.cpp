@@ -242,6 +242,11 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		{
 			EntranceAttack();
 		}
+		else if (m_pBlackBoard->bIsReflectExcution())
+		{
+			m_pSkillData.push(m_pGameManager->Find_SkillData(40));
+			SelectAttackData();
+		}
 		else
 		{
 			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
@@ -812,6 +817,32 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 	break;
 #pragma endregion
 
+	case 40:
+#pragma region GroggyCounter
+	{
+		Desc.BeginTime = 0.16f;
+		Desc.EndTime = 0.21f;
+		Desc.fRange = 3.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.26f;
+		Desc.EndTime = 0.32f;
+		Desc.fRange = 1.f;
+		Desc.fSpeed = 10.f;
+		Desc.fAnimationSpeed = 2.f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = true;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
 	case 41:
 #pragma region COUNTER MOVE ATTACK
 	{
@@ -1207,6 +1238,9 @@ void CTask_ScarletAttack::Clear_ScarletAttackTask()
 
 	if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		m_pBlackBoard->SetEntarnceAttack(false);
+
+	if (m_pBlackBoard->bIsReflectExcution())
+		m_pBlackBoard->SetRefelctExcution(false);
 }
 
 CTask_ScarletAttack* CTask_ScarletAttack::Create(CBehaviorTree* pOwnerTree)

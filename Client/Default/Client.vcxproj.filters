@@ -832,9 +832,6 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Dead">
       <UniqueIdentifier>{bbdd4585-dbfa-4936-91d8-bf60a2d46f2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit">
-      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\CutScene">
       <UniqueIdentifier>{e217fbfe-57a0-4b0a-aff5-68e728ea900c}</UniqueIdentifier>
     </Filter>
@@ -1114,6 +1111,12 @@
     <Filter Include="02.GameObjects\Map\Desert\Shutter">
       <UniqueIdentifier>{ee9bce94-827e-4034-a137-da06a8414ebf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Hit">
+      <UniqueIdentifier>{dfb57439-d25c-41ae-a512-ea0595991b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
+      <UniqueIdentifier>{44f47e13-04ea-4fdd-9f4f-87279de045d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1281,8 +1284,8 @@
     <ClInclude Include="..\Public\Task_Theshold.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_Hit.h">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
+    <ClInclude Include="..\Public\Task_ScarletHit.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_GorillaAttack.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -2140,6 +2143,9 @@
     <ClInclude Include="..\Public\Player_ScarletLinkAttackState.h">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Task_GorillaHit.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2291,8 +2297,8 @@
     <ClCompile Include="..\Private\Task_Theshold.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Theshold</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Task_Hit.cpp">
-      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Task\Hit</Filter>
+    <ClCompile Include="..\Private\Task_ScarletHit.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\ScarletBehaviorTree\Task\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_GorillaAttack.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Attack</Filter>
@@ -3120,7 +3126,7 @@
     </ClCompile>
     <ClCompile Include="..\private\BeatSaberSpawner.cpp">
       <Filter>02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner</Filter>
-   </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\DisplayBox.cpp">
       <Filter>02.GameObjects\Actor\Interaction\DisplayBox</Filter>
     </ClCompile>
@@ -3132,6 +3138,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Task_GorillaHit.cpp">
+      <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
