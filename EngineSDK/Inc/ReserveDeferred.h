@@ -32,7 +32,7 @@ public:
 	//하위 객체단에서 다형성으로 처리.
 	virtual void Bind_Resources(const _wstring& strRTTag) = 0;
 	void Set_ShaderPassIdx(_uint iIdx) { m_iShaderPassIdx = iIdx; }
-	void Set_Active(_bool bFlag) { m_isActive = bFlag; if (m_isActive) m_fTime = 0; }
+	void Set_Active(_bool bFlag);
 	_bool	Update(_float fTimeDelta);
 	_bool Get_Active() { return m_isActive; }
 	_float Get_Time() { return m_fTime; }
@@ -45,6 +45,7 @@ protected:
 	_uint					m_iShaderPassIdx = { 0 };
 	_bool					m_isActive = { false };
 	_float					m_fTime = { 0 };
+	_float					m_fEnd = { 0 };
 	_float					m_fEndTime = { 0 };
 
 public:

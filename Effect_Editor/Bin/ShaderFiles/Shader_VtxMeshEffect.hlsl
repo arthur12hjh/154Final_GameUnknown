@@ -161,6 +161,18 @@ struct PS_IN
     float4 vProjPos : TEXCOORD2;
 };
 
+
+
+struct PS_NONBLEND_OUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
+    float4 vBloom : SV_TARGET5;
+};
+
 struct PS_NORMAL_OUT
 {
     float4 vDiffuse : SV_TARGET0;
@@ -174,15 +186,18 @@ struct PS_NONLIGHT_OUT
 };
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
-PS_NORMAL_OUT PS_MAIN(PS_IN In)
+PS_NONBLEND_OUT PS_MAIN(PS_IN In)
 {
-    PS_NORMAL_OUT Out;
+    PS_NONBLEND_OUT Out;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
         discard;
     Out.vDiffuse = g_vColor;
     Out.vNormal = float4(normalize(In.vNormal) * 0.5f + 0.5f, 1.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 

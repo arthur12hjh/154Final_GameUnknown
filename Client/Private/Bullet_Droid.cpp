@@ -33,7 +33,7 @@ HRESULT CBullet_Droid::Initialize(void* pArg)
 
 	m_PointLists.resize(5, {});
 	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
-	/*CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 
@@ -42,10 +42,11 @@ HRESULT CBullet_Droid::Initialize(void* pArg)
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 1.2f;
+	EffectDesc.fSize = 0.1f;
 	EffectDesc.iFloor = 0;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));*/
+	EffectDesc.pDir = &m_vProjectileDir;
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
 	return S_OK;
 }
@@ -184,7 +185,7 @@ void CBullet_Droid::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	if (pCharacter)
 		pCharacter->Damaged(&pDamageDesc);
 
-	if (ReflectBullet(pHitActor))
+	if (false == ReflectBullet(pHitActor))
 	{
 		//m_pEffect->Set_Dead(true);
 		Set_Dead(true);
@@ -217,7 +218,22 @@ CGameObject* CBullet_Droid::Clone(void* pArg)
 
 void CBullet_Droid::Free()
 {
-	__super::Free();
+	if (nullptr != m_pEffect) {
+		m_pEffect->End();
 
-	//Safe_Release(m_pEffect);
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+		EffectDesc.vPos = CombinedMatrix.r[3];
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 2.0f;
+		EffectDesc.iFloor = 0;
+		EffectDesc.pDir = &m_vProjectileDir;
+		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+	}
+	__super::Free();
 }

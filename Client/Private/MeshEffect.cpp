@@ -145,7 +145,7 @@ HRESULT CMeshEffect::Render()
 
 void CMeshEffect::End()
 {
-	m_tData.fEndTime = m_fTime + 1.f;
+	m_tData.fEndTime = m_fTime;
 	m_bisEnd = true;
 }
 

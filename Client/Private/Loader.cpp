@@ -1691,9 +1691,21 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 
-	/* For.Prototype_Component_Effect_Scarlet_LineArea */
+	/* For.Prototype_Component_Effect_Turret_Laser */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Turret_Laser");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Turret_Laser.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
+	/* For.Prototype_Component_Effect_Missile */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Missile");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Missile.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
+	/* For.Prototype_Component_Effect_Missile */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Missile_Boom");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Missile_Boom.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	

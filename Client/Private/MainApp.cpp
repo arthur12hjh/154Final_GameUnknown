@@ -330,9 +330,21 @@ HRESULT CMainApp::Ready_ClientDeferred()
 		return E_FAIL;
 
 	eScreenDesc.fEndTime = 1.57f;
-	eScreenDesc.iPass = 1;
+	eScreenDesc.iPass = 2;
 
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Slash_World"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
+		return E_FAIL;
+
+	eScreenDesc.fEndTime = 0.3f;
+	eScreenDesc.iPass = 3;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Damage"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
+		return E_FAIL;
+
+	eScreenDesc.fEndTime = -1.f;
+	eScreenDesc.iPass = 4;
+
+	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Hurt"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
 	return S_OK;

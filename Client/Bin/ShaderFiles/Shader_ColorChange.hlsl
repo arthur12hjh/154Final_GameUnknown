@@ -2,7 +2,7 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector g_vColor;
-float g_fTime;
+float g_fTime, g_fEndTime;
 
 texture2D g_SceneTexture, g_GlassTexture;
 
@@ -150,6 +150,64 @@ PS_OUT_DEFERRED PS_SLASH(PS_IN_DEFERRED In)
     return Out;
 }
 
+PS_OUT_DEFERRED PS_DAMAGE(PS_IN_DEFERRED In)
+{
+    PS_OUT_DEFERRED Out;
+    
+    int time = g_fTime * (4 / 0.3);
+    switch (time)
+    {
+        case 0:
+            Out.vBackBuffer.r = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y))).r;
+            Out.vBackBuffer.g = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + 0.01, In.vTexcoord.y - 0.01))).g;
+            Out.vBackBuffer.b = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y + 0.01))).b;
+            break;
+        case 1:
+            Out.vBackBuffer.r = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y))).r;
+            Out.vBackBuffer.g = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y + 0.01))).g;
+            Out.vBackBuffer.b = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y - 0.01))).b;
+            break;
+        case 2:
+            Out.vBackBuffer.r = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + 0.01, In.vTexcoord.y - 0.01))).r;
+            Out.vBackBuffer.g = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + 0.01, In.vTexcoord.y + 0.01))).g;
+            Out.vBackBuffer.b = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + 0.01, In.vTexcoord.y - 0.01))).b;
+            break;
+        default:
+            Out.vBackBuffer.r = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x + 0.01, In.vTexcoord.y + 0.01))).r;
+            Out.vBackBuffer.g = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y - 0.01))).g;
+            Out.vBackBuffer.b = (g_SceneTexture.Sample(DefaultSampler, float2(In.vTexcoord.x - 0.01, In.vTexcoord.y))).b;
+            break;
+    }
+    Out.vBackBuffer.a = 1;
+    return Out;
+}
+
+PS_OUT_DEFERRED PS_HURT(PS_IN_DEFERRED In)
+{
+    PS_OUT_DEFERRED Out;
+    
+    
+    float2 dir = In.vTexcoord - float2(0.5, 0.5);
+    float len = saturate(pow(length(dir), 3));
+    Out.vBackBuffer = g_SceneTexture.Sample(ClampSampler, In.vTexcoord);
+    float fTime = min(g_fTime * 0.8, 0.4);
+    float3 fGrayscale = (Out.vBackBuffer.r + Out.vBackBuffer.g + Out.vBackBuffer.b) / 3;
+    float3 fHurt = lerp(Out.vBackBuffer.rgb, fGrayscale, fTime);
+    fTime = abs(sin(g_fTime * 2));
+    fHurt = lerp(fHurt, float3(1, 0, 0), len * fTime);
+    
+    if (0 > g_fEndTime)
+    {
+        Out.vBackBuffer.rgb = fHurt;
+    }
+    else
+    {
+        fTime = g_fEndTime - g_fTime;
+        Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, fHurt, fTime);
+    }
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // idx 0
@@ -184,5 +242,27 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH();
+    }
+    // idx 3
+    pass Damage
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DAMAGE();
+    }
+    // idx 4
+    pass Hurt
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HURT();
     }
 }
