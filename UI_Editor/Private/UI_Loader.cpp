@@ -52,6 +52,9 @@
 #include "UIItemSlot.h"
 #include "UIMouseInteraction.h"
 
+#include "UINeonNumber.h"
+#include "UIScore.h"
+
 #pragma endregion
 
 #include "GameInstance.h"
@@ -119,6 +122,9 @@ HRESULT CUI_Loader::Loading()
 	case LEVEL::GAMEPLAY:
 		hr = Loading_For_GamePlay();
 		break;
+	case LEVEL::BEATSABER_GAME:
+		hr = Loading_For_DororongSaber();
+		break;
 	}
 
 	LeaveCriticalSection(&m_CriticalSection);
@@ -153,6 +159,26 @@ HRESULT CUI_Loader::Loading_For_GamePlay()
 	m_pUIResourceStore->Clear_UI_Texture_Descs();
 
 	if (FAILED(Loading_UI_For_GamePlay_Level()))
+		return E_FAIL;
+
+	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
+
+	m_strMessage = TEXT("셰이더를(을) 로딩 중 입니다.");
+
+	m_strMessage = TEXT("객체원형를(을) 로딩 중 입니다.");
+
+	m_strMessage = TEXT("로딩이 완료되었습니다..");
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CUI_Loader::Loading_For_DororongSaber()
+{
+	m_pUIResourceStore->Clear_UI_Texture_Descs();
+
+	if (FAILED(Loading_UI_For_Beatsaber_Gameplay_Level()))
 		return E_FAIL;
 
 	m_strMessage = TEXT("텍스쳐를(을) 로딩 중 입니다.");
@@ -234,13 +260,13 @@ HRESULT CUI_Loader::Loading_UI_For_GamePlay_Level()
 
 	if (FAILED(Loading_UI_For_Combat_HUD_Skills()))
 		return E_FAIL;
-
+	
 	if (FAILED(Loading_UI_For_World()))
 		return E_FAIL;
-
+	
 	if (FAILED(Loading_UI_For_Shop()))
 		return E_FAIL;
-
+	
 	if (FAILED(Loading_UI_For_Popups()))
 		return E_FAIL;
 
@@ -744,14 +770,6 @@ HRESULT CUI_Loader::Loading_UI_For_Popups()
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Map_Thumbnails"),
 		TEXT("Com_Texture_UI_Map_Thumbnail"), TEXT("../../Client/Bin/Resources/Textures/UI/Maps/Map_Thumbnail_%d.dds"), 3);
-	
-	/* For.Prototype_Component_UI_Texture_ItemIcons */
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.dds"), 3))))
-		return E_FAIL;
-
-	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_ItemIcons"),
-		TEXT("Com_Texture_UI_ItemIcons"), TEXT("../../Client/Bin/Resources/Textures/UI/ItemIcons/Item_Icon_%d.dds"), 3);
 
 	/*=================================================================================================================*/
 
@@ -976,6 +994,126 @@ HRESULT CUI_Loader::Loading_UI_For_World()
 	/* For.Prototype_GameObject_UI_LockOn */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_UI_LockOn"),
 		CUILockOn::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Panel"),
+		CUIPanel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Wrapper"),
+		CUIWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Button"),
+		CUIButton::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Text"),
+		CUIText::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Image"),
+		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Script"),
+		CUIScript::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* ==================================================================================================================== */
+
+	/* For.Prototype_Component_UI_Texture_Overlay */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Overlay"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Overlay"),
+		TEXT("Com_Texture_UI_Overlay"), TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
+
+	/* For.Prototype_Component_UI_Texture_Interaction_FX */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_NeonNumber"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/NeonNumber/Neon_Number.png"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_NeonNumber"),
+		TEXT("Com_Texture_UI_NeonNumber"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/NeonNumber/Neon_Number.png"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Combo */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Combo"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Combo.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Combo"),
+		TEXT("Com_Texture_UI_Combo"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Combo.dds"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Numbers */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Numbers"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Numbers.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Numbers"),
+		TEXT("Com_Texture_UI_Numbers"), TEXT("../../Client/Bin/Resources/Textures/UI/Number/Numbers.dds"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Rank */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Rank"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.dds"), 5))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Rank"),
+		TEXT("Com_Texture_UI_Rank"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.dds"), 5);
+
+	/* For.Prototype_GameObject_UI_NeonNumber */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_NeonNumber"),
+		CUINeonNumber::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Score */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Score"),
+		CUIScore::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* ------------------------------------------------------------------------------------------- */
+
+	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Prob_CanBox"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../../Client/Bin/Resources/Models/Box/CanBox/CanBox.binx", PreTransformMatrix))))
+	//	return E_FAIL;
+	///* Can Box */
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
+	//	CCanBox::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
+	//	CInteraction_Component::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements))))
+	//	return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Sky */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Model_Sky"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_Sky1 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Sky1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.dds"), 1))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
+		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

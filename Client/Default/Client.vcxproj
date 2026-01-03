@@ -451,6 +451,7 @@
     <ClInclude Include="..\Public\UILoadingBlock.h" />
     <ClInclude Include="..\Public\UIMapSelector.h" />
     <ClInclude Include="..\Public\UIMouseInteraction.h" />
+    <ClInclude Include="..\Public\UINeonNumber.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -461,6 +462,7 @@
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
     <ClInclude Include="..\Public\UIPopup.h" />
+    <ClInclude Include="..\Public\UIScore.h" />
     <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UIShop.h" />
     <ClInclude Include="..\Public\UISimpleKey.h" />
@@ -804,6 +806,7 @@
     <ClCompile Include="..\Private\UILoadingBlock.cpp" />
     <ClCompile Include="..\Private\UIMapSelector.cpp" />
     <ClCompile Include="..\Private\UIMouseInteraction.cpp" />
+    <ClCompile Include="..\Private\UINeonNumber.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
@@ -814,6 +817,7 @@
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\Private\UIPopup.cpp" />
+    <ClCompile Include="..\Private\UIScore.cpp" />
     <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UIShop.cpp" />
     <ClCompile Include="..\Private\UISimpleKey.cpp" />
