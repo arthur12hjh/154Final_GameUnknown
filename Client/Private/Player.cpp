@@ -252,7 +252,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 	// 안에서 플레이어 모션 제어 중
 	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
-	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
 	return S_OK;
 }

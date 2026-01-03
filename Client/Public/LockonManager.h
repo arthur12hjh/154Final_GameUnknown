@@ -31,7 +31,7 @@ public:
 	// 락온 모드일때 타겟의 트랜스폼 가져오는 함수.
 	// 락온 모드가 아니라면 nullptr을 반환한다.
 	CTransform*					Get_TargetTransform();
-
+	class CNaytiba*				Get_LockonTarget();
 	//이거 락온한 위치 받아올수있게 일단 반환함
 	_vector						Get_LockOnPoint();
 
