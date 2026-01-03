@@ -8,19 +8,22 @@ class CNaytiba;
 
 class CTask_CutScene final : public CTask
 {
-protected:
+private :
 	CTask_CutScene();
 	virtual ~CTask_CutScene() = default;
 
-public:
+public :
 	virtual	HRESULT						Initialize_Prototype(CBehaviorTree* pOwnerTree);
-
-	// 테스크 성공 여부 반환
 	virtual	NODE_STATE					Update(_float fTimeDelta);
 
-private:
+private :
 	CScarletBlackBoard*					m_pBlackBoard = { nullptr };
 	CNaytiba*							m_pNaytiba = { nullptr };
+
+	_bool								m_bIsPlayEnd = {};
+
+private :
+	void								FinishedCutScene();
 
 public:
 	static	CTask_CutScene*				Create(CBehaviorTree* pOwnerTree);

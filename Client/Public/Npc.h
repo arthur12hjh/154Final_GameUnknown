@@ -36,7 +36,6 @@ public:
 
 	virtual HRESULT				Render() override;
 	virtual HRESULT				Render_Shadow() override;
-
 	const Npc_Data_Desc*		Get_NpcDesc() { return m_NpcDesc; }
 
 private:
