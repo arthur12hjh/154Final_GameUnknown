@@ -230,8 +230,6 @@ void CRenderer::Update(_float fTimeDelta)
 		m_isBloom = !m_isBloom;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
 		m_isFog = !m_isFog;
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F7))
-		m_isHDR = !m_isHDR;
 	// SSAO 토글.
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
 		m_isSSAO = !m_isSSAO;
@@ -318,6 +316,10 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_ToneMapping"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
 		return E_FAIL;
 
+	/* Target_FXAA */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_FXAA"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.0f, 0.0f, 1.f, 1.f))))
+		return E_FAIL;
+
 	/* Target_Velocity */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Velocity"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -371,6 +373,10 @@ HRESULT CRenderer::Ready_MRTs()
 
 	/* MRT_ToneMapping */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_ToneMapping"), TEXT("Target_ToneMapping"))))
+		return E_FAIL;
+
+	/* MRT_FXAA */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_FXAA"), TEXT("Target_FXAA"))))
 		return E_FAIL;
 
 	/* MRT_Velocity */
@@ -530,7 +536,6 @@ void* CRenderer::Get_Volumetric_Desc()
 void* CRenderer::Get_HDR_Desc()
 {
 	m_HDRDesc.fHDRExposure = &m_fHDRExposure;
-	m_HDRDesc.isHDR = &m_isHDR;
 
 	return &m_HDRDesc;
 }
@@ -1000,6 +1005,7 @@ void CRenderer::Render_ScreenDeferred()
 
 void CRenderer::ToneMapping()
 {
+	//톤매핑
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_ToneMapping"))))
 		return;
 
@@ -1009,16 +1015,34 @@ void CRenderer::ToneMapping()
 	if (FAILED(m_pShader->Bind_RawValue("g_fHDRExposure", &m_fHDRExposure, sizeof(_float))))
 		return;
 
-	if(true == m_isHDR)
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::TONE_MAPPING));
-	else
-		m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FINAL));
-
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::TONE_MAPPING));
 	m_pVIBuffer->Bind_Resources();
 	m_pVIBuffer->Render();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
+
+#ifdef _DEBUG 
+	m_pGameInstance->BeginMarker(m_pContext, TEXT("FXAA"));
+#endif
+
+	//FXAA
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
+		return;
+
+	if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		return;
+
+	m_pShader->Begin(ENUM_CLASS(SHADER_DEFERRED_IDX::FXAA));
+	m_pVIBuffer->Bind_Resources();
+	m_pVIBuffer->Render();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return;
+
+#ifdef _DEBUG 
+	m_pGameInstance->EndMarker(m_pContext);
+#endif
 }
 
 void CRenderer::Render_BackBuffer()
@@ -1037,7 +1061,7 @@ void CRenderer::Render_BackBuffer()
 			return;
 
 		if (iCount == 0)
-			strRTTag = TEXT("Target_ToneMapping");
+			strRTTag = TEXT("Target_FXAA");
 		else
 			strRTTag = TEXT("Target_ClientDeferred") + to_wstring(iCount - 1);
 
@@ -1056,7 +1080,7 @@ void CRenderer::Render_BackBuffer()
 	// 최종 백버퍼 합성과정. 여긴 신경 쓰지마
 	if (0 == iCount)
 	{
-		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_ToneMapping"), m_pShader, "g_ScreenTexture")))
+		if (FAILED(m_pGameInstance->Bind_RenderTarget(TEXT("Target_FXAA"), m_pShader, "g_ScreenTexture")))
 			return;
 	}
 	else

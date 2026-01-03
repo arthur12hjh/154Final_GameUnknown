@@ -1132,6 +1132,9 @@
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Split">
       <UniqueIdentifier>{273b3926-666e-4710-80ac-7a5a544485ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
+      <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
