@@ -141,11 +141,13 @@ HRESULT CBossController::Damage(void* pArg)
             {
                 if (SKILL_TYPE::REPULSE_SKILL != pDamageSKillDesc->eSkillType)
                 {
-                    if (SKILL_PROPERTY::SUPERARMOR & pAttackData->eProPerty)
+                    if (m_pBlackBoard->IsSuperAmor())
                     {
                         if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
                         {
                             bIsHitAble = false;
+                            m_pBlackBoard->SetAttackDelay(0.7f);
+                            m_pBlackBoard->ClearAttackTimer();
                         }
                     }
 

@@ -131,7 +131,7 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 HRESULT CBullet_Scarlet::ADD_Components(BULLET_DESC& pDesc)
 {
 	COBBCollider::OBB_COLLIDER_DESC pOBBDesc = {};
-	pOBBDesc.vSize = { 1.f, 1.f, 1.f };
+	pOBBDesc.vSize = { 2.f, 1.f, 2.f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &pOBBDesc)))
