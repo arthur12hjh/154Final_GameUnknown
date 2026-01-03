@@ -504,6 +504,8 @@ namespace Client
 		FADE_OUT,				// 7
 		PLAY_SOUND,				// 8
 		MOVE_CHARACTER,			// 9
+		MOVE_NPC,				// 10
+		CREATE_TRIGGERBOX,		// 11
 		END };
 
 	typedef struct Cinematic_Index_Desc
