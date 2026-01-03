@@ -117,7 +117,6 @@ void CShaderDebugger::Update(_float fTimeDeleta)
 
     ImGui::Text("HDR Info");
 
-    ImGui::Checkbox("HDR Activate", m_pHDRDesc->isHDR);
     ImGui::DragFloat("HDR Desc", m_pHDRDesc->fHDRExposure, 0.001f, 0.f, 2.f);
 
     ImGui::Separator();

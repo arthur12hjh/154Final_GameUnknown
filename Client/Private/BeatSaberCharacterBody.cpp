@@ -53,19 +53,13 @@ HRESULT CBeatSaberCharacterBody::Render()
 
     for (size_t i = 0; i < iNumMeshes; i++)
     {
+        if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
+            return E_FAIL;
+
         if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
             return E_FAIL;
 
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-            return E_FAIL;
-
-        if (FAILED(m_pShaderCom->Begin(0)))
+        if (FAILED(m_pShaderCom->Begin(9)))
             return E_FAIL;
 
         if (FAILED(m_pModelCom->Render(i)))
