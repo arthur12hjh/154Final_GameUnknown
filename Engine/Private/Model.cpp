@@ -44,16 +44,16 @@ CModel::CModel(const CModel& Prototype)
     for (auto& pMaterial : m_Materials)
         Safe_AddRef(pMaterial);
 
-    for (auto* pChannelBuffer : Prototype.m_pChannelBufferList)
+    for (auto* pChannelSRV : Prototype.m_pChannelSRVList)
     {
-        Safe_AddRef(pChannelBuffer);
-        m_pChannelBufferList.push_back(pChannelBuffer);
+        Safe_AddRef(pChannelSRV);
+        m_pChannelSRVList.push_back(pChannelSRV);
     }
 
-    for (auto* pKeyFrameBuffer : Prototype.m_pKeyFrameBufferList)
+    for (auto* pKeyFrameSRV : Prototype.m_pKeyFrameSRVList)
     {
-        Safe_AddRef(pKeyFrameBuffer);
-        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+        Safe_AddRef(pKeyFrameSRV);
+        m_pKeyFrameSRVList.push_back(pKeyFrameSRV);
     }
 
     for (auto& pPrototypeAnim : Prototype.m_Animations)
@@ -443,35 +443,17 @@ HRESULT CModel::Initialize_AnimationIndexMap()
 HRESULT CModel::Initialize_AnimationBufferResource()
 {
     // 1) 다 밀어주기
-    for (auto& pChannelBuffer : m_pChannelBufferList)
-        Safe_Release(pChannelBuffer);
-    m_pChannelBufferList.clear();
+    for (auto& pChannelSRV : m_pChannelSRVList)
+        Safe_Release(pChannelSRV);
+    m_pChannelSRVList.clear();
     
-    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
-        Safe_Release(pKeyFrameBuffer);
-    m_pKeyFrameBufferList.clear();
-
-    // 키프레임 수
-    _uint iMaxNumKeyFrames = 0;
-
-    for (auto& pAnim : m_Animations)
-    {
-        auto pChannels = pAnim->Get_vChannels();
-        if (pChannels == nullptr)
-            continue;
-
-        _uint iTotal = 0;
-        for (auto& pChannel : *pChannels)
-            iTotal += pChannel->Get_NumKeyFrames();
-
-        if (iTotal > iMaxNumKeyFrames)
-            iMaxNumKeyFrames = iTotal;
-    }
+    for (auto& pKeyFrameSRV : m_pKeyFrameSRVList)
+        Safe_Release(pKeyFrameSRV);
+    m_pKeyFrameSRVList.clear();
 
     // 채널 수
-    _uint iNumData = (_uint)m_Bones.size();
-    iNumData = max(iNumData, iMaxNumKeyFrames);
-    if (iNumData == 0)
+    _uint iNumBones = (_uint)m_Bones.size();
+    if (iNumBones == 0)
         return S_OK;
 
 
@@ -479,27 +461,23 @@ HRESULT CModel::Initialize_AnimationBufferResource()
     // 메모리 손해 아니냐고? 프레임이 이난리인데 메모리가 중하냐!
     for (_uint iCurrentAnimationIndex = 0; iCurrentAnimationIndex < m_Animations.size(); ++iCurrentAnimationIndex)
     {
-        vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumData);
+        CAnimation* pAnimation = m_Animations[iCurrentAnimationIndex];
+
+        _uint iMaxKeyFrames = Get_TotalAnimationKeyFrame(pAnimation);
+        if (iMaxKeyFrames == 0)
+            iMaxKeyFrames = 1;
+
+        vector<COMPUTE_CHANNELINFO> vChannelInfos(iNumBones);
         vector<COMPUTE_KEYFRAMEINFO> vKeyFrameInfos;
-        vKeyFrameInfos.reserve(iNumData);
+        vKeyFrameInfos.reserve(iMaxKeyFrames);
 
         auto pChannels = m_Animations[iCurrentAnimationIndex]->Get_vChannels();
         auto& BoneToChannelMappingList = m_Animations[iCurrentAnimationIndex]->Get_BoneToChannelMappingLists();
 
         _uint iKeyFrameOffset = 0;
 
-        for (_uint i = 0; i < iNumData; ++i)
+        for (_uint i = 0; i < iNumBones; ++i)
         {
-            if (i >= m_Bones.size())
-            {
-                // 여기는 “padding 영역” – 유효한 본 없음
-                vChannelInfos[i].iBoneIndex = 0;
-                vChannelInfos[i].iNumKeyFrames = 0;
-                vChannelInfos[i].iCurrentKeyFrameIndex = 0;
-                vChannelInfos[i].iKeyFrameOffset = 0;
-                continue;
-            }
-
             vChannelInfos[i].iBoneIndex = i;
 
             _int iChannelIndex = BoneToChannelMappingList[i];
@@ -513,7 +491,7 @@ HRESULT CModel::Initialize_AnimationBufferResource()
                 continue;
             }
 
-            // 채널 인덱스가 실제 데이터 범위를 넘는 경우 (예방)
+            // 채널 인덱스가 실제 데이터 범위를 넘는 경우
             if (iChannelIndex >= (_int)pChannels->size())
             {
                 vChannelInfos[i].iNumKeyFrames = 0;
@@ -547,22 +525,22 @@ HRESULT CModel::Initialize_AnimationBufferResource()
             // 키프레임 데이터 밀어넣기
             for (_uint j = 0; j < iNumKeyFrames; ++j)
             {
-                const KEYFRAME& KF = pChannel->Get_KeyFrame(j);
+                const KEYFRAME& KeyFrameReference = pChannel->Get_KeyFrame(j);
 
-                COMPUTE_KEYFRAMEINFO OutKF = {};
-                OutKF.vScale = KF.vScale;
-                OutKF.padding01 = 0.f;
-                OutKF.vRotation = KF.vRotation;
-                OutKF.vTranslation = KF.vTranslation;
-                OutKF.fTrackPosition = KF.fTrackPosition;
+                COMPUTE_KEYFRAMEINFO OutKeyFrameInfo = {};
+                OutKeyFrameInfo.vScale = KeyFrameReference.vScale;
+                OutKeyFrameInfo.padding01 = 0.f;
+                OutKeyFrameInfo.vRotation = KeyFrameReference.vRotation;
+                OutKeyFrameInfo.vTranslation = KeyFrameReference.vTranslation;
+                OutKeyFrameInfo.fTrackPosition = KeyFrameReference.fTrackPosition;
 
-                vKeyFrameInfos.push_back(OutKF);
+                vKeyFrameInfos.push_back(OutKeyFrameInfo);
             }
 
             iKeyFrameOffset += iNumKeyFrames;
         }
 
-        if (vKeyFrameInfos.size() < iNumData)
+        if (vKeyFrameInfos.size() < iMaxKeyFrames)
         {
             COMPUTE_KEYFRAMEINFO pad{};
             pad.vScale = { 1.f, 1.f, 1.f };
@@ -571,7 +549,7 @@ HRESULT CModel::Initialize_AnimationBufferResource()
             pad.vTranslation = { 0.f, 0.f, 0.f };
             pad.fTrackPosition = 0.f;
 
-            vKeyFrameInfos.resize(iNumData, pad);
+            vKeyFrameInfos.resize(iMaxKeyFrames, pad);
         }
 
         ID3D11Buffer* pChannelBuffer = nullptr;
@@ -579,7 +557,7 @@ HRESULT CModel::Initialize_AnimationBufferResource()
 
         D3D11_BUFFER_DESC ChannelBufferDesc = {};
         ChannelBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        ChannelBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumData;
+        ChannelBufferDesc.ByteWidth = sizeof(COMPUTE_CHANNELINFO) * iNumBones;
         ChannelBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         ChannelBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
         ChannelBufferDesc.StructureByteStride = sizeof(COMPUTE_CHANNELINFO);
@@ -591,11 +569,24 @@ HRESULT CModel::Initialize_AnimationBufferResource()
         if (FAILED(m_pDevice->CreateBuffer(&ChannelBufferDesc, &ChannelSubResource, &pChannelBuffer)))
             return E_FAIL;
 
-        m_pChannelBufferList.push_back(pChannelBuffer);
+        ID3D11ShaderResourceView* pChannelSRV = nullptr;
+
+        D3D11_SHADER_RESOURCE_VIEW_DESC ChannelSRVDesc{};
+        ChannelSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+        ChannelSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+        ChannelSRVDesc.Buffer.FirstElement = 0;
+        ChannelSRVDesc.Buffer.NumElements = iNumBones;
+
+        if (FAILED(m_pDevice->CreateShaderResourceView(pChannelBuffer, &ChannelSRVDesc, &pChannelSRV)))
+            return E_FAIL;
+
+        m_pChannelSRVList.push_back(pChannelSRV);
+        Safe_Release(pChannelBuffer);
+
 
         D3D11_BUFFER_DESC KeyFrameBufferDesc = {};
         KeyFrameBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        KeyFrameBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iNumData;
+        KeyFrameBufferDesc.ByteWidth = sizeof(COMPUTE_KEYFRAMEINFO) * iMaxKeyFrames;
         KeyFrameBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         KeyFrameBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
         KeyFrameBufferDesc.StructureByteStride = sizeof(COMPUTE_KEYFRAMEINFO);
@@ -603,13 +594,23 @@ HRESULT CModel::Initialize_AnimationBufferResource()
         D3D11_SUBRESOURCE_DATA KeyFrameSubResource{};
         KeyFrameSubResource.pSysMem = vKeyFrameInfos.empty() ? nullptr : vKeyFrameInfos.data();
 
-        if (FAILED(m_pDevice->CreateBuffer(
-            &KeyFrameBufferDesc,
-            vKeyFrameInfos.empty() ? nullptr : &KeyFrameSubResource,
-            &pKeyFrameBuffer)))
+        if (FAILED(m_pDevice->CreateBuffer(&KeyFrameBufferDesc, &KeyFrameSubResource, &pKeyFrameBuffer)))
             return E_FAIL;
 
-        m_pKeyFrameBufferList.push_back(pKeyFrameBuffer);
+        ID3D11ShaderResourceView* pKeyFrameSRV = nullptr;
+
+        D3D11_SHADER_RESOURCE_VIEW_DESC KeyFrameSRVDesc{};
+        KeyFrameSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+        KeyFrameSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+        KeyFrameSRVDesc.Buffer.FirstElement = 0;
+        KeyFrameSRVDesc.Buffer.NumElements = iMaxKeyFrames;
+
+        if (FAILED(m_pDevice->CreateShaderResourceView(pKeyFrameBuffer, &KeyFrameSRVDesc, &pKeyFrameSRV)))
+            return E_FAIL;
+
+        m_pKeyFrameSRVList.push_back(pKeyFrameSRV);
+        Safe_Release(pKeyFrameBuffer);
+
     }        
 
     Release_AnimationChannel();
@@ -1404,6 +1405,7 @@ HRESULT CModel::Ready_ComputeShader()
             return E_FAIL;
 
     }
+    // 대대적인 컴셰 개편작업으로, 이건 필요없다 이제 ㅇㅇ. SRV를 들고 내가 직접 나서겠다.
     // 두 번째로, Channel을 넣어주자
     {
         TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1752,8 +1754,12 @@ HRESULT CModel::Bind_ComputeShader(_float fTimeDelta)
 
 
     {
+        ID3D11ShaderResourceView* nullSRVs[5] = {};
+        m_pContext->CSSetShaderResources(0, 5, nullSRVs);
+
         _uint iInputIndices[5] = { 0, 1, 2, 3, 4 }; // Bone, Channel, KeyFrame, InitialLocalMatrix, LerpMatrix
         m_pComputeShaderCom->Bind_InputBuffer(5, iInputIndices);
+        Bind_ChannelAndKeyFrameBuffer(); // t1,t2 다시 덮어쓰기
     }
 
     {
@@ -1907,10 +1913,18 @@ HRESULT CModel::Apply_RootMotion(CTransform* pTransform, _float fRootMotionMagni
 
 HRESULT CModel::Bind_ChannelAndKeyFrameBuffer()
 {
-    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
+    //m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 1, m_pChannelBufferList[m_iCurrentAnimIndex]);
 
-    m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
+    //m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 2, m_pKeyFrameBufferList[m_iCurrentAnimIndex]);
     
+    ID3D11ShaderResourceView* AnimationSRVs[2] =
+    {
+        m_pChannelSRVList[m_iCurrentAnimIndex],
+        m_pKeyFrameSRVList[m_iCurrentAnimIndex]
+    };
+
+    m_pContext->CSSetShaderResources(1, 2, AnimationSRVs);
+
     return S_OK;
 }
 
@@ -1929,6 +1943,23 @@ _int CModel::Find_Animation(const _char* szAnimationTag)
         return -1;
 
     return (*iter).second;
+}
+
+_uint CModel::Get_TotalAnimationKeyFrame(CAnimation* pAnimation)
+{
+    _uint iResult = 0;
+
+    auto pChannels = pAnimation->Get_vChannels();
+    if (!pChannels)
+        return 0;
+
+    for (auto pChannel : *pChannels)
+    {
+        const auto& Frames = pChannel->Get_KeyFrames();
+        iResult += (_uint)Frames.size();
+    }
+
+    return iResult;
 }
 
 HRESULT CModel::Bind_BoneMatrixSRV(CShader* pShader, const _char* pConstantName)
@@ -2020,13 +2051,13 @@ void CModel::Free()
     //if (m_isCloned == FALSE)
     //    Safe_Delete(m_pModel);
 
-    for (auto& pChannelBuffer : m_pChannelBufferList)
-        Safe_Release(pChannelBuffer);
-    m_pChannelBufferList.clear();
+    for (auto& pChannelSRV : m_pChannelSRVList)
+        Safe_Release(pChannelSRV);
+    m_pChannelSRVList.clear();
 
-    for (auto& pKeyFrameBuffer : m_pKeyFrameBufferList)
-        Safe_Release(pKeyFrameBuffer);
-    m_pKeyFrameBufferList.clear();
+    for (auto& pKeyFrameSRV : m_pKeyFrameSRVList)
+        Safe_Release(pKeyFrameSRV);
+    m_pKeyFrameSRVList.clear();
 
      
     for (auto& pAnimation : m_Animations)
