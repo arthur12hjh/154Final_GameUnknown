@@ -4,6 +4,11 @@
 #include "Engine_Shader_Defines.hlsli"
 #include "Shader_Deferred_Defines.hlsli"
 
+float FxaaLuma(float3 rgb)
+{
+    return rgb.y * (0.587 / 0.299) + rgb.x;
+}
+
 float4 GetWorldPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, matrix ProjMatrixInv, matrix ViewMatrixInv)
 {
     // 좌표 복구
@@ -275,11 +280,11 @@ PS_OUT_LIGHT PBR_Light(
     Out.vSpecular = 0;
     
     float3 vHalf = normalize(vFromView + vFromLight);
-    float fNdotL = saturate(dot(vNormal, vFromLight));
-    float fNdotV = saturate(dot(vNormal, vFromView));
+    float fNdotL = saturate(dot(vNormal, vFromLight)); // 조명 쪽
+    float fNdotV = saturate(dot(vNormal, vFromView)); // 카메라 쪽
 
     // Roughness floor (자글거림 방지)
-    fRoughness = max(fRoughness, 0.6f);
+    fRoughness = max(fRoughness, 0.4f);
     float fAlpha = max(fRoughness * fRoughness, 0.36f);
     float fK = ((fRoughness + 0.5f) * (fRoughness + 0.5f)) / 8.f;
 
@@ -293,31 +298,35 @@ PS_OUT_LIGHT PBR_Light(
     float fDenom = max(4.f * fNdotL * fNdotV, 1e-7);
     float3 vSpecBRDF = vNumerator / fDenom;
 
-    float fSpecBoostMetal = lerp(1.0f, 4.0f, saturate(fMetallic)); 
-    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic); 
-
-    // 비금속이면 약하게, 금속이면 매우 강하게
-    float fFinalSpecBoost = lerp(fSpecBoostNonMetal, fSpecBoostMetal, fMetallic);
-    vSpecBRDF *= fFinalSpecBoost;
-
     // 스페큘러 디퓨즈 줄이기
     float3 vKS = vF;
 
+    // ===== Base Diffuse (기존 비금속 로직) =====
     float fNonMetalFactor = 1.0f - fMetallic;
-    // 비금속 쪽은 그대로, 메탈릭 쪽은 더 빨리 죽도록 제곱
     fNonMetalFactor *= fNonMetalFactor;
 
     float3 vKD = (1.f - vKS) * fNonMetalFactor;
     vKD *= 0.8f;
 
+    // ===== Metallic diffuse floor =====
+    // 금속에서도 완전히 0으로 죽지 않도록 최소 디퓨즈를 조금 남김
+    float fMetalDiffuseFloor = 0.10f; // 풀메탈에서 약 10% 정도
+    float fMetalBlend = smoothstep(0.3f, 1.0f, fMetallic);
+
+    // vKD가 0으로 수렴할수록 floor 값 쪽으로 보정
+    float3 vKDMetal = lerp(vKD, fMetalDiffuseFloor.xxx, fMetalBlend);
+
+    // 금속만 보정, 비금속은 원래 값 유지
+    vKD = lerp(vKD, vKDMetal, fMetalBlend);
+
     // 비금속 반사 약하게 보정
     if (fMetallic < 0.1f)
     {
-        vSpecBRDF *= 0.4f; // 비금속 → 반사광 약화
-        vKD *= 1.1f; // 반사 줄었으니 알베도 조금 보정
+        vSpecBRDF *= 0.4f;
+        vKD *= 1.1f;
     }
 
-    // 역광 디퓨즈 강화
+    // --------- 역광 디퓨즈 강화 (원래 코드 유지) ----------
     float fBackLight = saturate(dot(vNormal, -vFromLight)); // 뒤에서 비치는 조명
     float fBackBoost = smoothstep(0.f, 1.0f, fBackLight);
     
@@ -325,6 +334,23 @@ PS_OUT_LIGHT PBR_Light(
     float fBackDiffuseBoost = lerp(1.0f, 3.f, fBackBoostForDiffuse);
 
     vKD *= fBackDiffuseBoost;
+
+    // NdotL 낮은 어두운 면에서는 스펙 점점 0으로
+    float fLightSideMask = smoothstep(0.1f, 0.35f, fNdotL);
+    // NdotV 낮은 실루엣(가장자리)에서도 스펙 줄이기
+    float fViewSideMask = smoothstep(0.1f, 0.30f, fNdotV);
+    // 둘 다 만족하는 영역(= 정면에 가깝고 밝은 면)에서만 스펙 강하게
+    float fSpecMask = fLightSideMask * fViewSideMask;
+
+    // FinalSpecBoost도 이 마스크 안에서만 먹게
+    float fSpecBoostMetal = lerp(1.0f, 3.0f, saturate(fMetallic));
+    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic);
+    float fFinalSpecBoost = lerp(fSpecBoostNonMetal, fSpecBoostMetal, fMetallic);
+
+    float fSpecBoost = lerp(1.0f, fFinalSpecBoost, fSpecMask);
+
+    // 기본 GGX 스펙 + 부스트 둘 다 역광/실루엣에서 같이 감쇠
+    vSpecBRDF *= fSpecBoost * fSpecMask;
 
     // 직접광 디퓨즈
     Out.vShade = float4((vKD * vAlbedo) * (fNdotL * fAttenuation) * vLightColor, 1.f);
@@ -337,20 +363,21 @@ PS_OUT_LIGHT PBR_Light(
     // 직접 스페큘러
     Out.vSpecular = float4(vSpecBRDF * vLightColor * fAttenuation * fNdotL, 1.f);
 
-    // 앰비언트 스페큘러
+    // 앰비언트 스페큘러도 같은 마스크로 줄여서 실루엣 하얀 테두리 제거
     float3 vFAmb = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vF0);
     float3 vAmbientSpec = vFAmb * lerp(0.02f, 0.08f, fMetallic) * (1 - fRoughness * fRoughness);
+    vAmbientSpec *= fSpecMask;
     Out.vSpecular.xyz += vAmbientSpec;
 
-    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView)); 
-    float fRimMask = (1.0f - fMetallic) * fBackLight * fViewEdge;
+    // (옵션) 림 스펙은 일단 꺼둔 상태 유지
+    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView));
+    float fRimMask = (1.0f - fMetallic) * fViewEdge * fBackLight;
 
     float3 vRimF = Fresnel_Schlick(fViewEdge, vF0);
     float fRimIntensity = 1.5f;
-
     float3 vRimSpec = vRimF * fRimIntensity * fRimMask;
 
-    Out.vSpecular.xyz += vRimSpec * vAlbedo * fAttenuation;
+    //Out.vSpecular.xyz += vRimSpec * vAlbedo * fAttenuation;
     
     return Out;
 }

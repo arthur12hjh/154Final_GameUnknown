@@ -1129,6 +1129,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore">
       <UniqueIdentifier>{5f06ce2b-e607-4c86-abbc-2a05165d46f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
+      <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
