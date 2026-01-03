@@ -71,7 +71,7 @@
 544,M_BarnacleA_Shield,None,None,17,10,"1,1,2",0,0,4,0,32
 631,M_SunFlower_Swing,None,None,18,7,"1,1,3",1,0,4,0,11
 632,M_SunFlower_SwingChain,None,None,19,7,"1,1,3",4,0,4,0,11
-633,M_SunFlower_Spit,None,None,20,7,"1,1,2",1,0,4,0,11
+633,M_SunFlower_Spit,None,None,20,20,"1,1,2",1,0,4,0,11
 731,M_Antlion_PawAttack,None,None,21,7,"1,1,7",1,0,0,0,11
 732,M_AntlionC_SwingTriple,None,None,22,7,"1,1,7",3,0,0,0,11
 741,M_Tentacle_Summoned,None,None,22,14,"1,1,7",3,0,0,4,11
