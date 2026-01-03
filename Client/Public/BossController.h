@@ -35,6 +35,7 @@ public:
 	virtual	HRESULT						Damage(void* pArg) override;
 	virtual void						ActionSuccess(void* pArg) override;
 
+	_bool								bIsLinkAttack();
 	_bool								bIsLastAttack();
 	_bool								bIsEntranceAttack();
 

@@ -39,7 +39,7 @@ void CPlayer_ScarletLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     // 플레이어의 애니메이션을 변경해준다. 
     // 여기서 애니메이션 재생속도 조절가능해.
-    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", false, 2.f, 0.f, FALSE, -1.f, 0.f, TRUE);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
@@ -53,10 +53,15 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
 
     _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
-    m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
-    m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
-    m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
-    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+
+    //240 프레임 이상은 본 안따라가게 처리?
+    if (!(240 <= m_pPlayer->Get_iTrackPosition()))
+    {
+        m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
+        m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
+        m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
+        m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+    }
 
 
     if (true == isAnimationFinished)

@@ -86,6 +86,7 @@ public:
 	// </end>
 
 	_uint Get_AnimationKeyFrameIndex() const;
+	_float Get_fTrackPosition() const;
 
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
 	const _float4x4* Get_LocalBoneMatrixPtr(const _char* pBoneName);

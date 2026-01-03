@@ -34,16 +34,15 @@ void CInscription_L::Priority_Update(_float fTimeDelta)
 
 void CInscription_L::Update(_float fTimeDelta)
 {
-	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
 void CInscription_L::Late_Update(_float fTimeDelta)
 {
-	if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
-	{
+	/*if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
+	{*/
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
+	//}
 
 }
 
@@ -94,7 +93,6 @@ HRESULT CInscription_L::Ready_Components()
 
 	OBBDesc.vSize = _float3(3.f, 10.f, 3.f);
 	OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
-	OBBDesc.vAngles = _float3(0.f, 0.f/*XMConvertToRadians(45.0f)*/, 0.f);
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;

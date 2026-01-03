@@ -67,66 +67,66 @@ void CCinematicMaker::WriteCinematicDesc()
     static CINEMATIC_DESC CinematicDesc{};
     static _int iSelectedNodeIndex = -1;
 
-    ImGui::InputInt("CinematicID", (_int*)&CinematicDesc.iCinematicID);
-    ImGui::InputText("CinematicName", CinematicDesc.szCinematicName, MAX_PATH);
+  //  ImGui::InputInt("CinematicID", (_int*)&CinematicDesc.iCinematicID);
+  //  ImGui::InputText("CinematicName", CinematicDesc.szCinematicName, MAX_PATH);
 
-    ImGui::Separator();
+  //  ImGui::Separator();
 
-    ImGui::Text("Node Count : %d", (_int)CinematicDesc.CinematicNodeTrackList.size());
+  //  ImGui::Text("Node Count : %d", (_int)CinematicDesc.CinematicNodeTrackList.size());
 
-    if (ImGui::Button("Add Node"))
-    {
-        CINEMATIC_NODE_DESC CinematicNode{};
-        CinematicNode.eState = CINEMATICNODE_STATE::ACTIVE_CINEOBJ;
-        CinematicNode.fTrackPosition = 0.f;
-        CinematicNode.iActiveIndex = 0;
-        CinematicNode.szObjectTag[0] = '\0';
+  //  if (ImGui::Button("Add Node"))
+  //  {
+  //      CINEMATIC_NODE_DESC CinematicNode{};
+  //      CinematicNode.eState = CINEMATICNODE_STATE::ACTIVE_CINEOBJ;
+  //      CinematicNode.fTrackPosition = 0.f;
+  //      CinematicNode.iActiveIndex = 0;
+  //      CinematicNode.szObjectTag[0] = '\0';
 
-        CinematicDesc.CinematicNodeTrackList.push_back(CinematicNode);
-    }
+  //      CinematicDesc.CinematicNodeTrackList.push_back(CinematicNode);
+  //  }
 
-    ImGui::Separator();
+  //  ImGui::Separator();
 
-    const char* szStateNames[] = { "ACTIVE_CINEOBJ", "PLAY_CINEOBJ", "ACTIVE_CHARACTER", "ACTIVE_CAMERA", "PLAY_SOUND", "END"};
+  //  const char* szStateNames[] = { "ACTIVE_CINEOBJ", "PLAY_CINEOBJ", "ACTIVE_CHARACTER", "ACTIVE_CAMERA", "PLAY_SOUND", "END"};
 
-    for (_uint i = 0; i < CinematicDesc.CinematicNodeTrackList.size(); ++i)
-    {
-        CINEMATIC_NODE_DESC& Node = CinematicDesc.CinematicNodeTrackList[i];
-        string Header = "Node_" + std::to_string(i);
+  //  for (_uint i = 0; i < CinematicDesc.CinematicNodeTrackList.size(); ++i)
+  //  {
+  //      CINEMATIC_NODE_DESC& Node = CinematicDesc.CinematicNodeTrackList[i];
+  //      string Header = "Node_" + std::to_string(i);
 
-        if (ImGui::CollapsingHeader(Header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            ImGui::PushID(i);
+  //      if (ImGui::CollapsingHeader(Header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+  //      {
+  //          ImGui::PushID(i);
 
-            _int iState = (_int)Node.eState;
-            if (ImGui::Combo("State", &iState, szStateNames, IM_ARRAYSIZE(szStateNames)))
-                Node.eState = (CINEMATICNODE_STATE)iState;
+  //          _int iState = (_int)Node.eState;
+  //          if (ImGui::Combo("State", &iState, szStateNames, IM_ARRAYSIZE(szStateNames)))
+  //              Node.eState = (CINEMATICNODE_STATE)iState;
 
-            ImGui::InputFloat("TrackPosition", &Node.fTrackPosition);
-            ImGui::InputText("ObjectTag", Node.szObjectTag, MAX_PATH);
-            ImGui::InputInt("ActiveIndex", (_int*)&Node.iActiveIndex);
+  //          ImGui::InputFloat("TrackPosition", &Node.fTrackPosition);
+  //          ImGui::InputText("ObjectTag", Node.szObjectTag, MAX_PATH);
+  //          ImGui::InputInt("ActiveIndex", (_int*)&Node.iActiveIndex);
 
-            if (ImGui::Button("Delete Node"))
-            {
-                CinematicDesc.CinematicNodeTrackList.erase(
-                    CinematicDesc.CinematicNodeTrackList.begin() + i);
-                ImGui::PopID();
-                break;
-            }
+  //          if (ImGui::Button("Delete Node"))
+  //          {
+  //              CinematicDesc.CinematicNodeTrackList.erase(
+  //                  CinematicDesc.CinematicNodeTrackList.begin() + i);
+  //              ImGui::PopID();
+  //              break;
+  //          }
 
-            ImGui::PopID();
-        }
-    }
+  //          ImGui::PopID();
+  //      }
+  //  }
 
-    ImGui::Separator();
+  //  ImGui::Separator();
 
-    /* Save */
-    if (ImGui::Button("Save Cinematic"))
-    {
-		m_pCinematicDatas->emplace(CinematicDesc.iCinematicID, CinematicDesc);
+  //  /* Save */
+  //  if (ImGui::Button("Save Cinematic"))
+  //  {
+		//m_pCinematicDatas->emplace(CinematicDesc.iCinematicID, CinematicDesc);
 
-        m_pGameManager->Save_CinematicData();
-    }
+  //      m_pGameManager->Save_CinematicData();
+  //  }
 
     ImGui::Separator();
 

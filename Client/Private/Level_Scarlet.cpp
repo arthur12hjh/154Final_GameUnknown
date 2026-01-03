@@ -112,10 +112,6 @@ void CLevel_Scarlet::FontRender()
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
-
-	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	// Load_Light_Data();
-
 	LIGHT_DESC			LightDesc{};
 	//방향성 광원 추가 코드.
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -145,12 +141,12 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	
+
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;*/
 
 
-	// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
+		// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
 	Load_Light_Data();
 
 	/*LIGHT_DESC			LightDesc{};
@@ -457,7 +453,7 @@ HRESULT CLevel_Scarlet::Load_Map_Data()
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock12"), TEXT("Layer_CM_Rock12")))) return S_OK;
 	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_CM_Rock13"), TEXT("Layer_CM_Rock13")))) return S_OK;
 
-	//if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
+	if (FAILED(Load_Map_Format(ifs, TEXT("Prototype_GameObject_Virtual_Wall"), TEXT("Layer_Virtual_Wall")))) return S_OK;
 
 	ifs.close();
 

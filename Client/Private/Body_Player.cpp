@@ -87,8 +87,19 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-
 	m_pModelCom->Set_AnimationIndex(1);
+
+	if (FAILED(Ready_VerticalJoints()))
+		return E_FAIL;
+
+	if (FAILED(Ready_HorizontalJoints()))
+		return E_FAIL; 
+
+	if (FAILED(Ready_SkirtBoneOrigin()))
+		return E_FAIL;
+
+	if(FAILED(Ready_ThighRigidBodies()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -119,12 +130,29 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 	}
 
+	for (auto& Pair : m_ThighRigidBodies)
+	{
+		Pair.second->Update_PxTransform(
+			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
+	}
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
 #endif
+	//조인트 업데이트용. 신경 안써도됨
+	for (auto& Pair : m_RootRigidBodies)
+	{
+		Pair.second->Update_PxTransform(
+			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
+	}
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-	
+
+	if (m_bIsActive)
+	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	}
+
 	if(fDist < 100.f)
 		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
 }
@@ -166,6 +194,8 @@ HRESULT CBody_Player::Render()
 
 HRESULT CBody_Player::Render_Shadow()
 {
+	Sync_BonesByJoint();
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
@@ -237,10 +267,10 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-
 	OBBDesc.vSize = _float3(0.25f, 0.5f, 0.25f);
 	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
+
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
@@ -291,6 +321,343 @@ void CBody_Player::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 
 }
 
+HRESULT CBody_Player::Ready_VerticalJoints()
+{
+	//1번 인덱스부터, 10번까지 하자. 읽기 편하게..
+	for (_uint i = 1; i <= 10; ++i)
+	{
+		vector<_wstring> strBoneNames = {};
+		CJointChain* pVerticalJointChain = { nullptr };
+#pragma region BoneNameStore
+		switch (i)
+		{
+		case 1:
+			strBoneNames.push_back(TEXT("Ab-R-SkirtD-01"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtD-02"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtD-03"));
+			break;
+		case 2:
+			strBoneNames.push_back(TEXT("Ab-L-SkirtD-01"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtD-02"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtD-03"));
+			break;
+		case 3:
+			strBoneNames.push_back(TEXT("Ab-L-SkirtO-01"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtO-02"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtO-03"));
+			break;
+		case 4:
+			strBoneNames.push_back(TEXT("Ab-L-SkirtE-01"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtE-02"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtE-03"));
+			break;
+#pragma region 4Bones
+		case 5:
+			strBoneNames.push_back(TEXT("Ab-L-SkirtS-01"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtS-02"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtS-03"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtS-04"));
+			break;
+		case 6:
+			strBoneNames.push_back(TEXT("Ab-L-SkirtQ-01"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtQ-02"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtQ-03"));
+			strBoneNames.push_back(TEXT("Ab-L-SkirtQ-04"));
+			break;
+		case 7:
+			strBoneNames.push_back(TEXT("Ab-R-SkirtQ-01"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtQ-02"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtQ-03"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtQ-04"));
+			break;
+		case 8:
+			strBoneNames.push_back(TEXT("Ab-R-SkirtS-01"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtS-02"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtS-03"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtS-04"));
+			break;
+#pragma endregion
+		case 9:
+			strBoneNames.push_back(TEXT("Ab-R-SkirtE-01"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtE-02"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtE-03"));
+			break;
+		case 10:
+			strBoneNames.push_back(TEXT("Ab-R-SkirtO-01"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtO-02"));
+			strBoneNames.push_back(TEXT("Ab-R-SkirtO-03"));
+			break;
+		default:
+			break;
+		}
+#pragma endregion
+		//m_RootBoneMatrices
+		for (_uint iVerticalCount = 0; iVerticalCount < strBoneNames.size(); ++iVerticalCount)
+		{
+			CRigidBody* pRigidBody = { nullptr };
+#pragma region RootBoneRigidBody
+			//만약 루트본을 세팅하는 과정이라면,
+			if(0 == iVerticalCount)
+			{
+				_matrix pRootBoneMatrix = {};
+				_char* pRootBoneName = new _char[strBoneNames[iVerticalCount].length() + 1];
+
+				CStringHelper::ConvertWideToUTF(strBoneNames[iVerticalCount].c_str(), pRootBoneName);
+				const _float4x4* pRootBone = m_pModelCom->Get_BoneMatrixPtr(pRootBoneName);
+				// 루트 본 저장해두고.
+				pRootBoneMatrix = XMLoadFloat4x4(pRootBone);
+
+				// 이 오브젝트(또는 캐릭터) 월드
+				_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
+					XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+				
+				// 데스크 세팅해주고.
+				CRigidBody::RIGIDBODY_DESC RootDesc;
+				RootDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::NONE;
+				RootDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+				// SkirtBoneRoot 0 , 1, ... 10
+				RootDesc.tUserData.szActorTag = TEXT("SkirtBoneRoot") + to_wstring(i);
+				RootDesc.vSize = _float3(0.03f, 0.03f, 0.f);
+				RootDesc.fMass = { 0.f };
+				RootDesc.iCollisionGroup = PHYSX_CUSTOM_2;
+				RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+				RootDesc.isSimulateSync = false;
+				RootDesc.isQuery = false;
+				XMStoreFloat4x4(&RootDesc.StartWorldMatrix, pRootBoneMatrix * OwnerWorld);
+
+				// 태그 이름으로 넣어준다.
+				if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+					RootDesc.tUserData.szActorTag, reinterpret_cast<CComponent**>(&pRigidBody), &RootDesc)))
+					return E_FAIL;
+
+				// 마찬가지로 태그 이름으로 넣어준다.
+				// 루트 리지드 바디는 m_RootRigidBodies에 저장한다. 자식 리지드바디랑 저장 방법이 다르니 조심할 것 
+				m_RootRigidBodies.push_back(make_pair(pRootBone, pRigidBody));
+				Safe_Delete_Array(pRootBoneName);
+
+				// 이름으로 i번쨰 조인트 체인임을 명시해준다. 
+				if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_JointChain"),
+					TEXT("Com_JointChain") + to_wstring(i), reinterpret_cast<CComponent**>(&pVerticalJointChain))))
+					return E_FAIL;
+
+				m_VerticalJointChains.push_back(pVerticalJointChain);
+
+				pVerticalJointChain->Set_Root(pRigidBody);
+				m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+			}
+#pragma endregion
+
+		
+#pragma region ChildBoneRigidBodies
+			else
+			{
+				_matrix pChildBoneMatrix = {};
+				_char* pChildBoneName = new _char[strBoneNames[iVerticalCount].length() + 1];
+
+				CStringHelper::ConvertWideToUTF(strBoneNames[iVerticalCount].c_str(), pChildBoneName);
+
+				pChildBoneMatrix = XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr(pChildBoneName));
+
+				// 이 오브젝트(또는 캐릭터) 월드
+				_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
+					XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+
+				// 첫 노드(다이나믹 구) - 원점이 B02에 있어야 함
+				CRigidBody::RIGIDBODY_DESC ChildDesc;
+				ChildDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+				ChildDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
+				//actor tag로 i번째 인덱스의 iVerticalCount번쨰 자식임을 명시한다.
+				ChildDesc.tUserData.szActorTag = TEXT("SkirtBoneChild") + to_wstring(i) + to_wstring(iVerticalCount);
+				ChildDesc.vMaterial = _float3(0.02f, 0.01f, 0.f);
+				ChildDesc.vSize = _float3(0.03f, 0.03f, 0.f);
+				ChildDesc.fMass = { 0.05f };
+				ChildDesc.iCollisionGroup = PHYSX_CUSTOM_2;
+				ChildDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+				ChildDesc.isSimulateSync = false;
+				ChildDesc.isQuery = false;
+				XMStoreFloat4x4(&ChildDesc.StartWorldMatrix, pChildBoneMatrix * OwnerWorld);
+
+				// 태그 이름으로 넣어준다.
+				if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+					ChildDesc.tUserData.szActorTag, reinterpret_cast<CComponent**>(&pRigidBody), &ChildDesc)))
+					return E_FAIL;
+
+				// 마찬가지로 태그 이름으로 넣어준다.
+				// 부모랑은 다르게 m_SkirtRigidBodies 에 보관하며, 키도 본 이름으로 세팅한다.
+				m_SkirtRigidBodies.push_back(make_pair(strBoneNames[iVerticalCount], pRigidBody));
+
+				Safe_Delete_Array(pChildBoneName);
+
+				pVerticalJointChain->Add_Joint(pRigidBody);
+				m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+			}
+
+#pragma endregion
+		}
+		strBoneNames.clear();
+	}
+
+	return S_OK;
+}
+
+HRESULT CBody_Player::Ready_HorizontalJoints()
+{
+	return S_OK;
+}
+
+//현재 트랜스폼의 매트릭스를 기준으로 한 본의 오리진 행렬을 미리 연산해둔다.
+// 이게 왜필요함 ? << 본과 리지드바디 간의 축이 맞지 않아서 그대로 떄려박으면 수틀리는 경우가 많음.
+// (좌표계도 뒤집어져있고)
+HRESULT CBody_Player::Ready_SkirtBoneOrigin()
+{
+	//컴바인드 매트릭스 1회 연산 (일단 위치 잡아야하니까.)
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	_matrix matOwnerWorld = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+
+	//매트릭스를 분해한다.
+	_vector vOwnerS, vOwnerR, vOwnerT;
+	XMMatrixDecompose(&vOwnerS, &vOwnerR, &vOwnerT, matOwnerWorld);
+
+	//스케일은 제거해서 따로 보관하고, 로테이션이랑 트랜스레이션만 가져온다.
+	_matrix matOwnerNoScale = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorZero(),
+		vOwnerR, vOwnerT);
+
+	for (auto& Pair : m_SkirtRigidBodies)
+	{
+		_wstring strBoneName = Pair.first;
+		_char* pBoneName = new _char[strBoneName.length() + 1];
+		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
+
+		_matrix matBoneBase = XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr(pBoneName));
+
+		_vector vBoneScale, vBoneRotation, vBoneTranslation;
+		_float3 vScale = {};
+		XMMatrixDecompose(&vBoneScale, &vBoneRotation, &vBoneTranslation, matBoneBase);
+		XMStoreFloat3(&vScale, vBoneScale);
+
+		m_SkirtBoneScales.push_back(make_pair(strBoneName, vScale));
+
+		//본의 초기 월드 위치를 구해낸다.
+		_matrix matBoneRestWorld = matBoneBase * matOwnerNoScale;
+		PxTransform tBoneRestWorld(m_pGameInstance->Convert_Matrix_ToPxTransform(matBoneRestWorld));
+
+		//리지드 바디의 초기 월드 위치를 구해낸다.
+		PxTransform tActorRestWorld = Pair.second->Get_PxTransform();
+		PxTransform tShapeRestWorld = tActorRestWorld * Pair.second->Get_ShapeLocalPose();
+
+		//본의 초기 월드 위치를, 리지드 바디의 로컬 좌표계로 끌어들인뒤, SkirtActorToBones에 저장해둔다.
+		m_SkirtActorToBones.push_back(make_pair(strBoneName, tShapeRestWorld.getInverse() * tBoneRestWorld));
+
+		Safe_Delete_Array(pBoneName);
+	}
+
+	return S_OK;
+}
+
+HRESULT CBody_Player::Ready_ThighRigidBodies()
+{
+	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+	RigidBodyDesc.tUserData.szActorTag = TEXT("BodyCollider");
+	RigidBodyDesc.vSize = _float3(0.2f, 0.5f, 0.f);
+	RigidBodyDesc.fMass = { 0.f };
+	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_2 | PHYSX_CUSTOM_3;
+	RigidBodyDesc.isSimulateSync = false;
+	RigidBodyDesc.isQuery = false;
+	RigidBodyDesc.vMaterial = _float3(0.01f, 0.01f, 0.f);
+
+	//##################### R-Thigh
+	CRigidBody* pRigidBody = { nullptr };
+	const _float4x4* pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-R-Thigh-Tw1");
+	_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	_matrix BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody_Ab-R-Thigh-Tw1"), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+
+	pRigidBody->Set_AngularDamping(0.1f);
+	pRigidBody->Set_LinearDamping(0.06f);
+	pRigidBody->Set_CCD(true);
+
+	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+
+	//##################### L-Thigh
+	pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-L-Thigh-Tw1");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody_Ab-L-Thigh-Tw1"), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+
+	pRigidBody->Set_AngularDamping(0.1f);
+	pRigidBody->Set_LinearDamping(0.06f);
+	pRigidBody->Set_CCD(true);
+
+	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+
+	return S_OK;
+}
+
+void CBody_Player::Sync_BonesByJoint()
+{
+	// 컴바인드 매트릭스의 SRT를 가져온다.
+	_matrix matOwnerWorld = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+	_vector vOwnerS, vOwnerR, vOwnerT;
+	XMMatrixDecompose(&vOwnerS, &vOwnerR, &vOwnerT, matOwnerWorld);
+
+	// 스케일을 제거한 뒤 역행렬로 만들어서 보관한다.
+	_matrix matOwnerNoScale = XMMatrixAffineTransformation(
+		XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorZero(), XMQuaternionNormalize(vOwnerR), vOwnerT);
+	_matrix matOwnerNoScaleInv = XMMatrixInverse(nullptr, matOwnerNoScale);
+
+	_uint iCount = 0;
+	for (auto& Pair : m_SkirtRigidBodies)
+	{
+		_wstring strBoneName = Pair.first;
+		_char* pBoneName = new _char[strBoneName.length() + 1];
+		CStringHelper::ConvertWideToUTF(strBoneName.c_str(), pBoneName);
+
+		//현재 리지드바디의 월드 위치를 가져온다.
+		PxTransform tActorNow = Pair.second->Get_PxTransform();
+		PxTransform tShapeNow = tActorNow * Pair.second->Get_ShapeLocalPose();
+
+		// 리지드 바디의 로컬 좌표계로 끌어들였던, 본의 초기 월드 위치를
+		// 리지드 바디의 현재 월드 행렬로 끌어올린다.
+		PxTransform tBoneWorld = tShapeNow * m_SkirtActorToBones[iCount].second;
+
+		// 월드까지 왔지만 스케일은 없는 상태임.
+		_matrix matBoneModelNoScale = m_pGameInstance->Convert_PxTransform_ToMatrix(tBoneWorld) * matOwnerNoScaleInv;
+
+		// 본의 월드를 다시 분리해서, 
+		_vector vS, vR, vT;
+		XMMatrixDecompose(&vS, &vR, &vT, matBoneModelNoScale);
+
+		// 미리 빼놨던 스케일을 가져온 뒤
+		_float3 vScaleFloat = m_SkirtBoneScales[iCount].second;
+		_vector vScale = XMVectorSet(vScaleFloat.x, vScaleFloat.y, vScaleFloat.z, 0.f);
+
+		// 합성한다.
+		_matrix matNew = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionNormalize(vR), vT);
+
+		//본의 월드행렬을 덮어 씌운다.
+		m_pModelCom->Override_CombinedTransformationMatrix(pBoneName, matNew);
+
+		Safe_Delete_Array(pBoneName);
+		iCount++;
+	}
+
+}
+
 CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBody_Player* pInstance = new CBody_Player(pDevice, pContext);
@@ -322,4 +689,34 @@ void CBody_Player::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
+
+	for (auto& iter : m_HorizontalJointChains)
+	{
+		Safe_Release(iter);
+	}
+	m_HorizontalJointChains.clear();
+
+	for (auto& iter : m_VerticalJointChains)
+	{
+		Safe_Release(iter);
+	}
+	m_VerticalJointChains.clear();
+
+	for (auto& Pair : m_SkirtRigidBodies)
+	{
+		Safe_Release(Pair.second);
+	}
+	m_SkirtRigidBodies.clear();
+
+	for (auto& Pair : m_ThighRigidBodies)
+	{
+		Safe_Release(Pair.second);
+	}
+	m_ThighRigidBodies.clear();
+
+	for (auto& Pair : m_RootRigidBodies)
+	{
+		Safe_Release(Pair.second);
+	}
+	m_RootRigidBodies.clear();
 }

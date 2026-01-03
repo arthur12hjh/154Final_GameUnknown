@@ -47,13 +47,19 @@ public:
 		_float			fMoveDistance = 0.f;
 	}SAVED_LIFT_PLATFORM_INFO;
 
-
-
 	typedef struct SavedMonsterInfo
 	{
 		_float4x4	    worldMatrix;
-		_uint			iMonsterId = 0;
+		_tchar			szComponentTag[256];
+		_uint			iMonsterID = 0;
 	}SAVEDMONSTERINFO;
+
+	typedef struct SavedNpcInfo
+	{
+		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
+		_uint			iNpcID = 0;
+	}SAVEDNPCINFO;
 
 	typedef struct tagModelInstanceLoadDesc
 	{
@@ -63,10 +69,10 @@ public:
 
 	}MODEL_INSTANCE_LOAD_DESC;
 
-	typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
+	/*typedef struct Nayitba_Desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_uint						iMonsterID = {};
-	}NAYITBA_DESC;
+	}NAYITBA_DESC;*/
 
 public:
 	CMapTool_Desert();
@@ -88,6 +94,7 @@ public:
 	HRESULT Save_Lift_Controller_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Lift_Platform_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
 	HRESULT Load_Monster_Objects(const _char* szFilePath);
@@ -97,6 +104,7 @@ public:
 	HRESULT Load_Lift_Controller_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Npcs_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);

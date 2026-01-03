@@ -7,6 +7,8 @@ NS_BEGIN(Engine)
 class CModel;
 class CShader;
 class CCollider;
+class CRigidBody;
+class CJointChain;
 NS_END
 
 NS_BEGIN(Client)
@@ -55,6 +57,30 @@ private:
 	HRESULT				Bind_ShaderResources();
 
 	void				Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+
+private:
+	HRESULT				Ready_VerticalJoints();
+	HRESULT				Ready_HorizontalJoints();
+	HRESULT				Ready_SkirtBoneOrigin();
+	HRESULT				Ready_ThighRigidBodies();
+	void				Sync_BonesByJoint();
+
+private:
+	//수직으로 연결된 조인트 체인들. 
+	vector<pair<const _float4x4*, class CRigidBody*>>	m_RootRigidBodies = {};
+	vector<class CJointChain*>  m_VerticalJointChains = {};
+	//수평으로 연결된 조인트 체인들.
+	vector<class CJointChain*>  m_HorizontalJointChains = {};
+	// 치마 리지드 바디들. 본 이름과 매핑시켜놨으니..
+	// 본 이름으로 매트릭스 찾고, 리지드 바디랑 합성시키는 과정이 똑같이 필요함.
+	vector<pair<_wstring, class CRigidBody*>> m_SkirtRigidBodies = {};
+
+	// Actor 로컬에서 Bone 로컬로 가는 오프셋
+	vector<pair<_wstring, PxTransform>>  m_SkirtActorToBones = {};
+	// 본 스케일 보존
+	vector<pair<_wstring, _float3>>      m_SkirtBoneScales = {};
+	// 허벅지 콜라이더 2개 (본 이름을 키로 해주자)
+	vector<pair<const _float4x4*, class CRigidBody*>> m_ThighRigidBodies = {};
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

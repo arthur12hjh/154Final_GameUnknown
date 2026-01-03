@@ -208,26 +208,6 @@ void CPlayer::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
 
-	//// [JU] Use_RushSkill 테스트(키보드 R키)
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_HOME))
-	//{
-	//	auto pTransportData = m_pGameManager->Find_TransportData(1);
-	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
-
-	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
-	//	m_pCCT->Set_Position(vPos);
-	//}
-
-	//// [JU] Use_RushSkill 테스트(키보드 R키)
-	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_END))
-	//{
-	//	auto pTransportData = m_pGameManager->Find_TransportData(2);
-	//	_vector vPos = XMLoadFloat3(&pTransportData->vTransportpoint);
-
-	//	m_pTransformCom->Set_State(STATE::POSITION, vPos);
-	//	m_pCCT->Set_Position(vPos);
-	//}
-
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
 
@@ -235,11 +215,7 @@ void CPlayer::Late_Update(_float fTimeDelta)
 {
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-	if (m_bIsActive == TRUE)
-	{
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
-	}
+
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -250,28 +226,17 @@ void CPlayer::Late_Update(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render();
-
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_Shadow()
 {
-	for (auto& pPartObject : m_PartObjects)
-	{
-		if(pPartObject.first != TEXT("Part_Hair"))
-			pPartObject.second->Render_Shadow();
-	}
 
 	return S_OK;
 }
 
 HRESULT CPlayer::Render_MotionBlur()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_MotionBlur();
-
 	return S_OK;
 }
 
@@ -287,6 +252,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 	// 안에서 플레이어 모션 제어 중
 	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
+	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
 	return S_OK;
 }
@@ -368,11 +334,11 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), true);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
 	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("ColorChange"), false);
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
 	}
 }
 
@@ -432,6 +398,9 @@ HRESULT CPlayer::Ready_Components()
 
 	m_pGameInstance->Add_CCT_ToPhysx(this, m_pCCT);
 
+#ifdef _DEBUG
+	m_pGameInstance->Set_PVDRender_Off();
+#endif
 	return S_OK;
 }
 
@@ -777,25 +746,26 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 	CHARACTER_SKILL_DESC SkillDescCopy{};
 	Default_Damage_Desc DamageDesc = {};
 	//만약 그랩스킬이라면
+	//폐기했으니까 무시
 	switch (pSkillDesc->eSkillType)
 	{
 	case SKILL_TYPE::INTERACTION_SKILL:
 		{
-		memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
+		//memcpy(&SkillDescCopy, pSkillDesc, sizeof(CHARACTER_SKILL_DESC));
 
-		Desc.isChangeMode = false;
-		Desc.eNextState = PLAYER_STATE::GRAB;
-		Desc.pArg = &SkillDescCopy;
+		//Desc.isChangeMode = false;
+		//Desc.eNextState = PLAYER_STATE::GRAB;
+		//Desc.pArg = &SkillDescCopy;
 
-		//공격한 녀석의 본 이름 & 객체 포인터 들고옴
-		auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
-		m_PlayerDesc.pGrabBone = pNayitba->Get_BodyModelCom()
-			->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
+		////공격한 녀석의 본 이름 & 객체 포인터 들고옴
+		//auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+		//m_PlayerDesc.pGrabBone = pNayitba->Get_BodyModelCom()
+		//	->Get_BoneMatrixPtr(pSkillDesc->szLinkBoneName);
 
-		m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
+		//m_PlayerDesc.pGrabAttackter = pDamageDesc->pAttacker;
 
-		pNayitba->ActionSuccess(nullptr);
-		m_pFSM->Handle_Transition(Desc);
+		//pNayitba->ActionSuccess(nullptr);
+		//m_pFSM->Handle_Transition(Desc);
 		}
 		break;
 	default:

@@ -40,8 +40,16 @@ public:
 	typedef struct SavedMonsterInfo
 	{
 		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
 		_uint			iMonsterId = 0;
 	}SAVEDMONSTERINFO;
+
+	typedef struct SavedNpcInfo
+	{
+		_float4x4	    worldMatrix;
+		_tchar			szComponentTag[256];
+		_uint			iNpcID = 0;
+	}SAVEDNPCINFO;
 
 	typedef struct tagModelInstanceLoadDesc
 	{
@@ -84,6 +92,7 @@ private:
 	HRESULT Load_Lift_Platform_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT Load_Monster_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Npc_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);

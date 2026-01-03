@@ -39,7 +39,7 @@ void CPlayer_ScarletPhase2tLinkAttackState::Start(void* pArg, _float fBlendRatio
 
     // 플레이어의 애니메이션을 변경해준다. 
     // 여기서 애니메이션 재생속도 조절가능해.
-    m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 2.f, 0.f, FALSE, -1.f, 0.f, TRUE);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTimeDelta)
@@ -53,10 +53,15 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTim
 
     _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
-    m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
-    m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
-    m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
-    m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+
+    //45 이상부턴 본 안따라가게 처리.
+    if (!(45 <= m_pPlayer->Get_iTrackPosition()))
+    {
+        m_pPlayer->GetTransform()->Set_State(STATE::RIGHT, CombinedMatrix.r[0]);
+        m_pPlayer->GetTransform()->Set_State(STATE::UP, CombinedMatrix.r[1]);
+        m_pPlayer->GetTransform()->Set_State(STATE::LOOK, CombinedMatrix.r[2]);
+        m_pPlayer->GetTransform()->Set_State(STATE::POSITION, CombinedMatrix.r[3]);
+    }
 
     if (true == isAnimationFinished)
     {

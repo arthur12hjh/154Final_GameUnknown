@@ -38,7 +38,10 @@ protected :
 
 public:
 	virtual HRESULT						Initialize(void* pArg) override;
+	virtual	_bool						EnterExcution(NAYITBA_EXECUTION_TYPE eExcution);
+	virtual _bool						UnconditionallyAttack();
 
+public :
 	// 보스 타겟 세팅
 	void								SetTarget(CGameObject* pGameObject);
 	CGameObject*						GetTarget() { return m_pTarget; }
@@ -82,7 +85,7 @@ public:
 	_bool								IsCurrentPhaseLastAttackAction();
 	_bool								IsPhaseLastAttack() { return m_bIsPhaseLastAttack; }
 
-	void								EnterExcution(NAYITBA_EXECUTION_TYPE eExcution);
+
 	_bool								bIsExcution();
 	// 이걸로 공격 가능체크하고
 	// 가능하면 True를 반환.

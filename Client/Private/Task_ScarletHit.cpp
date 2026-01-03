@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "Task_Hit.h"
+#include "Task_ScarletHit.h"
 
 #include "GameInstance.h"
 #include "BossBlackBoard.h"
 #include "BehaviorTree.h"
 #include "Nayitba.h"
 
-CTask_Hit::CTask_Hit() : CTask()
+CTask_ScarletHit::CTask_ScarletHit() : CTask()
 {
 }
 
-HRESULT CTask_Hit::Initialize_Prototype(CBehaviorTree* pOwnerTree)
+HRESULT CTask_ScarletHit::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 {
 	if (FAILED(__super::Initialize_Prototype(pOwnerTree)))
 		return E_FAIL;
@@ -25,7 +25,7 @@ HRESULT CTask_Hit::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	return S_OK;
 }
 
-CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
+CBehaviorNode::NODE_STATE CTask_ScarletHit::Update(_float fTimeDelta)
 {
 	// 이거 비헤비어 밖에서 데미지 처리가 이루어지는데 
 	// 비헤비어 안에서 애니메이션을 재생해야하네?
@@ -43,19 +43,26 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->bIsExcution())
 	{
-		if (m_pBlackBoard->IsPhaseLastAttack() || m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
+		if (m_pBlackBoard->UnconditionallyAttack() || m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
 		{
 			m_pHit_Data = nullptr;
+			m_pSkill_Data = nullptr;
+
 			if (CBossBlackBoard::BOSS_STATE::HIT == m_pBlackBoard->GetCurState())
 				m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 			return NODE_STATE::FAIL;
 		}
 	}
+	m_fAnimSpeed = 1.f;
 
 	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
-	if (m_pOwner->Play_Animation(fTimeDelta))
+	Hit_Reaction(fTimeDelta);
+	
+	if (m_pOwner->Play_Animation(fTimeDelta * m_fAnimSpeed))
 	{
 		m_pHit_Data = nullptr;
+		m_pSkill_Data = nullptr;
+
 		if (m_bIsHitRepulse)
 		{
 			m_bIsHitRepulse = false;
@@ -84,7 +91,7 @@ CBehaviorNode::NODE_STATE CTask_Hit::Update(_float fTimeDelta)
 	return NODE_STATE::RUNNING;
 }
 
-void CTask_Hit::Refresh_HitMotion()
+void CTask_ScarletHit::Refresh_HitMotion()
 {
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	_vector vAttackerPos = m_pBlackBoard->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
@@ -95,12 +102,36 @@ void CTask_Hit::Refresh_HitMotion()
 	auto pSkill_Data = static_cast<const CHARACTER_SKILL_DESC *>(m_pHit_Data->pSkillData);
 	Damaged_Attack(pSkill_Data, vDir);
 
+	
 	m_pBlackBoard->SetAttackData(nullptr);
 	m_pBlackBoard->SetHitData(nullptr);
 }
 
-void CTask_Hit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector vDir)
+void CTask_ScarletHit::Hit_Reaction(_float fTimeDelta)
 {
+	if (nullptr == m_pSkill_Data)
+		return;
+
+	_float fAnimRatio = m_pOwner->Get_AnimationRatio();
+	switch (m_pSkill_Data->iSkillID)
+	{
+	case 1010 :
+		if(0.62f >= fAnimRatio)
+			m_fAnimSpeed = 2.f;
+		
+		if (0.62f <= fAnimRatio && fAnimRatio <= 0.82f)
+		{
+			m_pOwner->GetTransform()->Move_Direction(fTimeDelta,
+				m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -1.f, 10.f);
+
+		}
+		break;
+	}
+}
+
+void CTask_ScarletHit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector vDir)
+{
+	m_pSkill_Data = pData;
 	if (!strcmp(pData->szHitAnimationName, "None"))
 	{
 		_float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
@@ -149,18 +180,18 @@ void CTask_Hit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector vDir)
 		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
 }
 
-CTask_Hit* CTask_Hit::Create(CBehaviorTree* pOwnerTree)
+CTask_ScarletHit* CTask_ScarletHit::Create(CBehaviorTree* pOwnerTree)
 {
-	CTask_Hit* pTask_GorillaHit = new CTask_Hit();
-	if (FAILED(pTask_GorillaHit->Initialize_Prototype(pOwnerTree)))
+	CTask_ScarletHit* pTask_Hit = new CTask_ScarletHit();
+	if (FAILED(pTask_Hit->Initialize_Prototype(pOwnerTree)))
 	{
-		Safe_Release(pTask_GorillaHit);
-		MSG_BOX("Create Fail : Task Gorilla Hit");
+		Safe_Release(pTask_Hit);
+		MSG_BOX("Create Fail : Task Scarlet Hit");
 	}
-	return pTask_GorillaHit;
+	return pTask_Hit;
 }
 
-void CTask_Hit::Free()
+void CTask_ScarletHit::Free()
 {
 	__super::Free();
 

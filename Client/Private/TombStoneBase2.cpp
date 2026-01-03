@@ -87,7 +87,7 @@ HRESULT CTombStoneBase2::Ready_Components()
 	/* Com_Collider_Sphere */
 	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
 
-	SphereDesc.fRadius = 5.f;
+	SphereDesc.fRadius = 20.f;
 	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
