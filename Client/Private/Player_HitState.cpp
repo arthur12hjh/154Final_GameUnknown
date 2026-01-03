@@ -3,7 +3,7 @@
 
 #include "Player.h"
 #include "GameInstance.h"
-
+#include "GameManager.h"
 // 히트 방향따라 다르게 처리해줘야 하긴 하는데..
 // 일단 애니메이션 정상화 되면 처리 ㄱㄱ.
 CPlayer_HitState::CPlayer_HitState(PLAYER_HIT_DESC* pHitDesc)
@@ -21,6 +21,8 @@ CPlayer_HitState::CPlayer_HitState(PLAYER_HIT_DESC* pHitDesc)
 
 void CPlayer_HitState::Start(void* pArg, _float fBlendRatio)
 {
+	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
+
 	m_eState = PLAYER_STATE::HIT;
 
 	m_Desc->isLookFixed = true;

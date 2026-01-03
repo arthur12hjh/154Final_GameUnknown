@@ -9,11 +9,10 @@
 #include "CinematicObject.h"
 #include "Camera_Free.h"
 #include "Camera_Action.h"
-#include "Player.h"
-#include "Nayitba.h"
+#include "Npc.h"
+#include "TriggerBox.h"
 
 #include "UIHUD.h"
-#include "UIBase.h"
 
 CCinematicManager::CCinematicManager()
     : m_pGameInstance{ CGameInstance::GetInstance() }
@@ -241,6 +240,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 {
     _tchar szText[MAX_PATH];
     _wstring strObjectName;
+    CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
     list<CGameObject*>* pObjectList = nullptr;
 
     switch (CinematicNodeDesc.eState)
@@ -336,6 +336,57 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                     ++iObjectIndex;
                 }
             }
+            break;
+        case CINEMATICNODE_STATE::MOVE_NPC:
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), TEXT("Layer_Npc"));
+            if (pObjectList != nullptr)
+            {
+                for (auto& pObject : *pObjectList)
+                {
+                    if (dynamic_cast<CNpc*>(pObject)->Get_NpcDesc()->iNpcID == CinematicNodeDesc.iActiveIndex)
+                    {
+                        pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[0].vPosition), 1.f));
+
+                        static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
+
+                        if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 0.f)
+                        {
+                            pObject->GetTransform()->Rotation(
+                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z);
+                        }
+                        else if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 1.f)
+                        {
+                            _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[0].vRotation), 1.f);
+                            pObject->GetTransform()->LookAt(vLookAt);
+                        }
+
+                    }
+                }
+            }
+            break;
+        case CINEMATICNODE_STATE::CREATE_TRIGGERBOX:
+            pTriggerBoxDesc.iTriggerCode = CinematicNodeDesc.iActiveIndex;
+            pTriggerBoxDesc.eColType = COLLIDER::OBB;
+            pTriggerBoxDesc.vScale = { CinematicNodeDesc.CinematicIndexDataList[0].vScale.x,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vScale.y,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vScale.z };
+            pTriggerBoxDesc.vRotation = { CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z };
+            pTriggerBoxDesc.vPosition = { CinematicNodeDesc.CinematicIndexDataList[0].vPosition.x,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vPosition.y,
+                                CinematicNodeDesc.CinematicIndexDataList[0].vPosition.z };
+            pTriggerBoxDesc.fDelayTime = -1.f;
+
+            if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Trigger"), &pTriggerBoxDesc)))
+            {
+                int a = 10;
+            }
+
             break;
         case CINEMATICNODE_STATE::END:
 

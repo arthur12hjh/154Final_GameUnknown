@@ -179,6 +179,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -212,6 +213,7 @@ PS_OUT PS_REED(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;

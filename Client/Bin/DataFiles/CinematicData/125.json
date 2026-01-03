@@ -72,6 +72,40 @@
         	       }
     	   ]
             },
+	{
+                "eState": 10,
+                "fTrackPosition": 26.6,
+                "iActiveIndex": 1,
+                "szObjectTag": "Layer_Npc",
+	   "CinematicIndexDataList": [
+        	       {
+      	   	"iActiveIndex": 1,
+      	   	"szObjectTag": "Layer_Npc",
+ 	   	"vPosition": [741.467, 2.0, 646.534],
+ 	   	"vRotation": [741.467, 2.0, 636.534, 1.0],
+  	   	"vScale": [1.0, 1.0, 1.0],
+  	   	"iInputInt": 0,
+  	   	"fInputFloat": 0.0
+        	       }
+    	   ]
+            },
+	{
+                "eState": 11,
+                "fTrackPosition": 26.6,
+                "iActiveIndex": 126,
+                "szObjectTag": "Layer_Npc",
+	   "CinematicIndexDataList": [
+        	       {
+      	   	"iActiveIndex": 126,
+      	   	"szObjectTag": "Layer_Npc",
+ 	   	"vPosition": [741.467, 2.0, 646.534],
+ 	   	"vRotation": [0.0, 0.0, 0.0, 1.0],
+  	   	"vScale": [3.0, 3.0, 3.0],
+  	   	"iInputInt": 0,
+  	   	"fInputFloat": 0.0
+        	       }
+    	   ]
+            },
             {
                 "eState": 7,
                 "fTrackPosition": 26.700000762939453,
