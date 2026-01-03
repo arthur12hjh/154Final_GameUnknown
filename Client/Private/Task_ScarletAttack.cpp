@@ -64,10 +64,12 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 		if (false == SelectPattern())
 			return NODE_STATE::FAIL;
 	}
-
-	ActionAmount(fTimeDelta);
-	if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
-		m_fAnimationSpeed = 1.2f;
+	else
+	{
+		ActionAmount(fTimeDelta);
+		if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
+			m_fAnimationSpeed = 1.2f;
+	}
 
 	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
 	if (bIsFinished)
