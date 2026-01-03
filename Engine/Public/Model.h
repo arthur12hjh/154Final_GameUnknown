@@ -224,8 +224,8 @@ private:
 	vector<class CBone*>		m_Bones;
 	vector<_float4x4>			m_GlobalOffsetMatrices;
 
-	vector<ID3D11Buffer*>		m_pChannelBufferList;
-	vector<ID3D11Buffer*>		m_pKeyFrameBufferList;
+	vector<ID3D11ShaderResourceView*>		m_pChannelSRVList;
+	vector<ID3D11ShaderResourceView*>		m_pKeyFrameSRVList;
 
 	_float4x4					m_PreRootMatrix{};
 	_float4x4					m_CurRootMatrix{};
@@ -275,6 +275,8 @@ private:
 	HRESULT Update_BoneMatrices();
 
 	_int Find_Animation(const _char* szAnimationTag);
+	
+	_uint Get_TotalAnimationKeyFrame(class CAnimation* pAnimation);
 
 
 public:
