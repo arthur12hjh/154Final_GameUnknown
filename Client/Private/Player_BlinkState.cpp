@@ -14,6 +14,7 @@ CPlayer_BlinkState::CPlayer_BlinkState()
 //시간 느려지면서 이펙트 나와야하는 모션. ( + 림라이트도 )
 void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 {
+	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.3f);
 	//락 못바꾸게 처리
 	m_Desc->isLockChangable = false;
 	m_Desc->isInvincible = true;
@@ -40,6 +41,9 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkState::Update(_float fTimeDelta)
 
 _float CPlayer_BlinkState::End()
 {
+	//m_pGameInstance->Active_RadialBlur(0.2f, 16, 0.6f);
+	m_Desc->isLockChangable = false;
+
 	return m_fNextBlendRatio;
 }
 

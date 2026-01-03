@@ -294,14 +294,14 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::FADE_IN:
         {
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("Cinematic_Overlay"), TEXT("CInema_Outro"));
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Intro"));
             Safe_Release(pHUD);
             break;
         }
         case CINEMATICNODE_STATE::FADE_OUT:
         {
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("Cinematic_Overlay"), TEXT("CInema_Intro"));
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Outro"));
             Safe_Release(pHUD);
             break;
         }

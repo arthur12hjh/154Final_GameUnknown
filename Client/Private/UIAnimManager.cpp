@@ -243,8 +243,8 @@ void CUIAnimManager::Anim_Stop(CUIBase* pUI)
 
 _bool CUIAnimManager::Check_Anim_Finish(CUIBase* pUI, _wstring szAnimTag)
 {
-	if(m_bTargetAnimFinish)
-		Safe_Release(m_pTargetAnim);
+	/*if(m_bTargetAnimFinish)
+		Safe_Release(m_pTargetAnim);*/
 	
 	return m_bTargetAnimFinish;
 }
@@ -258,7 +258,7 @@ void CUIAnimManager::Set_TargetAnim(CUIBase* pUI, _wstring szAnimTag)
 		{
 			m_pTargetAnim = pAnimInstance;
 			m_bTargetAnimFinish = false;
-			Safe_AddRef(m_pTargetAnim);
+			//Safe_AddRef(m_pTargetAnim);
 		}
 	}
 }
@@ -289,6 +289,6 @@ void CUIAnimManager::Free()
 
 	Clear_AnimInstances();
 
-	Safe_Release(m_pTargetAnim);
+	//Safe_Release(m_pTargetAnim);
 }
 

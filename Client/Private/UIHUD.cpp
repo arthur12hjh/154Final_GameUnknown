@@ -112,7 +112,7 @@ void CUIHUD::Update(_float fTimeDelta)
 			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->SetVisibility(VISIBILITY::HIDDEN);
 			m_WorldUIs[TEXT("Pool_InteractionDot")][i]->Set_Rent(false);
 		}
-	}		
+	}
 
 	__super::Update(fTimeDelta);
 
