@@ -235,6 +235,8 @@
     <ClCompile Include="..\..\Client\Private\Player_ParrySuccessState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_Parts.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_RepulseState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ScarletLinkAttackState.cpp" />
+    <ClCompile Include="..\..\Client\Private\Player_ScarletPhase2tLinkAttackState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_SheatheHairpin.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_SupplyBoxInteractionState.cpp" />
     <ClCompile Include="..\..\Client\Private\Player_TestState.cpp" />
@@ -289,6 +291,7 @@
     <ClCompile Include="..\..\Client\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIMouseInteraction.cpp" />
+    <ClCompile Include="..\..\Client\Private\UINeonNumber.cpp" />
     <ClCompile Include="..\..\Client\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPanel.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPlayAnimEvent.cpp" />
@@ -297,6 +300,7 @@
     <ClCompile Include="..\..\Client\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotionStack.cpp" />
     <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIScore.cpp" />
     <ClCompile Include="..\..\Client\Private\UIScript.cpp" />
     <ClCompile Include="..\..\Client\Private\UIShield.cpp" />
     <ClCompile Include="..\..\Client\Private\UIShop.cpp" />

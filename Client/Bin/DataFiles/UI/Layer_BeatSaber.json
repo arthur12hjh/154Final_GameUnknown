@@ -1,0 +1,61 @@
+[
+    {
+        "Children": [
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 600.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 360.0,
+                "fSizeY": 80.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 3,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Score",
+                "szUIID": "UI_Score_0",
+                "szUITag": "UI_Score"
+            },
+            {
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 384.0,
+                "fSizeY": 188.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 3,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szLayerTag": "Layer_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_NeonNumber",
+                "szUIID": "UI_ComboScore_0",
+                "szUITag": "UI_ComboScore"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 3,
+        "iDrawType": 1,
+        "iLevel": 5,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szLayerTag": "Layer_BeatSaber",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_BeatSaber_Panel_0",
+        "szUITag": "BeatSaber_Panel"
+    }
+]

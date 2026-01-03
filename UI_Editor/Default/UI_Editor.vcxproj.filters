@@ -634,6 +634,18 @@
     <ClCompile Include="..\Private\UI_Level_Beatsaber.cpp">
       <Filter>01.Level\BeatSaber</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UINeonNumber.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_ScarletLinkAttackState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Player_ScarletPhase2tLinkAttackState.cpp">
+      <Filter>999. CPP From Client\03. Player\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIScore.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

@@ -43,15 +43,11 @@ HRESULT CUI_Level_Beatsaber::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 	
-	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
-		return E_FAIL;
-
-	//if (FAILED(Ready_UI(TEXT("Layer_UI"))))
+	//if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
 	//	return E_FAIL;
 
-	/*auto pGameCharacter = m_pGameInstance->GetMainCamera();
-	m_pGameInstance->SetInteractionBaseObject(pGameCharacter);
-	Safe_Release(pGameCharacter);*/
+	if (FAILED(Ready_UI(TEXT("Layer_UI"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -60,7 +56,7 @@ void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_isOverlay && m_pHUD)
+	/*if (m_isOverlay && m_pHUD)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
 		m_isOverlay = false;
@@ -73,7 +69,7 @@ void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}
+	}*/
 }
 
 HRESULT CUI_Level_Beatsaber::Render()
@@ -110,31 +106,10 @@ HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_GARA"))))
 		return E_FAIL;
 
-	pUIHUD->Anim_Play(TEXT("Layer_Combat"), TEXT("Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Boss"))))
-		return E_FAIL;
-
-	pUIHUD->Anim_Play(TEXT("Layer_Boss"), TEXT("Boss_Hp_Fx"), TEXT("Hp_Fx_BeapBeap"));
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_World"))))
-		return E_FAIL;
-
-	pUIHUD->Anim_Play(TEXT("Layer_World"), TEXT("MonsterHp_Fx"), TEXT("Hp_Fx_BeapBeap"));
-	
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Combat_Info"))))
-		return E_FAIL;
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
-		return E_FAIL;
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Popup"))))
-		return E_FAIL;
-
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Shop"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -143,30 +118,8 @@ HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 HRESULT CUI_Level_Beatsaber::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
+		ENUM_CLASS(LEVEL::BEATSABER_GAME), strLayerTag)))
 		return E_FAIL;
-
-	//CActor::ACTOR_DESC ProbDesc = {};
-	//ProbDesc.bIsApplyTransform = true;
-	//ProbDesc.vScale = { 1.f, 1.f, 1.f };
-	////ProbDesc.vPosition = { 0.f, 0.f, 0.f };
-
-	//ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_CanBox");
-
-	///*if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
-	//	ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
-	//	return E_FAIL;*/
-
-	//for (size_t i = 0; i < 5; i++)
-	//{
-	//	ProbDesc.vPosition = { 10.f * i,
-	//						   m_pGameInstance->Random(0, 50),
-	//						   m_pGameInstance->Random(0, 50) };
-
-	//	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
-	//		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &ProbDesc)))
-	//		return E_FAIL;
-	//}
 
 	return S_OK;
 }

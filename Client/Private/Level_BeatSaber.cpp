@@ -8,6 +8,7 @@
 #include "Level_Loading.h"
 #include "StringHelper.h"
 #include "BeatSaberSpawner.h"
+#include "Note.h"
 
 CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID) :
     CLevel(pDevice, pContext, ENUM_CLASS(eLevelID))
@@ -61,6 +62,16 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
     {
+        CNote::NOTE_DESC NoteDesc = {};
+        NoteDesc.bIsApplyTransform = true;
+        NoteDesc.vScale = { 1.f, 1.f, 1.f };
+        NoteDesc.vPosition = { 22.f, 1.f, 22.f };
+        NoteDesc.fNoteSpeed = 2.f;
+        NoteDesc.vTargetPoint = { -3.f, 1.f, -3.f };
+
+        m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
+            ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc);
+
         Play_GameBGM(TEXT("Test"), 1.f);
     }
 
@@ -200,6 +211,17 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
 
 HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
 {
+    CUIHUD* pUIHUD = CUIHUD::Create(m_pDevice, m_pContext);
+
+    if (pUIHUD == nullptr)
+        return E_FAIL;
+
+    SetHUD(pUIHUD);
+    pUIHUD->Set_Show_Debug_Rect(false);
+
+    if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
+        return E_FAIL;
+
     return S_OK;
 }
 
