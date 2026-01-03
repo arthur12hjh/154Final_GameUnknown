@@ -124,6 +124,11 @@ CTransform* CLockonManager::Get_TargetTransform()
     return m_pTarget->GetTransform();
 }
 
+CNaytiba* CLockonManager::Get_LockonTarget()
+{
+    return m_pTarget;
+}
+
 _vector CLockonManager::Get_LockOnPoint()
 {
 #ifdef _DEBUG
