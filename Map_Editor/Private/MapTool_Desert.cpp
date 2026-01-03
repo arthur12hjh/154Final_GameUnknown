@@ -1946,6 +1946,13 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 #pragma endregion 
 
+#pragma region Dororong SABER
+				case DESESRT_RUIN_OBJECT::PAD:
+					protoTag = TEXT("Prototype_GameObject_Pad"); layerTag = TEXT("Layer_Pad");
+					pDesc.pComponentTag == nullptr;
+					break;
+#pragma endregion
+
 #pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
 					if (fHeight > 0)
@@ -1976,6 +1983,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PAD)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, nullptr);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -2364,7 +2375,7 @@ HRESULT CMapTool_Desert::Render()
 
 	// 1. 메인 테마/레벨 선택 드롭다운 
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco" };
+	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco", "DORORONG_SABER"};
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -4525,8 +4536,26 @@ HRESULT CMapTool_Desert::Render()
 			}
 		}
 	}
+	else if (m_eCurrentMap == DESERT_THEME::DORORONG_SABER)
+	{
+		ImGui::Text("DORORONG_SABER Objects");
+		_int nSelectedModel = -1;
 
+		const _char* modelNames[] = { "Pad" };
 
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::PAD;
+					m_CurrentLayerName = TEXT("Layer_Pad");
+				}
+			}
+		}
+
+	}
 
 	// 삭제 버튼
 #pragma region Delete_Object

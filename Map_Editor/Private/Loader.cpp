@@ -93,6 +93,7 @@
 #include "DisplayBox.h"
 #include "Shutter.h"
 #include "Npc.h"
+#include "Pad.h"
 #pragma endregion
 
 
@@ -184,7 +185,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Wall(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Building(pArg); });
 
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Sky_Texture(pArg); });
 
 		hr = Loading_For_Desert();
@@ -3777,10 +3778,21 @@ HRESULT CLoader::Loading_For_Desert_Xion_Building(void* pArg)
 
 HRESULT CLoader::Loading_For_Sky_Texture(void* pArg)
 {
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::DESERT);
+
 	/* For.Prototype_Component_Texture_Sky_Desert */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_galaxy+X"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/galaxy+X.png"), 1))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Pad */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Pad");
+	pProtoDesc.pPrototype = CPad::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }
@@ -4127,8 +4139,6 @@ HRESULT CLoader::Loading_For_Desert_Building_Ruin(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-
 
 	/* For.Prototype_GameObject_Building_Ruin */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Building_Ruin");

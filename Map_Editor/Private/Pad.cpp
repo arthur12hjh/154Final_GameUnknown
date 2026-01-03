@@ -35,8 +35,35 @@ void CPad::Priority_Update(_float fTimeDelta)
 
 void CPad::Update(_float fTimeDelta)
 {
-    _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
-    m_pCollider->UpdateColiision(WorldMat);
+    /*_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+    m_pCollider->UpdateColiision(WorldMat);*/
+
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    {
+		m_bIsColorChange = true;
+        
+    }
+    if (m_bIsColorChange)
+    {
+        m_fColorWeight += fTimeDelta * 5.f;
+        m_fTimeAcc += fTimeDelta;
+
+        if (m_fColorWeight > 1.f)
+            m_fColorWeight = 1.f;
+
+        if (m_fTimeAcc > 0.2f)
+        {
+            m_bIsColorChange = false;
+        }
+    }
+    else {
+        m_fColorWeight -= fTimeDelta * 3.f;
+
+        if (m_fColorWeight < 0.f)
+            m_fColorWeight = 0.f;
+
+        m_fTimeAcc = 0.f;
+    }
 }
 
 void CPad::Late_Update(_float fTimeDelta)
@@ -46,30 +73,71 @@ void CPad::Late_Update(_float fTimeDelta)
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
     //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
     //}
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+    //m_pGameInstance->Add_DebugComponent(m_pCollider);
+#endif
+
 }
 
 HRESULT CPad::Render()
 {
-    COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+    if (FAILED(Bind_ShaderResources()))
+        return E_FAIL;
+
+   /* COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
     pObbCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
+
+    if (FAILED(m_pShaderCom->Begin(0)))
+        return E_FAIL;*/
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fColorWeight", &m_fColorWeight, sizeof(_float))))
+        return E_FAIL;
+
+    /*m_pShaderCom->Begin(1);
+    m_pVIBufferCom->Bind_Resources();
+    m_pVIBufferCom->Render();*/
+
+    m_pShaderCom->Begin(3);
+    m_pVIBufferCom->Bind_Resources();
+    m_pVIBufferCom->Render();
 
     return S_OK;
 }
 
 HRESULT CPad::Ready_Components()
 {
-    ///* Com_Shader */
-    //if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_OBB"),
-    //    TEXT("Com_Collider"), reinterpret_cast<CComponent**>(&m_pCollider))))
-    //    return E_FAIL;
+    /* Com_Shader */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxCube"),
+        TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+        return E_FAIL;
+
+    /* Com_VIBuffer */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_VIBuffer_Cube"),
+        TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+        return E_FAIL;
 
     /* Com_Collider_OBB */
     COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
     OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
-    OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
+    OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y * 0.5f, 0.f);
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_OBB"),
         TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pCollider), &OBBDesc)))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CPad::Bind_ShaderResources()
+{
+    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
         return E_FAIL;
 
     return S_OK;
@@ -102,4 +170,6 @@ void CPad::Free()
     __super::Free();
 
     Safe_Release(m_pCollider);
+    Safe_Release(m_pShaderCom);
+    Safe_Release(m_pVIBufferCom);
 }
