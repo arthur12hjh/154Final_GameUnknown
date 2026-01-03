@@ -11,7 +11,7 @@ namespace Tool_Map
 	const unsigned int			g_iHalfWinSizeX = 800;
 	const unsigned int			g_iHalfWinSizeY = 450;
 
-	enum class LEVEL { STATIC, LOADING, LOGO, VILLAGE, DESERT, BOSS, END };
+	enum class LEVEL { STATIC, LOADING, LOGO, VILLAGE, DESERT, END };
 
 	enum class MAP_THEME { TUTORIAL, GORILLA, SCARLET, COMMON, END };
 

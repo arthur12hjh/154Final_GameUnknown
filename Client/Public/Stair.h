@@ -4,7 +4,8 @@
 #include "StaticMap.h"
 
 NS_BEGIN(Engine)
-
+class CRigidBody;
+class CModel;
 NS_END
 
 NS_BEGIN(Client)
@@ -27,6 +28,10 @@ public:
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
+
+	CRigidBody* m_pRigidBody = { nullptr };
+	CModel* m_pColModelCom = { nullptr };
+	_bool	m_bIsReady = { false };
 
 public:
 	static CStair* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

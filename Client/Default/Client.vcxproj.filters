@@ -1099,6 +1099,12 @@
     <Filter Include="02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner">
       <UniqueIdentifier>{a80cb650-fb27-4097-91cc-6096a30630f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber">
+      <UniqueIdentifier>{dfa0fc65-97fc-4cba-bbb4-d6b2d2315ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber">
+      <UniqueIdentifier>{ace582d6-7c55-4fcf-ac16-e29d96ce171a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\DisplayBox">
       <UniqueIdentifier>{80d2f063-5793-4bf6-b85d-fb0454e18428}</UniqueIdentifier>
     </Filter>
@@ -1111,11 +1117,17 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
       <UniqueIdentifier>{44f47e13-04ea-4fdd-9f4f-87279de045d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles">
+      <UniqueIdentifier>{6bef3bb2-ca9e-4956-95a3-38d6144a3081}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03.Effects\TrailEffect">
       <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects\TrailEffect\TrailData">
       <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore">
+      <UniqueIdentifier>{5f06ce2b-e607-4c86-abbc-2a05165d46f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2122,6 +2134,9 @@
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UINeonNumber.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\NaytibaFace.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
     </ClInclude>
@@ -2145,6 +2160,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Task_GorillaHit.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaFace.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIScore.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3139,6 +3160,12 @@
     <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UINeonNumber.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIScore.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Task_GorillaHit.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
     </ClCompile>
@@ -3206,6 +3233,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_BeamShader.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

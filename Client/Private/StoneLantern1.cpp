@@ -43,6 +43,10 @@ void CStoneLantern1::Late_Update(_float fTimeDelta)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CStoneLantern1::Render()
@@ -86,14 +90,13 @@ HRESULT CStoneLantern1::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+	/* Com_Collider_OBB */
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = _float3(3.f, 4.5f, 3.f);
+	OBBDesc.vCenter = _float3(0.f, 4.f, 0.f);
 
-	SphereDesc.fRadius = 3.f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	return S_OK;

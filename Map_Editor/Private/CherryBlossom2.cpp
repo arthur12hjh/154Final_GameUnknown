@@ -35,7 +35,6 @@ void CCherryBlossom2::Priority_Update(_float fTimeDelta)
 void CCherryBlossom2::Update(_float fTimeDelta)
 {
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
-
 }
 
 void CCherryBlossom2::Late_Update(_float fTimeDelta)
@@ -43,8 +42,11 @@ void CCherryBlossom2::Late_Update(_float fTimeDelta)
 	/*if (true == m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 	}*/
-
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+#ifdef _DEBUG
+		m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+#endif
 }
 
 HRESULT CCherryBlossom2::Render()
@@ -88,13 +90,12 @@ HRESULT CCherryBlossom2::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Collider_Sphere */
-	CSphereCollider::SPHERE_COLLIDER_DESC		SphereDesc{};
+	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
+	OBBDesc.vSize = _float3(15.f, 12.f, 15.f);
+	OBBDesc.vCenter = _float3(3.f, 9.f, 0.f);
 
-	SphereDesc.fRadius = 10.f;
-	SphereDesc.vCenter = _float3(0.f, SphereDesc.fRadius, 0.f);
-
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Sphere"), reinterpret_cast<CComponent**>(&m_pColliderCom), &SphereDesc)))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_OBB"),
+		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
 
 	return S_OK;

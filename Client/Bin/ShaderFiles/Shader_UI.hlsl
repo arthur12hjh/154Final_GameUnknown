@@ -1653,6 +1653,108 @@ PS_OUT PS_ITEM_ICON(PS_IN In)
 
 /*------------------[E_ITEM_ICON]----------------*/
 
+/*------------------[S_NEON_NUMBER]----------------*/
+
+PS_OUT PS_NEON_NUMBER(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
+    
+    Icon.rgb += Icon.rgb;
+    
+    //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
+    //    discard;
+    
+    Out.vColor = Icon;
+    
+    if(Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_NEON_NUMBER]----------------*/
+
+/*------------------[S_COMBO]----------------*/
+
+PS_OUT PS_COMBO(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float2 ScaleUV = uv;
+    ScaleUV -= float2(0.5f, -0.1f);
+    ScaleUV /= float2(200.f / 384.f, 60.f / 188.f) * g_fScale;
+    ScaleUV += float2(0.5f, -0.1f);
+    
+    float4 Combo = g_Texture0.Sample(ClampSampler, ScaleUV);
+    
+    Combo.rgb += Combo.rgb;
+    
+    Out.vColor = Combo;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_COMBO]----------------*/
+
+/*------------------[S_NEON_NUMBER]----------------*/
+
+PS_OUT PS_SCORE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
+    
+    Icon.rgb += Icon.rgb;
+    
+    //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
+    //    discard;
+    
+    Out.vColor = Icon;
+    
+    if(Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_NEON_NUMBER]----------------*/
+
+/*------------------[S_RANK]----------------*/
+
+PS_OUT PS_RANK(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float2 ScaleUV = uv;
+    ScaleUV -= float2(0.f, 0.5f);
+    ScaleUV /= float2(97.f / 400.f, 60.f / 80.f) * g_fScale;
+    ScaleUV += float2(0.f, 0.5f);
+    
+    float4 Rank = g_Texture0.Sample(ClampSampler, ScaleUV);
+    
+    Out.vColor = Rank;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_RANK]----------------*/
+
 technique11 DefaultTechnique
 {
     pass UI // 0
@@ -1985,5 +2087,45 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_ITEM_ICON();
+    }
+
+    pass NEON_NUMBER // 32
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_NEON_NUMBER();
+    }
+
+    pass COMBO // 33
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_COMBO();
+    }
+
+    pass SCORE // 34
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_INSTANCE_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCORE();
+    }
+
+    pass RANK // 35
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RANK();
     }
 }

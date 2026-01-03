@@ -174,7 +174,7 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
 	{
-		m_CharacterDesc.eDirection = DIRECTION::LEFT;
+		m_CharacterDesc.eDirection = DIRECTION::RIGHT;
 		bIsMove = true;
 	}
 
@@ -186,13 +186,14 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
-		m_CharacterDesc.eDirection = DIRECTION::RIGHT;
+
+		m_CharacterDesc.eDirection = DIRECTION::LEFT;
 		bIsMove = true;
 	}
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
 	{
-		m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
+		m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
 		bIsMove = true;
 	}
 
@@ -204,7 +205,7 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
 	{
-		m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
+		m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
 		bIsMove = true;
 	}
 

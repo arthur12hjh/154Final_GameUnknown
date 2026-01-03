@@ -1206,41 +1206,6 @@
                 "szProtoTag": "Prototype_GameObject_UI_Image",
                 "szUIID": "GamePlay_Overlay_1-4",
                 "szUITag": "GamePlay_Overlay"
-            },
-            {
-                "TextureDesc": {
-                    "iPass": 0,
-                    "iTextureIndex": 0,
-                    "szProtoTag": "Prototype_Component_UI_Texture_Overlay",
-                    "szTextureComTag": "Com_Texture_UI_Overlay"
-                },
-                "fAlpha": 0.0,
-                "fOffsetX": 0.0,
-                "fOffsetY": 0.0,
-                "fRotation": 0.0,
-                "fSizeX": 1600.0,
-                "fSizeY": 900.0,
-                "fX": 800.0,
-                "fY": 450.0,
-                "iDepth": 9999,
-                "iDrawType": 1,
-                "iLevel": 3,
-                "iRenderGroup": 9,
-                "iVisibility": 0,
-                "szAnimTags": [
-                    {
-                        "szAnimTag": "Cinema_Intro",
-                        "szPrefabTag": "Cinema_Intro"
-                    },
-                    {
-                        "szAnimTag": "Cinema_Outro",
-                        "szPrefabTag": "Cinema_Outro"
-                    }
-                ],
-                "szLayerTag": "Layer_Combat",
-                "szProtoTag": "Prototype_GameObject_UI_Image",
-                "szUIID": "Cinematic_Overlay_1-5",
-                "szUITag": "Cinematic_Overlay"
             }
         ],
         "fAlpha": 1.0,

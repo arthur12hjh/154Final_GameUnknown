@@ -6,6 +6,7 @@ matrix g_PreWorldMatrix, g_PreViewMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
+Texture2D g_OpacityTexture;
 Texture2D g_EmissiveTexture; 
 Texture2D g_ORMTexture;
 Texture2D g_ORSSTexture;
@@ -484,6 +485,29 @@ PS_OUT PS_NONE_NORMAL(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_HAIR_ALPHA_CUT(PS_IN In)
+{
+    PS_OUT Out;
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
+    //vMtrlDiffuse.rgb *= vMtrlOpacity.r;
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+   
+    if (g_IsPattern)
+        Out.vDiffuse = g_vMeshColor;
+    else
+        Out.vDiffuse = vMtrlDiffuse;
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // 0
@@ -592,6 +616,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_NONE_NORMAL();
+    }
+    // idx 10 Hair Alpha Cutting
+    pass HairAlphaCut
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HAIR_ALPHA_CUT();
     }
 }
 
