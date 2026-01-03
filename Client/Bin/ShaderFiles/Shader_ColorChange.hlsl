@@ -141,7 +141,8 @@ PS_OUT_DEFERRED PS_SLASH(PS_IN_DEFERRED In)
     }
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, uv);
-    Out.vBackBuffer = Out.vBackBuffer * max(1 - BigEdge, 0) + float4(1, 65.f / 255, 150.f / 255, 1) * BigEdge;
+    Out.vBackBuffer *= 1 - saturate(pow(BigEdge * 0.95f, 8));
+    Out.vBackBuffer += float4(1, 15.f / 255, 35.f / 255, 1) * BigEdge;
     Out.vBackBuffer = Out.vBackBuffer * max(1 - (edge * 5), 0) + float4(1, 55.f / 255, 85.f / 255, 1) * edge * 5;
     //Out.vBackBuffer = lerp(Out.vBackBuffer, float4(1, 15.f / 255, 120.f / 255, 1), edge * 5);
     fTime = min(g_fTime * 2, 1.57);
