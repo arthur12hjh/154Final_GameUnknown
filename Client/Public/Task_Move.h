@@ -28,6 +28,7 @@ private :
 	_uint								m_iAnimSection = {};
 
 	string								m_szAnimationName = {};
+
 	_float3								m_vMoveDir = {};
 	_float								m_fSpeed = {};
 

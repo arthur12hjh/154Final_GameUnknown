@@ -81,33 +81,51 @@ void CUIOwnGold::Late_Update(_float fTimeDelta)
 	else
 	{
 		if (m_iPrevOwnGold != *m_iOwnGold)
+		{
+			m_fTimeAcc = 0.f;
+			m_vTransOffset = _float2(0.f, 0.f);
 			m_bShow = true;
+		}
 
 		if (m_bShow)
 		{
 			m_fTimeAcc += fTimeDelta;
 			m_iPrevOwnGold = *m_iOwnGold;
 
-			if (m_fTimeAcc >= 1.f)
-			{
-				m_tUIDesc.fAlpha -= fTimeDelta * 5.f;
-				m_vTransOffset.y -= fTimeDelta * 5.f;
-			}
 			if (m_fTimeAcc <= 0.3f)
 			{
-				m_tUIDesc.fAlpha += fTimeDelta * 4.f;
-				m_vTransOffset.y -= fTimeDelta * 7.f;
+				_float t = (m_fTimeAcc) / 0.3f;
+				t = min(t, 1.0f);
+
+				m_tUIDesc.fAlpha = t;
+				m_vTransOffset.y = t * -2.5f;
+
+				//m_tUIDesc.fAlpha += fTimeDelta * 4.f;
+				//m_vTransOffset.y -= fTimeDelta * 7.f;
+			}
+			if (m_fTimeAcc >= 1.f)
+			{
+				_float t = (m_fTimeAcc - 1.f) / 0.7f;
+				t = min(t, 1.0f);
+
+				m_tUIDesc.fAlpha = t * -1.f;
+				m_vTransOffset.y = t * 2.5f;
+
+				/*m_tUIDesc.fAlpha -= fTimeDelta * 5.f;
+				m_vTransOffset.y += fTimeDelta * 5.f;*/
 			}
 
 			if (m_fTimeAcc >= 0.f && m_tUIDesc.fAlpha <= 0.f)
+			{
+				m_fTimeAcc = 0.f;
 				m_bShow = false;
+			}
 		}
-		else
+		/*else
 		{
 			m_fTimeAcc = 0.f;
-			m_iPrevOwnGold = *m_iOwnGold;
 			m_vTransOffset = _float2(0.f, 0.f);
-		}
+		}*/
 	}
 }
 

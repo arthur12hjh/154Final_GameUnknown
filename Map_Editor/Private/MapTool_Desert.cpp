@@ -14,6 +14,7 @@
 #include "Lift_Controller.h"
 #include "Lift_Platform.h"
 #include "Npc.h"
+#include "Dororong_Saber.h"
 #include "SpawnBox.h"
 
 CMapTool_Desert::CMapTool_Desert()
@@ -1946,6 +1947,21 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 #pragma endregion 
 
+#pragma region Dororong SABER
+				case DESESRT_RUIN_OBJECT::PAD:
+					protoTag = TEXT("Prototype_GameObject_Pad"); layerTag = TEXT("Layer_Pad");
+					pDesc.pComponentTag == nullptr;
+					break;
+				case DESESRT_RUIN_OBJECT::RAIL:
+					protoTag = TEXT("Prototype_GameObject_Rail"); layerTag = TEXT("Layer_Rail");
+					pDesc.pComponentTag == nullptr;
+					break;
+				case DESESRT_RUIN_OBJECT::INDICATOR:
+					protoTag = TEXT("Prototype_GameObject_Beat_Indicator"); layerTag = TEXT("Layer_Beat_Indicator");
+					pDesc.pComponentTag == nullptr;
+					break;
+#pragma endregion
+
 #pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
 					if (fHeight > 0)
@@ -1976,6 +1992,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PAD || m_eCurrentObject == DESESRT_RUIN_OBJECT::RAIL || m_eCurrentObject == DESESRT_RUIN_OBJECT::INDICATOR)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, nullptr);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -2364,7 +2384,7 @@ HRESULT CMapTool_Desert::Render()
 
 	// 1. 메인 테마/레벨 선택 드롭다운 
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco" };
+	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco", "DORORONG_SABER"};
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -4525,8 +4545,37 @@ HRESULT CMapTool_Desert::Render()
 			}
 		}
 	}
+	else if (m_eCurrentMap == DESERT_THEME::DORORONG_SABER)
+	{
+		ImGui::Text("DORORONG_SABER Objects");
+		_int nSelectedModel = -1;
 
+		const _char* modelNames[] = { "Pad", "Rail", "Beat_Indicator" };
 
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::PAD;
+					m_CurrentLayerName = TEXT("Layer_Pad");
+				}
+				else if (nSelectedModel == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::RAIL;
+					m_CurrentLayerName = TEXT("Layer_Rail");
+				}
+				else if (nSelectedModel == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::INDICATOR;
+					m_CurrentLayerName = TEXT("Layer_Beat_Indicator");
+				}
+
+			}
+		}
+
+	}
 
 	// 삭제 버튼
 #pragma region Delete_Object
@@ -4867,6 +4916,48 @@ HRESULT CMapTool_Desert::Render()
 		}
 	}
 
+	ImGui::Spacing();// 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	// 도로롱 세이버 저장 로드
+
+	static _char szSaveDororongFilePath[256] = "../Bin/DataFiles/Dororong_Saber.bin";
+	ImGui::InputText("Dororong Save File Path", szSaveDororongFilePath, sizeof(szSaveDororongFilePath));
+
+	// 에디터 세이브 / 로드
+	if (ImGui::Button("Save_Dororong"))
+	{
+		// 맵 오브젝트 저장
+		if (FAILED(Save_Dororong_Saber_Objects(szSaveDororongFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"도로롱 세이버 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"도로롱 세이버 저장 성공.", L"알림", MB_OK);
+		}
+	}
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szLoadDororongFilePath[256] = "../Bin/DataFiles/Dororong_Saber.bin";
+	ImGui::InputText("Dororong Load File Path", szLoadDororongFilePath, sizeof(szLoadDororongFilePath));
+
+	if (ImGui::Button("Load_Dororong"))
+	{
+		if (FAILED(Load_Dororong_Saber_Objects(szLoadDororongFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"도로롱 세이버 로드 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"도로롱 세이버 로드 성공.", L"알림", MB_OK);
+		}
+	}
+
 	ImGui::End();
 
 	return S_OK;
@@ -4935,6 +5026,25 @@ HRESULT CMapTool_Desert::Save_Monster_Objects(const _char* szFilePath)
 
 	if (FAILED(Save_Monsters_By_Layer(ofs, TEXT("Layer_Monster")))) return S_OK;
 	if (FAILED(Save_Npcs_By_Layer(ofs, TEXT("Layer_Npc")))) return S_OK;
+
+	ofs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Save_Dororong_Saber_Objects(const _char* szFilePath)
+{
+	// 맵 데이터 파일 열기
+	std::ofstream ofs(szFilePath, std::ios::binary);
+	if (!ofs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Pad")))) return S_OK;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Rail")))) return S_OK;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Beat_Indicator")))) return S_OK;
 
 	ofs.close();
 
@@ -5161,6 +5271,35 @@ HRESULT CMapTool_Desert::Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerT
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Dororong_Saber_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CDororong_Saber* pDororongSaberObject = dynamic_cast<CDororong_Saber*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pDororongSaberObject))
+			{
+				SAVEDDORORONGSABERINFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVEDDORORONGSABERINFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 {
 	std::ifstream ifs(szFilePath, std::ios::binary);
@@ -5207,6 +5346,24 @@ HRESULT CMapTool_Desert::Load_Monster_Objects(const _char* szFilePath)
 
 	if (FAILED(Load_Monsters_By_Layer(ifs, TEXT("Prototype_GameObject_SpawnBox"), TEXT("Layer_Monster")))) return S_OK;
 	if (FAILED(Load_Npcs_By_Layer(ifs, TEXT("Prototype_GameObject_Npc"), TEXT("Layer_Npc")))) return S_OK;
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Dororong_Saber_Objects(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return S_OK;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return S_OK;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return S_OK;
 
 	ifs.close();
 
@@ -5465,6 +5622,36 @@ HRESULT CMapTool_Desert::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		{
 			return E_FAIL;
 		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVEDDORORONGSABERINFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDDORORONGSABERINFO));
+
+		CGameObject::GAMEOBJECT_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
 	}
 
 	return S_OK;

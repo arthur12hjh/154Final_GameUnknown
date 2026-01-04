@@ -46,6 +46,7 @@
 #pragma region Bullet
 #include "Bullet_Rock.h"
 #include "Bullet_Droid.h"
+#include "Bullet_Split.h"
 #include "Bullet_Scarlet.h"
 #pragma endregion
 
@@ -189,6 +190,13 @@
 #include "Desert_Grass.h"
 #include "DisplayBox.h"
 #include "Shutter.h"
+#pragma endregion
+
+#pragma region Dororong_Saber
+#include "Pad.h"
+#include "Rail.h"
+#include "Beat_Indicator.h"
+#include "Sky_Dororong.h"
 #pragma endregion
 
 #include "Instance_Model.h"
@@ -410,6 +418,7 @@ HRESULT CLoader::Loading()
 		m_strMessage = TEXT("Dororong");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Map(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 			hr = Loading_For_BeatSaber();
@@ -689,9 +698,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Cinematic_Dororong */
-	PreTransformMatrix = XMMatrixScaling(0.0003f, 0.0003f, 0.0003f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Dororong"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 
@@ -784,6 +793,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Bullet_Split */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Bullet_Split"),
+		CBullet_Split::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/*if (FAILED(Loading_UI_For_GamePlay_Level()))
@@ -7548,9 +7562,9 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	_matrix PreTransformMatrix = {};
 
 	/* For.Prototype_Component_Model_Dororong */
-	PreTransformMatrix = XMMatrixScaling(0.0002f, 0.0002f, 0.0002f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(-90.f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Dororong");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -7561,6 +7575,61 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BeatSaber_Map(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
+
+	/* For.Prototype_Component_Model_Sky_Dororong */
+	_matrix	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Sky_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky4.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	/* For.Prototype_Component_Texture_Sky_Scarlet */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky_Dororong");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/galaxy+X.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Sky_Dororong */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sky_Dororong");
+	pProtoDesc.pPrototype = CSky_Dororong::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Pad */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Pad");
+	pProtoDesc.pPrototype = CPad::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Rail */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Rail");
+	pProtoDesc.pPrototype = CRail::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Beat_Indicator */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Beat_Indicator");
+	pProtoDesc.pPrototype = CBeat_Indicator::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
 
 	return S_OK;
 }

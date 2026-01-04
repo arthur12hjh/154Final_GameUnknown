@@ -83,7 +83,9 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 			m_pOwner->GetTransform()->LookAt(vOwnerPos + vDir);*/
 
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
-		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
+
+		_float fAnimSpeed = m_fSpeed / m_pOwner->GetStaticMonsterData()->fMoveSpeed;
+		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * fAnimSpeed);
 		if (false == m_bIsCaution)
 		{
 			if (bIsFinished)
