@@ -62,6 +62,11 @@ void CMonsterMoveState::Start(void* pArg, CState* pPreState)
             AnimationName += "_Run_S";
             m_bIsEnableChange = false;
             m_bIsCaution = false;
+
+            m_fMoveSpeed = m_pInitOwnerInfo->fMoveSpeed;
+            if (6 == m_pInitOwnerInfo->iMonsetID)
+                m_fMoveSpeed = m_pInitOwnerInfo->fMoveSpeed * 2.f;
+
             pOwner->Set_Animation(AnimationName.c_str(), false, 1.5f, 0.24f);
         }
         else
@@ -207,16 +212,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         
         vDir = XMVector3Normalize(vTargetPos - vOwnerPos);
         _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
-        if (1 == m_iSectionIndex)
-        {
-            AnimationName += "_Run_L";
-            // 전투 상태라면 이거 Target을 향해서 뛰어간다.
-            LerpLookAt(fTimeDelta, 2.f);
-            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.5f);
-
-            if (m_pOwnerInfo->fAttackRange * 2.f >= fDistance)
-                m_iSectionIndex++;
-        }
+       
 
         if (2 == m_iSectionIndex)
         {
@@ -226,7 +222,14 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         }
         else
         {
-            LerpLookAt(fTimeDelta, 4.f);
+            if (1 == m_iSectionIndex)
+            {
+                AnimationName += "_Run_L";
+                if (m_pOwnerInfo->fAttackRange * 2.f >= fDistance)
+                    m_iSectionIndex++;
+            }
+
+            LerpLookAt(fTimeDelta, 2.f);
             m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
         }
     }
@@ -250,14 +253,19 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
         }
     }
 
+    _float fAnimSpeed = m_fMoveSpeed / m_pInitOwnerInfo->fMoveSpeed;
     pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, m_pInitOwnerInfo->fLerpRatio);
-    pEntity->Play_Animation(fTimeDelta);
+
+    pEntity->Play_Animation(fTimeDelta * fAnimSpeed);
     if (pEntity->IsAnmiationFinished())
     {
         if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytibaState)
         {
             if (0 == m_iSectionIndex)
+            {
+                m_fMoveSpeed = m_pInitOwnerInfo->fMoveSpeed * 2.f;
                 m_iSectionIndex++;
+            }
             else if (2 == m_iSectionIndex)
             {
                 m_iSectionIndex = 0;

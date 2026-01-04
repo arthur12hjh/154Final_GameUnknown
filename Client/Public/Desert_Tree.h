@@ -10,6 +10,7 @@ NS_END
 
 NS_BEGIN(Client)
 
+/* ±â°¡½º¸Ê ºÐÈ« ³ª¹« */
 class CDesert_Tree final : public CActor
 {
 private:

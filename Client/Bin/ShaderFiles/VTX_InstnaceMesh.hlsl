@@ -7,6 +7,7 @@ Texture2D g_NormalTexture;
 Texture2D g_ORMTexture;
 Texture2D g_MaskTexture;
 
+float g_fFar;
 float g_CamFar;
 float g_fTime;
 float g_fWaveSpeed;
@@ -177,8 +178,9 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -210,8 +212,9 @@ PS_OUT PS_REED(PS_IN In)
     //노말의 크기를 줄여서 세팅함. -> SSAO가 너무 강하게 들어가서
     //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal, 0.1f);
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_CamFar, 0.0f, 0.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -240,6 +243,7 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
 
 technique11 Tech
 {
+    //잔디
     pass Pass0
     {
         SetRasterizerState(RS_Default);

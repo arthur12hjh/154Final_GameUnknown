@@ -65,6 +65,8 @@ void CUIItemSlot::Update(_float fTimeDelta)
 
 	if (m_eState == INTERACTION_STATE::ACTIVE)
 	{
+		m_eState == INTERACTION_STATE::END;
+		m_fInteractionTime = 0.f;
 		auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
 		if (pPlayer)
@@ -79,6 +81,32 @@ void CUIItemSlot::Update(_float fTimeDelta)
 		}
 
 		Safe_Release(pPlayer);
+	}
+
+	if(!m_bCanBuy)
+	{
+		m_fCoolTime += fTimeDelta;
+		
+		if (m_fCoolTime >= m_fBuyCoolTime)
+		{
+			m_fCoolTime = 0.f;
+			m_fInteractionTime = 0.f;
+			m_eState = INTERACTION_STATE::DEFAULT;
+
+			/*UI_EVENT_ARG_DESC Arg{};
+			Arg.szActionTag = TEXT("ItemSlot_Event");
+			Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
+			Arg.pData = &m_eState;
+			__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg);*/
+
+			UI_EVENT_ARG_DESC Arg2{};
+			Arg2.szActionTag = TEXT("ItemSlot_Event");
+			Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
+			Arg2.pData = &m_fInteractionTime;
+			__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+
+			m_bCanBuy = true;
+		}
 	}
 }
 
@@ -264,7 +292,7 @@ HRESULT CUIItemSlot::SetUp_ItemSlot(_float fTimeDelta)
 		m_ItemSlotInstances.push_back(inst);
 	}
 
-	if (isHover)
+	if (isHover && m_bCanBuy)
 	{
 		m_pMousePointer->SetVisibility(VISIBILITY::HIDDEN);
  		m_eState = INTERACTION_STATE::DEFAULT;
@@ -321,7 +349,7 @@ HRESULT CUIItemSlot::SetUp_ItemIcon()
 		inst.vUVAtlasSize = _float4{ 1.f, 1.f, vScale.x, vScale.y };
 		inst.vUVAtlasOffset = _float4{ 0.f, 0.f, vPos.x, vPos.y };
 
-		_float2 vUIPos = _float2{
+		/*_float2 vUIPos = _float2{
 			m_tUIDesc.fX + m_tUIDesc.fOffsetX + (vUISize.x * fRatio * (i % ATLAS_COL)) - (fUIWidth * 0.5f),
 			m_tUIDesc.fY + m_tUIDesc.fOffsetY + (vUISize.y * fRatio * (i / ATLAS_COL)) - (fUIHeight * 0.5f)
 		};
@@ -332,7 +360,7 @@ HRESULT CUIItemSlot::SetUp_ItemIcon()
 		{
 			eBtnState = BTN_STATE::HOVER;
 
-			/*UI_EVENT_ARG_DESC Arg{};
+			UI_EVENT_ARG_DESC Arg{};
 			Arg.szActionTag = TEXT("Set_Texture_Index");
 			Arg.Type = UI_EVENT_ARG_DESC::INT;
 			Arg.pData = &i;
@@ -341,8 +369,8 @@ HRESULT CUIItemSlot::SetUp_ItemIcon()
 			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
 			{
 				eBtnState = BTN_STATE::CLICK;
-			}*/
-		}
+			}
+		}*/
 
 		inst.vAtlasIndex = _float4{ (_float)col, (_float)row, 0.f, 0.f };
 
@@ -416,6 +444,37 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 	/*if(m_eState == INTERACTION_STATE::END)
 		return;*/
 
+	/*if (0 > m_iCurrentItemIdx)
+	{
+		m_fInteractionTime = 0.f;
+		m_eState = INTERACTION_STATE::END;
+
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("ItemSlot_Event");
+		Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
+		Arg.pData = &m_eState;
+		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg);
+
+		UI_EVENT_ARG_DESC Arg2{};
+		Arg2.szActionTag = TEXT("ItemSlot_Event");
+		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
+		Arg2.pData = &m_fInteractionTime;
+		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+	}*/
+
+	if (!m_bCanBuy || m_iCurrentItemIdx < 0)
+	{
+		m_fInteractionTime = 0.f;
+
+		UI_EVENT_ARG_DESC Arg2{};
+		Arg2.szActionTag = TEXT("ItemSlot_Event");
+		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
+		Arg2.pData = &m_fInteractionTime;
+		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+
+		return;
+	}
+
 	if (m_pGameInstance->KeyUp(KEY_INPUT::MOUSE, 1)
 		|| m_iPrevItemIdx != m_iCurrentItemIdx)
 	{
@@ -424,7 +483,7 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		UI_EVENT_ARG_DESC Arg{};
 		Arg.szActionTag = TEXT("ItemSlot_Event");
 		Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
-		Arg.pData = &m_eState;	
+		Arg.pData = &m_eState;
 		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg);
 
 		UI_EVENT_ARG_DESC Arg2{};
@@ -437,9 +496,11 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		&& m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, 1))
 	{
 		m_eState = INTERACTION_STATE::LOCK;
-		m_fInteractionTime += fTimeDelta;
-		
-		if (m_fInteractionTime >= 1.f)
+
+		if (!m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+			m_fInteractionTime += fTimeDelta;
+
+		if (m_fInteractionTime >= 0.5f)
 			m_eState = INTERACTION_STATE::CONTACT;
 
 		UI_EVENT_ARG_DESC Arg{};
@@ -454,10 +515,18 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		Arg2.pData = &m_fInteractionTime;
 		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
 	}
+
 	if (m_eState == INTERACTION_STATE::CONTACT)
 	{
 		m_fInteractionTime = 0.f;
 		m_eState = INTERACTION_STATE::ACTIVE;
+		m_bCanBuy = false;
+
+		UI_EVENT_ARG_DESC Arg2{};
+		Arg2.szActionTag = TEXT("ItemSlot_Event");
+		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
+		Arg2.pData = &m_fInteractionTime;
+		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
 	}
 
 	m_iPrevItemIdx = m_iCurrentItemIdx;
@@ -502,6 +571,9 @@ HRESULT CUIItemSlot::Render_Text()
 		if(m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
 			szText = TEXT("더 이상 구매가 불가능합니다.");
 	}
+
+	if (!m_bCanBuy)
+		szText = TEXT("구매를 완료했습니다.");
 
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), szText.c_str(), true, 0.8f);
 

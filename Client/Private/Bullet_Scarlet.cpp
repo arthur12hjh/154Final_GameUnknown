@@ -131,7 +131,7 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 HRESULT CBullet_Scarlet::ADD_Components(BULLET_DESC& pDesc)
 {
 	COBBCollider::OBB_COLLIDER_DESC pOBBDesc = {};
-	pOBBDesc.vSize = { 1.f, 1.f, 1.f };
+	pOBBDesc.vSize = { 2.f, 1.f, 2.f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &pOBBDesc)))
@@ -170,15 +170,19 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	pDamageDesc.vHitDir = vHitDir;
 	pDamageDesc.pSkillData = m_pSkillData;
 
-	if (false == ReflectBullet(pHitActor))
+	if (ReflectBullet(pHitActor))
 	{
-		auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-		if (pCharacter)
-			pCharacter->Damaged(&pDamageDesc);
-
-		//m_pEffect->Set_Dead(true);
-		Set_Dead(true);
+		CHARACTER_SKILL_DESC DummySkill = {};
+		pDamageDesc.pSkillData = &DummySkill;
 	}
+	else
+		Set_Dead(true);
+
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if (pCharacter)
+		pCharacter->Damaged(&pDamageDesc);
+
+	//m_pEffect->Set_Dead(true);
 }
 
 CBullet_Scarlet* CBullet_Scarlet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

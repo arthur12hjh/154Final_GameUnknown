@@ -43,7 +43,10 @@ void CUINeonNumber::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	{
 		m_iCombo += (_uint)m_pGameInstance->Random(1.f, 4.f);
+		m_iHighCombo = max(m_iHighCombo, m_iCombo);
+	}
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
 		m_iCombo = 0;
 	
@@ -59,6 +62,12 @@ void CUINeonNumber::Update(_float fTimeDelta)
 		if (m_fScaleRatio < 1.f)
 			m_fScaleRatio = 1.f;
 	}
+
+	UI_EVENT_ARG_DESC Arg{};
+	Arg.szActionTag = TEXT("Combo_Result");
+	Arg.Type = UI_EVENT_ARG_DESC::INT;
+	Arg.pData = &m_iHighCombo;
+	__super::Trigger_Event(TEXT("Combo_Result"), &Arg);
 }
 
 void CUINeonNumber::Late_Update(_float fTimeDelta)

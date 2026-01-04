@@ -252,7 +252,6 @@ HRESULT CPlayer::Damaged(void* pArg)
 	// 안에서 플레이어 모션 제어 중
 	Calc_Damage(pDamageDesc, pSkillDesc);
 	Handle_Hit(pDamageDesc, pSkillDesc);
-	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
 	return S_OK;
 }
@@ -368,8 +367,8 @@ HRESULT CPlayer::Ready_Components()
 {
 	/* Com_Collider_AABB */
 	CBoxCollider::BOX_COLLIDER_DESC		AABBDesc{};
-	AABBDesc.vSize = _float3(1.5f, 2.f, 1.5f);
-	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y * 0.5f, 0.f);
+	AABBDesc.vSize = _float3(1.5f, 2.5f, 1.5f);
+	AABBDesc.vCenter = _float3(0.f, AABBDesc.vSize.y, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &AABBDesc)))
@@ -774,22 +773,26 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 			Desc.isChangeMode = false;
 			Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
 			Desc.pArg = &HitDesc;
-
+			
 			m_pFSM->Handle_Transition(Desc);
 			DamageDesc.pAttacker = this;
 
 			auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
-			if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+			if (0 != pSkillDesc->iSkillID)
 			{
-				if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
-					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
-				else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+				if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+				{
+					if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+					else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+				}
+				else
 					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
-			}
-			else
-				DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
-			pNayitba->Damaged(&DamageDesc);
+				pNayitba->Damaged(&DamageDesc);
+			}
+		
 			//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 		}
 		// 가드만 성공

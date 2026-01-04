@@ -245,7 +245,23 @@ PS_OUT_SHADOW PS_MAIN_CASCADE_SHADOW(PS_IN_SHADOW In)
     return Out;
 }
 
-
+PS_OUT PS_MAIN_TREE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.1f)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(1.f, 1.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
 
 technique11 DefaultTechnique
 { 
@@ -330,6 +346,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MOON_GAMEOBJECT();
     }
 
+    // ±â°¡½º ¸Ê¿¡ ±ò¸° ³ª¹«
     // idx 8
     pass Tree
     {
@@ -338,6 +355,6 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_TREE();
     }
 }

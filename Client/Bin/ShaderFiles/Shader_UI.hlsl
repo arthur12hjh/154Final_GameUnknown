@@ -72,6 +72,9 @@ float2 g_vWindowSize = { 1600.f, 900.f };
 
 float g_fTimeDelta = 0.f;
 
+float2 g_Result_BG_Offset = 0.f;
+float2 g_Result_Thumbnail_Offset = 0.f;
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -1668,7 +1671,7 @@ PS_OUT PS_NEON_NUMBER(PS_IN In)
     //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
     //    discard;
     
-    Out.vColor = Icon;
+    Out.vColor = Icon * g_Alpha;
     
     if(Out.vColor.a <= 0.0f)
         discard;
@@ -1720,7 +1723,7 @@ PS_OUT PS_SCORE(PS_IN In)
     //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
     //    discard;
     
-    Out.vColor = Icon;
+    Out.vColor = Icon * g_Alpha;
     
     if(Out.vColor.a <= 0.0f)
         discard;
@@ -1754,6 +1757,83 @@ PS_OUT PS_RANK(PS_IN In)
 }
 
 /*------------------[E_RANK]----------------*/
+
+/*------------------[S_DORORONG_SABER_RESULT]----------------*/
+
+PS_OUT PS_DORORONG_SABER_RESULT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float2 ThumbnailUV = uv;
+    ThumbnailUV -= float2(0.f, 0.f);
+    ThumbnailUV += float2(0.f, 0.f);
+    
+    float4 Thumbnail = g_Texture1.Sample(ClampSampler, ThumbnailUV);
+    
+    float2 ScaleUV = uv;
+    ScaleUV -= float2(1.f + (g_Result_BG_Offset.x / 1600.f), 0.5f);
+    //ScaleUV -= float2(1.f, 0.5f);
+    ScaleUV /= float2(680.f / 1600.f, 1.f);
+    ScaleUV += float2(1.f + (g_Result_BG_Offset.x / 1600.f), 0.5f);
+    //ScaleUV += float2(1.f, 0.5f);
+    
+    float4 BG = g_Texture0.Sample(ClampSampler, ScaleUV);
+    
+    float4 result = BG;
+    //result = lerp(result, BG, BG.a);
+    
+    Out.vColor = result;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_DORORONG_SABER_RESULT]----------------*/
+
+/*------------------[S_DORORONG_SABER_RESULT_GLOW]----------------*/
+
+PS_OUT PS_DORORONG_SABER_RESULT_GLOW(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float2 RankUV = uv;
+    RankUV -= float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 750.f / 900.f);
+    RankUV /= float2((300.f * g_fScale) / 1600.f, (185.f * g_fScale) / 900.f);
+    RankUV += float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 750.f / 900.f);
+    float4 Rank = g_Texture0.Sample(ClampSampler, RankUV);
+    
+    float2 ComboUV = uv;
+    ComboUV -= float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 155.f / 900.f);
+    ComboUV /= float2(200.f / 1600.f, 60.f / 900.f);
+    ComboUV += float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 155.f / 900.f);
+    float4 Combo = g_Texture1.Sample(ClampSampler, ComboUV);
+    
+    float2 ScoreUV = uv;
+    ScoreUV -= float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 425.f / 900.f);
+    ScoreUV /= float2(200.f / 1600.f, 60.f / 900.f);
+    ScoreUV += float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 425.f / 900.f);
+    float4 Score = g_Texture2.Sample(ClampSampler, ScoreUV);
+    
+    float4 result = 0.f;
+    result += Rank * g_Alpha;
+    result += Combo;
+    result += Score;
+    
+    Out.vColor = result;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_DORORONG_SABER_RESULT_GLOW]----------------*/
 
 technique11 DefaultTechnique
 {
@@ -2127,5 +2207,25 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RANK();
+    }
+
+    pass DORORONG_SABER_RESULT // 36
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DORORONG_SABER_RESULT();
+    }
+
+    pass DORORONG_SABER_RESULT_GLOW // 37
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DORORONG_SABER_RESULT_GLOW();
     }
 }

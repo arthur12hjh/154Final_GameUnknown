@@ -11,6 +11,8 @@ CPlayer_LockonJustEvadeState::CPlayer_LockonJustEvadeState()
 
 void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 {
+	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.4f);
+
 	m_eState = PLAYER_STATE::JUST_EVADE;
 	m_Desc->isInvincible = true;
 	
@@ -30,6 +32,11 @@ void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 		m_eDirection = PLAYER_DIRECTION::RIGHT;
 	}
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+	{
+		m_pPlayer->Set_Animation("Proto_Lockon_Sword_Just_Evade1_backward_3", false, 1.2f);
+		m_eDirection = PLAYER_DIRECTION::BACKWARD;
+	}
+	else
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Sword_Just_Evade1_backward_3", false, 1.2f);
 		m_eDirection = PLAYER_DIRECTION::BACKWARD;

@@ -100,7 +100,6 @@ private:
 	_bool								m_isBloom = { true };
 	_bool								m_isFog = { true };
 	HDR_DESC							m_HDRDesc = {};
-	_bool								m_isHDR = { true };
 	_float								m_fHDRExposure = { 1.52f };
 	_bool								m_isSSAO = { true }; 
 

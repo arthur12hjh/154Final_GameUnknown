@@ -49,18 +49,38 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	}
 
 	_vector vOwnerPos = {};
+	SearchTargetDistance();
+
 	if (bIsRandomAttack)
+	{
 		m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+		if (m_fDistance < m_pSkillData->fRange * 0.5f)
+		{
+			while (633 == m_pSkillData->iSkillID)
+				m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+		}
+	}
 
 	ReadySetting();
 	pEntity->SetAttackData(m_pSkillData);
-
-	SearchTargetDistance();
 	if (m_fDistance >= m_pSkillData->fRange && 0 != pEntity->GetStaticMonsterData()->fMoveSpeed)
 	{
 		m_szAnimationName = pEntity->GetStaticMonsterData()->szAnimationName;
 		m_szAnimationName += "_Run_L";
 		pEntity->Set_Animation(m_szAnimationName.c_str(), true, 1.f, m_StaticMonsterData->fLerpRatio);
+
+		if (10.f > m_fDistance)
+		{
+			m_fPlayRatio = 1.f;
+			m_fMoveSpeed = m_StaticMonsterData->fMoveSpeed;
+		}
+		else
+		{
+			m_fPlayRatio = 2.f;
+			m_fMoveSpeed = m_StaticMonsterData->fMoveSpeed * 2.f;
+		}
+
+
 		m_bIsMoveAction = true;
 	}
 	else
@@ -83,10 +103,8 @@ void CMonsterAttackState::Update(_float fTimeDelta)
 	
 	if(m_bIsMoveAction)
 	{
-		m_fPlayRatio = 1.f;
-
 		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 2.f));
-		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), m_fMoveSpeed * 2.5f);
+		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, m_pOwner->GetTransform()->Get_State(STATE::LOOK), m_fMoveSpeed);
 	}
 	else
 	{
@@ -189,7 +207,7 @@ void CMonsterAttackState::BeholderPattern(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 	DIRECTION eType = DIRECTION::FRONT;
 
@@ -240,7 +258,7 @@ void CMonsterAttackState::BanaclePattern(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 
 	if (541 == m_pSkillData->iSkillID)
@@ -296,7 +314,7 @@ void CMonsterAttackState::StatueAPattern(_float fTimeDelta)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 
 	if (nullptr == m_pSkillData)
@@ -377,7 +395,7 @@ void CMonsterAttackState::StatueBPattern(_float fTimeDelta)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 
 	if (531 == m_pSkillData->iSkillID)
@@ -473,7 +491,7 @@ void CMonsterAttackState::SunFlowerPattern(_float fTimeDelta)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 
 	if (631 == m_pSkillData->iSkillID)
@@ -517,7 +535,7 @@ void CMonsterAttackState::Minion11Pattern(_float fTimeDelta)
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 	_vector vOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
-	_float fSpeed = m_fMoveSpeed;
+	_float fSpeed = m_StaticMonsterData->fMoveSpeed;
 	_bool bMoveAction = false;
 
 	if (732 == m_pSkillData->iSkillID)

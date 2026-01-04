@@ -234,8 +234,8 @@ HRESULT CCinematicModel_Dororong::Initialize_Cinematic_Dororong_Meet()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_dororong_01", FALSE, 1.f, 0.f, TRUE);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(681.378f, 33.953f, 350.178f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(679.378f, 33.953f, 350.178f, 1.f));
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(681.378f, 34.203f, 350.178f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(679.378f, 34.203f, 350.178f, 1.f));
 
 	return S_OK;
 }
@@ -265,7 +265,7 @@ HRESULT CCinematicModel_Dororong::Play_Cinematic_Dororong_Meet(_float fTimeDelta
 			&& fCurrentTrackPosition <= 60.f)
 		{
 			_float fRatio = Clamp((fCurrentTrackPosition - 45.f) / 15.f, 0.f, 1.f);
-			_vector vPosition = XMVectorLerp(XMVectorSet(679.378f, 33.953f, 350.178f, 1.f), XMVectorSet(679.254f, 34.650f, 357.712f, 1.f), fRatio);
+			_vector vPosition = XMVectorLerp(XMVectorSet(679.378f, 34.203f, 350.178f, 1.f), XMVectorSet(679.254f, 34.503f, 357.712f, 1.f), fRatio);
 
 			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 		}
@@ -273,8 +273,8 @@ HRESULT CCinematicModel_Dororong::Play_Cinematic_Dororong_Meet(_float fTimeDelta
 				&& fCurrentTrackPosition <= 95.f)
 		{
 			_float fRatio = Clamp((fCurrentTrackPosition - 60.f) / 35.f, 0.f, 1.f);
-			_vector vPosition = XMVectorLerp(XMVectorSet(679.254f, 34.650f, 357.712f, 1.f), XMVectorSet(685.190f, 30.696f, 389.852f, 1.f), fRatio);
-			_vector vLookAt = XMVectorLerp(XMVectorSet(679.254f, 34.650f, 358.712f, 1.f), XMVectorSet(685.690f, 30.536f, 391.852f, 1.f), fRatio);
+			_vector vPosition = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 357.712f, 1.f), XMVectorSet(685.190f, 30.696f, 389.852f, 1.f), fRatio);
+			_vector vLookAt = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 358.712f, 1.f), XMVectorSet(685.690f, 30.536f, 391.852f, 1.f), fRatio);
 
 			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 			m_pTransformCom->LookAt(vLookAt);
@@ -301,8 +301,8 @@ HRESULT CCinematicModel_Dororong::Play_Cinematic_Dororong_Meet(_float fTimeDelta
 		else if (m_iAnimationSequence == 1)
 		{
 			m_pBodyModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_dororong_02", FALSE, 1.f, 0.f, FALSE, 95.f);
-			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(679.378f, 33.953f, 350.178f, 1.f));
-			m_pTransformCom->LookAt(XMVectorSet(679.378f, 33.953f, 351.178f, 1.f));
+			m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(679.378f, 34.203f, 350.178f, 1.f));
+			m_pTransformCom->LookAt(XMVectorSet(679.378f, 34.203f, 351.178f, 1.f));
 		}
 		else if (m_iAnimationSequence == 2)
 		{

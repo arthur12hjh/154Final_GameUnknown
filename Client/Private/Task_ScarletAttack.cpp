@@ -64,10 +64,12 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 		if (false == SelectPattern())
 			return NODE_STATE::FAIL;
 	}
-
-	ActionAmount(fTimeDelta);
-	if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
-		m_fAnimationSpeed = 1.2f;
+	else
+	{
+		ActionAmount(fTimeDelta);
+		if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
+			m_fAnimationSpeed = 1.2f;
+	}
 
 	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
 	if (bIsFinished)
@@ -226,17 +228,18 @@ void CTask_ScarletAttack::SelectAttackData()
 	SelectAttackMoveData(pSkillData->iSkillID);
 	m_pBlackBoard->SetAttackData(pSkillData);
 
+	pSkillData->eProPerty & SKILL_PROPERTY::SUPERARMOR ? m_pBlackBoard->SetSuperAmor(true) : m_pBlackBoard->SetSuperAmor(false);
 	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.f, true);
 }
 
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	//m_pSkillData.push(m_pGameManager->Find_SkillData(33));
-	//SelectAttackData();
+	m_pSkillData.push(m_pGameManager->Find_SkillData(51));
+	SelectAttackData();
 
 	//EntranceAttack();
-	if (false == m_pBlackBoard->IsPhaseLastAttack())
+	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
@@ -267,7 +270,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
 		SelectAttackData();
-	}
+	}*/
 
 	return true;
 }
@@ -341,17 +344,26 @@ void CTask_ScarletAttack::BackStepPattern()
 
 void CTask_ScarletAttack::CancelSkillData()
 {
+	_float fAnimationRatio = m_pOwner->Get_AnimationRatio();
 	_float fDistance = m_pBlackBoard->GetTargetDistance();
 	auto pSkillData = m_pBlackBoard->GetAttackData();
-
-	if (nullptr == pSkillData)
-		return;
 
 	if (22 == pSkillData->iSkillID)
 	{
 		auto NextSkillData = m_pSkillData.front();
 		if (NextSkillData->fRange >= fDistance)
 			SelectAttackData();
+	}
+	else if(20 == pSkillData->iSkillID)
+	{
+		if (m_pBlackBoard->bIsEnableEntarnceAttack())
+		{
+			if (0.66f <= fAnimationRatio)
+			{
+				m_pBlackBoard->SetEntarnceAttack(false);
+				m_pBlackBoard->SetSuperAmor(false);
+			}
+		}
 	}
 }
 

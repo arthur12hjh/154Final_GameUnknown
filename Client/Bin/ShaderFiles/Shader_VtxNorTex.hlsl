@@ -86,6 +86,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     Out.vORM = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -126,10 +127,15 @@ PS_OUT PS_DESERT_TERRAIN(PS_IN In)
     Out.vNormal = Calc_TerrainNormal(g_NormalTexture, In.vTexcoord * 50.f, In.vNormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     Out.vORM = float4(1.f, 0.8f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
 
+/* 
+맵툴용 셰이더 패스
+지우지 말것
+*/
 PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
 {
     PS_OUT Out;
@@ -165,6 +171,7 @@ PS_OUT PS_DESERT_TERRAIN_MAPTOOL(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 1.0f);
     Out.vORM = float4(1.f, 0.8f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }

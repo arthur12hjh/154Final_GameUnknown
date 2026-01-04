@@ -35,36 +35,57 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 	CScarletBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 	_uint iCurrentPhaseIndex = ENUM_CLASS(ePhase);
 
-	switch (iCurrentPhaseIndex)
+	if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
 	{
-	case 0:
-		CGameManager::GetInstance()->Play_Cinematic(142);
-		break;
-	case 1:
-		CGameManager::GetInstance()->Play_Cinematic(143);
-		break;
+		m_pBlackBoard->Set_PlayCutScene();
+		switch (iCurrentPhaseIndex)
+		{
+		case 0:
+			CGameManager::GetInstance()->Play_Cinematic(142, [&]() { FinishedCutScene(); });
+			break;
+		case 1:
+			CGameManager::GetInstance()->Play_Cinematic(143, [&]() { FinishedCutScene(); });
+			break;
+		}
 	}
 
-	// 나중에 수정할 코드
-	//WCHAR szMessage[MAX_PATH] = {};
-	//wsprintf(szMessage, TEXT("%d 번째 컷씬 재생중입니다"), iCrrentPhaseIndex);
-	//MSG_BOX_TEXT(szMessage);
+	if (m_bIsPlayEnd)
+	{
+		m_bIsPlayEnd = false;
+		return NODE_STATE::COMPLETE;
+	}
 
+	return NODE_STATE::RUNNING;
+}
+
+void CTask_CutScene::FinishedCutScene()
+{
+	CScarletBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+	_uint iCurrentPhaseIndex = ENUM_CLASS(ePhase);
 
 	auto ePreState = m_pBlackBoard->GetPreState();
-
 	// 대충 컷씬이 끝나면 여기서 End 함수를 호출해서 할거임 지금은 그냥 Idle로만 바꿀예정
-	m_pBlackBoard->Set_BossPhase(CScarletBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
-	m_pBlackBoard->SetCurState(CScarletBlackBoard::BOSS_STATE::IDLE);
-	m_pBlackBoard->SetEntarnceAttack(true);
+	if (m_pBlackBoard->IsLastPhase())
+	{
+		if(1 == m_pNaytiba->GetMonsterID())
+			m_pNaytiba->Excution();
+		else
+			m_pNaytiba->Set_Dead(true);
+	}
+	else
+	{
+		m_pBlackBoard->Set_BossPhase(CScarletBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
+		m_pBlackBoard->SetCurState(CScarletBlackBoard::BOSS_STATE::IDLE);
+		m_pBlackBoard->SetEntarnceAttack(true);
 
-	if (CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
-		m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
-	m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
-	m_pBlackBoard->Reset_State();
+		if (CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
+			m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
+		m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);
+		m_pBlackBoard->Reset_State();
+	}
 
-	return NODE_STATE::COMPLETE;
-	//return NODE_STATE::RUNNING;
+
+	m_bIsPlayEnd = true;
 }
 
 CTask_CutScene* CTask_CutScene::Create(CBehaviorTree* pOwnerTree)

@@ -131,7 +131,8 @@ namespace Engine
 		SPOT,
 		OCCLUSION,
 		SHADOW_BLUR_X,
-		COMBINE_SHADOW
+		COMBINE_SHADOW,
+		FXAA
 	};
 
 	

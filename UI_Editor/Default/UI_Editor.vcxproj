@@ -299,6 +299,7 @@
     <ClCompile Include="..\..\Client\Private\UIPotion.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotionCount.cpp" />
     <ClCompile Include="..\..\Client\Private\UIPotionStack.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIResult.cpp" />
     <ClCompile Include="..\..\Client\Private\UIRushSlot.cpp" />
     <ClCompile Include="..\..\Client\Private\UIScore.cpp" />
     <ClCompile Include="..\..\Client\Private\UIScript.cpp" />

@@ -240,12 +240,6 @@ float NDF_ggxtr(float3 vNormal, float3 vHalfWayVector, float fAlpha) // NormalDi
     return (nom / fDenom);
 }
 
-// F->G
-// GschlickGGX(n, v, k) 
-// k는 이하 두개 조명 조건에 따라 가변적임
-// Direct //  Kdir -> ((a + 1) * (a + 1)) / 8 // direct lighting 추천
-// IBL Lighting // Kibl -> a * a / 2 // 이미지 기반 조명기법
-
 float Geometry_SchlickGGX(float NdotV, float fK)
 {
     return NdotV / (NdotV * (1.0f - fK) + fK);
@@ -265,7 +259,6 @@ float Geometry_Smith(float3 vNormal, float3 vFromView, float3 vFromLight, float 
     return Geometry_SchlickGGX(NdotV, k) * Geometry_SchlickGGX(NdotL, k);
 }
 
-// F -> F
 float3 Fresnel_Schlick(float cosTheta, float3 F0)
 {
     // 모서리 부분의 반사
@@ -293,7 +286,6 @@ PS_OUT_LIGHT PBR_Light(
     float fD = NDF_ggxtr(vNormal, vHalf, fAlpha);
     float fG = Geometry_Smith(vNormal, vFromView, vFromLight, fK);
 
-    // 금속/비금속에 따른 F0
     float3 vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vF0Base, fMetallic);
     float3 vF = Fresnel_Schlick(saturate(dot(vHalf, vFromView)), vF0);
 
@@ -301,27 +293,24 @@ PS_OUT_LIGHT PBR_Light(
     float fDenom = max(4.f * fNdotL * fNdotV, 1e-7);
     float3 vSpecBRDF = vNumerator / fDenom;
 
-    // 스페큘러 반사광 강화
-    // 금속은 매우 세게, 비금속은 약하게
-    float fSpecBoostMetal = lerp(1.0f, 4.0f, saturate(fMetallic)); // 금속 → +4x
-    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic); // 비금속 → 60% 정도만 유지
+    float fSpecBoostMetal = lerp(1.0f, 4.0f, saturate(fMetallic)); 
+    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic); 
 
     // 비금속이면 약하게, 금속이면 매우 강하게
     float fFinalSpecBoost = lerp(fSpecBoostNonMetal, fSpecBoostMetal, fMetallic);
     vSpecBRDF *= fFinalSpecBoost;
 
-    // 하이라이트가 너무 퍼지지 않도록 살짝 선명하게
-    //vSpecBRDF = pow(vSpecBRDF, lerp(1.0f, 0.8f, fMetallic));
-
     // 스페큘러 디퓨즈 줄이기
-    // 기존 kD를 전체적으로 약하게
     float3 vKS = vF;
-    float3 vKD = (1.f - vKS) * (1.f - fMetallic);
 
-    // 디퓨즈 자체 약화 (스페큘러가 강해질 때 과충돌 방지)
+    float fNonMetalFactor = 1.0f - fMetallic;
+    // 비금속 쪽은 그대로, 메탈릭 쪽은 더 빨리 죽도록 제곱
+    fNonMetalFactor *= fNonMetalFactor;
+
+    float3 vKD = (1.f - vKS) * fNonMetalFactor;
     vKD *= 0.8f;
 
-    // 비금속 반사 약하게
+    // 비금속 반사 약하게 보정
     if (fMetallic < 0.1f)
     {
         vSpecBRDF *= 0.4f; // 비금속 → 반사광 약화
@@ -332,11 +321,12 @@ PS_OUT_LIGHT PBR_Light(
     float fBackLight = saturate(dot(vNormal, -vFromLight)); // 뒤에서 비치는 조명
     float fBackBoost = smoothstep(0.f, 1.0f, fBackLight);
     
-    // 역광일 때 vKD * Albedo 를 살짝 부스트
-    float fBackDiffuseBoost = lerp(1.0f, 3.f, fBackBoost);
+    float fBackBoostForDiffuse = fBackBoost * (1.0f - fMetallic);
+    float fBackDiffuseBoost = lerp(1.0f, 3.f, fBackBoostForDiffuse);
+
     vKD *= fBackDiffuseBoost;
 
-    // 직접광
+    // 직접광 디퓨즈
     Out.vShade = float4((vKD * vAlbedo) * (fNdotL * fAttenuation) * vLightColor, 1.f);
 
     // 환경광(SSAO 적용)
@@ -352,21 +342,14 @@ PS_OUT_LIGHT PBR_Light(
     float3 vAmbientSpec = vFAmb * lerp(0.02f, 0.08f, fMetallic) * (1 - fRoughness * fRoughness);
     Out.vSpecular.xyz += vAmbientSpec;
 
-     
-    //위에서 계산한 역광 항 이용
-    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView)); // 실루엣일수록 강하게
+    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView)); 
+    float fRimMask = (1.0f - fMetallic) * fBackLight * fViewEdge;
 
-    // 금속만 림라이트 효과 적용
-    float fMetalRim = fMetallic * fBackLight * fViewEdge;
-
-    // 림라이트 스펙큘러 색: Fresnel 기반
     float3 vRimF = Fresnel_Schlick(fViewEdge, vF0);
+    float fRimIntensity = 1.5f;
 
-    // 강도 조절
-    float fRimIntensity = 1.5f; // 원하는만큼 조절
-    float3 vRimSpec = vRimF * fRimIntensity * fMetalRim;
+    float3 vRimSpec = vRimF * fRimIntensity * fRimMask;
 
-    // 기존 스페큘러에 add
     Out.vSpecular.xyz += vRimSpec * vAlbedo * fAttenuation;
     
     return Out;

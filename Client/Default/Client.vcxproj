@@ -160,6 +160,7 @@
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
     <ClInclude Include="..\public\BeatSaberSpawner.h" />
+    <ClInclude Include="..\public\Bullet_Split.h" />
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
@@ -462,6 +463,7 @@
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
     <ClInclude Include="..\Public\UIPopup.h" />
+    <ClInclude Include="..\Public\UIResult.h" />
     <ClInclude Include="..\Public\UIScore.h" />
     <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UIShop.h" />
@@ -501,6 +503,7 @@
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
     <ClCompile Include="..\private\BeatSaberSpawner.cpp" />
+    <ClCompile Include="..\private\Bullet_Split.cpp" />
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
@@ -817,6 +820,7 @@
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\Private\UIPopup.cpp" />
+    <ClCompile Include="..\Private\UIResult.cpp" />
     <ClCompile Include="..\Private\UIScore.cpp" />
     <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UIShop.cpp" />
