@@ -263,9 +263,9 @@ void CGameManager::Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTa
     m_pShaderManager->Set_Desc_ReserveDeferred(strReserveDeferredTag, pArg);
 }
 
-void CGameManager::Change_ShaderSetting(LEVEL eLevelID)
+void CGameManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIndex)
 {
-    m_pShaderManager->Change_ShaderSetting(eLevelID);
+    m_pShaderManager->Change_ShaderSetting(eLevelID, iIndex);
 }
 
 #pragma region LOCKON

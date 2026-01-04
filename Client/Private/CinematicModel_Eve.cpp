@@ -5,6 +5,7 @@
 #include "Face_Player.h"
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
+#include "Hairpin_Player.h"
 #include "Weapon.h"
 
 #include "GameInstance.h"
@@ -350,6 +351,15 @@ HRESULT CCinematicModel_Eve::Ready_PartObjects()
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
 		return E_FAIL;
 
+	CHairpin_Player::HAIRPIN_PLAYER_DESC HairpinDesc{};
+	HairpinDesc.pParentTransform = m_pTransformCom;
+	HairpinDesc.pBodyPtr = pBody;
+
+	/* Part_Hairpin */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hairpin_Player"),
+		TEXT("Part_Hairpin"), &HairpinDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -412,8 +422,8 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_GoodBye()
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
 	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Eve_b", FALSE, 2.f, 0.f, TRUE);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(812.065f, 98.135f, 1507.918f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(812.065f, 98.135f, 1517.918f, 1.f));
 
 	return S_OK;
 }
