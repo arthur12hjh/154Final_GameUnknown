@@ -7,10 +7,10 @@ NS_BEGIN(Client)
 class CLevel_BeatSaber : public CLevel
 {
 public:
-	typedef struct SavedObjectInfo
+	typedef struct SavedDororongSaberInfo
 	{
 		_float4x4	    worldMatrix;
-	}SAVEDOBJECTINFO;
+	}SAVEDDORORONGSABERINFO;
 
 	typedef struct NoteDataFile
 	{
@@ -55,6 +55,8 @@ private:
 	//HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT						Load_Light_Data();
+	HRESULT						Load_Dororong_Saber_Objects(const _char* szFilePath);
+	HRESULT						Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	NOTE_DATA_NAME*				Get_FindSongFile(const wstring& szFileTag);
 
 public:

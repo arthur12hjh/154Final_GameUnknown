@@ -61,6 +61,11 @@ public:
 		_uint			iNpcID = 0;
 	}SAVEDNPCINFO;
 
+	typedef struct SavedDororongSaberInfo
+	{
+		_float4x4	    worldMatrix;
+	}SAVEDDORORONGSABERINFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -88,6 +93,7 @@ public:
 	void Update_Rotation();
 	HRESULT Save_Map_Objects(const _char* szFilePath);
 	HRESULT Save_Monster_Objects(const _char* szFilePath);
+	HRESULT Save_Dororong_Saber_Objects(const _char* szFilePath);
 
 	HRESULT Save_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Interaction_Objects_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
@@ -95,9 +101,12 @@ public:
 	HRESULT Save_Lift_Platform_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Monsters_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Dororong_Saber_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
 	HRESULT Load_Monster_Objects(const _char* szFilePath);
+	HRESULT Load_Dororong_Saber_Objects(const _char* szFilePath);
 
 	HRESULT Load_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Interaction_Objects_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
@@ -106,6 +115,7 @@ public:
 	HRESULT Load_Monsters_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Npcs_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
+	HRESULT Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 

@@ -3,19 +3,16 @@
 #include "Dororong_Saber.h"
 
 NS_BEGIN(Engine)
-class CModel;
-class CShader;
-class CVIBuffer_Cube;
-class CCollider;
+
 NS_END
 
 NS_BEGIN(Tool_Map)
-class CPad : public CDororong_Saber
+class CBeat_Indicator : public CDororong_Saber
 {
 private:
-	CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPad(const CPad& Prototype);
-	virtual ~CPad() = default;
+	CBeat_Indicator(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CBeat_Indicator(const CBeat_Indicator& Prototype);
+	virtual ~CBeat_Indicator() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -32,7 +29,7 @@ private:
 	HRESULT					Bind_ShaderResources();
 
 public:
-	static CPad* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CBeat_Indicator* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void			Free() override;
 };

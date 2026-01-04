@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Pad.h"
+#include "Beat_Indicator.h"
 #include "GameInstance.h"
 
-CPad::CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CBeat_Indicator::CBeat_Indicator(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CDororong_Saber(pDevice, pContext)
 {
 }
 
-CPad::CPad(const CPad& Prototype) :
+CBeat_Indicator::CBeat_Indicator(const CBeat_Indicator& Prototype) :
     CDororong_Saber(Prototype)
 {
 }
 
-HRESULT CPad::Initialize_Prototype()
+HRESULT CBeat_Indicator::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CPad::Initialize(void* pArg)
+HRESULT CBeat_Indicator::Initialize(void* pArg)
 {
 
     if (FAILED(__super::Initialize(pArg)))
@@ -29,19 +29,21 @@ HRESULT CPad::Initialize(void* pArg)
     return S_OK;
 }
 
-void CPad::Priority_Update(_float fTimeDelta)
+void CBeat_Indicator::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CPad::Update(_float fTimeDelta)
+void CBeat_Indicator::Update(_float fTimeDelta)
 {
     /*_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCollider->UpdateColiision(WorldMat);*/
 
-    /*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) || 
+        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K) || 
+        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
     {
-		m_bIsColorChange = true;
-        
+        m_bIsColorChange = true;
+
     }
     if (m_bIsColorChange)
     {
@@ -63,10 +65,11 @@ void CPad::Update(_float fTimeDelta)
             m_fColorWeight = 0.f;
 
         m_fTimeAcc = 0.f;
-    }*/
+    }
+
 }
 
-void CPad::Late_Update(_float fTimeDelta)
+void CBeat_Indicator::Late_Update(_float fTimeDelta)
 {
     /*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {*/
@@ -81,16 +84,10 @@ void CPad::Late_Update(_float fTimeDelta)
 
 }
 
-HRESULT CPad::Render()
+HRESULT CBeat_Indicator::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
-
-   /* COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
-    pObbCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
-
-    if (FAILED(m_pShaderCom->Begin(0)))
-        return E_FAIL;*/
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fColorWeight", &m_fColorWeight, sizeof(_float))))
         return E_FAIL;
@@ -99,14 +96,14 @@ HRESULT CPad::Render()
     m_pVIBufferCom->Bind_Resources();
     m_pVIBufferCom->Render();*/
 
-    m_pShaderCom->Begin(3);
+    m_pShaderCom->Begin(4);
     m_pVIBufferCom->Bind_Resources();
     m_pVIBufferCom->Render();
 
     return S_OK;
 }
 
-HRESULT CPad::Ready_Components()
+HRESULT CBeat_Indicator::Ready_Components()
 {
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Shader_VtxCube"),
@@ -130,7 +127,7 @@ HRESULT CPad::Ready_Components()
     return S_OK;
 }
 
-HRESULT CPad::Bind_ShaderResources()
+HRESULT CBeat_Indicator::Bind_ShaderResources()
 {
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
         return E_FAIL;
@@ -143,29 +140,29 @@ HRESULT CPad::Bind_ShaderResources()
     return S_OK;
 }
 
-CPad* CPad::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CBeat_Indicator* CBeat_Indicator::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CPad* pPad = new CPad(pDevice, pContext);
-    if (FAILED(pPad->Initialize_Prototype()))
+    CBeat_Indicator* pBeat_Indicator = new CBeat_Indicator(pDevice, pContext);
+    if (FAILED(pBeat_Indicator->Initialize_Prototype()))
     {
-        Safe_Release(pPad);
-        MSG_BOX("Create Fail : Pad");
+        Safe_Release(pBeat_Indicator);
+        MSG_BOX("Create Fail : Beat_Indicator");
     }
-    return pPad;
+    return pBeat_Indicator;
 }
 
-CGameObject* CPad::Clone(void* pArg)
+CGameObject* CBeat_Indicator::Clone(void* pArg)
 {
-    CPad* pPad = new CPad(*this);
-    if (FAILED(pPad->Initialize(pArg)))
+    CBeat_Indicator* pBeat_Indicator = new CBeat_Indicator(*this);
+    if (FAILED(pBeat_Indicator->Initialize(pArg)))
     {
-        Safe_Release(pPad);
-        MSG_BOX("Create Fail : Pad");
+        Safe_Release(pBeat_Indicator);
+        MSG_BOX("Create Fail : Beat_Indicator");
     }
-    return pPad;
+    return pBeat_Indicator;
 }
 
-void CPad::Free()
+void CBeat_Indicator::Free()
 {
     __super::Free();
 }
