@@ -56,6 +56,15 @@ void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Result();
+	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Close_Result();
+	}
+
 	/*if (m_isOverlay && m_pHUD)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
@@ -110,6 +119,9 @@ HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Result"))))
 		return E_FAIL;
 
 	return S_OK;
