@@ -170,7 +170,7 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
     _float fCamDist = XMVectorGetX(
         XMVector3Length( vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
-    if (fCamDist < 300.f)
+    if (fCamDist < 200.f)
     {
         CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
         if (Naytiba)
