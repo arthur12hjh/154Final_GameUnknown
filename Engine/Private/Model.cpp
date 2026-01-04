@@ -655,7 +655,7 @@ HRESULT CModel::Import_Animations(vector<class CAnimation*>* pAnimations, _char*
 
 HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char* pTextureFilePath, const _char* pBindTag, _bool bIsSaved)
 {
-ㅊ    if (iMeshIndex >= m_iNumMeshes)
+    if (iMeshIndex >= m_iNumMeshes)
         return E_FAIL;
 
     _uint      iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();

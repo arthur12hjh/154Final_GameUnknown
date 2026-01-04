@@ -1,7 +1,7 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
@@ -975,11 +975,16 @@ PS_NONLIGHT_OUT PS_LASER_LIGHTNING_BLOOM(PS_IN In)
 PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
 {
     PS_NONLIGHT_OUT Out;
-    float4 pos = (g_WorldMatrix._41_42_43_44 - In.vWorldPos) * 0.03f;
+    matrix worldmat = g_CamMatrix;
+    worldmat._11_12_13_14 = normalize(worldmat._11_12_13_14);
+    worldmat._21_22_23_24 = normalize(worldmat._21_22_23_24);
+    worldmat._31_32_33_34 = normalize(-worldmat._31_32_33_34);
+    worldmat._41_42_43_44 = float4(0, 0, 0, 1);
+    float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat) * 0.01f;
     pos.y *= -1;
-    pos.xy += pos.z;
+    //pos.xy += pos.z;
     Out.vColor.xy = pos.xy;
-    Out.vColor.w = 0;
+    Out.vColor.zw = 0;
     return Out;
 }
 
