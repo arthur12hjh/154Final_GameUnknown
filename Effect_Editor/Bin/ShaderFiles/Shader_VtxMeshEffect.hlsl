@@ -970,6 +970,20 @@ PS_NONLIGHT_OUT PS_LASER_LIGHTNING_BLOOM(PS_IN In)
     return Out;
 }
 
+// * max((abs(1 - saturate(g_fTime * 3))) * 4, 0.8)
+/* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
+PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float4 pos = (g_WorldMatrix._41_42_43_44 - In.vWorldPos) * 0.03f;
+    pos.y *= -1;
+    pos.xy += pos.z;
+    Out.vColor.xy = pos.xy;
+    Out.vColor.w = 0;
+    return Out;
+}
+
+
 BlendState BS_BlendAlphaMax
 {
     BlendEnable[0] = true;
@@ -1225,5 +1239,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LASER_LIGHTNING_BLOOM();
+    }
+    // idx 24
+    pass Shock_Motion_Blur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SHOCK_MOTION_BLUR();
     }
 }

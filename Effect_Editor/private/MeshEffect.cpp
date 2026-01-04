@@ -66,6 +66,25 @@ HRESULT CMeshEffect::Render()
 	return S_OK;
 }
 
+HRESULT CMeshEffect::Render_MotionBlur()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+	m_iRenderCount++;
+	return S_OK;
+}
+
 void CMeshEffect::Set_Components(MESH_DATA tData)
 {
 	Safe_Release(m_pSizeDiagramSRV);
@@ -105,6 +124,9 @@ void CMeshEffect::Set_Components(MESH_DATA tData)
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
+		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
 		break;
 	}
 
@@ -180,6 +202,9 @@ void CMeshEffect::Set_Replay(MESH_DATA tData)
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 
 	ID3D11Buffer* pBuffer = nullptr;
@@ -239,6 +264,9 @@ void CMeshEffect::Update(MESH_DATA tData)
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
+		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
 		break;
 	}
 }
