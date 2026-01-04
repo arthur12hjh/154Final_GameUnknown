@@ -9,6 +9,7 @@ class CVIBuffer_Instance_Model;
 class CCollider;
 NS_END
 
+/* 기가스 맵 풀 (진짜임) */
 NS_BEGIN(Client)
 class CInstance_Desert : public CActor
 {

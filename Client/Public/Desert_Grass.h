@@ -10,6 +10,8 @@ NS_END
 
 NS_BEGIN(Client)
 
+/* 기가스맵 마른 풀 */
+
 class CDesert_Grass final : public CActor
 {
 private:

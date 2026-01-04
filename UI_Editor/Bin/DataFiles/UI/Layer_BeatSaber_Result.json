@@ -1,0 +1,100 @@
+[
+    {
+        "Children": [
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Song_Thumbnail",
+                    "szTextureComTag": "Com_Texture_UI_Song_Thumbnail"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 1600.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 49,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Open_Result",
+                        "szPrefabTag": "Open_Result"
+                    },
+                    {
+                        "szAnimTag": "Close_Result",
+                        "szPrefabTag": "Close_Result"
+                    }
+                ],
+                "szLayerTag": "Layer_BeatSaber_Result",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "UI_Thumbnail_1-1",
+                "szUITag": "UI_Thumbnail"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": 1600.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 50,
+        "iDrawType": 1,
+        "iLevel": 5,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Open_Result",
+                "szPrefabTag": "Open_Result"
+            },
+            {
+                "szAnimTag": "Close_Result",
+                "szPrefabTag": "Close_Result"
+            }
+        ],
+        "szEvents": {
+            "Get_Combo_Result": [
+                {
+                    "szActionTag": "Get_Combo_Result",
+                    "szArg": "Get_Combo_Result",
+                    "szSubscribeEventTags": [
+                        "Combo_Result"
+                    ],
+                    "szTypeTag": "ActionEvent"
+                }
+            ],
+            "Get_Score_Result": [
+                {
+                    "szActionTag": "Get_Score_Result",
+                    "szArg": "Get_Score_Result",
+                    "szSubscribeEventTags": [
+                        "Score_Result"
+                    ],
+                    "szTypeTag": "ActionEvent"
+                }
+            ],
+            "Get_Rank_Result": [
+                {
+                    "szActionTag": "Get_Rank_Result",
+                    "szArg": "Get_Rank_Result",
+                    "szSubscribeEventTags": [
+                        "Rank_Result"
+                    ],
+                    "szTypeTag": "ActionEvent"
+                }
+            ]
+        },
+        "szLayerTag": "Layer_BeatSaber_Result",
+        "szProtoTag": "Prototype_GameObject_UI_Result",
+        "szUIID": "UI_Result_0",
+        "szUITag": "UI_Result"
+    }
+]

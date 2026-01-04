@@ -54,6 +54,7 @@
 
 #include "UINeonNumber.h"
 #include "UIScore.h"
+#include "UIResult.h"
 
 #pragma endregion
 
@@ -1051,6 +1052,14 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Combo"),
 		TEXT("Com_Texture_UI_Combo"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Combo.dds"), 1);
 	
+	/* For.Prototype_Component_UI_Texture_Score */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Score"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Score.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Score"),
+		TEXT("Com_Texture_UI_Score"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Score.dds"), 1);
+	
 	/* For.Prototype_Component_UI_Texture_Numbers */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Numbers"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Numbers.dds"), 1))))
@@ -1061,11 +1070,27 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 	
 	/* For.Prototype_Component_UI_Texture_Rank */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Rank"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.dds"), 5))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.png"), 5))))
 		return E_FAIL;
 
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Rank"),
-		TEXT("Com_Texture_UI_Rank"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.dds"), 5);
+		TEXT("Com_Texture_UI_Rank"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.png"), 5);
+	
+	/* For.Prototype_Component_UI_Result_BG */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Result_BG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/Result_BG_%d.dds"), 1))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Result_BG"),
+		TEXT("Com_Texture_UI_Result_BG"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/Result_BG_%d.dds"), 1);
+	
+	/* For.Prototype_Component_UI_Texture_Song_Thumbnail */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Song_Thumbnail"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Thumbnail/Song_Thumbnail_%d.dds"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Song_Thumbnail"),
+		TEXT("Com_Texture_UI_Song_Thumbnail"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Thumbnail/Song_Thumbnail_%d.dds"), 2);
 
 	/* For.Prototype_GameObject_UI_NeonNumber */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_NeonNumber"),
@@ -1075,6 +1100,11 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 	/* For.Prototype_GameObject_UI_Score */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Score"),
 		CUIScore::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_Result */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Result"),
+		CUIResult::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 	/* ------------------------------------------------------------------------------------------- */

@@ -49,6 +49,9 @@ public :
 	const Naytiba_NetWork_Desc*			GetBossDefaultInfo() { return m_BossDefualtInfo; }
 	const Naytiba_Desc*					GetBossInfo() { return m_BossCurrentInfo; }
 
+	void								SetSuperAmor(_bool bFlag);
+	_bool								IsSuperAmor() { return m_bIsSuperAmor; }
+
 	void								SetTargetDistacne();
 	_float								GetTargetDistance() { return m_fTargetDistance; }
 
@@ -116,6 +119,7 @@ protected :
 	NAYITBA_EXECUTION_TYPE						m_eExcution = { NAYITBA_EXECUTION_TYPE::END };
 	_bool								m_bIsParryAttack = { false };
 
+	_bool								m_bIsSuperAmor = { false };
 	_float								m_fTargetDistance = {};
 	_float2								m_fAttackDelay = {};
 	_float2								m_vGroggyTime = { 0.f, 4.0f };

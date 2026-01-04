@@ -166,14 +166,16 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
+    _vector vPosition = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3];
     _float fCamDist = XMVectorGetX(
-        XMVector3Length(
-            m_pTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition()
-            )));
+        XMVector3Length( vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
-    if (fCamDist < 100.f)
+    if (fCamDist < 300.f)
     {
-        m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+        CNaytiba* Naytiba = static_cast<CNaytiba*>(m_pParent);
+        if(NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
+            m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+
         m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     }
 

@@ -908,11 +908,14 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 		}
 		else
 		{
-			if (0 < m_MonsterInfo.iCurrentStamina)
-				m_MonsterInfo.iCurrentStamina--;
+			if (0 != pSkillDesc->iSkillID)
+			{
+				if (0 < m_MonsterInfo.iCurrentStamina)
+					m_MonsterInfo.iCurrentStamina--;
 
-			if(0 == m_MonsterInfo.iCurrentStamina)
-				ResetBodyColor();
+				if (0 == m_MonsterInfo.iCurrentStamina)
+					ResetBodyColor();
+			}
 		}
 	}
 	else

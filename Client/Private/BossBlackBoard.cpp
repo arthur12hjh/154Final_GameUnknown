@@ -25,6 +25,11 @@ void CBossBlackBoard::SetTarget(CGameObject* pGameObject)
     m_pTarget = pGameObject;
 }
 
+void CBossBlackBoard::SetSuperAmor(_bool bFlag)
+{
+    m_bIsSuperAmor = bFlag;
+}
+
 void CBossBlackBoard::SetTargetDistacne()
 {
     if (nullptr == m_pTarget)

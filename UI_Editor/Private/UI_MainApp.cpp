@@ -60,7 +60,7 @@ HRESULT CUI_MainApp::Initialize()
 	if (FAILED(Ready_Mouse()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::BEATSABER_GAME)))
+	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
 		return E_FAIL;
 
 	return S_OK;

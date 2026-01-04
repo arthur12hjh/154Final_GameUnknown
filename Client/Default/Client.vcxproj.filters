@@ -1143,6 +1143,15 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Dororong_Saber\Rail">
       <UniqueIdentifier>{284604d9-ba96-43b2-a2d4-f351c65bba64}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult">
+      <UniqueIdentifier>{d373463f-8e52-44b7-9dae-0b97d978719f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Split">
+      <UniqueIdentifier>{273b3926-666e-4710-80ac-7a5a544485ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
+      <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2191,8 +2200,14 @@
     <ClInclude Include="..\public\Rail.h">
       <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Pad.h">
-      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+	<ClInclude Include="..\public\Pad.h">
+		<Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\UIResult.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bullet_Split.h">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3207,6 +3222,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Pad.cpp">
       <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\UIResult.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bullet_Split.cpp">
+      <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@
 
 #include "UIPopup.h"
 #include "UIShop.h"
+#include "UIResult.h"
 #include "UILockOn.h"
 #include "Lift_Controller.h"
 
@@ -319,6 +320,40 @@ void CUIHUD::Close_Shop()
 		return;
 
 	pShop->Close_Shop();
+}
+
+void CUIHUD::Open_Result()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_BeatSaber_Result"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Result"));
+
+	CUIResult* pResult = dynamic_cast<CUIResult*>(pObj->second);
+
+	if (!pResult)
+		return;
+
+	pResult->Open_Result();
+}
+
+void CUIHUD::Close_Result()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_BeatSaber_Result"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Result"));
+
+	CUIResult* pResult = dynamic_cast<CUIResult*>(pObj->second);
+
+	if (!pResult)
+		return;
+
+	pResult->Close_Result();
 }
 
 _bool CUIHUD::Check_isOpenPopup(const _wstring& szPopupTag)

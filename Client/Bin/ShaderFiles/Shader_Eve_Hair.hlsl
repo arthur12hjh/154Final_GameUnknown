@@ -208,9 +208,12 @@ PS_OUT PS_MAIN_HAIR(PS_IN In)
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMtrlOpacity = g_OpacityTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    /*
     vMtrlDiffuse.a = vMtrlOpacity.r;
     if (vMtrlDiffuse.a < 0.1f)
         discard;
+    */
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);

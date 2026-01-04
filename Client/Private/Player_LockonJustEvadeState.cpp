@@ -36,6 +36,11 @@ void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 		m_pPlayer->Set_Animation("Proto_Lockon_Sword_Just_Evade1_backward_3", false, 1.2f);
 		m_eDirection = PLAYER_DIRECTION::BACKWARD;
 	}
+	else
+	{
+		m_pPlayer->Set_Animation("Proto_Lockon_Sword_Just_Evade1_backward_3", false, 1.2f);
+		m_eDirection = PLAYER_DIRECTION::BACKWARD;
+	}
 
 	m_pGameInstance->SetGameSpeed(0.7f);
 }

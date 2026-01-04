@@ -185,6 +185,7 @@ void CTask_GorillaAttack::SelectAttack(_bool bIsForce)
 		m_pSkillData.pop();
 
 		auto pSkill_Data = m_pBlackBoard->GetAttackData();
+		pSkill_Data->eProPerty& SKILL_PROPERTY::SUPERARMOR ? m_pBlackBoard->SetSuperAmor(true) : m_pBlackBoard->SetSuperAmor(false);
 		m_pOwner->Set_Animation(pSkill_Data->szAnimationName, false, 1.0f, 0.12f, true);
 	}
 
