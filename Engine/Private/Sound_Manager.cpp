@@ -83,6 +83,12 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 
 	bool bPlay = FALSE;
 
+	if (m_pChannelArr[eID])
+	{
+		m_pChannelArr[eID]->stop();
+		m_pChannelArr[eID] = nullptr;
+	}
+
 	FMOD_RESULT res = m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[eID]);
 	if (res != FMOD_OK) {
 		printf("playSound error: %s\n", FMOD_ErrorString(res));
@@ -113,6 +119,12 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	if (iter == m_mapSound.end())
 		return;
 
+	if (m_pChannelArr[CHANNELID::BGM])
+	{
+		m_pChannelArr[CHANNELID::BGM]->stop();
+		m_pChannelArr[CHANNELID::BGM] = nullptr;
+	}
+
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[CHANNELID::BGM]);
 	m_pChannelArr[CHANNELID::BGM]->setMode(FMOD_LOOP_NORMAL);
 	m_pChannelArr[CHANNELID::BGM]->setVolume(fVolume);
@@ -134,12 +146,16 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
 	m_pChannelArr[eID]->stop();
+	m_pChannelArr[eID] = nullptr;
 }
 
 void CSound_Manager::Manager_StopAll()
 {
 	for (int i = 0; i < CHANNELID::END; ++i)
+	{
 		m_pChannelArr[i]->stop();
+		m_pChannelArr[i] = nullptr;
+	}
 }
 
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)

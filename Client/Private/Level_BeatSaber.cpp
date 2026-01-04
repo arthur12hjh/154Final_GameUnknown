@@ -303,7 +303,7 @@ CLevel_BeatSaber::NOTE_DATA_NAME* CLevel_BeatSaber::Get_FindSongFile(const wstri
 
 FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
 {
-    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    m_pGameInstance->Manager_StopAll();
     m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
 
     return FMOD_RESULT::FMOD_OK;
