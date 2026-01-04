@@ -93,7 +93,7 @@ private:
 	CNayitbaPartBody*						m_pPartBody = { nullptr };
 
 	_uint									m_iMonsterID = {};
-	const NAYTIBA_NETWORK_DESC*				m_pInitMonsterInfo = {};
+	const NAYTIBA_NETWORK_DESC*				m_pInitMonsterInfo = { nullptr };
 	const CHARACTER_SKILL_DESC*				m_pAttack_Data = { nullptr };
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
