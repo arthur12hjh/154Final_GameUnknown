@@ -1,6 +1,6 @@
 #pragma once
-#include "Maptool_Defines.h"
-#include "Dororong_Saber.h"
+#include "Client_Defines.h"
+#include "Actor.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -9,8 +9,8 @@ class CVIBuffer_Cube;
 class CCollider;
 NS_END
 
-NS_BEGIN(Tool_Map)
-class CPad : public CDororong_Saber
+NS_BEGIN(Client)
+class CPad : public CActor
 {
 private:
 	CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,6 +30,11 @@ public:
 private:
 	HRESULT					Ready_Components();
 	HRESULT					Bind_ShaderResources();
+
+private:
+	_float					m_fColorWeight = { 0.f };
+	_float					m_fTimeAcc = { 0.f };
+	_bool					m_bIsColorChange = { false };
 
 public:
 	static CPad* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

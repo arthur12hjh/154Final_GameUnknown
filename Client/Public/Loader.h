@@ -116,6 +116,7 @@ private:
 
 #pragma region Beat Saber Map
 	HRESULT	Loading_For_BeatSaber_Model(void* pArg);
+	HRESULT	Loading_For_BeatSaber_Map(void* pArg);
 #pragma endregion
 
 

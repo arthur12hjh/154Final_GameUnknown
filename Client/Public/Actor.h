@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 class CShader;
-class CVIBuffer;
+class CVIBuffer_Cube;
 class CRigidBody;
 class CModel;
 NS_END
@@ -47,6 +47,7 @@ protected :
 
 	CModel*						m_pColModelCom = { nullptr };
 	CRigidBody*					m_pRigidBody = { nullptr };
+	CVIBuffer_Cube*				m_pVIBufferCom = { nullptr };
 	_tchar						m_ComponentTag[256] = {};
 
 public:
