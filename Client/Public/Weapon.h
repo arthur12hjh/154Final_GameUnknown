@@ -51,7 +51,6 @@ private:
 	class CEffect*				m_pGigasSpark = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 	_uint						m_iTrail = {};
-	TCHAR						m_szRotationAngle[MAX_PATH] = {};
 	_float3						m_vRotationQuaternion;
 	PLAYER_DESC*				m_pPlayerDesc = { nullptr };
 

@@ -162,6 +162,7 @@
     <ClInclude Include="..\Public\Gigas.h" />
     <ClInclude Include="..\Public\Glass_Scarlet.h" />
     <ClInclude Include="..\Public\Grid.h" />
+    <ClInclude Include="..\Public\HairPin_Character.h" />
     <ClInclude Include="..\Public\Hair_Character.h" />
     <ClInclude Include="..\Public\imconfig.h" />
     <ClInclude Include="..\Public\imgui.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="..\Private\Gigas.cpp" />
     <ClCompile Include="..\Private\Glass_Scarlet.cpp" />
     <ClCompile Include="..\Private\Grid.cpp" />
+    <ClCompile Include="..\Private\HairPin_Character.cpp" />
     <ClCompile Include="..\Private\Hair_Character.cpp" />
     <ClCompile Include="..\Private\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

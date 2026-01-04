@@ -7,6 +7,7 @@
 #include "Face_Player.h"
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
+#include "Hairpin_Player.h"
 #include "Weapon.h"
 #include "CameraBone_Player.h"
 
@@ -456,6 +457,16 @@ HRESULT CPlayer::Ready_PartObjects()
 	/* Part_PonyTail */
 	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		TEXT("Part_PonyTail"), &PonyTailDesc)))
+		return E_FAIL;
+	
+	
+	CHairpin_Player::HAIRPIN_PLAYER_DESC HairpinDesc{};
+	HairpinDesc.pParentTransform = m_pTransformCom;
+	HairpinDesc.pBodyPtr = pBody;
+	
+	/* Part_PonyTail */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hairpin_Player"),
+		TEXT("Part_Hairpin"), &HairpinDesc)))
 		return E_FAIL;
 	
 	CCameraBone_Player::CAMERABONE_DESC CameraBoneDesc{};

@@ -367,8 +367,8 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_GoodBye()
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_GoodBye_Scarlet_b2", FALSE, 2.f, 0.f, TRUE);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(812.065f, 98.135f, 1517.918f, 1.f));
+	m_pTransformCom->LookAt(XMVectorSet(812.065f, 98.135f, 1507.918f, 1.f));
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Weapon")))->SetActive(FALSE);
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Scabbard")))->SetActive(FALSE);
 

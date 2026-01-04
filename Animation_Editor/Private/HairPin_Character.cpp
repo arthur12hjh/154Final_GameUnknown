@@ -1,28 +1,28 @@
 #include "pch.h"
-#include "Weapon.h"
+#include "HairPin_Character.h"
 
 #include "GameInstance.h"
 
 #include "Character.h"
 
-CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CHairPin_Character::CHairPin_Character(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CWeapon::CWeapon(const CWeapon& Prototype) 
+CHairPin_Character::CHairPin_Character(const CHairPin_Character& Prototype)
 	: CPartObject{ Prototype }
 {
 }
 
-HRESULT CWeapon::Initialize_Prototype()
+HRESULT CHairPin_Character::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CWeapon::Initialize(void* pArg)
-{	
-	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
+HRESULT CHairPin_Character::Initialize(void* pArg)
+{
+	HAIRPIN_CHARACTER_DESC* pDesc = static_cast<HAIRPIN_CHARACTER_DESC*>(pArg);
 
 	m_pSocketMatrix = pDesc->pSocketMatrix;
 
@@ -32,8 +32,8 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
-	
+	m_vRotationQuaternion = { 10.4f, -55.4f, 55.0f };
+	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(-0.02f, 0.01f, -0.0f, 1.f));
 	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
 
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
@@ -41,21 +41,14 @@ HRESULT CWeapon::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
-	m_pModelCom->Set_Animation("cine_weapon_idle", TRUE, 1.f, 0.f);
-
 	return S_OK;
 }
 
-void CWeapon::Priority_Update(_float fTimeDelta)
+void CHairPin_Character::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CWeapon::Update(_float fTimeDelta)
-{	
-	m_pModelCom->Play_Animation(fTimeDelta);
-}
-
-void CWeapon::Late_Update(_float fTimeDelta)
+void CHairPin_Character::Update(_float fTimeDelta)
 {
 	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 	_matrix		ParentMatrix = XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
@@ -76,14 +69,13 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	// 
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-#ifdef _DEBUG
-	//m_pGameInstance->Add_DebugComponent(m_pColliderCom);
-
-#endif
 }
 
-HRESULT CWeapon::Render()
+void CHairPin_Character::Late_Update(_float fTimeDelta)
+{
+}
+
+HRESULT CHairPin_Character::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -96,22 +88,18 @@ HRESULT CWeapon::Render()
 		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-			return E_FAIL;
-
 		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;		
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
 
-	
 
 	return S_OK;
 }
 
-HRESULT CWeapon::Render_Shadow()
+HRESULT CHairPin_Character::Render_Shadow()
 {
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -135,15 +123,15 @@ HRESULT CWeapon::Render_Shadow()
 	return S_OK;
 }
 
-HRESULT CWeapon::Ready_Components()
+HRESULT CHairPin_Character::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Weapon"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_HairPin"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-	
+
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -160,11 +148,11 @@ HRESULT CWeapon::Ready_Components()
 	return S_OK;
 }
 
-HRESULT CWeapon::Bind_ShaderResources()
+HRESULT CHairPin_Character::Bind_ShaderResources()
 {
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
-		return E_FAIL;	
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -173,9 +161,9 @@ HRESULT CWeapon::Bind_ShaderResources()
 	return S_OK;
 }
 
-CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CHairPin_Character* CHairPin_Character::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon* pInstance = new CWeapon(pDevice, pContext);
+	CHairPin_Character* pInstance = new CHairPin_Character(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -186,20 +174,20 @@ CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CGameObject* CWeapon::Clone(void* pArg)
+CGameObject* CHairPin_Character::Clone(void* pArg)
 {
-	CWeapon* pInstance = new CWeapon(*this);
+	CHairPin_Character* pInstance = new CHairPin_Character(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CWeapon");
+		MSG_BOX("Failed to Cloned : CHairPin_Character");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CWeapon::Free()
+void CHairPin_Character::Free()
 {
 	__super::Free();
 
