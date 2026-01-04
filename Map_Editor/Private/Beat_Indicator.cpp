@@ -59,7 +59,7 @@ void CBeat_Indicator::Update(_float fTimeDelta)
         }
     }
     else {
-        m_fColorWeight -= fTimeDelta * 3.f;
+        m_fColorWeight -= fTimeDelta * 8.f;
 
         if (m_fColorWeight < 0.f)
             m_fColorWeight = 0.f;

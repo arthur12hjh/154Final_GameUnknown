@@ -29,9 +29,16 @@ private:
 	HRESULT					Bind_ShaderResources();
 
 private:
+	_float					m_fTimeArr[3] = { 0.f, 0.f, 0.f };
+	_bool					m_bIsColorArr[3] = { false, false, false };
+
 	_float					m_fColorWeight = { 0.f };
 	_float					m_fTimeAcc = { 0.f };
 	_bool					m_bIsColorChange = { false };
+
+	_bool					m_bIsIdx0 = { false };
+	_bool					m_bIsIdx1 = { false };
+	_bool					m_bIsIdx2 = { false };
 
 public:
 	static CRail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
