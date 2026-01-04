@@ -46,6 +46,9 @@ HRESULT CMeshParticle::Initialize_Prototype(const MESH_PARTICLE_DATA* pMeshParti
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 	CVIBuffer_Instance_MeshParticle::MESH_PARTICLE_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pMeshParticleData->iNumInstance;
@@ -159,6 +162,43 @@ void CMeshParticle::Late_Update(_float fTimeDelta)
 }
 
 HRESULT CMeshParticle::Render()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
+	if (m_tData.bisMeshTexture) {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+	else {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+
+	m_iRenderCount++;
+	return S_OK;
+}
+
+HRESULT CMeshParticle::Render_MotionBlur()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;

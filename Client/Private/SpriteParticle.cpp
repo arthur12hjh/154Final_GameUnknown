@@ -49,6 +49,9 @@ HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pSprit
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pSpriteParticleData->iNumInstance;

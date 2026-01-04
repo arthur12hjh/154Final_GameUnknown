@@ -2,12 +2,12 @@
     {
         "AnimationNotifies": [
           {
-            "fNumData01": 0.0,
+            "fNumData01": 1.3,
             "fNumData02": 0.0,
             "fNumData03": 0.0,
             "fNumData04": 0.0,
-            "iNotifyKeyFrame": 23,
-            "iNumData01": 0,
+            "iNotifyKeyFrame": 25,
+            "iNumData01": 3,
             "iNumData02": 0,
             "iNumData03": 0,
             "iNumData04": 0,
@@ -31,8 +31,8 @@
               0.0
             ],
             "vNotifyRotation": [
+              90.0,
               270.0,
-              0.0,
               0.0
             ],
             "vNotifyScale": [
@@ -42,12 +42,12 @@
             ]
           },
           {
-            "fNumData01": 0.0,
+            "fNumData01": 1.3,
             "fNumData02": 0.0,
             "fNumData03": 0.0,
             "fNumData04": 0.0,
-            "iNotifyKeyFrame": 32,
-            "iNumData01": 0,
+            "iNotifyKeyFrame": 33,
+            "iNumData01": 3,
             "iNumData02": 0,
             "iNumData03": 0,
             "iNumData04": 0,
@@ -71,8 +71,8 @@
               0.0
             ],
             "vNotifyRotation": [
+              90.0,
               270.0,
-              0.0,
               0.0
             ],
             "vNotifyScale": [
@@ -87,7 +87,7 @@
             "fNumData03": 0.0,
             "fNumData04": 0.0,
             "iNotifyKeyFrame": 54,
-            "iNumData01": 0,
+            "iNumData01": 3,
             "iNumData02": 0,
             "iNumData03": 0,
             "iNumData04": 0,
@@ -111,14 +111,14 @@
               0.0
             ],
             "vNotifyRotation": [
+              90.0,
               270.0,
-              0.0,
               0.0
             ],
             "vNotifyScale": [
-              4.0,
-              4.0,
-              4.0
+              3.0,
+              3.0,
+              3.0
             ]
           },
             {

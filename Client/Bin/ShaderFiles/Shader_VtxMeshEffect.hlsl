@@ -1,7 +1,7 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
@@ -688,8 +688,7 @@ PS_NONLIGHT_OUT PS_STING_SHOCK(PS_IN In)
         discard;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
-    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
-    
+
     float4 vColor = g_vColor;
     Out.vColor = vColor;
     if (0 > MaskTexcoord.y)
@@ -970,6 +969,49 @@ PS_NONLIGHT_OUT PS_LASER_LIGHTNING_BLOOM(PS_IN In)
     return Out;
 }
 
+// * max((abs(1 - saturate(g_fTime * 3))) * 4, 0.8)
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    matrix worldmat = g_CamMatrix;
+    worldmat._11_12_13_14 = normalize(worldmat._11_12_13_14);
+    worldmat._21_22_23_24 = normalize(worldmat._21_22_23_24);
+    worldmat._31_32_33_34 = normalize(-worldmat._31_32_33_34);
+    worldmat._41_42_43_44 = float4(0, 0, 0, 1);
+    float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat);
+    pos.y *= -1;
+    pos.xyz = normalize(pos.xyz);
+    //pos.xy += pos.z;
+    
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DissolveTexcoord = float2(In.vTexcoord.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    if (0 > MaskTexcoord.y)
+        discard;
+    float2 tex = MaskTexcoord + float2(g_fTime * g_fDiffuseUVSpeed.x, g_fTime * g_fDiffuseUVSpeed.y);
+    
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
+    //alpha *= pow(In.vTexcoord.y * 5, 2);
+    
+    
+    
+    Out.vColor.xy = pos.xy * 0.06f * saturate(mask) * saturate(g_DissolveTexture.Sample(NoneSampler, In.vTexcoord) * 2) * g_DissolveTexture.Sample(NoneSampler, DissolveTexcoord) * g_fDiffuseUVSize.x;
+    Out.vColor.zw = 0;
+    if (0.01f >= length(Out.vColor.xy))
+        discard;
+    return Out;
+}
+
+
 BlendState BS_BlendAlphaMax
 {
     BlendEnable[0] = true;
@@ -1225,5 +1267,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_LASER_LIGHTNING_BLOOM();
+    }
+    // idx 24
+    pass Shock_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SHOCK_MOTION_BLUR();
     }
 }

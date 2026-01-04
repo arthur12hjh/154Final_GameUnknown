@@ -788,12 +788,12 @@ void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NO
         Out[1].vTexcoord = float2(1.f, 0.f);
         Out[1].vLifeTime = In[0].vLifeTime;
     
-        Out[2].vPosition = mul(float4(In[0].vPosition.xyz, 1.f), matVP);
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR * 0.5f, 1.f), matVP);
         Out[2].vTexcoord = float2(1.f, 1.f);
         Out[2].vLifeTime = In[0].vLifeTime;
     
-        Out[3].vPosition = mul(float4(In[0].vPosition.xyz, 1.f), matVP);
-        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR * 0.5f, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);              
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
@@ -942,12 +942,12 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
         Out[1].vLifeTime = In[0].vLifeTime;
         Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0) * 2, matVP);
     
-        Out[2].vPosition = mul(float4(In[0].vPosition.xyz, 1.f), matVP);
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR * 0.5f, 1.f), matVP);
         Out[2].vTexcoord = float2(1.f, 1.f);
         Out[2].vLifeTime = In[0].vLifeTime;
         Out[2].vProjPos = mul(In[0].vProjPos, matVP);
                                                               
-        Out[3].vPosition = mul(float4(In[0].vPosition.xyz, 1.f), matVP);
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR * 0.5f, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos, matVP);
@@ -2546,6 +2546,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_GLOW_BLOOM();
+    }
+    // idx 33
+    pass Small_Electric
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_THUNDER_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_ELECTRIC();
+    }
+    // idx 34
+    pass Small_Electric_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_THUNDER_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_ELECTRIC_BLOOM();
     }
 
 }

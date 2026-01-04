@@ -298,9 +298,9 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 		_TCHAR szPartObjectName[MAX_PATH];
 		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg08.c_str(), szPartObjectName);
 		_matrix matDir = XMLoadFloat4x4(m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr());
-		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0]);
-		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1]);
-		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2]);
+		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0] * EffectDesc.fSize);
+		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1] * EffectDesc.fSize);
+		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2] * EffectDesc.fSize);
 		if (0 != AnimNotify.vNotifyRotation.x)
 			pEffect->GetTransform()->Turn(pEffect->GetTransform()->Get_State(STATE::UP), XMConvertToRadians(AnimNotify.vNotifyRotation.x));
 		if (0 != AnimNotify.vNotifyRotation.y)
@@ -310,9 +310,9 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 	}
 	else if (AnimNotify.iNumData01 == 4) {
 		_matrix matDir = XMLoadFloat4x4(&matTransform);
-		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0]);
-		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1]);
-		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2]);
+		pEffect->GetTransform()->Set_State(STATE::RIGHT, matDir.r[0] * EffectDesc.fSize);
+		pEffect->GetTransform()->Set_State(STATE::UP, matDir.r[1] * EffectDesc.fSize);
+		pEffect->GetTransform()->Set_State(STATE::LOOK, matDir.r[2] * EffectDesc.fSize);
 	}
 	if (nullptr == pEffect)
 		return E_FAIL;

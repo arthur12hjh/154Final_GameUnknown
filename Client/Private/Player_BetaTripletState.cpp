@@ -36,6 +36,31 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
 
 
 
+    if (0.15f <= fAnimationRatio && 0.17f > fAnimationRatio)
+    {
+        if (false == m_isEffectActed)
+        {
+            m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.05f);
+            m_isEffectActed = true;
+        }
+    }
+    if (0.18f <= fAnimationRatio && 0.20f > fAnimationRatio)
+    {
+        m_isEffectActed = false;
+    }
+    if (0.203f <= fAnimationRatio && 0.23f > fAnimationRatio)
+    {
+        if (false == m_isEffectActed)
+        {
+            m_pGameInstance->Active_RadialBlur(0.3f, 5, 0.2f);
+            m_isEffectActed = true;
+        }
+    }
+    if (0.24f <= fAnimationRatio && 0.26f > fAnimationRatio)
+    {
+            m_isEffectActed = false;
+    }
+    
     if (0.33f <= fAnimationRatio && 0.36f > fAnimationRatio)
     {
         m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 10.f * fAnimationRatio);
@@ -43,7 +68,7 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
         if (false == m_isEffectActed)
         {
             //m_pGameInstance->Shake_Camera(0.2f, 0.2f);
-            m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.5f);
+            m_pGameInstance->Active_RadialBlur(0.5f, 5, 0.6f);
             m_isEffectActed = true;
         }
     }

@@ -468,9 +468,9 @@ void CRenderer::Render()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 
-	Render_MotionBlur();
 	//렌더 타겟 내용을 백버퍼로 뱉어내게 하기.
 	Render_Deferred();
+	Render_MotionBlur();
 	Render_ScreenDeferred();
 
 	ToneMapping();

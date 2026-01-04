@@ -688,8 +688,7 @@ PS_NONLIGHT_OUT PS_STING_SHOCK(PS_IN In)
         discard;
     float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
-    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
-    
+
     float4 vColor = g_vColor;
     Out.vColor = vColor;
     if (0 > MaskTexcoord.y)
@@ -980,11 +979,34 @@ PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
     worldmat._21_22_23_24 = normalize(worldmat._21_22_23_24);
     worldmat._31_32_33_34 = normalize(-worldmat._31_32_33_34);
     worldmat._41_42_43_44 = float4(0, 0, 0, 1);
-    float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat) * 0.01f;
+    float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat);
     pos.y *= -1;
     //pos.xy += pos.z;
-    Out.vColor.xy = pos.xy;
+    
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DissolveTexcoord = float2(In.vTexcoord.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    if (0 > MaskTexcoord.y)
+        discard;
+    float2 tex = MaskTexcoord + float2(g_fTime * g_fDiffuseUVSpeed.x, g_fTime * g_fDiffuseUVSpeed.y);
+    
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
+    //alpha *= pow(In.vTexcoord.y * 5, 2);
+    
+    
+    
+    Out.vColor.xy = normalize(pos.xy) * 0.045f * saturate(mask) * saturate(g_DissolveTexture.Sample(NoneSampler, In.vTexcoord) * 2) * g_DissolveTexture.Sample(NoneSampler, DissolveTexcoord) * g_fDiffuseUVSize.x;
     Out.vColor.zw = 0;
+    if (0.01f >= length(Out.vColor.xy))
+        discard;
     return Out;
 }
 
@@ -1248,7 +1270,7 @@ technique11 DefaultTechnique
     // idx 24
     pass Shock_Motion_Blur
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
