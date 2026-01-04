@@ -64,42 +64,6 @@ inline float BayerDither(float2 pixelPos)
 
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
-/*
-        float fSum = 0.0f;
-    
-    float2 vTexcoord;
-    
-    vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
-    vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
-
-    // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
-    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f) * 2.f;
-
-    // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.0002f;
-
-    // 캐스케이드 밖이면 shadow 적용하지 않음
-    if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
-        return 1.f;
-
-    [unroll]
-    for (int iX = -1; iX <= 1; ++iX)
-    {
-        [unroll]
-        for (int iY = -1; iY <= 1; ++iY)
-        {
-            float2 vOffset = float2(iX, iY) * vTexel;
-            vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord + vOffset, iSlice));
-            // 투영행렬까지만 곱했다면 w에 뷰스페이스 상의 z값 남아있을거고,
-            // 그림자엔 Far로 정규화한 0~1사이 값인 뷰 스페이스 상의 z가 있으니까 얠 다시 far 곱해서 연산. 
-            fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
-        }
-    }
-
-    fSum /= 9.0f;
-    return lerp(1.0f, 0.6f, fSum);
-    */
-   
     float2 vTexcoord;
     
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
@@ -109,7 +73,7 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.0008f;
+    float fBias = 0.00007f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
@@ -302,16 +266,17 @@ PS_OUT_LIGHT PBR_Light(
     float3 vKS = vF;
 
     // ===== Base Diffuse (기존 비금속 로직) =====
-    float fNonMetalFactor = 1.0f - fMetallic;
-    fNonMetalFactor *= fNonMetalFactor;
-
+    //float fNonMetalFactor = 1.0f - fMetallic;
+    //fNonMetalFactor *= fNonMetalFactor;
+    float fNonMetalFactor = lerp(1.0f, 0.2f, fMetallic);
+    
     float3 vKD = (1.f - vKS) * fNonMetalFactor;
     vKD *= 0.8f;
 
     // ===== Metallic diffuse floor =====
-    // 금속에서도 완전히 0으로 죽지 않도록 최소 디퓨즈를 조금 남김
-    float fMetalDiffuseFloor = 0.10f; // 풀메탈에서 약 10% 정도
-    float fMetalBlend = smoothstep(0.3f, 1.0f, fMetallic);
+    // 금속에서도 완전히 0으로 죽지 않도록 디퓨즈를 조금 남김
+    float fMetalDiffuseFloor = 0.20f; 
+    float fMetalBlend = smoothstep(0.4f, 1.0f, fMetallic);
 
     // vKD가 0으로 수렴할수록 floor 값 쪽으로 보정
     float3 vKDMetal = lerp(vKD, fMetalDiffuseFloor.xxx, fMetalBlend);
@@ -356,8 +321,12 @@ PS_OUT_LIGHT PBR_Light(
     Out.vShade = float4((vKD * vAlbedo) * (fNdotL * fAttenuation) * vLightColor, 1.f);
 
     // 환경광(SSAO 적용)
+    float fMetalAmbFloor = 0.25f;
+    float fAmbMetalMask = lerp(1.0f, fMetalAmbFloor, fMetallic);
+    
     float3 vDiffuseAmb = vAlbedo * lerp(0.2f, 0.5f, 1 - fRoughness);
-    vDiffuseAmb *= (1 - fMetallic) * fSSAO;
+    vDiffuseAmb *= fAmbMetalMask * fSSAO;
+    
     Out.vShade.xyz += vDiffuseAmb;
 
     // 직접 스페큘러

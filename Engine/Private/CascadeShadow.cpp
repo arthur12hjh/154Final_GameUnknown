@@ -49,7 +49,7 @@ HRESULT CCascadeShadow::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader
 HRESULT CCascadeShadow::Ready_Shadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
 	m_fCascadeEnds[0] = 0.1f;
-	m_fCascadeEnds[1] = 10.0f,
+	m_fCascadeEnds[1] = 6.0f,
 	m_fCascadeEnds[2] = 20.0f,
 	m_fCascadeEnds[3] = 40.f;
 	m_fCascadeEnds[4] = 100.f;
@@ -245,9 +245,16 @@ void CCascadeShadow::Calc_CascadeMatrices()
 			fMaxZ = max(fMaxZ, XMVectorGetZ(vFarLS));
 		}
 
-		_float fPadding = 10.f;
-		fMinZ -= fPadding;
-		fMaxZ += fPadding;
+		_float fSliceLen = m_fCascadeEnds[i + 1] - m_fCascadeEnds[i];
+
+		_float fPadding;
+		if (i == 0)
+			fPadding = max(0.5f, fSliceLen * 0.05f);  // 첫 캐스케이드는 적게
+		else if (i == 1)
+			fPadding = max(1.0f, fSliceLen * 0.15f);
+		else
+			fPadding = max(10.0f, fSliceLen * 0.2f);
+
 		fMinX -= fPadding;
 		fMaxX += fPadding;
 		fMinY -= fPadding;
