@@ -43,7 +43,10 @@ void CUIScore::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	{
 		m_iScore += (_uint)m_pGameInstance->Random(3.f, 9.f);
+		m_iHighScore = max(m_iHighScore, m_iScore);
+	}
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
 		m_iScore = 0;
 
@@ -70,6 +73,20 @@ void CUIScore::Update(_float fTimeDelta)
 		if (m_fScaleRatio < 1.f)
 			m_fScaleRatio = 1.f;
 	}
+
+	// 게임 끝나면 한번만 하게 수정해야함
+	UI_EVENT_ARG_DESC Arg{};
+	Arg.szActionTag = TEXT("Score_Result");
+	Arg.Type = UI_EVENT_ARG_DESC::INT;
+	Arg.pData = &m_iHighScore;
+	__super::Trigger_Event(TEXT("Score_Result"), &Arg);
+
+	UI_EVENT_ARG_DESC Arg2{};
+	Arg2.szActionTag = TEXT("Rank_Result");
+	Arg2.Type = UI_EVENT_ARG_DESC::INT;
+	Arg2.pData = &m_iRank;
+
+	__super::Trigger_Event(TEXT("Rank_Result"), &Arg2);
 }
 
 void CUIScore::Late_Update(_float fTimeDelta)
@@ -197,7 +214,7 @@ HRESULT CUIScore::Render_Score()
 HRESULT CUIScore::SetUp_Score()
 {
 	m_ScoreInstances.clear();
-	m_ScoreInstances.reserve(3);
+	m_ScoreInstances.reserve(5);
 
 	_int ATLAS_COL = 5;
 	_int ATLAS_ROW = 1;

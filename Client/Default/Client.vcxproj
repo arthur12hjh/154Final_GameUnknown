@@ -463,6 +463,7 @@
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
     <ClInclude Include="..\Public\UIPopup.h" />
+    <ClInclude Include="..\Public\UIResult.h" />
     <ClInclude Include="..\Public\UIScore.h" />
     <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UIShop.h" />
@@ -819,6 +820,7 @@
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\Private\UIPopup.cpp" />
+    <ClCompile Include="..\Private\UIResult.cpp" />
     <ClCompile Include="..\Private\UIScore.cpp" />
     <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UIShop.cpp" />

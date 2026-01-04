@@ -60,6 +60,11 @@ private:
 	_int						m_iCurrentItemIdx{ -1 };
 	_int						m_iPrevItemIdx{ -1 };
 
+	_float						m_fCoolTime{ 0.f };
+	_float						m_fBuyCoolTime{ 1.f };
+
+	_bool						m_bCanBuy{ true };
+
 private:
 	HRESULT SetUp_ItemSlot(_float fTimeDelta);
 	HRESULT SetUp_ItemIcon();
