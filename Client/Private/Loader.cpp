@@ -1171,11 +1171,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-	vector<string> szTargetTagList;
-	szTargetTagList.push_back("Haed");
-	
-	CModel* pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
-	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 	
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	/* For.Prototype_Component_Model_Minion11 */
@@ -1216,14 +1211,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-
-	
-	szTargetTagList.clear();
-	szTargetTagList.push_back("Haed001_end");
-	
-	pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
-	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 
 	/* For.Prototype_Component_Model_StatueA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));

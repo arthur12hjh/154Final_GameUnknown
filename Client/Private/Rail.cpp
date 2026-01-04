@@ -40,7 +40,7 @@ void CRail::Update(_float fTimeDelta)
 
 void CRail::Late_Update(_float fTimeDelta)
 {
-    m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);

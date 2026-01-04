@@ -230,7 +230,7 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
             }
 
             LerpLookAt(fTimeDelta, 2.f);
-            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed * 2.f);
+            m_pOwner->GetTransform()->Move_Direction(fTimeDelta, vDir, m_fMoveSpeed);
         }
     }
     else
@@ -256,14 +256,14 @@ void CMonsterMoveState::Update_Move(_float fTimeDelta)
     _float fAnimSpeed = m_fMoveSpeed / m_pInitOwnerInfo->fMoveSpeed;
     pEntity->Set_Animation(AnimationName.c_str(), bIsAnimLoop, 1.f, m_pInitOwnerInfo->fLerpRatio);
 
-    pEntity->Play_Animation(fTimeDelta * fAnimSpeed);
+    pEntity->Play_Animation(fTimeDelta);
     if (pEntity->IsAnmiationFinished())
     {
         if (NAYTIBA_STATE::BATTLE == m_pOwnerInfo->eNaytibaState)
         {
             if (0 == m_iSectionIndex)
             {
-                m_fMoveSpeed = m_pInitOwnerInfo->fMoveSpeed * 2.f;
+                m_fMoveSpeed = m_pInitOwnerInfo->fMoveSpeed * 1.3f;
                 m_iSectionIndex++;
             }
             else if (2 == m_iSectionIndex)
