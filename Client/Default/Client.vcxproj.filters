@@ -1129,6 +1129,21 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore">
       <UniqueIdentifier>{5f06ce2b-e607-4c86-abbc-2a05165d46f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber">
+      <UniqueIdentifier>{f74a5655-6622-42f4-a9ec-3906c0413dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Sky">
+      <UniqueIdentifier>{0b233bc6-1500-4e89-984d-c0e6771a403d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Pad">
+      <UniqueIdentifier>{7c8ebc81-4366-4c59-a0b8-a98ebae30d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Beat_Indicator">
+      <UniqueIdentifier>{1fefcb52-a23a-465a-9e91-e6faa3b29f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Rail">
+      <UniqueIdentifier>{284604d9-ba96-43b2-a2d4-f351c65bba64}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult">
       <UniqueIdentifier>{d373463f-8e52-44b7-9dae-0b97d978719f}</UniqueIdentifier>
     </Filter>
@@ -1137,6 +1152,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
       <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TraceLight">
+      <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2176,11 +2194,26 @@
     <ClInclude Include="..\Public\UIScore.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Beat_Indicator.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Beat_Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky_Dororong.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rail.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pad.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UIResult.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bullet_Split.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetLight.h">
+      <Filter>02.GameObjects\TraceLight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3184,11 +3217,26 @@
     <ClCompile Include="..\private\Task_GorillaHit.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Beat_Indicator.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Beat_Indicator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky_Dororong.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rail.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pad.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\UIResult.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Split.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetLight.cpp">
+      <Filter>02.GameObjects\TraceLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

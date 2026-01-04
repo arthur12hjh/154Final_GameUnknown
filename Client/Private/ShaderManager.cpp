@@ -5,6 +5,10 @@
 #include "Camera.h"
 //셰이더 매니저 통해서 리저브 해두면.. 꺼내쓰기 불편하지 않나?
 #include "ReserveDeferred.h"
+#include "TargetLight.h"
+#include "GameManager.h"
+#include "Player.h"
+#include "Nayitba.h"
 
 CShaderManager::CShaderManager()
     : m_pGameInstance { CGameInstance::GetInstance()}
@@ -133,9 +137,17 @@ void CShaderManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIdx)
         {
             Load_Scarlet_ShaderSettings();
         }
-        else
+        else if (1 == iIdx)
+        {
+            Load_TargetLights();
+        }
+        else if (2 == iIdx)
         {
             Load_Scarlet_Phase2_ShaderSettings();
+        }
+        else
+        {
+
         }
         break;
     default:
@@ -162,11 +174,11 @@ void CShaderManager::Load_Desert_ShaderSettings()
 #pragma endregion
 
 #pragma region SSAO
-    *m_pSSAODesc->fRadiusMin = { 0.26f };
-    *m_pSSAODesc->fRadiusMax = { 5.f };
-    *m_pSSAODesc->fBiasMin = { 0.029f };
-    *m_pSSAODesc->fBiasMax = { 0.059f };
-    *m_pSSAODesc->fIntensity = { 5.f };
+    *m_pSSAODesc->fRadiusMin = { 0.173f };
+    *m_pSSAODesc->fRadiusMax = { 0.141f };
+    *m_pSSAODesc->fBiasMin = { 0.019f };
+    *m_pSSAODesc->fBiasMax = { 0.62f };
+    *m_pSSAODesc->fIntensity = { 2.32f };
 #pragma endregion
 
 #pragma region HDR
@@ -227,6 +239,29 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
 #pragma endregion
 }
 
+void CShaderManager::Load_TargetLights()
+{
+    CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();;
+
+    CTargetLight::TARGETLIGHT_DESC Desc{};
+    Desc.tLightDesc.eType = LIGHT_TYPE::POINT;
+    Desc.tLightDesc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 1.f);
+    Desc.tLightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
+    Desc.tLightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
+    Desc.tLightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
+    Desc.tLightDesc.fRange = 10.f;
+    Desc.pTarget = CGameManager::GetInstance()->GetGameCharacter();
+    Safe_Release(Desc.pTarget);
+
+    CTargetLight* pTargetLight = CTargetLight::Create(&Desc);
+    m_TargetLights.push_back(pTargetLight);
+
+    Desc.pTarget = *m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Layer_Monster"))->begin();
+
+    pTargetLight = CTargetLight::Create(&Desc);
+    m_TargetLights.push_back(pTargetLight);
+}
+
 void CShaderManager::Load_Scarlet_Phase2_ShaderSettings()
 {
 }
@@ -265,4 +300,10 @@ void CShaderManager::Free()
         Safe_Release(iter.second);
     }
     m_ReserveDeferredShaders.clear();
+
+    for (auto& iter : m_TargetLights)
+    {
+        Safe_Release(iter);
+    }
+    m_TargetLights.clear();
 }

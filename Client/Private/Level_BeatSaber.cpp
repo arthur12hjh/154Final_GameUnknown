@@ -29,8 +29,8 @@ HRESULT CLevel_BeatSaber::Initialize()
     if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
         return E_FAIL;
 
-    if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
-        return E_FAIL;
+    /*if (FAILED(Ready_Layer_Terrain(TEXT("Layer_Terrian"))))
+        return E_FAIL;*/
 
     if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
         return E_FAIL;
@@ -44,8 +44,10 @@ HRESULT CLevel_BeatSaber::Initialize()
     if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
         return E_FAIL;
 
-    if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
-        return E_FAIL;
+  /*  if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
+        return E_FAIL;*/
+
+    Load_Dororong_Saber_Objects("../../Map_Editor/Bin/DataFiles/Dororong_Saber.bin");
 
     return S_OK;
 }
@@ -157,6 +159,9 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Terrain(const _wstring& strLayerTag)
 
 HRESULT CLevel_BeatSaber::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
+    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky_Dororong"),
+        ENUM_CLASS(LEVEL::BEATSABER_GAME), strLayerTag)))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -198,7 +203,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { 0.f, 1.f, 0.f };
+    Desc.vPosition = { -2.5f, 4.f, -4.5f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
 
@@ -306,6 +311,54 @@ FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontr
 
 HRESULT CLevel_BeatSaber::Load_Light_Data()
 {
+    return S_OK;
+}
+
+HRESULT CLevel_BeatSaber::Load_Dororong_Saber_Objects(const _char* szFilePath)
+{
+    std::ifstream ifs(szFilePath, std::ios::binary);
+    if (!ifs.is_open())
+    {
+        MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+        return E_FAIL;
+    }
+
+    if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return S_OK;
+    if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return S_OK;
+    if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return S_OK;
+
+    ifs.close();
+
+    return S_OK;
+}
+
+HRESULT CLevel_BeatSaber::Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+    _uint iNumObjs = 0;
+    ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+    for (_uint i = 0; i < iNumObjs; ++i)
+    {
+        SAVEDDORORONGSABERINFO info;
+        ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVEDDORORONGSABERINFO));
+
+        CGameObject::GAMEOBJECT_DESC Desc = {};
+        Desc.bIsApplyTransform = true;
+        Desc.bIsQuaternion = true;
+
+        _vector vScale = {};
+        _vector vRotation = {};
+        _vector vPosition = {};
+        XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+        XMStoreFloat3(&Desc.vScale, vScale);
+        XMStoreFloat4(&Desc.vRotation, vRotation);
+        XMStoreFloat3(&Desc.vPosition, vPosition);
+
+        HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
+            ENUM_CLASS(LEVEL::BEATSABER_GAME), pLayerTag, &Desc);
+    }
+
     return S_OK;
 }
 

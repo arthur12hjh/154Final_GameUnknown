@@ -250,6 +250,12 @@
     <Filter Include="02.GameObjects\Maps\Dororong_Saber\Pad">
       <UniqueIdentifier>{167eda96-4bf4-4d54-90ef-31a610070737}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Dororong_Saber\Rail">
+      <UniqueIdentifier>{dac5474f-f50b-4225-a1dc-a89d5cd0f378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Dororong_Saber\Beat_Indicator">
+      <UniqueIdentifier>{5f5dc749-562b-4ce5-9e0b-18e646fda969}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -587,6 +593,15 @@
     <ClInclude Include="..\public\Pad.h">
       <Filter>02.GameObjects\Maps\Dororong_Saber\Pad</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Beat_Indicator.h">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Beat_Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rail.h">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Rail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Dororong_Saber.h">
+      <Filter>02.GameObjects\Maps\Dororong_Saber</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -907,6 +922,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Pad.cpp">
       <Filter>02.GameObjects\Maps\Dororong_Saber\Pad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Beat_Indicator.cpp">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Beat_Indicator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rail.cpp">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Rail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Dororong_Saber.cpp">
+      <Filter>02.GameObjects\Maps\Dororong_Saber</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

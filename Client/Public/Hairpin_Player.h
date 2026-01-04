@@ -17,10 +17,10 @@ NS_BEGIN(Client)
 class CHairpin_Player final : public CPlayer_Parts
 {
 public:
-	typedef struct tagHair_Player_Desc : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagHairpin_Player_Desc : public CPartObject::PARTOBJECT_DESC
 	{
 		void* pBodyPtr = { nullptr };
-	} HAIR_PLAYER_DESC;
+	} HAIRPIN_PLAYER_DESC;
 
 private:
 	CHairpin_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -41,6 +41,11 @@ public:
 private:
 	CModel* m_pBodyModelCom = { nullptr };
 
+	_float3						m_vRotationQuaternion;
+	_tchar						m_szRotationAngle[MAX_PATH];
+
+	const _float4x4* m_pSocketMatrix = { nullptr };
+	
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

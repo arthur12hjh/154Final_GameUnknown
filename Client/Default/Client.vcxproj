@@ -160,6 +160,7 @@
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
     <ClInclude Include="..\public\BeatSaberSpawner.h" />
+    <ClInclude Include="..\public\Beat_Indicator.h" />
     <ClInclude Include="..\public\Bullet_Split.h" />
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
@@ -246,6 +247,7 @@
     <ClInclude Include="..\public\NpcInteractionController.h" />
     <ClInclude Include="..\public\NpcInteractionState.h" />
     <ClInclude Include="..\public\NpcPatrolState.h" />
+    <ClInclude Include="..\public\Pad.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
@@ -293,6 +295,7 @@
     <ClInclude Include="..\public\PoolingManager.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
+    <ClInclude Include="..\public\Rail.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\Public\RimLight.h" />
     <ClInclude Include="..\public\ScarletBehaviorTree.h" />
@@ -300,6 +303,7 @@
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
     <ClInclude Include="..\public\Shutter.h" />
+    <ClInclude Include="..\public\Sky_Dororong.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
@@ -405,6 +409,7 @@
     <ClInclude Include="..\public\StoneWall1.h" />
     <ClInclude Include="..\public\StoneWall2.h" />
     <ClInclude Include="..\Public\TargetComponent.h" />
+    <ClInclude Include="..\Public\TargetLight.h" />
     <ClInclude Include="..\public\Task_CutScene.h" />
     <ClInclude Include="..\public\Task_Dead.h" />
     <ClInclude Include="..\public\Task_GorillaHit.h" />
@@ -503,6 +508,7 @@
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
     <ClCompile Include="..\private\BeatSaberSpawner.cpp" />
+    <ClCompile Include="..\private\Beat_Indicator.cpp" />
     <ClCompile Include="..\private\Bullet_Split.cpp" />
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
@@ -588,6 +594,7 @@
     <ClCompile Include="..\private\NpcInteractionController.cpp" />
     <ClCompile Include="..\private\NpcInteractionState.cpp" />
     <ClCompile Include="..\private\NpcPatrolState.cpp" />
+    <ClCompile Include="..\private\Pad.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
@@ -635,6 +642,7 @@
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
     <ClCompile Include="..\private\PoolingManager.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
+    <ClCompile Include="..\private\Rail.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\Private\RimLight.cpp" />
     <ClCompile Include="..\private\ScarletBehaviorTree.cpp" />
@@ -642,6 +650,7 @@
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
     <ClCompile Include="..\private\Shutter.cpp" />
+    <ClCompile Include="..\private\Sky_Dororong.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
@@ -763,6 +772,7 @@
     <ClCompile Include="..\private\StoneWall1.cpp" />
     <ClCompile Include="..\private\StoneWall2.cpp" />
     <ClCompile Include="..\Private\TargetComponent.cpp" />
+    <ClCompile Include="..\Private\TargetLight.cpp" />
     <ClCompile Include="..\private\Task_CutScene.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp" />
     <ClCompile Include="..\private\Task_GorillaHit.cpp" />

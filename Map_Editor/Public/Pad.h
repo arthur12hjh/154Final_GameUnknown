@@ -1,15 +1,16 @@
 #pragma once
 #include "Maptool_Defines.h"
-#include "GameObject.h"
+#include "Dororong_Saber.h"
 
 NS_BEGIN(Engine)
 class CModel;
-class CCollider;
 class CShader;
+class CVIBuffer_Cube;
+class CCollider;
 NS_END
 
 NS_BEGIN(Tool_Map)
-class CPad : public CGameObject
+class CPad : public CDororong_Saber
 {
 private:
 	CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -27,10 +28,8 @@ public:
 	virtual HRESULT			Render() override;
 
 private:
-	class CCollider*		m_pCollider = { nullptr };
-
-private:
 	HRESULT					Ready_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CPad* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
