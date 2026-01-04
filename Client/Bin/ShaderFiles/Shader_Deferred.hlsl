@@ -54,7 +54,7 @@ Texture2DArray g_CascadeShadowTexture;
 
 float g_fCascadeEnds[6] = { 
     0.1f,
-	10.0f,
+	6.0f,
 	20.0f,
 	40.f,
 	100.f,
@@ -428,6 +428,9 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     [unroll]
     for (uint i = 0; i < 5; ++i)
         iIdx += (fViewZ >= g_fCascadeEnds[i + 1]);
+    
+    //캐스케이드가 5개니까..
+    iIdx = min(iIdx, 4);
     
     vector vPosition;
     
