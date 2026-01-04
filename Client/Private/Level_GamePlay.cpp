@@ -56,9 +56,6 @@ HRESULT CLevel_GamePlay::Initialize()
 	/*if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;*/
 
-	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
-	//	return E_FAIL;
-
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
@@ -529,6 +526,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Shop"))))
+		return E_FAIL;
+	
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Cinematic"))))
 		return E_FAIL;
 
 	return S_OK;

@@ -5,7 +5,7 @@
     "fBaseFOV": 15.0,
     "szCameraAnimationName": "",
 
-    "vBaseCameraPivot": [250.390,25.055,282.661],
+    "vBaseCameraPivot": [250.390,31.055,282.661],
     "vBaseBonePosition": [250.511,11.589,234.509],
     "vBaseBoneRotation": [0.0,0.0,0.0],
 
@@ -21,8 +21,8 @@
     ],
 
     "PivotTrackList": [
-      { "fTrackPosition": 0.0, "vTrackValue": [250.390,25.055,282.661], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 },
-      { "fTrackPosition": 8.0, "vTrackValue": [255.347,26.115,283.197], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 }
+      { "fTrackPosition": 0.0, "vTrackValue": [250.390,31.055,282.661], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 },
+      { "fTrackPosition": 8.0, "vTrackValue": [255.347,32.115,283.197], "fTangentStart": 0.0, "fTangentEnd": 0.0, "iInterpolationFlag": 0 }
     ],
 
     "BoneRotationTrackList": []

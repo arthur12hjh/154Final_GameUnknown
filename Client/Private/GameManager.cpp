@@ -270,6 +270,11 @@ void CGameManager::Change_ShaderSetting(LEVEL eLevelID)
 
 #pragma region LOCKON
 
+CNaytiba* CGameManager::Get_LockonTarget()
+{
+    return m_pLockonManager->Get_LockonTarget();
+}
+
 CTransform* CGameManager::Get_TargetTransform()
 {
     return m_pLockonManager->Get_TargetTransform();

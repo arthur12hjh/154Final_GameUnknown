@@ -81,6 +81,8 @@ HRESULT CCharacterController::Initialize(void* pArg)
 	Filter.word0 = pDesc->iCollisionGroup;       // ¿¹: (1<<5)
 	Filter.word1 = pDesc->iCollisionMask;
 
+	m_eShape = pDesc->eCharacterControllerType;
+
 	switch (pDesc->eCharacterControllerType)
 	{
 	case CCT_SHAPE::BOX:
@@ -189,6 +191,8 @@ void CCharacterController::Update_ControllerTransform(_float fTimeDelta, class C
 void CCharacterController::Set_Position(_vector vPosition)
 {
 	m_pController->setFootPosition(PxExtendedVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition)));
+
+	m_vPrePosition = PxVec3(XMVectorGetX(vPosition), XMVectorGetY(vPosition), XMVectorGetZ(vPosition));
 }
 
 _vector CCharacterController::Calc_Gravity(_float fTimeDelta)

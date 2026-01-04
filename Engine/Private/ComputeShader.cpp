@@ -297,6 +297,7 @@ HRESULT CComputeShader::Bind_OutputBuffer(_uint iBufferNum, _uint* iOutputIndex)
     return S_OK;
 }
 
+
 HRESULT CComputeShader::Bind_UAV(ID3D11UnorderedAccessView** pUAV)
 {
     m_pContext->CSSetUnorderedAccessViews(0, 1, pUAV, nullptr);

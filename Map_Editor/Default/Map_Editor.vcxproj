@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Bamboo.h" />
+    <ClInclude Include="..\public\Beat_Indicator.h" />
     <ClInclude Include="..\public\Brush.h" />
     <ClInclude Include="..\public\Building_Ruin.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
@@ -195,8 +196,10 @@
     <ClInclude Include="..\public\Desert_Architecture.h" />
     <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
+    <ClInclude Include="..\public\Dororong_Saber.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pad.h" />
+    <ClInclude Include="..\public\Rail.h" />
     <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\DryGrass1.h" />
     <ClInclude Include="..\public\DryGrass2.h" />
@@ -281,6 +284,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Bamboo.cpp" />
+    <ClCompile Include="..\private\Beat_Indicator.cpp" />
     <ClCompile Include="..\private\Brush.cpp" />
     <ClCompile Include="..\private\Building_Ruin.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
@@ -310,8 +314,10 @@
     <ClCompile Include="..\private\Desert_Architecture.cpp" />
     <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
+    <ClCompile Include="..\private\Dororong_Saber.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pad.cpp" />
+    <ClCompile Include="..\private\Rail.cpp" />
     <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\DryGrass1.cpp" />
     <ClCompile Include="..\private\DryGrass2.cpp" />

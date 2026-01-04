@@ -45,7 +45,6 @@ CBehaviorNode::NODE_STATE CDeco_BossPhase::Update(_float fTimeDelta)
 						//m_pBlackBoard->Set_BossPhase(CBossBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
 
 						m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::CUTSCENE);
-						m_pBlackBoard->Set_PlayCutScene();
 					}
 				}
 				else

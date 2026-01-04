@@ -93,6 +93,7 @@ public :
 
 #pragma region LOCKON
 public:
+	class CNaytiba* Get_LockonTarget();
 	CTransform* Get_TargetTransform();
 	void		Lockon(_float fTimeDelta);
 

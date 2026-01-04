@@ -50,7 +50,7 @@ public:
 
 	void							Set_Position(_vector vPosition);
 	CModel*							Get_BodyModelCom() { return m_pBodyModelCom; }
-
+	CCharacterController*			Get_CCT() { return m_pCCT; }
 	_float							Get_ImpactForce();
 	void							Set_ImpactForce(_float fImpactForce);
 

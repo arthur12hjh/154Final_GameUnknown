@@ -116,6 +116,7 @@ private:
 
 #pragma region Beat Saber Map
 	HRESULT	Loading_For_BeatSaber_Model(void* pArg);
+	HRESULT	Loading_For_BeatSaber_Map(void* pArg);
 #pragma endregion
 
 
@@ -136,6 +137,8 @@ private:
 	HRESULT Loading_UI_For_World(void* pArg);
 	HRESULT Loading_UI_For_Shop(void* pArg);
 	HRESULT Loading_UI_For_Popup(void* pArg);
+	
+	HRESULT Loading_For_BeatSaber_UI(void* pArg);
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

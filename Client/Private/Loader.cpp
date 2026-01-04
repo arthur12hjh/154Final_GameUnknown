@@ -191,6 +191,13 @@
 #include "Shutter.h"
 #pragma endregion
 
+#pragma region Dororong_Saber
+#include "Pad.h"
+#include "Rail.h"
+#include "Beat_Indicator.h"
+#include "Sky_Dororong.h"
+#pragma endregion
+
 #include "Instance_Model.h"
 #include "PxTestProp.h"
 
@@ -244,6 +251,9 @@
 #include "UIShop.h"
 #include "UIItemSlot.h"
 #include "UIMouseInteraction.h"
+
+#include "UINeonNumber.h"
+#include "UIScore.h"
 
 #pragma endregion
 
@@ -406,6 +416,8 @@ HRESULT CLoader::Loading()
 	{
 		m_strMessage = TEXT("Dororong");
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Map(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
 			hr = Loading_For_BeatSaber();
@@ -807,10 +819,20 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
 
+
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Scarlet"));
+
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.binx");
+
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
+
+	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Scarlet")))->Import_Texture(0, TEXTURE_TYPE::ORSS,
+		"../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_ORSS.dds",
+		"g_ORSSTexture", TRUE);
+
 
 	/* For.Prototype_Component_Model_Bottle_Scarlet */
 	_matrix	PreTransformMatrix = XMMatrixScaling(0.035f, 0.035f, 0.035f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -827,6 +849,15 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_Shader_Scarlet_Face */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Shader_Scarlet_Face");
+	pProtoDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Scarlet_Face.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	m_pGameManager->Add_Shader(m_eNextLevelID, pProtoDesc.szPrototypeName, static_cast<CShader*>(pProtoDesc.pPrototype));
+
 
 	return S_OK;
 }
@@ -851,6 +882,30 @@ HRESULT CLoader::Loading_For_BeatSaber()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_Camera_BeatSaber"),
 		CCamera_BeatSaber::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Panel"),
+		CUIPanel::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Wrapper"),
+		CUIWrapper::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Button"),
+		CUIButton::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Text"),
+		CUIText::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Image"),
+		CUIImage::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_Script"),
+		CUIScript::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	Sleep(1000.f);
@@ -7518,6 +7573,61 @@ HRESULT CLoader::Loading_For_BeatSaber_Model(void* pArg)
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_For_BeatSaber_Map(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
+
+	/* For.Prototype_Component_Model_Sky_Dororong */
+	_matrix	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Sky_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky4.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	/* For.Prototype_Component_Texture_Sky_Scarlet */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Sky_Dororong");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/galaxy+X.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Sky_Dororong */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sky_Dororong");
+	pProtoDesc.pPrototype = CSky_Dororong::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Pad */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Pad");
+	pProtoDesc.pPrototype = CPad::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Rail */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Rail");
+	pProtoDesc.pPrototype = CRail::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Beat_Indicator */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Beat_Indicator");
+	pProtoDesc.pPrototype = CBeat_Indicator::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+
+	return S_OK;
+}
+
 
 HRESULT CLoader::Loading_UI_For_Logo_Level()
 {
@@ -8310,6 +8420,50 @@ HRESULT CLoader::Loading_UI_For_Popup(void* pArg)
 	/* For.Prototype_GameObject_UI_UnlockFX */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_UnlockFX");
 	pProtoDesc.pPrototype = CUIUnlockFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
+
+	/* For.Prototype_Component_UI_Texture_NeonNumber */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_NeonNumber");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/NeonNumber/Neon_Number.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Combo */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Combo");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Combo.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Numbers */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Numbers");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Number/Numbers.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_NeonNumber */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_NeonNumber");
+	pProtoDesc.pPrototype = CUINeonNumber::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_Score */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Score");
+	pProtoDesc.pPrototype = CUIScore::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

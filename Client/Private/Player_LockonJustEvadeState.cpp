@@ -11,6 +11,8 @@ CPlayer_LockonJustEvadeState::CPlayer_LockonJustEvadeState()
 
 void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 {
+	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.4f);
+
 	m_eState = PLAYER_STATE::JUST_EVADE;
 	m_Desc->isInvincible = true;
 	

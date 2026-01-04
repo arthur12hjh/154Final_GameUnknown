@@ -13,7 +13,7 @@
             {
                 "fTangentEnd": 1.0,
                 "fTangentStart": 2.0,
-                "fTrackPosition": 4.0,
+                "fTrackPosition": 2.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
 5.0, -20.0, 30.0
@@ -22,7 +22,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 4.0,
-                "fTrackPosition": 8.3,
+                "fTrackPosition": 4.15,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
 5.0, -20.0, 30.0
@@ -31,7 +31,7 @@
             {
                 "fTangentEnd": 4.0,
                 "fTangentStart": 4.0,
-                "fTrackPosition": 8.5,
+                "fTrackPosition": 4.25,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
 5.0, -15.0, 10.0
@@ -40,7 +40,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 4.0,
-                "fTrackPosition": 9.0,
+                "fTrackPosition": 4.5,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
 10.0, -5.0, -10.0
@@ -62,7 +62,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 0.5,
+                "fTrackPosition": 0.25,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
             90.0,
@@ -86,7 +86,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 5.83209753036499,
-                "fTrackPosition": 1.0,
+                "fTrackPosition": 0.5,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     15.0,
@@ -97,7 +97,7 @@
             {
                 "fTangentEnd": 5.83209753036499,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 2.5431103706359863,
+                "fTrackPosition": 1.12731103706359863,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     15.0,
@@ -108,7 +108,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 4.5,
+                "fTrackPosition": 2.25,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     15.0,
@@ -119,7 +119,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 8.3,
+                "fTrackPosition": 4.15,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     15.0,
@@ -130,7 +130,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 8.5,
+                "fTrackPosition": 4.25,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     25.0,
@@ -141,7 +141,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 9.5,
+                "fTrackPosition": 4.75,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     45.0,
@@ -165,7 +165,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 4.0,
+                "fTrackPosition": 2.0,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     0.0,
@@ -176,7 +176,7 @@
             {
                 "fTangentEnd": 0.0,
                 "fTangentStart": 0.0,
-                "fTrackPosition": 9.0,
+                "fTrackPosition": 4.5,
                 "iInterpolationFlag": 0,
                 "vTrackValue": [
                     0.0,

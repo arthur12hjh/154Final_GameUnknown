@@ -1099,6 +1099,12 @@
     <Filter Include="02.GameObjects\Actor\Spawner\BeatSaberLevelSpawner">
       <UniqueIdentifier>{a80cb650-fb27-4097-91cc-6096a30630f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber">
+      <UniqueIdentifier>{dfa0fc65-97fc-4cba-bbb4-d6b2d2315ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber">
+      <UniqueIdentifier>{ace582d6-7c55-4fcf-ac16-e29d96ce171a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\DisplayBox">
       <UniqueIdentifier>{80d2f063-5793-4bf6-b85d-fb0454e18428}</UniqueIdentifier>
     </Filter>
@@ -1111,11 +1117,32 @@
     <Filter Include="02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit">
       <UniqueIdentifier>{44f47e13-04ea-4fdd-9f4f-87279de045d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles">
+      <UniqueIdentifier>{6bef3bb2-ca9e-4956-95a3-38d6144a3081}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03.Effects\TrailEffect">
       <UniqueIdentifier>{ce3a39b5-0867-44f5-a8a8-bc5f41990817}</UniqueIdentifier>
     </Filter>
     <Filter Include="03.Effects\TrailEffect\TrailData">
       <UniqueIdentifier>{3738cbda-a378-4f96-8b56-0af527669657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore">
+      <UniqueIdentifier>{5f06ce2b-e607-4c86-abbc-2a05165d46f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber">
+      <UniqueIdentifier>{f74a5655-6622-42f4-a9ec-3906c0413dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Sky">
+      <UniqueIdentifier>{0b233bc6-1500-4e89-984d-c0e6771a403d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Pad">
+      <UniqueIdentifier>{7c8ebc81-4366-4c59-a0b8-a98ebae30d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Beat_Indicator">
+      <UniqueIdentifier>{1fefcb52-a23a-465a-9e91-e6faa3b29f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\Rail">
+      <UniqueIdentifier>{284604d9-ba96-43b2-a2d4-f351c65bba64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2122,6 +2149,9 @@
     <ClInclude Include="..\public\LightTool.h">
       <Filter>30.ImGui\LightTool</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UINeonNumber.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\NaytibaFace.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
     </ClInclude>
@@ -2145,6 +2175,24 @@
     </ClInclude>
     <ClInclude Include="..\public\Task_GorillaHit.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\NaytibaFace.h">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIScore.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Beat_Indicator.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Beat_Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sky_Dororong.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Rail.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Pad.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3139,8 +3187,26 @@
     <ClCompile Include="..\Private\Player_ScarletLinkAttackState.cpp">
       <Filter>02.GameObjects\Character\Player\00. State\00. SharedStates\LinkAttack</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UINeonNumber.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UINeonNumber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIScore.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Task_GorillaHit.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Beat_Indicator.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Beat_Indicator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sky_Dororong.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Rail.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Pad.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3206,6 +3272,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_BeamShader.hlsl">
       <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
+      <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

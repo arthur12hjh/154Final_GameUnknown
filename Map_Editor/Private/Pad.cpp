@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CPad::CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-    CGameObject(pDevice, pContext)
+    CDororong_Saber(pDevice, pContext)
 {
 }
 
 CPad::CPad(const CPad& Prototype) :
-    CGameObject(Prototype)
+    CDororong_Saber(Prototype)
 {
 }
 
@@ -38,7 +38,7 @@ void CPad::Update(_float fTimeDelta)
     /*_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCollider->UpdateColiision(WorldMat);*/
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    /*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
     {
 		m_bIsColorChange = true;
         
@@ -63,7 +63,7 @@ void CPad::Update(_float fTimeDelta)
             m_fColorWeight = 0.f;
 
         m_fTimeAcc = 0.f;
-    }
+    }*/
 }
 
 void CPad::Late_Update(_float fTimeDelta)
@@ -73,7 +73,7 @@ void CPad::Late_Update(_float fTimeDelta)
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
     //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
     //}
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
 
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
@@ -168,8 +168,4 @@ CGameObject* CPad::Clone(void* pArg)
 void CPad::Free()
 {
     __super::Free();
-
-    Safe_Release(m_pCollider);
-    Safe_Release(m_pShaderCom);
-    Safe_Release(m_pVIBufferCom);
 }

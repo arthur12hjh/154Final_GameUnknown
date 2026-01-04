@@ -160,6 +160,7 @@
     <ClInclude Include="..\public\BeatSaberCharacterBody.h" />
     <ClInclude Include="..\public\BeatSaberFsm.h" />
     <ClInclude Include="..\public\BeatSaberSpawner.h" />
+    <ClInclude Include="..\public\Beat_Indicator.h" />
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
@@ -245,6 +246,7 @@
     <ClInclude Include="..\public\NpcInteractionController.h" />
     <ClInclude Include="..\public\NpcInteractionState.h" />
     <ClInclude Include="..\public\NpcPatrolState.h" />
+    <ClInclude Include="..\public\Pad.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
     <ClInclude Include="..\Public\Player_AerialAttack.h" />
@@ -292,6 +294,7 @@
     <ClInclude Include="..\public\PoolingManager.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
+    <ClInclude Include="..\public\Rail.h" />
     <ClInclude Include="..\Public\RepairConsole.h" />
     <ClInclude Include="..\Public\RimLight.h" />
     <ClInclude Include="..\public\ScarletBehaviorTree.h" />
@@ -299,6 +302,7 @@
     <ClInclude Include="..\Public\SciFi_Door.h" />
     <ClInclude Include="..\Public\ShaderManager.h" />
     <ClInclude Include="..\public\Shutter.h" />
+    <ClInclude Include="..\public\Sky_Dororong.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
@@ -451,6 +455,7 @@
     <ClInclude Include="..\Public\UILoadingBlock.h" />
     <ClInclude Include="..\Public\UIMapSelector.h" />
     <ClInclude Include="..\Public\UIMouseInteraction.h" />
+    <ClInclude Include="..\Public\UINeonNumber.h" />
     <ClInclude Include="..\Public\UIOwnGold.h" />
     <ClInclude Include="..\Public\UIInteractionFX.h" />
     <ClInclude Include="..\Public\UILoadingBlur.h" />
@@ -461,6 +466,7 @@
     <ClInclude Include="..\Public\UIMonsterStamina.h" />
     <ClInclude Include="..\Public\UIMonsterStaminaFX.h" />
     <ClInclude Include="..\Public\UIPopup.h" />
+    <ClInclude Include="..\Public\UIScore.h" />
     <ClInclude Include="..\Public\UIScript.h" />
     <ClInclude Include="..\Public\UIShop.h" />
     <ClInclude Include="..\Public\UISimpleKey.h" />
@@ -499,6 +505,7 @@
     <ClCompile Include="..\private\BeatSaberCharacterBody.cpp" />
     <ClCompile Include="..\private\BeatSaberFsm.cpp" />
     <ClCompile Include="..\private\BeatSaberSpawner.cpp" />
+    <ClCompile Include="..\private\Beat_Indicator.cpp" />
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
@@ -583,6 +590,7 @@
     <ClCompile Include="..\private\NpcInteractionController.cpp" />
     <ClCompile Include="..\private\NpcInteractionState.cpp" />
     <ClCompile Include="..\private\NpcPatrolState.cpp" />
+    <ClCompile Include="..\private\Pad.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
     <ClCompile Include="..\Private\PlayerState.cpp" />
@@ -630,6 +638,7 @@
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
     <ClCompile Include="..\private\PoolingManager.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
+    <ClCompile Include="..\private\Rail.cpp" />
     <ClCompile Include="..\Private\RepairConsole.cpp" />
     <ClCompile Include="..\Private\RimLight.cpp" />
     <ClCompile Include="..\private\ScarletBehaviorTree.cpp" />
@@ -637,6 +646,7 @@
     <ClCompile Include="..\Private\SciFi_Door.cpp" />
     <ClCompile Include="..\Private\ShaderManager.cpp" />
     <ClCompile Include="..\private\Shutter.cpp" />
+    <ClCompile Include="..\private\Sky_Dororong.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
@@ -804,6 +814,7 @@
     <ClCompile Include="..\Private\UILoadingBlock.cpp" />
     <ClCompile Include="..\Private\UIMapSelector.cpp" />
     <ClCompile Include="..\Private\UIMouseInteraction.cpp" />
+    <ClCompile Include="..\Private\UINeonNumber.cpp" />
     <ClCompile Include="..\Private\UIOwnGold.cpp" />
     <ClCompile Include="..\Private\UIInteractionFX.cpp" />
     <ClCompile Include="..\Private\UILoadingBlur.cpp" />
@@ -814,6 +825,7 @@
     <ClCompile Include="..\Private\UIMonsterStamina.cpp" />
     <ClCompile Include="..\Private\UIMonsterStaminaFX.cpp" />
     <ClCompile Include="..\Private\UIPopup.cpp" />
+    <ClCompile Include="..\Private\UIScore.cpp" />
     <ClCompile Include="..\Private\UIScript.cpp" />
     <ClCompile Include="..\Private\UIShop.cpp" />
     <ClCompile Include="..\Private\UISimpleKey.cpp" />
@@ -861,6 +873,7 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Hair.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Instance_Cuilling.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Mouse.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />
