@@ -102,6 +102,8 @@ void CMainApp::Update(_float fTimeDelta)
 	m_pEffectSRV->Reset();
 
 	m_pGameInstance->Update_Engine(fTimeDelta);
+	// 게임 인스턴스 업데이트 이후에,
+	// 게임 매니저 업데이트가 돈다.
 	m_pGameManager->Update(fTimeDelta);
 
 #ifdef _DEBUG

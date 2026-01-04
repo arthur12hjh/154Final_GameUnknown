@@ -409,6 +409,7 @@
     <ClInclude Include="..\public\StoneWall1.h" />
     <ClInclude Include="..\public\StoneWall2.h" />
     <ClInclude Include="..\Public\TargetComponent.h" />
+    <ClInclude Include="..\Public\TargetLight.h" />
     <ClInclude Include="..\public\Task_CutScene.h" />
     <ClInclude Include="..\public\Task_Dead.h" />
     <ClInclude Include="..\public\Task_GorillaHit.h" />
@@ -771,6 +772,7 @@
     <ClCompile Include="..\private\StoneWall1.cpp" />
     <ClCompile Include="..\private\StoneWall2.cpp" />
     <ClCompile Include="..\Private\TargetComponent.cpp" />
+    <ClCompile Include="..\Private\TargetLight.cpp" />
     <ClCompile Include="..\private\Task_CutScene.cpp" />
     <ClCompile Include="..\private\Task_Dead.cpp" />
     <ClCompile Include="..\private\Task_GorillaHit.cpp" />

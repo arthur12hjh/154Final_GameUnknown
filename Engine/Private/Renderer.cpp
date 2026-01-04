@@ -706,7 +706,7 @@ void CRenderer::Render_NonBlend()
 
 	_char szDebugString[256];
 
-	/* Diffuse + Normal */
+	/* Diffuse + Normal + Depth .... */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return;
 

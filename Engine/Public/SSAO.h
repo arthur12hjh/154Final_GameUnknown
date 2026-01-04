@@ -47,11 +47,11 @@ private:
 	SSAO_DESC m_Desc = {};
 	_float3 m_vRandomNoise[16] = {};
 	//0.2 ~ 1.5
-	_float m_fRadiusMin = { 0.26f }, m_fRadiusMax = { 5.f };
+	_float m_fRadiusMin = { 0.173f }, m_fRadiusMax = { 0.141f };
 	//0.001  ~ 1 
-	_float m_fBiasMin = { 0.029f }, m_fBiasMax = { 0.059 };
+	_float m_fBiasMin = { 0.019f }, m_fBiasMax = { 0.62f };
 	//0 ~ 3
-	_float m_fIntensity = { 5.f };
+	_float m_fIntensity = { 2.32f };
 public:
 	static CSSAO* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
