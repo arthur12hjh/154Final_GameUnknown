@@ -69,6 +69,9 @@ public:
 	void Open_Shop();
 	void Close_Shop();
 
+	void Open_Result();
+	void Close_Result();
+
 	// 한글 때문에 만듦
 	string WStringToUTF8(const _wstring& wstr);
 	_wstring UTF8ToWString(const string& str);

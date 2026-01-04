@@ -1129,6 +1129,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore">
       <UniqueIdentifier>{5f06ce2b-e607-4c86-abbc-2a05165d46f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult">
+      <UniqueIdentifier>{d373463f-8e52-44b7-9dae-0b97d978719f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Actor\Bullet\Bullet_Split">
       <UniqueIdentifier>{273b3926-666e-4710-80ac-7a5a544485ce}</UniqueIdentifier>
     </Filter>
@@ -2173,6 +2176,9 @@
     <ClInclude Include="..\Public\UIScore.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIScore</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UIResult.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Bullet_Split.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
     </ClInclude>
@@ -3177,6 +3183,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Task_GorillaHit.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\GoriilaBehaviorTree\Task\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIResult.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Split.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>

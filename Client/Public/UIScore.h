@@ -39,6 +39,7 @@ private:
 
 	_uint m_iScore = 0;
 	_uint m_iPrevScore = 0;
+	_uint m_iHighScore = 0;
 
 	_uint m_iRank = 0;
 	_uint m_iPrevRank = 0;
