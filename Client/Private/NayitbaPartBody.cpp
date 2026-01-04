@@ -172,9 +172,12 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 
     if (fCamDist < 300.f)
     {
-        CNaytiba* Naytiba = static_cast<CNaytiba*>(m_pParent);
-        if(NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
-            m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+        CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
+        if (Naytiba)
+        {
+            if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
+                m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+        }
 
         m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     }
