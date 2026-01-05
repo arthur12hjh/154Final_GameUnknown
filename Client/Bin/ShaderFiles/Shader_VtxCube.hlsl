@@ -2,6 +2,7 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 textureCUBE g_Texture;
+float g_fWeight0, g_fWeight1, g_fWeight2;
 float g_fFar;
 float g_fTime;
 float g_fColorWeight;
@@ -109,27 +110,51 @@ PS_OUT PS_RAIL(PS_IN In)
     // 모든 칸 색상을 밝은 연두로 통일
     float4 vBrightLime = float4(0.5f, 1.0f, 0.0f, 1.0f);
 
-    // 가로 위치 계산 (-0.5 ~ 0.5 범위를 0, 1, 2 인덱스로 변환)
+    float4 vColors[5];
+    vColors[0] = float4(0.0f, 0.2f, 0.0f, 1.0f);
+    vColors[1] = float4(0.1f, 0.4f, 0.0f, 1.0f);
+    vColors[2] = float4(0.3f, 0.7f, 0.0f, 1.0f);
+    vColors[3] = float4(0.5f, 1.0f, 0.0f, 1.0f);
+    vColors[4] = float4(0.8f, 1.0f, 0.5f, 1.0f);
+    
     float fXPos = (In.vTexcoord.x + 0.5f);
     int iIdx = (int) floor(fXPos * 3.0f);
     iIdx = clamp(iIdx, 0, 2);
 
+    float fYPos = (In.vTexcoord.y + 0.5f);
+    float fColorIdx = fYPos * 4.0f;
+    int iColorIdx = (int) floor(fColorIdx);
+    float fWeight = frac(fColorIdx);
+
+    float4 vTargetColor = lerp(vColors[clamp(iColorIdx, 0, 4)], vColors[clamp(iColorIdx + 1, 0, 4)], smoothstep(0.0f, 1.0f, fWeight));
+    
     // 현재 픽셀이 속한 칸이 활성화되었는지 확인
     bool bIsActive = false;
+    float fMyWeight = 0.f;
     if (iIdx == 0)
+    {
         bIsActive = g_bIsIdx0;
+        fMyWeight = g_fWeight0;
+    }
     else if (iIdx == 1)
+    {
         bIsActive = g_bIsIdx1;
+        fMyWeight = g_fWeight1;
+    }
     else if (iIdx == 2)
+    {
         bIsActive = g_bIsIdx2;
+        fMyWeight = g_fWeight2;
+    }
 
-    float fThreshold = lerp(-0.49f, -0.45f, g_fColorWeight);
+    float fThreshold = lerp(-0.49f, 0.4f, fMyWeight);
     float fHeightMask = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
 
     float4 vBaseColor = vBlack;
     if (bIsActive)
     {
-        vBaseColor = lerp(vBlack, vBrightLime, fHeightMask);
+        //vBaseColor = lerp(vBlack, vBrightLime, fHeightMask);
+        vBaseColor = lerp(vBlack, vTargetColor, fHeightMask);
     }
     
     float3 vAbsPos = abs(In.vTexcoord);

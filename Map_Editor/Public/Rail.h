@@ -30,7 +30,10 @@ private:
 
 private:
 	_float					m_fTimeArr[3] = { 0.f, 0.f, 0.f };
+	_float					m_fColorWeightArr[3] = { 0.f, 0.f, 0.f };
 	_bool					m_bIsColorArr[3] = { false, false, false };
+	_bool					m_bIsActive[3] = { false, false , false };
+
 
 	_bool					m_bIsIdx0 = { false };
 	_bool					m_bIsIdx1 = { false };
