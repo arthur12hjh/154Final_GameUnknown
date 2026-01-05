@@ -47,12 +47,18 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 		pChannel->getCurrentSound(&pSound);
 		pChannel->getUserData(&pUserData);
 
-		if (pUserData)
-		{
-			auto pUserCalllBack = static_cast<function<void(FMOD_CHANNELCONTROL * channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)>*>(pUserData);
-			(*pUserCalllBack)(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
-		}
+		_uint iSoundTotalLength{}, iPosition;
+		pSound->getLength(&iSoundTotalLength, FMOD_TIMEUNIT_MS);
+		pChannel->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
 
+		if (iPosition >= iSoundTotalLength)
+		{
+			if (pUserData)
+			{
+				auto pUserCalllBack = static_cast<function<void(FMOD_CHANNELCONTROL * channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)>*>(pUserData);
+				(*pUserCalllBack)(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+			}
+		}
 	}
 	break;
 	case FMOD_CHANNELCONTROL_CHANNELGROUP:
@@ -145,16 +151,32 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
-	m_pChannelArr[eID]->stop();
-	m_pChannelArr[eID] = nullptr;
+	_bool bIsChannelPlaying;
+	if (m_pChannelArr[eID])
+	{
+		m_pChannelArr[eID]->isPlaying(&bIsChannelPlaying);
+		if (bIsChannelPlaying)
+		{
+			m_pChannelArr[eID]->stop();
+			m_pChannelArr[eID] = nullptr;
+		}
+	}
 }
 
 void CSound_Manager::Manager_StopAll()
 {
+	_bool bIsChannelPlaying;
 	for (int i = 0; i < CHANNELID::END; ++i)
 	{
-		m_pChannelArr[i]->stop();
-		m_pChannelArr[i] = nullptr;
+		if (m_pChannelArr[i])
+		{
+			m_pChannelArr[i]->isPlaying(&bIsChannelPlaying);
+			if (bIsChannelPlaying)
+			{
+				m_pChannelArr[i]->stop();
+				m_pChannelArr[i] = nullptr;
+			}
+		}
 	}
 }
 
