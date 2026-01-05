@@ -64,7 +64,6 @@ VS_OUT VS_MAIN(VS_IN In)
         fWeightW = In.vBlendWeight.w / fWeightSum;
     }
           
-// CPU�� ������ ��� ����
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -75,13 +74,10 @@ VS_OUT VS_MAIN(VS_IN In)
                         MatrixZ * fWeightZ +
                         MatrixW * fWeightW;
     
-    /* ��Ű�� */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
     float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
     float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
-
-    // ���� ��ȯ
     
     matrix matWV, matWVP;
     

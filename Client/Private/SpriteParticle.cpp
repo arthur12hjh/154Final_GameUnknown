@@ -49,6 +49,9 @@ HRESULT CSpriteParticle::Initialize_Prototype(const SPRITE_PARTICLE_DATA* pSprit
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 	CVIBuffer_Point_Instance::POINT_INSTANCE_DESC		Desc{};
 	Desc.iNumInstance = pSpriteParticleData->iNumInstance;
@@ -121,24 +124,21 @@ void CSpriteParticle::Update(_float fTimeDelta)
 		m_isDead = true;
 		return;
 	}
+
 	_float4x4 CombinedWorldMatrix;
 	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
 
 	if (m_tData.bisSpectrum) {
-		if (0 < XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0]))))) {
-			m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
-			if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
-				m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
-			}
-			else {
-				m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
-				if (1 < m_fLength) {
-					_int iLength = (_int)m_fLength;
-					m_fLength -= iLength;
-					m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
-				}
-			}
+		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
+		m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
+		if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
+		}
+		else if (1 < m_fLength) {
+			_int iLength = (_int)m_fLength;
+			m_fLength -= iLength;
+			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w, m_tData.iNumInstance) + iLength;
 		}
 	}
 	m_CombinedWorldMatrix = CombinedWorldMatrix;
@@ -222,6 +222,7 @@ HRESULT CSpriteParticle::Ready_Components()
 
 HRESULT CSpriteParticle::Bind_ShaderResources()
 {
+	CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
 	if (m_tData.bisSpectrum) {
 		_float4x4 world = m_CombinedWorldMatrix;
 		world._41 = 0;
@@ -281,6 +282,10 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAngle", &m_tData.fAngle, sizeof(_float))))
 		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
+		return E_FAIL;
+
 	_int iBillboard = 0;
 	iBillboard += m_tData.bisBillboard ? 1 : 0;
 	iBillboard += m_tData.bisAngleBillboard ? 2 : 0;
@@ -324,14 +329,15 @@ HRESULT CSpriteParticle::Ready_ComputeShader()
 #pragma region Const Buffer Setting
 	_uint iNumData = m_pComputeShader->GetNumData();
 	m_CBData.vGravity = m_tData.fGravityDiagram;
-	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y, m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f };
+	m_CBData.vPivot = { m_tData.fPivot.x,  m_tData.fPivot.y,  m_tData.fPivot.z, m_tData.bisSpectrum ? 0.f : 1.f };
 	m_CBData.fTurnPower = m_tData.fTurnPower;
 	m_CBData.fisSphere.x = m_tData.bisSphere ? 1 : m_tData.bisCircle ? 2 : 0;
 	m_CBData.fisSphere.y = m_tData.fSphereSize;
 	m_CBData.fCircle = m_tData.fCircle;
-	m_CBData.iLoopAndCount.x = m_bisStop ? 4 : m_tData.bisLoop ? m_tData.bisSpectrum ? (2 == m_CBData.iLoopAndCount.x || 3 == m_CBData.iLoopAndCount.x) ? 3 : 2 : 1 : 0;
+	m_CBData.iLoopAndCount.x = m_bisStop ? 5 : m_tData.bisLoop ? m_tData.bisSpectrum ? (4 > m_CBData.iLoopAndCount.x) ? m_CBData.iLoopAndCount.x++ : 4 : 1 : 0;
+
 	m_CBData.iLoopAndCount.y = iNumData;
-	m_CBData.fTimeDelta.z = 0;
+	m_CBData.fTimeDelta.z = m_tData.fEndTime;
 	m_CBData.fTimeDelta.w = 0;
 
 	m_CBData.vRotation.x = -1.f;

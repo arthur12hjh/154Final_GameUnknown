@@ -93,7 +93,7 @@ private:
 	CNayitbaPartBody*						m_pPartBody = { nullptr };
 
 	_uint									m_iMonsterID = {};
-	const NAYTIBA_NETWORK_DESC*				m_pInitMonsterInfo = {};
+	const NAYTIBA_NETWORK_DESC*				m_pInitMonsterInfo = { nullptr };
 	const CHARACTER_SKILL_DESC*				m_pAttack_Data = { nullptr };
 
 	NAYTIBA_DESC							m_MonsterInfo = {};
@@ -108,8 +108,8 @@ private:
 	_uint									m_iComboCount = { };
 	_uint									m_iRepulseCount = { };
 
+	_float									m_fHealthBarOffset = {};
 	const _float4x4*						m_pLockOnMatrix = { nullptr };
-	const _float4x4*						m_pHeadBoneMatrix = { nullptr };
 	const _float4x4*						m_pLinkTargetBoneMatrix = { nullptr };
 
 	// 이거는 랜덤안하면 순차적으로 증가하면서 나오는 공격에 대한 인덱스

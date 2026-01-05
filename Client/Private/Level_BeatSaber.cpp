@@ -44,8 +44,8 @@ HRESULT CLevel_BeatSaber::Initialize()
     if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
         return E_FAIL;
 
-    if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
-        return E_FAIL;
+  /*  if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
+        return E_FAIL;*/
 
     Load_Dororong_Saber_Objects("../../Map_Editor/Bin/DataFiles/Dororong_Saber.bin");
 

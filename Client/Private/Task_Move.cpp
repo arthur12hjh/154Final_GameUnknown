@@ -84,8 +84,8 @@ CBehaviorNode::NODE_STATE CTask_Move::Update(_float fTimeDelta)
 
 		m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vMoveDir), m_fSpeed);
 
-		_float fAnimSpeed = m_fSpeed / m_pOwner->GetStaticMonsterData()->fMoveSpeed;
-		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * fAnimSpeed);
+		//_float fAnimSpeed = m_fSpeed / m_pOwner->GetStaticMonsterData()->fMoveSpeed;
+		_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta);
 		if (false == m_bIsCaution)
 		{
 			if (bIsFinished)
@@ -132,14 +132,14 @@ void CTask_Move::Refresh_MovePoint()
 			m_eDirection = DIRECTION::LEFT;
 			m_szAnimationName += "_Caution_Lw";
 			m_pOwner->Set_Animation(m_szAnimationName.c_str());
-			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 0.8f;
 		}
 		else
 		{
 			m_eDirection = DIRECTION::RIGHT;
 			m_szAnimationName += "_Caution_Rw";
 			m_pOwner->Set_Animation(m_szAnimationName.c_str());
-			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed;
+			m_fSpeed = m_pBlackBoard->GetBossInfo()->fMoveSpeed * 0.8f;
 		}
 		m_bIsCaution = true;
 	}

@@ -44,7 +44,10 @@ HRESULT CCinematicPartBody::Initialize(void* pArg)
 	}
 
     m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
-    m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+
+    if(TEXT("Prototype_Component_Model_Cinematic_Dororong") != m_szModelTag)
+        m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+
     //m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
     m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 
@@ -103,7 +106,7 @@ HRESULT CCinematicPartBody::Render()
             if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
                 return E_FAIL;
 
-            if (FAILED(m_pShaderCom->Begin(0)))
+            if (FAILED(m_pShaderCom->Begin(9)))
                 return E_FAIL;
 
             if (FAILED(m_pModelCom->Render(i)))

@@ -146,6 +146,7 @@ HRESULT CTrailEffect::Ready_Components(void* pArg)
 
 HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
 {
+    CAMERA_INFO CamInfo = m_pGameInstance->Get_CurrentCamInfo();
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -174,6 +175,9 @@ HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSpeed", &tData.fDissolveUVSpeed, sizeof(_float2))))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveUVSize", &tData.fDissolveUVSize, sizeof(_float2))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
         return E_FAIL;
 
     return S_OK;

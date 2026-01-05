@@ -92,7 +92,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     float fSum = 0.0f;
-    float fBias = 0.0008f;
+    float fBias = 0.00007f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;

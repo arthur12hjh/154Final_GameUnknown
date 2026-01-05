@@ -37,6 +37,17 @@ float4 Calc_TerrainNormal(texture2D NormalTexture, float2 vTexcoord, float3 vNor
     return float4(normalize(vResultNormal) * 0.5f + 0.5f, 0.f);
 }
 
+float4 Calc_RGBNormal(texture2D NormalTexture, float2 vTexcoord,
+                   float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
+{
+    vector vNormalDesc = NormalTexture.Sample(MirrorSampler, vTexcoord);
+    float3x3 WorldMatrix = float3x3(vTangent, vBinormal * -1.f, vNormal);
+    
+    float3 vResultNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
+   
+    return float4(vResultNormal * 0.5f + 0.5f, 0.f);
+}
+
 float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
                    float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
 {

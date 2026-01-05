@@ -76,8 +76,8 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 		}
 		else
 		{
-			m_fPlayRatio = 2.f;
-			m_fMoveSpeed = m_StaticMonsterData->fMoveSpeed * 2.f;
+			m_fPlayRatio = 1.3f;
+			m_fMoveSpeed = m_StaticMonsterData->fMoveSpeed * 1.3f;
 		}
 
 

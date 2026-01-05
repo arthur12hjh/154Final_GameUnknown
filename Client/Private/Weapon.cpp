@@ -45,7 +45,6 @@ HRESULT CWeapon::Initialize(void* pArg)
 	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.2f, 0.1f, -0.1f, 1.f));
 
-
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
 	//m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
