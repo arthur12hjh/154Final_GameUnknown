@@ -21,6 +21,30 @@ NS_BEGIN(Client)
 class CShaderManager : public CBase
 {
 private:
+	typedef struct tagScarletPhase2Cache {
+		// Directional
+		_float4 vDirDiffuseStart;
+
+		// Fog
+		_float4 vFogColorStart;
+		_float  fFogEndStart;
+		_float  fFogPowerMinStart;
+		_float  fFogPowerMaxStart;
+		_float  fSkyboxFogPowerStart;
+
+		// Volume Fog
+		_float  VolAsymmetryStart;
+		_float  VolDensityStart;
+		_float  VolIntensityStart;
+		_float  VolNoiseContrastStart;
+		_float  VolNoiseScaleStart;
+		_float  VolNoiseStrengthStart;
+		_float  VolStartDistanceStart;
+		_float4 VolFogAmbientStart;
+		_float4 VolLightColorStart;
+	} SCARLET_PHASE2_LERP_CACHE;
+
+private:
 	CShaderManager();
 	virtual ~CShaderManager() = default;
 
@@ -68,11 +92,21 @@ private:
 	class CNaytiba* m_pScarlet = { nullptr };
 	class CPlayer*  m_pPlayer = { nullptr };
 	class CEffect*	m_pMapEffect = { nullptr };
+	//¥ﬁ¿∫ ª°∞≤∞‘ «ÿ¡‡æﬂ¡ˆ
+	class CMoon*	m_pMoon = { nullptr };
+
+	//»´∑√ 2∆‰¿Ã¡Ó ≥—æÓ∞•∂ß LerpøÎ
+	_bool m_isScarletPhase2LerpTriggerOn = { false };
+	_float m_fScarletPhase2LerpTime = { 1.f };
+	_float m_fScarletPhase2LerpTimeAcc = { 0.f };
+
+	SCARLET_PHASE2_LERP_CACHE m_ScarletPhase2LerpCache;
+
 private:
 	void Load_Desert_ShaderSettings();
 	void Load_Scarlet_ShaderSettings();
 	void Load_TargetLights();
-	void Load_Scarlet_Phase2_ShaderSettings();
+	void Load_Scarlet_Phase2_ShaderSettings(_float fTimeDelta);
 	void Load_Scarlet_BattleEnd_ShaderSettings();
 
 	/* »´∑√∏  ºŒ¿Ã¥ı */

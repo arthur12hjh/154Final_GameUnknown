@@ -26,6 +26,9 @@ float g_fFar;
 matrix g_LightViewMatrix[5];
 matrix g_LightProjMatrix[5];
 
+//До РќПы
+float4 g_MoonColorFactor;
+
 VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
@@ -152,6 +155,7 @@ PS_OUT PS_MOON(PS_IN In)
     float3 finalDiffuseColor = vMtrlDiffuse.rgb * (vAmbientColor + fDiffuse * vLightColor);
     
     Out.vDiffuse.rgb = finalDiffuseColor + vEmissiveColor;
+    Out.vDiffuse *= g_MoonColorFactor;
     Out.vDiffuse *= 2.f;
     
     Out.vDiffuse.a = vMtrlDiffuse.a;
@@ -190,7 +194,7 @@ PS_OUT PS_MOON_GAMEOBJECT(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vBloom = float4(finalDiffuseColor + vEmissiveColor, 1.f);
+    Out.vBloom = float4((finalDiffuseColor + vEmissiveColor) * g_MoonColorFactor.xyz, 1.f);
     
     return Out;
 }
