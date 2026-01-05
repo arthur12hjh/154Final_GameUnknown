@@ -329,7 +329,7 @@ namespace Engine
 		unsigned int			iNumValuesAndWeights;
 	}BINMESHMORPHKEY;
 
-	typedef struct binMeshMorphAnim
+	typedef struct binMeshMorphAnim					// Morph Target
 	{
 		char					szName[MAX_PATH];
 		unsigned int			iNumKeys;
@@ -348,7 +348,6 @@ namespace Engine
 		unsigned int			iNumWeights;
 		vector<binVertexWeight>	vWeights;
 		XMFLOAT4X4				OffsetMatrix;
-		//binNode*				pNode;
 	}BINBONE;
 
 	typedef struct binChannel
@@ -364,36 +363,26 @@ namespace Engine
 
 	typedef struct binAnimation
 	{
-		char					szName[MAX_PATH];
-		float					fDuration;
-		float					fTicksPerSecond;
-		unsigned int			iNumChannels;
-		vector<binChannel>		vChannels;
+		char						szName[MAX_PATH];
+		float						fDuration;
+		float						fTicksPerSecond;
+		unsigned int				iNumChannels;
+		vector<binChannel>			vChannels;
 	}BINANIMATION;
 
-	typedef struct binMesh
+	typedef struct binMorphAnimation		// 모프 타겟 애니메이션
 	{
-		unsigned int				iNumVertices;
-		unsigned int				iNumFaces;
-		unsigned int				iNumBones;
-		unsigned int				iMaterialIndex;
-		vector<XMFLOAT3>			vPositions;
-		vector<XMFLOAT3>			vNormals;
-		vector<XMFLOAT3>			vTangents;
-		vector<XMFLOAT3>			vBinormals;
-		vector<vector<XMFLOAT2>>	vTextureCoords;
-		vector<binFace>				vFaces;
-		vector<binBone>				vBones;
 		char						szName[MAX_PATH];
-	}BINMESH;
+		float						fDuration;
+		float						fTicksPerSecond;
+		unsigned int				iNumChannels;
+		vector<binMeshMorphAnim>	vMorphAnimations;
+	}BINMORPHANIMATION;
 
-	typedef struct binAnimMesh
+	typedef struct binAnimMesh					// Morph Target
 	{
 		/* binMesh에도 있는 정점 수 */
 		unsigned int				iNumVertices;
-		unsigned int				iNumFaces;
-		unsigned int				iNumBones;
-		unsigned int				iMaterialIndex;
 		/* 정점. 아 이러면 아예 로드 방식 자체를 기존 FBX Parser랑 다르게 해야할듯 */
 		vector<XMFLOAT3>			vPositions;
 
@@ -411,6 +400,24 @@ namespace Engine
 
 		char						szName[MAX_PATH];
 	}BINANIMMESH;
+
+	typedef struct binMesh
+	{
+		unsigned int				iNumVertices;
+		unsigned int				iNumFaces;
+		unsigned int				iNumBones;
+		unsigned int				iMaterialIndex;
+		vector<XMFLOAT3>			vPositions;
+		vector<XMFLOAT3>			vNormals;
+		vector<XMFLOAT3>			vTangents;
+		vector<XMFLOAT3>			vBinormals;
+		vector<vector<XMFLOAT2>>	vTextureCoords;
+		vector<binFace>				vFaces;
+		vector<binBone>				vBones;
+		vector<binAnimMesh>			vAnimMesh;				// 셰이프 그룹
+		char						szName[MAX_PATH];
+	}BINMESH;
+
 
 	typedef struct binMaterial
 	{
