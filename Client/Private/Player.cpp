@@ -719,9 +719,8 @@ void CPlayer::Update_LinkAttack(_float fTimeDelta)
 
 		if (NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK == eExecutionState)
 			Execution_Nayitba();
-
-		else if(NAYITBA_EXECUTION_TYPE::LINK_ATTACK == eExecutionState)
-			LinkAttack_Nayitba();
+		else
+			LinkAttack_Nayitba(eExecutionState);
 	}
 }
 
@@ -908,7 +907,7 @@ void CPlayer::Execution_Nayitba()
 	m_PlayerDesc.pLinkAttackTarget->Damaged(&Desc);
 }
 
-void CPlayer::LinkAttack_Nayitba()
+void CPlayer::LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType)
 {
 	PLAYER_TRANSITION_DESC TransitionDesc{};
 	SOCKETMATRIX_DESC TargetDesc{};
@@ -929,16 +928,13 @@ void CPlayer::LinkAttack_Nayitba()
 	// 일단 기본적으로 홍련 링크어택으로 들어가게 했어
 	// 2페이즈 그로기는 아래에 주석 처리한 SCARLET_PHASE2_LINKATTACK 임.
 	case 8:
-		TransitionDesc.eNextState = PLAYER_STATE::SCARLET_LINKATTACK;
+		if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == eLinkAttackType)
+			TransitionDesc.eNextState = PLAYER_STATE::SCARLET_LINKATTACK;
+		else if (NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK == eLinkAttackType)
+			TransitionDesc.eNextState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
+
 		TransitionDesc.pArg = &TargetDesc;
 		break;
-
-	// 
-	//case 8:
-	//	TransitionDesc.eNextState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
-	//	TransitionDesc.pArg = &TargetDesc;
-	//	break;
-
 	default:
 		return;
 	}
