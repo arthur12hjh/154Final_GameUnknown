@@ -25,6 +25,8 @@ HRESULT CBeatSaberSpawner::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    BEATSABER_SPAWNER_DESC* pDesc = static_cast<BEATSABER_SPAWNER_DESC*>(pArg);
+    m_pPlayerTransform = pDesc->pPlayerTransform;
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
@@ -104,7 +106,7 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.vScale = { 1.f, 1.f, 1.f };
     NoteDesc.vRotation = { 0.f, XMConvertToRadians(180.f), 0.f, 0.f };
     XMStoreFloat3(&NoteDesc.vPosition, m_pTransformCom->Get_State(STATE::POSITION));
-    NoteDesc.vTargetPoint = { 0.f, 1.f, 0.f };
+    XMStoreFloat3(& NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
     
     NoteDesc.fNoteSpeed = 5.f;
     NoteDesc.NoteType = NoteData.NoteType;

@@ -38,12 +38,12 @@ HRESULT CLevel_BeatSaber::Initialize()
     if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
         return E_FAIL;
 
-    if (FAILED(Ready_Layer_BeatSpawner(TEXT("Layer_BeatSaberSpawner"))))
-        return E_FAIL;
-
     if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
         return E_FAIL;
 
+    if (FAILED(Ready_Layer_BeatSpawner(TEXT("Layer_BeatSaberSpawner"))))
+
+        return E_FAIL;
   /*  if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
         return E_FAIL;*/
 
@@ -63,19 +63,7 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
     }
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
-    {
-        CNote::NOTE_DESC NoteDesc = {};
-        NoteDesc.bIsApplyTransform = true;
-        NoteDesc.vScale = { 1.f, 1.f, 1.f };
-        NoteDesc.vPosition = { 22.f, 1.f, 22.f };
-        NoteDesc.fNoteSpeed = 2.f;
-        NoteDesc.vTargetPoint = { -3.f, 1.f, -3.f };
-
-        m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
-            ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc);
-
         Play_GameBGM(TEXT("Test"), 1.f);
-    }
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
     {
@@ -84,13 +72,6 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 
         if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY, false))))
             return;
-
-        return;
-    }
-
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F11))
-    {
-        Play_GameBGM(TEXT("SoundTest.mp3"), 0.5f);
 
         return;
     }
@@ -232,13 +213,18 @@ HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
 
 HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
 {
-    CGameObject::GAMEOBJECT_DESC Desc = {};
+    auto pLayerList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Player"));
+    if (nullptr == pLayerList)
+        return E_FAIL;
+
+    CBeatSaberSpawner::BEATSABER_SPAWNER_DESC Desc = {};
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
     Desc.vPosition = { 20.f, 1.f, 20.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
+    Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();
 
     if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatSaberSpawner"),
         ENUM_CLASS(LEVEL::BEATSABER_GAME), strLayerTag, &Desc)))
@@ -303,8 +289,11 @@ CLevel_BeatSaber::NOTE_DATA_NAME* CLevel_BeatSaber::Get_FindSongFile(const wstri
 
 FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
 {
-    m_pGameInstance->Manager_StopAll();
-    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+    if(m_pGameInstance)
+    {
+        m_pGameInstance->Manager_StopAll();
+        m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+    }
 
     return FMOD_RESULT::FMOD_OK;
 }
@@ -377,5 +366,6 @@ CLevel_BeatSaber* CLevel_BeatSaber::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 void CLevel_BeatSaber::Free()
 {
+    m_pGameInstance->Manager_StopAll();
     __super::Free();
 }
