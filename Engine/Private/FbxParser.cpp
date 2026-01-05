@@ -34,6 +34,7 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	aiAnimMesh;
 	aiMeshMorphAnim;
 	aiMeshMorphKey;
+	aiAnimation;
 
 
 	// BINMODEL->iNumMaterials

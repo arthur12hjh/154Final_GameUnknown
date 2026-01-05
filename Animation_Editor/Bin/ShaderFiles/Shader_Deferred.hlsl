@@ -51,9 +51,10 @@ texture2D g_ScreenTexture;
 texture2D g_ShadowBlurXTexture;
 texture2D g_ShadowAreaTexture; 
 Texture2DArray g_CascadeShadowTexture;
+
 float g_fCascadeEnds[6] = { 
     0.1f,
-	10.0f,
+	6.0f,
 	20.0f,
 	40.f,
 	100.f,
@@ -71,6 +72,16 @@ float g_fFalloff;
 float g_fTheta;
 float g_fPhi;
 
+#define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+#define FXAA_EDGE_THRESHOLD_MIN  (1.0/24.0)
+#define FXAA_SEARCH_STEPS        32
+#define FXAA_SEARCH_ACCELERATION 1
+#define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+#define FXAA_SUBPIX              1
+#define FXAA_SUBPIX_FASTER       0
+#define FXAA_SUBPIX_CAP          (3.0/4.0)
+#define FXAA_SUBPIX_TRIM         (1.0/4.0)
+#define FXAA_SUBPIX_TRIM_SCALE (1.0/(1.0 - FXAA_SUBPIX_TRIM))
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -105,15 +116,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
 
     // Normal Strength 증가 --------------------------------------------
-    float3 N;
-    {
-        float3 n = vNormalDesc.xyz * 2.f - 1.f;
-        float normalStrength = 0.8f; // 기존 0.35 -> 최소 수정
-        n.xy *= normalStrength;
-        N = normalize(n);
-    }
 
-    // 위치 복원 그대로 ---------------------------------------------------
+    float3 N = normalize(vNormalDesc.xyz * 2.f - 1.f);
     float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * g_fFar;
 
@@ -126,10 +130,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     /* 로컬위치 * 월드 * 뷰 * 투영  */
     vPosition = vPosition * fViewZ;
-    
     /* 로컬위치 * 월드 * 뷰  */
     vPosition = mul(vPosition, g_ProjMatrixInv);
-    
     /* 로컬위치 * 월드   */
     vPosition = mul(vPosition, g_ViewMatrixInv);
 
@@ -144,24 +146,23 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float Metallic = 0.f;
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
 
-    bool hasPacked = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
-    bool isORSS = hasPacked && (A > 0.f);
-    bool isORM = hasPacked && (A == 0.f);
+    bool isPBR = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
+    bool isORSS = isPBR && (A > 0.f);
+    bool isORM = isPBR && (A == 0.f);
 
     // Phong
-    if (!hasPacked)
+    if (!isPBR)
     {
         float NdotL = saturate(dot(N, L));
 
-        float3 diff = vAlbedo.rgb * g_vLightDiffuse.rgb *
-                      saturate(NdotL + (g_vLightAmbient.rgb * g_vMtrlAmbient.rgb));
+        float3 diff = vAlbedo.rgb * g_vLightDiffuse.rgb * saturate(NdotL + (g_vLightAmbient.rgb * g_vMtrlAmbient.rgb));
 
         float3 refl = reflect(-L, N);
-        float3 spec = (g_vLightSpecular.rgb * g_vMtrlSpecular.rgb) *
-                      pow(max(dot(-V, normalize(refl)), 0.f), 50.f);
+        float3 spec = (g_vLightSpecular.rgb * g_vMtrlSpecular.rgb) * pow(max(dot(-V, normalize(refl)), 0.f), 50.f);
 
         Out.vShade = float4(diff, 1);
         Out.vSpecular = float4(spec, 1);
+        //Phong 셰이딩은 여기서 끝
         return Out;
     }
 
@@ -176,6 +177,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 baseF0 = float3(0.028f, 0.028f, 0.028f);
         F0 = baseF0 + specFactor * 0.05f;
     }
+    // ORM (orm 마스크) 
     else if (isORM)
     {
         AO = vORMDesc.r;
@@ -188,7 +190,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     Out.vShade.rgb *= AOStr;
 
-    // SSS 추가
+    // ORSS라면, SSS 추가
     if (isORSS)
     {
         float3 base = Out.vShade.rgb;
@@ -205,30 +207,30 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 result = lerp(base, bloodColor, w);
         Out.vShade.rgb = result;
 
-        // 역광 SSS BackScatter ----------------------------------------
+        // 역광 SSS BackScatter
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f) * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }
-
+    
     return Out;
 }
 
 PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 {
     PS_OUT_LIGHT Out;
-    
-    vector vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
-    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * g_fFar;
+
     
-    vector vPosition;
-    
+    float3 N = normalize(vNormalDesc.xyz * 2.f - 1.f);
     /* 로컬위치 * 월드 * 뷰 * 투영 / w */
+    vector vPosition;
     vPosition.x = In.vTexcoord.x * 2.f - 1.f;
     vPosition.y = In.vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
@@ -236,59 +238,73 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     /* 로컬위치 * 월드 * 뷰 * 투영  */
     vPosition = vPosition * fViewZ;
-    
     /* 로컬위치 * 월드 * 뷰  */
     vPosition = mul(vPosition, g_ProjMatrixInv);
-    
     /* 로컬위치 * 월드   */
     vPosition = mul(vPosition, g_ViewMatrixInv);
     
-    vector vLightDir = vPosition - g_vLightPos;
+    float3 V = normalize((vPosition - g_vCamPosition).xyz);
+    vector LOrigin = (vPosition - g_vLightPos) * -1.f;
+    vector L = normalize(LOrigin);
     
-    float fDistance = length(vLightDir);
+    float fDistance = length(LOrigin);
+    
     float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    float NdotL = saturate(dot(N, L.xyz));
     
-    if (fAtt <= 0.f)
-        discard;
-    
-    vector vLook = vPosition - g_vCamPosition;
-    vector vReflect = reflect(normalize(vLightDir), vNormal);
-    vector vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float fMetallic, fRoughness, fOcclusion, fAttenuation;
-    float3 vF0;
-    
-    //ORM 마스크 없으면 그냥 Phong Shading 처리.
-    if (vORMDesc.r == 0 && vORMDesc.g == 0 && vORMDesc.b == 0 && vORMDesc.a == 0)
+    float AO = vORMDesc.r;
+    float Rough = vORMDesc.g;
+    float MetalSrc = vORMDesc.b;
+    float A = vORMDesc.a;
+
+    float Metallic = 0.f;
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
+
+    bool isPBR = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
+    bool isORSS = isPBR && (A > 0.f);
+    bool isORM = isPBR && (A == 0.f);
+
+    // Phong
+    if (!isPBR)
     {
-        Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 50.f));
-        
+        float fNdotL = dot(N, L.xyz);
+        float3 vReflect = reflect(-L.xyz, N);
+   
+        Out.vShade = fAtt * (g_vLightDiffuse * saturate(max(fNdotL, 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+        Out.vSpecular = fAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(V * -1.f, normalize(vReflect)), 0.f), 50.f));
+    
         return Out;
     }
-    else if (vORMDesc.a == 2.f)
+
+    // ORSS(피부)
+    if (isORSS)
     {
-        fMetallic = 0.f;
-        fRoughness = vORMDesc.g;
-        fOcclusion = vORMDesc.b;
-        vF0 = float3(0.04f, 0.04f, 0.04f);
+        AO = vORMDesc.r;
+        Rough = vORMDesc.g;
+        float specFactor = saturate(vORMDesc.b);
+        Metallic = 0.f;
+
+        float3 baseF0 = float3(0.028f, 0.028f, 0.028f);
+        F0 = baseF0 + specFactor * 0.05f;
     }
-    else
+    // ORM (orm 마스크) 
+    else if (isORM)
     {
-        fOcclusion = vORMDesc.r;
-        fRoughness = vORMDesc.g;
-        fMetallic = vORMDesc.b;
-        vF0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.xyz, fMetallic);
+        AO = vORMDesc.r;
+        Rough = vORMDesc.g;
+        Metallic = saturate(vORMDesc.b);
+        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
     }
+
+    float AOStr = lerp(1.0f, 1.2f, AO);
+    Out = PBR_Light(N, -V, L.xyz, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
     
-    fAttenuation = 1.f;
-    
-    float fDiffuseAOStrength = lerp(1.3f, 2.0f, fOcclusion);
-    
-    Out = PBR_Light(normalize(vNormal.xyz), normalize(vLook.xyz) * -1.f, normalize(g_vLightDir.xyz) * -1.f, vAlbedo.xyz, fMetallic, fRoughness, g_vLightDiffuse.xyz, fAttenuation, vF0, 1.f);
-    
-    Out.vShade *= fDiffuseAOStrength * fAtt;
+    Out.vShade *= fAtt;
     Out.vSpecular *= fAtt;
+    
+    Out.vShade.rgb *= AOStr;
+
+    //점조명은 ORSS 적용 X
     
     return Out;
 }
@@ -411,6 +427,9 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     [unroll]
     for (uint i = 0; i < 5; ++i)
         iIdx += (fViewZ >= g_fCascadeEnds[i + 1]);
+    
+    //캐스케이드가 5개니까..
+    iIdx = min(iIdx, 4);
     
     vector vPosition;
     
@@ -557,6 +576,70 @@ PS_OUT_COMBINED_SHADOW PS_MAIN_COMBINE_SHADOW(PS_IN In)
     return Out;
 }
 
+//FXAA용 메서드. HDR 이후에 처리된다.
+PS_OUT_BACKBUFFER PS_MAIN_FXAA(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+   
+    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float2 vTexel = float2(1.f / g_iWinSizeX, 1.f / g_iWinSizeY);
+    float3 vColorN = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(0.f, vTexel.y * -1.f));
+    float3 vColorS = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(0.f, vTexel.y * 1.f));
+    float3 vColorW = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(vTexel.x * -1.f, 0.f));
+    float3 vColorE = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(vTexel.x * 1.f, 0.f));
+    float3 vColorM = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fLuminanceN = FxaaLuma(vColorN);
+    float fLuminanceS = FxaaLuma(vColorS);
+    float fLuminanceW = FxaaLuma(vColorW);
+    float fLuminanceE = FxaaLuma(vColorE);
+    float fLuminanceM = FxaaLuma(vColorM);
+    
+    //가장 휘도가 적은 곳.
+    float fRangeMin = min(fLuminanceM, min(min(fLuminanceN, fLuminanceS), min(fLuminanceW, fLuminanceE)));
+    //가장 휘도가 높은 곳. 
+    float fRangeMax = max(fLuminanceM, max(max(fLuminanceN, fLuminanceS), max(fLuminanceW, fLuminanceE)));
+    
+    //contrast를 구한다.
+    float fRange = fRangeMax - fRangeMin;
+    
+    if (fRange < max(FXAA_EDGE_THRESHOLD_MIN, fRangeMax * FXAA_EDGE_THRESHOLD)) 
+        return Out;
+    
+    //휘도 차이가 많이 나는 곳으로 방향이 정해진다. 
+    float2 vDir;
+    vDir.x = -((fLuminanceN + fLuminanceS) - (fLuminanceE + fLuminanceW));
+    vDir.y = ((fLuminanceN + fLuminanceS) - (fLuminanceE + fLuminanceW));
+    
+    vDir *= vTexel; // 텍셀 단위로 스케일
+
+    float SPAN_MAX = 8.0f;
+    vDir = clamp(vDir, -SPAN_MAX, SPAN_MAX) * vTexel;
+    
+    float3 vC1 = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + vDir * -0.5).rgb;
+    float3 vC2 = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + vDir * -0.5).rgb;
+
+    float3 vCA = 0.5 * (vC1 + vC2);
+    float fLuminanceA = FxaaLuma(vCA);
+
+    float3 vCB = vCA * 0.5 + Out.vBackBuffer.xyz * 0.5;
+    float fLuminanceB = FxaaLuma(vCB);
+    
+    if (fLuminanceB < fRangeMin || fLuminanceB > fRangeMax)
+        Out.vBackBuffer.xyz = vCA;
+    else
+        Out.vBackBuffer.xyz = vCB;
+
+    // subpixel blend
+    // 여기 인자화 해야됨.
+    Out.vBackBuffer.xyz = lerp(Out.vBackBuffer.xyz, vCA, 0.6f);
+
+    Out.vBackBuffer = float4(Out.vBackBuffer.xyz, 1.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 { 
     // idx 0 
@@ -693,6 +776,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINE_SHADOW();
+    }
+    // idx 13
+    pass FXAA
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_FXAA();
     }
 }
 

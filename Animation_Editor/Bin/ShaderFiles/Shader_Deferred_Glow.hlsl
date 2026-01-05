@@ -34,14 +34,15 @@ PS_OUT_BLUR PS_MAIN_GLOW_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float vSize = 0.f;
-    for (int i = -6; i < 7; ++i)
+    
+    for (int i = -10; i < 11; ++i)
     {
-        vTexcoord.x = In.vTexcoord.x + (float) i / (g_iWinSizeX * 0.5);
+        
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
         vTexcoord.y = In.vTexcoord.y;
         
-        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vSize += g_fWeights[i + 6];
-
+        vColor += g_fBloomWeights[i + 10] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fBloomWeights[i + 10];
     }
 
     Out.vBlur = vColor / vSize * 2;
@@ -54,13 +55,19 @@ PS_OUT_BLUR PS_MAIN_GLOW_FINAL(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float vSize = 0.f;
+    
+    for (int i = -10; i < 11; ++i)
+    {
+        
+        vTexcoord.x = In.vTexcoord.x;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
+    
+        vColor += g_fBloomWeights[i + 10] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
+        vSize += g_fBloomWeights[i + 10];
+    }
+    
     for (int i = -6; i < 7; ++i)
     {
-        vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / (g_iWinSizeY * 0.5);
-    
-        vColor += g_fWeights[i + 6] * g_GlowTexture.Sample(ClampSampler, vTexcoord);
-        vSize += g_fWeights[i + 6];
     }
     vColor /= vSize;
     float3 color = g_GlowPowerTexture.Sample(ClampSampler, In.vTexcoord).rgb;
