@@ -120,6 +120,21 @@ namespace Engine
 
 	}VTXPOSTEX;
 
+	typedef struct tagTrailPositionTexcoord
+	{
+		XMFLOAT3			vPosition;
+		XMFLOAT3			vDirection;
+		XMFLOAT2			vTexcoord;
+
+		static constexpr unsigned int					iNumElements = { 3 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "POSITION", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+	}VTXTRAIL;
+
 	typedef struct tagVertexCube
 	{
 		XMFLOAT3			vPosition;

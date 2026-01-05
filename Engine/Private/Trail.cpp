@@ -67,7 +67,7 @@ void CTrail::Initialize_Trail()
 	m_iNumPresent = 0;
 	m_iNumPositionPresent = 0;
 	m_iEndIndex = 0;
-	memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+	memset(m_pVTXTrails, 0, sizeof(VTXTRAIL) * m_iNumVertices);
 	memset(m_pPostions, 0, sizeof(_vector) * m_iNumPositions);
 }
 
@@ -91,7 +91,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		}
 
 		m_iNumPresent = 0;
-		memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+		memset(m_pVTXTrails, 0, sizeof(VTXTRAIL) * m_iNumVertices);
 		_vector vHighPositions[4]{};
 		_vector vLowPositions[4]{};
 		_float fValue = {};
@@ -126,8 +126,8 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 				iNum = fLength;
 			for (int i = 0; i < 4 * iNum; ++i) {
 				fValue = (_float)i / ((4 * iNum));
-				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
-				XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
+				XMStoreFloat3(&m_pVTXTrails[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
+				XMStoreFloat3(&m_pVTXTrails[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
 				m_iNumPresent += 2;
 				if (m_iNumPresent + 2 >= m_iNumVertices) {
 					break;
@@ -141,21 +141,28 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		if (iNumActivatedPairs >= 2) {
 			_uint iIndexLow;
 			_uint iIndexHigh;
-			for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
+			for (_uint iIndex = 0; iIndex + 1 < m_iNumPresent; iIndex += 2) {
 				_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
 				iIndexLow = iIndex;
 				iIndexHigh = iIndex + 1;
-
-				m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
-				m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
+				if (iIndexLow + 2 < m_iNumPresent) {
+					m_pVTXTrails[iIndexHigh].vDirection = m_pVTXTrails[iIndexHigh + 2].vPosition;
+					m_pVTXTrails[iIndexLow].vDirection = m_pVTXTrails[iIndexLow + 2].vPosition;
+				}
+				else {
+					XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition)));
+					XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition)));
+				}
+				m_pVTXTrails[iIndexHigh].vTexcoord = { u, 1.f };
+				m_pVTXTrails[iIndexLow].vTexcoord = { u, 0.f };
 			}
 
 			D3D11_MAPPED_SUBRESOURCE SubResource{};
 			m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
-			VTXPOSTEX* pVertices = static_cast<VTXPOSTEX*>(SubResource.pData);
+			VTXTRAIL* pVertices = static_cast<VTXTRAIL*>(SubResource.pData);
 			for (_uint i = 0; i < m_iNumPresent; ++i) {
-				pVertices[i] = m_pVTXPOSTEXs[i];
+				pVertices[i] = m_pVTXTrails[i];
 			}
 			m_pContext->Unmap(m_pVB, 0);
 		}
@@ -205,7 +212,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		m_iNumPositionPresent += 2;
 
 	m_iNumPresent = 0;
-	memset(m_pVTXPOSTEXs, 0, sizeof(VTXPOSTEX) * m_iNumVertices);
+	memset(m_pVTXTrails, 0, sizeof(VTXTRAIL) * m_iNumVertices);
 	for (int i = m_iNumPositionPresent; i > 2; i -= 2) {
 		if (i == 4) {
 			for (int j = 0; j < 3; ++j) {
@@ -236,8 +243,8 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 			iNum = fLength;
 		for (int i = 0; i < 4 * iNum; ++i) {
 			fValue = (_float)i / ((4 * iNum));
-			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
-			XMStoreFloat3(&m_pVTXPOSTEXs[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
+			XMStoreFloat3(&m_pVTXTrails[m_iNumPresent + 1].vPosition, XMVectorCatmullRom(vHighPositions[0], vHighPositions[1], vHighPositions[2], vHighPositions[3], fValue));
+			XMStoreFloat3(&m_pVTXTrails[m_iNumPresent].vPosition, XMVectorCatmullRom(vLowPositions[0], vLowPositions[1], vLowPositions[2], vLowPositions[3], fValue));
 			m_iNumPresent += 2;
 			if (m_iNumPresent + 2 >= m_iNumVertices) {
 				break;
@@ -249,21 +256,29 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	}
 	_uint iIndexLow;
 	_uint iIndexHigh;
-	for (_uint iIndex = 0; iIndex < m_iNumPresent; iIndex += 2) {
+	for (_uint iIndex = 0; iIndex + 1 < m_iNumPresent; iIndex += 2) {
 		_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
 		iIndexLow = iIndex;
 		iIndexHigh = iIndex + 1;
 
-		m_pVTXPOSTEXs[iIndexHigh].vTexcoord = { u, 1.f };
-		m_pVTXPOSTEXs[iIndexLow].vTexcoord = { u, 0.f };
+		if (iIndexLow + 2 < m_iNumPresent) {
+			m_pVTXTrails[iIndexHigh].vDirection = m_pVTXTrails[iIndexHigh + 2].vPosition;
+			m_pVTXTrails[iIndexLow].vDirection = m_pVTXTrails[iIndexLow + 2].vPosition;
+		}
+		else {
+			XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition)));
+			XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition)));
+		}
+		m_pVTXTrails[iIndexHigh].vTexcoord = { u, 1.f };
+		m_pVTXTrails[iIndexLow].vTexcoord = { u, 0.f };
 	}
 
 	D3D11_MAPPED_SUBRESOURCE SubResource{};
 	m_pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
 
-	VTXPOSTEX* pVertices = static_cast<VTXPOSTEX*>(SubResource.pData);
+	VTXTRAIL* pVertices = static_cast<VTXTRAIL*>(SubResource.pData);
 	for (_uint i = 0; i < m_iNumPresent; ++i) {
-		pVertices[i] = m_pVTXPOSTEXs[i];
+		pVertices[i] = m_pVTXTrails[i];
 	}
 	m_pContext->Unmap(m_pVB, 0);
 }
@@ -273,7 +288,7 @@ HRESULT CTrail::Render()
 	if (m_iNumPresent < 4) { return S_OK; }
 
 	ID3D11Buffer* VertexBuffers[] = { m_pVB };
-	_uint			VertexStrides[] = { sizeof(VTXPOSTEX) };
+	_uint			VertexStrides[] = { sizeof(VTXTRAIL) };
 	_uint			Offsets[] = { 0 };
 
 	m_pContext->IASetVertexBuffers(0, 1, VertexBuffers, VertexStrides, Offsets);
@@ -301,14 +316,14 @@ HRESULT CTrail::Initialize(void* pArg)
 
 #pragma region VTX_BUFFER
 	D3D11_BUFFER_DESC VBDesc{};
-	VBDesc.ByteWidth = sizeof(VTXPOSTEX) * m_iNumVertices;
+	VBDesc.ByteWidth = sizeof(VTXTRAIL) * m_iNumVertices;
 	VBDesc.Usage = D3D11_USAGE_DYNAMIC;
 	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	VBDesc.MiscFlags = 0;
-	VBDesc.StructureByteStride = sizeof(VTXPOSTEX);
+	VBDesc.StructureByteStride = sizeof(VTXTRAIL);
 
-	m_pVTXPOSTEXs = new VTXPOSTEX[m_iNumVertices]{};
+	m_pVTXTrails = new VTXTRAIL[m_iNumVertices]{};
 	m_pPostions = new _vector[m_iNumPositions]{};
 	if (FAILED(m_pDevice->CreateBuffer(&VBDesc, nullptr, &m_pVB))) {
 		return E_FAIL;
@@ -348,7 +363,7 @@ void CTrail::Free()
 {
 	__super::Free();
 
-	Safe_Delete_Array(m_pVTXPOSTEXs);
+	Safe_Delete_Array(m_pVTXTrails);
 	Safe_Delete_Array(m_pPostions);
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);

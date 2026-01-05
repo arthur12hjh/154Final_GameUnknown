@@ -21,7 +21,8 @@ texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 texture2D g_DepthTexture;
 struct VS_IN
 {
-    float3 vPosition : POSITION;
+    float3 vPosition : POSITION0;
+    float3 vDirection : POSITION1;
     float2 vTexcoord : TEXCOORD0;
 };
 

@@ -1515,7 +1515,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 
 	/* For.Prototype_Component_Shader_VtxTrail */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
-	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXTRAIL::Elements, VTXTRAIL::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
