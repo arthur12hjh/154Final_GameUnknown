@@ -22,6 +22,7 @@
 
 #include "UIPopup.h"
 #include "UIShop.h"
+#include "UISongSelector.h"
 #include "UIResult.h"
 #include "UILockOn.h"
 #include "Lift_Controller.h"
@@ -286,6 +287,40 @@ void CUIHUD::Close_Popup(const _wstring& szPopupTag)
 		return;
 
 	pPopup->Close_Popup();
+}
+
+void CUIHUD::Open_Song_Selector()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Song_Selector"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Song_Selector"));
+
+	CUISongSelector* pShop = dynamic_cast<CUISongSelector*>(pObj->second);
+
+	if (!pShop)
+		return;
+
+	pShop->Open_Song_Selector();
+}
+
+void CUIHUD::Close_Song_Selector()
+{
+	auto pLayer = m_pLayers.find(TEXT("Layer_Song_Selector"));
+
+	if (pLayer == m_pLayers.end())
+		return;
+
+	auto pObj = pLayer->second->Get_UserInterfaces()->find(TEXT("UI_Song_Selector"));
+
+	CUISongSelector* pShop = dynamic_cast<CUISongSelector*>(pObj->second);
+
+	if (!pShop)
+		return;
+
+	pShop->Close_Song_Selector();
 }
 
 void CUIHUD::Open_Shop()

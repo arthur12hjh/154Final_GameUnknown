@@ -1,0 +1,324 @@
+[
+    {
+        "Children": [
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 200.0,
+                        "fSizeY": 200.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 52,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Key_Active",
+                                "szPrefabTag": "Active_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "EnterKey_Active_FX": [
+                                {
+                                    "szActionTag": "Key_Active",
+                                    "szArg": "Key_Active",
+                                    "szSubscribeEventTags": [
+                                        "EnterKey_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Song_Selector",
+                        "szProtoTag": "Prototype_GameObject_UI_InteractionFX",
+                        "szUIID": "UI_Simple_Interaction_FX_2-1",
+                        "szUITag": "Interaction_FX"
+                    },
+                    {
+                        "TextDesc": {
+                            "fScale": 0.7,
+                            "szFont": "KoPub",
+                            "szText": "선택",
+                            "vColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -750.0,
+                        "fOffsetY": -470.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 100.0,
+                        "fSizeY": 20.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 51,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szLayerTag": "Layer_Song_Selector",
+                        "szProtoTag": "Prototype_GameObject_UI_Text",
+                        "szUIID": "UI_Trigger_Text_2-2",
+                        "szUITag": "Trigger_Text"
+                    }
+                ],
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 4,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Interaction_Key",
+                    "szTextureComTag": "Com_Texture_UI_Interaction_Key"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -725.0,
+                "fOffsetY": 10.0,
+                "fRotation": 0.0,
+                "fSizeX": 50.0,
+                "fSizeY": 50.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 51,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "EnterKey_Active": [
+                        {
+                            "szActionTag": "Key_Active",
+                            "szArg": "Key_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "EnterKey_Event_Listner": [
+                        {
+                            "szActionTag": "EnterKey_Event_Listner",
+                            "szArg": "EnterKey_Event_Listner",
+                            "szSubscribeEventTags": [
+                                "EnterKey_Event"
+                            ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Song_Selector",
+                "szProtoTag": "Prototype_GameObject_UI_TriggerKey",
+                "szUIID": "UI_EnterKey_1-1",
+                "szUITag": "UI_EnterKey"
+            },
+            {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 200.0,
+                        "fSizeY": 200.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 52,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Key_Active",
+                                "szPrefabTag": "Active_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "EscKey_Active_FX": [
+                                {
+                                    "szActionTag": "Key_Active",
+                                    "szArg": "Key_Active",
+                                    "szSubscribeEventTags": [
+                                        "EscKey_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_Song_Selector",
+                        "szProtoTag": "Prototype_GameObject_UI_InteractionFX",
+                        "szUIID": "UI_Simple_Interaction_FX_2-3",
+                        "szUITag": "Interaction_FX2"
+                    },
+                    {
+                        "TextDesc": {
+                            "fScale": 0.7,
+                            "szFont": "KoPub",
+                            "szText": "종료",
+                            "vColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -750.0,
+                        "fOffsetY": -1200.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 100.0,
+                        "fSizeY": 20.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 51,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szLayerTag": "Layer_Song_Selector",
+                        "szProtoTag": "Prototype_GameObject_UI_Text",
+                        "szUIID": "UI_Trigger_Text_2-4",
+                        "szUITag": "Trigger_Text2"
+                    }
+                ],
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 5,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Interaction_Key",
+                    "szTextureComTag": "Com_Texture_UI_Interaction_Key"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -725.0,
+                "fOffsetY": 375.0,
+                "fRotation": 0.0,
+                "fSizeX": 50.0,
+                "fSizeY": 50.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 51,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "EscKey_Active": [
+                        {
+                            "szActionTag": "Key_Active",
+                            "szArg": "Key_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "EscKey_Event_Listner": [
+                        {
+                            "szActionTag": "EscKey_Event_Listner",
+                            "szArg": "EscKey_Event_Listner",
+                            "szSubscribeEventTags": [
+                                "EscKey_Event"
+                            ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_Song_Selector",
+                "szProtoTag": "Prototype_GameObject_UI_TriggerKey",
+                "szUIID": "UI_EscKey_1-1",
+                "szUITag": "UI_EscKey"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 0,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Song_Thumbnail",
+                    "szTextureComTag": "Com_Texture_UI_Song_Thumbnail"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 1600.0,
+                "fSizeY": 900.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 49,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "Open_Song_Selector",
+                        "szPrefabTag": "Open_Song_Selector"
+                    },
+                    {
+                        "szAnimTag": "Close_Song_Selector",
+                        "szPrefabTag": "Close_Song_Selector"
+                    }
+                ],
+                "szLayerTag": "Layer_Song_Selector",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "UI_Thumbnail_1-2",
+                "szUITag": "UI_Thumbnail"
+            }
+        ],
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 50,
+        "iDrawType": 1,
+        "iLevel": 5,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Open_Song_Selector",
+                "szPrefabTag": "Open_Song_Selector"
+            },
+            {
+                "szAnimTag": "Close_Song_Selector",
+                "szPrefabTag": "Close_Song_Selector"
+            }
+        ],
+        "szEvents": {
+            "EnterKey_Event": [
+                {
+                    "szActionTag": "EnterKey_Event",
+                    "szArg": "EnterKey_Event",
+                    "szTypeTag": "ActionEvent"
+                }
+            ],
+            "EscKey_Event": [
+                {
+                    "szActionTag": "EscKey_Event",
+                    "szArg": "EscKey_Event",
+                    "szTypeTag": "ActionEvent"
+                }
+            ]
+        },
+        "szLayerTag": "Layer_Song_Selector",
+        "szProtoTag": "Prototype_GameObject_UI_Song_Selector",
+        "szUIID": "UI_Song_Selector_0",
+        "szUITag": "UI_Song_Selector"
+    }
+]

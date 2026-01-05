@@ -55,13 +55,22 @@ void CUI_Level_Loading::Update(_float fTimeDelta)
 	if (true == m_pLoader->isFinished()
 		&& !m_bLevelTransitioning)
 	{
-		if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
+		if (LEVEL::LOGO == m_eNextLevelID || LEVEL::BEATSABER_GAME == m_eNextLevelID)
 		{
-			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
-			if (static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Get_UIBase_Desc().fAlpha <= 0.f)
-				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"), TEXT("Loading_Complite"));
+			if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
+			{
+				static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
+				if (static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Get_UIBase_Desc().fAlpha <= 0.f)
+					static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"), TEXT("Loading_Complite"));
 
-			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Set_Alpha(1.f);
+				static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Set_Alpha(1.f);
+			}
+
+			if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+			{
+				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(szLayerTag, TEXT("Loading_Overlay"), TEXT("Outro"));
+				m_bLevelTransitioning = true;
+			}
 		}
 		else
 		{
@@ -72,19 +81,6 @@ void CUI_Level_Loading::Update(_float fTimeDelta)
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Stella_Symbol"))->SetVisibility(VISIBILITY::HIDDEN);
 			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading"), TEXT("Loading_Dim"))->SetVisibility(VISIBILITY::HIDDEN);
-		}
-
-		if (LEVEL::LOGO == m_eNextLevelID || LEVEL::BEATSABER_GAME == m_eNextLevelID)
-		{
-			if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
-			{
-				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(szLayerTag, TEXT("Loading_Overlay"), TEXT("Outro"));
-				m_bLevelTransitioning = true;
-			}
-		}
-		else
-		{
-			static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading"), TEXT("Loading_Overlay"), TEXT("Outro"));
 
 			m_bLevelTransitioning = true;
 		}

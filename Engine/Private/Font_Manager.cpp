@@ -23,7 +23,7 @@ HRESULT CFont_Manager::Add_Font(const _wstring& strFontTag, const _tchar* pFontF
     return S_OK;
 }
 
-HRESULT CFont_Manager::Render(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale)
+HRESULT CFont_Manager::Render(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale, _float2 vOrigin)
 {
     m_pContext->GSSetShader(nullptr, nullptr, 0);
 
@@ -31,7 +31,7 @@ HRESULT CFont_Manager::Render(const _wstring& strFontTag, const _tchar* pText, c
     if (nullptr == pFont)
         return E_FAIL;
 
-    return pFont->Render(pText, vPosition, vColor, fScale);    
+    return pFont->Render(pText, vPosition, vColor, fScale, vOrigin);    
 }
 
 _float2 CFont_Manager::Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace, float fScale)
