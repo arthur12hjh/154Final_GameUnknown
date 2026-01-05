@@ -49,12 +49,12 @@ void CTargetLight::Chase_Target()
     switch (m_isCinematic)
     {
     case true :
-        m_pLightCom->Set_Position(static_cast<CCinematicObject*>(m_pTarget)->Get_CinematicWorldPos().r[3] 
+        m_pLightCom->Set_Position((XMMatrixTranslation(2.f, 2.f, 0.f) * static_cast<CCinematicObject*>(m_pTarget)->Get_CinematicWorldPos()).r[3]
             + XMVectorSet(0.f, 7.f, 0.f, 0.f));
         break;
 
     case false:
-        m_pLightCom->Set_Position(m_pTarget->GetTransform()->Get_State(STATE::POSITION) 
+        m_pLightCom->Set_Position(m_pTarget->GetTransform()->Get_State(STATE::POSITION) + XMVector3Normalize(m_pTarget->GetTransform()->Get_State(STATE::LOOK) + XMVectorSet(0.f, 1.f, 0.f, 0.f)) * 3.4f
             + XMVectorSet(0.f, 7.f, 0.f, 0.f));
         break;
 
