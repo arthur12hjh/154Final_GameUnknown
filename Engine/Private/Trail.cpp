@@ -79,6 +79,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 	if (false == bMakeTrail) {
 		_int index = m_fTime / 0.015f;
 		m_fTime -= index * 0.015f;
+		m_iNumRemove += index;
 		for (_int i = 0; i < index; ++i) {
 			if (2 < m_iNumPositionPresent) {
 				m_iNumPositionPresent -= 2;
@@ -142,7 +143,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 			_uint iIndexLow;
 			_uint iIndexHigh;
 			for (_uint iIndex = 0; iIndex + 1 < m_iNumPresent; iIndex += 2) {
-				_float u = 1 - (iIndex * 0.5f) / (m_iNumPresent * 0.5f);
+				_float u = 1 - min(((iIndex + m_iNumRemove) * 0.5f) / (m_iNumPresent * 0.5f), 1.f);
 				iIndexLow = iIndex;
 				iIndexHigh = iIndex + 1;
 				if (iIndexLow + 2 < m_iNumPresent) {
@@ -168,6 +169,7 @@ void CTrail::Update_Trail(_fmatrix matCurrentWorld, _float fTimeDelta, _bool bMa
 		}
 		return;
 	}
+	m_iNumRemove = 0;
 	memmove(m_vPreHighPositions, m_vPreHighPositions + 1, sizeof(_float4) * 2);
 	memmove(m_vPreLowPositions, m_vPreLowPositions + 1, sizeof(_float4) * 2);
 

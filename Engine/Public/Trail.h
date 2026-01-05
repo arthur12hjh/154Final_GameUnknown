@@ -35,6 +35,7 @@ private:
 	_uint			m_iNumPositions = {};
 	_uint			m_iNumVertices = {};
 	_uint			m_iNumIndices = {};
+	_uint			m_iNumRemove = {};
 	_float			m_fTime = {};
 
 	_float4			m_vPreHighPositions[3]{};

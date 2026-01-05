@@ -1,7 +1,7 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
-matrix g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
+matrix g_ViewMatrix, g_ProjMatrix;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);
 float g_fTime = 0;
@@ -44,7 +44,8 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     
     float4 dir = mul(vector(In.vDirection, 1.f), g_ViewMatrix);
-    Out.vDirection = mul(dir, g_ProjMatrix).xyz;
+    float3 vDir = mul(dir, g_ProjMatrix).xyz;
+    Out.vDirection = vDir - Out.vPosition.xyz;
     
     return Out;
 }
@@ -198,7 +199,6 @@ PS_NONLIGHT_OUT PS_SCARLET_SLASH_NOISE(PS_IN In)
     
     
     float2 MaskTexcoord = float2(1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
-    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x / 180) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
     float2 uv = In.vTexcoord;
@@ -299,38 +299,46 @@ PS_NONLIGHT_OUT PS_SLASH_REVERS_BLOOM(PS_IN In)
 PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_IN In)
 {
     PS_NONLIGHT_OUT Out;
-    float3 pos = In.vDirection.xyz - In.vPosition.xyz;
+    float3 pos = In.vDirection;
     
     
-    float4 dir = float4(normalize(mul(vector(pos, 0.f), g_CamMatrix).xyz), 0);
+    float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+
     
-    //pos = In.vDirection;
-    //pos = In.vDirection;
-    //pos.x *= -1;
-    //pos.y *= -1;
-    //pos.xy += pos.z;
-    
-    
-    
-    //float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
-    //float2 DissolveTexcoord = float2(In.vTexcoord.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
-    //
-    //if (0 > MaskTexcoord.y)
-    //    discard;
-    //float2 tex = MaskTexcoord + float2(g_fTime * g_fDiffuseUVSpeed.x, g_fTime * g_fDiffuseUVSpeed.y);
-    //
-    //float3 noise = g_DiffuseTexture.Sample(MirrorSampler, tex).rgb;
-    //
-    //float2 distort = (noise.rb * 2.0 - 1.0);
-    //
-    //float2 uvDistorted = MaskTexcoord + distort;
-    //
-    //float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
-    //alpha *= pow(In.vTexcoord.y * 5, 2);
+    pos.x *= -1;
+    Out.vDiffuse.xy = pos.xy * 0.1 * g_vColor.a * g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r * g_fDissolveUVSize.x;
+    Out.vDiffuse.zw = 0;
+    if (0.01f >= length(Out.vDiffuse.xy))
+        discard;
+    return Out;
+}
+
+PS_NONLIGHT_OUT PS_SCARLET_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float3 pos = In.vDirection;
     
     
-    pos.z = 0;
-    Out.vDiffuse.xy = dir.xy * 0.1;
+    
+    float2 MaskTexcoord = float2(1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 uv = In.vTexcoord;
+    
+    float dist = distance(uv, float2(0.5, 0.5));
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, DissolveTexcoord).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0) * 0.4;
+    
+    float2 uvDistorted = uv + distort;
+    
+    float4 col = g_DissolveTexture.Sample(MirrorSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, MaskTexcoord).r;
+    
+    col.r *= mask;
+    pos.x *= -1;
+    Out.vDiffuse.xy = pos.xy * 0.1 * saturate(pow(g_vColor.a * lerp(0.4, 1, saturate(col.r)) * 5, 1.5)) * saturate(col.r * 5) * 2;
     Out.vDiffuse.zw = 0;
     if (0.01f >= length(Out.vDiffuse.xy))
         discard;
@@ -455,11 +463,21 @@ technique11 DefaultTechnique
     // idx 11
     pass Motion_Blur
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MOTION_BLUR();
+    }
+    // idx 12
+    pass Scarlet_Slash_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCARLET_MOTION_BLUR();
     }
 }

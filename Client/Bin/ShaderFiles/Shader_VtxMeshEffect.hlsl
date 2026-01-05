@@ -110,7 +110,7 @@ VS_OUT VS_MAIN(VS_IN In)
         Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
         Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
         Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
-        Out.vWorldPos = mul(vector(vPosition, 1.f), g_WorldMatrix);
+        Out.vWorldPos = matWVP._41_42_43_44;
         Out.vProjPos = Out.vPosition;
     }
     else
@@ -120,7 +120,7 @@ VS_OUT VS_MAIN(VS_IN In)
         Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
         Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
         Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
-        Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+        Out.vWorldPos = matWVP._41_42_43_44;
         Out.vProjPos = Out.vPosition;
     }
     return Out;
@@ -979,9 +979,9 @@ PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
     worldmat._21_22_23_24 = normalize(worldmat._21_22_23_24);
     worldmat._31_32_33_34 = normalize(-worldmat._31_32_33_34);
     worldmat._41_42_43_44 = float4(0, 0, 0, 1);
-    float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat);
-    pos.y *= -1;
-    pos.xyz = normalize(pos.xyz);
+    //float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat);
+    float4 pos = In.vProjPos - In.vWorldPos;
+    pos.x *= -1;
     //pos.xy += pos.z;
     
     
@@ -1004,7 +1004,7 @@ PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
     
     
     
-    Out.vColor.xy = pos.xy * 0.06f * saturate(mask) * saturate(g_DissolveTexture.Sample(NoneSampler, In.vTexcoord) * 2) * g_DissolveTexture.Sample(NoneSampler, DissolveTexcoord) * g_fDiffuseUVSize.x;
+    Out.vColor.xy = normalize(pos.xy) * 0.045f * saturate(mask) * saturate(g_DissolveTexture.Sample(NoneSampler, In.vTexcoord) * 2) * g_DissolveTexture.Sample(NoneSampler, DissolveTexcoord) * g_fDiffuseUVSize.x;
     Out.vColor.zw = 0;
     if (0.01f >= length(Out.vColor.xy))
         discard;

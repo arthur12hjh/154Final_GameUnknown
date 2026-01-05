@@ -158,12 +158,12 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 					XMStoreFloat3(&m_pVTXTrails[iIndexLow].vPosition, XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) + vUp * sinf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)) + vRight * cosf(m_fCumulativeTime + fPosLengh * m_fSpeed) * m_fPow * ((iIndex + m_iNumRemove) / ((m_iNumPresent + m_iNumRemove) * 0.3f)));
 				}
 				if (iIndexLow + 2 < m_iNumPresent) {
-					XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh + 2].vPosition)));
-					XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow + 2].vPosition)));
+					m_pVTXTrails[iIndexHigh].vDirection = m_pVTXTrails[iIndexHigh + 2].vPosition;
+					m_pVTXTrails[iIndexLow].vDirection = m_pVTXTrails[iIndexLow + 2].vPosition;
 				}
 				else {
-					XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition)));
-					XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition)));
+					XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition)));
+					XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition)));
 				}
 				m_pVTXTrails[iIndexHigh].vTexcoord = { u, 1.f };
 				m_pVTXTrails[iIndexLow].vTexcoord = { u, 0.f };
@@ -286,12 +286,12 @@ void CWaveTrail::Update_WaveTrail(_fmatrix matCurrentWorld, _float fTimeDelta, _
 		}
 
 		if (iIndexLow + 2 < m_iNumPresent) {
-			XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh + 2].vPosition)));
-			XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow + 2].vPosition)));
+			m_pVTXTrails[iIndexHigh].vDirection = m_pVTXTrails[iIndexHigh + 2].vPosition;
+			m_pVTXTrails[iIndexLow].vDirection = m_pVTXTrails[iIndexLow + 2].vPosition;
 		}
 		else {
-			XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition)));
-			XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMVector3Normalize(XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition)));
+			XMStoreFloat3(&m_pVTXTrails[iIndexHigh].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexHigh].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexHigh - 2].vPosition)));
+			XMStoreFloat3(&m_pVTXTrails[iIndexLow].vDirection, XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) + (XMLoadFloat3(&m_pVTXTrails[iIndexLow].vPosition) - XMLoadFloat3(&m_pVTXTrails[iIndexLow - 2].vPosition)));
 		}
 		m_pVTXTrails[iIndexHigh].vTexcoord = { u, 1.f };
 		m_pVTXTrails[iIndexLow].vTexcoord = { u, 0.f };

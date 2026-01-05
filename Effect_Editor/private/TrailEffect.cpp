@@ -94,9 +94,6 @@ HRESULT CTrailEffect::Bind_ShaderResources(CTrailData::TRAIL_DATA tData)
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &CamInfo.fFar, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
-		return E_FAIL;
-
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskUV", &tData.fMaskUV, sizeof(_float2))))
 		return E_FAIL;
