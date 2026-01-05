@@ -14,14 +14,24 @@
         "fSizeY": 900.0,
         "fX": 800.0,
         "fY": 450.0,
-        "iDepth": 0,
+        "iDepth": 20,
         "iDrawType": 1,
         "iLevel": 5,
         "iRenderGroup": 9,
         "iVisibility": 0,
-        "szLayerTag": "Layer_GARA",
+        "szAnimTags": [
+            {
+                "szAnimTag": "Intro",
+                "szPrefabTag": "FadeOut_3"
+            },
+            {
+                "szAnimTag": "Outro",
+                "szPrefabTag": "FadeIn_3"
+            }
+        ],
+        "szLayerTag": "Layer_BeatSaber_Overlay",
         "szProtoTag": "Prototype_GameObject_UI_Panel",
-        "szUIID": "UI_Layer_GARA_Panel_0",
-        "szUITag": "GARA_Panel"
+        "szUIID": "UI_Layer_BeatSaber_Overlay_0",
+        "szUITag": "BeatSaber_Overlay"
     }
 ]

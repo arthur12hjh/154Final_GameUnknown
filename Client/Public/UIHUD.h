@@ -69,6 +69,9 @@ public:
 	void Open_Shop();
 	void Close_Shop();
 
+	void Open_Song_Selector();
+	void Close_Song_Selector();
+
 	void Open_Result();
 	void Close_Result();
 

@@ -81,22 +81,22 @@
                             }
                         ],
                         "szEvents": {
-                            "MaouseInteraction_Shadow_Show_Effect": [
+                            "MouseInteraction_Shadow_Show_Effect": [
                                 {
                                     "szActionTag": "Show_Key",
                                     "szArg": "Show_Key",
                                     "szSubscribeEventTags": [
-                                        "MaouseInteraction_Show"
+                                        "MouseInteraction_Show"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "MaouseInteraction_Shadow_Hide_Effect": [
+                            "MouseInteraction_Shadow_Hide_Effect": [
                                 {
                                     "szActionTag": "Hide_Key",
                                     "szArg": "Hide_Key",
                                     "szSubscribeEventTags": [
-                                        "MaouseInteraction_Hide"
+                                        "MouseInteraction_Hide"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -143,22 +143,22 @@
                             }
                         ],
                         "szEvents": {
-                            "MaouseInteraction_Text_Show_Effect": [
+                            "MouseInteraction_Text_Show_Effect": [
                                 {
                                     "szActionTag": "Show_Key",
                                     "szArg": "Show_Key",
                                     "szSubscribeEventTags": [
-                                        "MaouseInteraction_Show"
+                                        "MouseInteraction_Show"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
                             ],
-                            "MaouseInteraction_Text_Hide_Effect": [
+                            "MouseInteraction_Text_Hide_Effect": [
                                 {
                                     "szActionTag": "Hide_Key",
                                     "szArg": "Hide_Key",
                                     "szSubscribeEventTags": [
-                                        "MaouseInteraction_Hide"
+                                        "MouseInteraction_Hide"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -192,17 +192,17 @@
                         "iVisibility": 1,
                         "szAnimTags": [
                             {
-                                "szAnimTag": "MaouseInteraction_Active",
+                                "szAnimTag": "MouseInteraction_Active",
                                 "szPrefabTag": "Active_Key"
                             }
                         ],
                         "szEvents": {
                             "MouseInteraction_Active_FX": [
                                 {
-                                    "szActionTag": "MaouseInteraction_Active",
-                                    "szArg": "MaouseInteraction_Active",
+                                    "szActionTag": "MouseInteraction_Active",
+                                    "szArg": "MouseInteraction_Active",
                                     "szSubscribeEventTags": [
-                                        "MaouseInteraction_Active"
+                                        "MouseInteraction_Active"
                                     ],
                                     "szTypeTag": "PlayAnimEvent"
                                 }
@@ -242,24 +242,24 @@
                     }
                 ],
                 "szEvents": {
-                    "MaouseInteraction_Show": [
+                    "MouseInteraction_Show": [
                         {
                             "szActionTag": "Show_Key",
                             "szArg": "Show_Key",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "MaouseInteraction_Hide": [
+                    "MouseInteraction_Hide": [
                         {
                             "szActionTag": "Hide_Key",
                             "szArg": "Hide_Key",
                             "szTypeTag": "ActionEvent"
                         }
                     ],
-                    "MaouseInteraction_Active": [
+                    "MouseInteraction_Active": [
                         {
-                            "szActionTag": "MaouseInteraction_Active",
-                            "szArg": "MaouseInteraction_Active",
+                            "szActionTag": "MouseInteraction_Active",
+                            "szArg": "MouseInteraction_Active",
                             "szTypeTag": "ActionEvent"
                         }
                     ],

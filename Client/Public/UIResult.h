@@ -54,6 +54,7 @@ private:
 	vector<VTX_INSTANCE_DESC>   m_ComboInstances{};
 
 	_bool m_isOpen{ false };
+	_bool m_isOpening{ false };
 	_bool m_isShowCombo{ false };
 	_bool m_isShowScore{ false };
 	_bool m_isShowRank{ false };
