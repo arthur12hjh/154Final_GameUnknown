@@ -242,6 +242,7 @@ popd</Command>
     <ClInclude Include="..\Public\Mesh.h" />
     <ClInclude Include="..\public\Metaball.h" />
     <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\public\MontionTrailComponent.h" />
     <ClInclude Include="..\Public\MotionBlur.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\OBBCollider.h" />
@@ -367,6 +368,7 @@ popd</Command>
     <ClCompile Include="..\Private\Mesh.cpp" />
     <ClCompile Include="..\private\Metaball.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\private\MontionTrailComponent.cpp" />
     <ClCompile Include="..\Private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\OBBCollider.cpp" />
