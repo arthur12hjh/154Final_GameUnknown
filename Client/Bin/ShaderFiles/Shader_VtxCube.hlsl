@@ -21,7 +21,8 @@ struct VS_OUT
 {
     float4 vPosition : SV_POSITION;
     float3 vNormal : NORMAL;
-    float3 vTexcoord : TEXCOORD0;    
+    float3 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -37,11 +38,11 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);   
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vNormal = mul(vector(In.vNormal, 0.f), matWVP);
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), matWVP)).xyz;
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */     
     Out.vTexcoord = In.vTexcoord;    
-
+    Out.vProjPos = Out.vPosition;
     return Out;
 }
 
@@ -60,12 +61,12 @@ VS_OUT VS_OUTLINE(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(float4(vExpandedPosition, 1.f), matWVP);
-    Out.vNormal = mul(vector(In.vNormal, 0.f), matWVP);
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), matWVP)).xyz;
     
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */     
     Out.vTexcoord = In.vTexcoord;
-
+    Out.vProjPos = Out.vPosition;
     return Out;
 }
 
@@ -78,12 +79,17 @@ struct PS_IN
     float4 vPosition : SV_POSITION;
     float3 vNormal : NORMAL;
     float3 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
 {
     float4 vColor : SV_TARGET0;
     float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
+    float4 vBloom : SV_TARGET5;
 };
 
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
@@ -93,7 +99,10 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
     Out.vNormal = float4(In.vNormal, 0.f);
-    
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;   
 }
 
@@ -143,7 +152,11 @@ PS_OUT PS_RAIL(PS_IN In)
         Out.vColor = vBlack;
     }
 
-    Out.vNormal = float4(In.vNormal, 0.f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -152,7 +165,11 @@ PS_OUT PS_OUTLINE(PS_IN In)
     PS_OUT Out;
     
     Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
-    Out.vNormal = float4(In.vNormal, 0.f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;   
 }
 
@@ -186,7 +203,11 @@ PS_OUT PS_MAIN_PAD(PS_IN In)
         Out.vColor = vBaseColor; 
     }
     
-    Out.vNormal = float4(In.vNormal, 0.f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -224,7 +245,11 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
         Out.vColor = vBaseColor;
     }
     
-    Out.vNormal = float4(In.vNormal, 0.f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -243,7 +268,7 @@ technique11 DefaultTechnique
     // idx 1
     pass Rail
     {   
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -265,7 +290,7 @@ technique11 DefaultTechnique
     // idx 3
     pass Pad
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -276,7 +301,7 @@ technique11 DefaultTechnique
     // idx 4
     pass BeatIndicator
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

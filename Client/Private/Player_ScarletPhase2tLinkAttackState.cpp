@@ -21,7 +21,7 @@ HRESULT CPlayer_ScarletPhase2tLinkAttackState::Initialize(void* pArg)
     m_pParentTransformMatrix = pSocketMatrixDesc->pParentTransformMatrix;
     m_pSocketMatrix = pSocketMatrixDesc->pSocketMatrix;
 
-    m_eState = PLAYER_STATE::GIGAS_LINKATTACK;
+    m_eState = PLAYER_STATE::SCARLET_PHASE2_LINKATTACK;
 
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
