@@ -57,6 +57,7 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_MotionBlur() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
 	void    End();
 private:

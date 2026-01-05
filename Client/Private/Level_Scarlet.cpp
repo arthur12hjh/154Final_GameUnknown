@@ -69,7 +69,7 @@ HRESULT CLevel_Scarlet::Initialize()
 #endif // _DEBUG
 
 	auto pGameManager = CGameManager::GetInstance();
-	pGameManager->Change_ShaderSetting(LEVEL::SCARLET);
+	pGameManager->Change_ShaderSetting(LEVEL::SCARLET, 0);
 
 	return S_OK;
 }

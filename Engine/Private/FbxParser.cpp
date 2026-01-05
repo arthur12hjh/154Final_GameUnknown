@@ -29,6 +29,12 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
  	auto pAIScene = ImporterBuffer.ReadFile(pModelFilePath, iFlag);
 	if (nullptr == pAIScene)
 		return E_FAIL;
+	
+	// Shape Key 관련 작업들
+	aiAnimMesh;
+	aiMeshMorphAnim;
+	aiMeshMorphKey;
+
 
 	// BINMODEL->iNumMaterials
 	pModel->iNumMaterials = pAIScene->mNumMaterials;

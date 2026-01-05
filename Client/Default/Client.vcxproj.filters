@@ -1143,7 +1143,7 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Dororong_Saber\Rail">
       <UniqueIdentifier>{284604d9-ba96-43b2-a2d4-f351c65bba64}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult">
       <UniqueIdentifier>{d373463f-8e52-44b7-9dae-0b97d978719f}</UniqueIdentifier>
     </Filter>
@@ -1152,6 +1152,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
       <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\TraceLight">
+      <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2200,14 +2203,17 @@
     <ClInclude Include="..\public\Rail.h">
       <Filter>02.GameObjects\Map\Dororong_Saber\Rail</Filter>
     </ClInclude>
-	<ClInclude Include="..\public\Pad.h">
-		<Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
-	</ClInclude>
+    <ClInclude Include="..\public\Pad.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UIResult.h">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bullet_Split.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TargetLight.h">
+      <Filter>02.GameObjects\TraceLight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3222,12 +3228,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Pad.cpp">
       <Filter>02.GameObjects\Map\Dororong_Saber\Pad</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UIResult.cpp">
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIResult</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bullet_Split.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TargetLight.cpp">
+      <Filter>02.GameObjects\TraceLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,7 @@
+C드라이브에 Tools 폴더 하나 생성하고, 그안에 TexConv.exe 넣어둘 것 (거기로 경로 잡음)
+
+1. FullAutoDDS -> 사이즈 입력 안받고 강제로 노말 디퓨즈 변환
+
+2. AutoDDS -> 사이즈 입력받고 노말 디퓨즈 변환
+
+3. PngResize -> 걍 png 리사이징 해줌

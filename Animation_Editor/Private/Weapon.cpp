@@ -24,7 +24,6 @@ HRESULT CWeapon::Initialize(void* pArg)
 {	
 	WEAPON_DESC* pDesc = static_cast<WEAPON_DESC*>(pArg);
 
-	m_pParentState = pDesc->pParentState;
 	m_pSocketMatrix = pDesc->pSocketMatrix;
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -33,33 +32,48 @@ HRESULT CWeapon::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scale(0.1f, 0.1f, 0.1f);
-	m_pTransformCom->Rotation(0.f, XMConvertToRadians(90.f), 0.f);
-	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.8f, 0.f, 0.f, 1.f));
+	m_vRotationQuaternion = { -90.f, 0.f, 0.f };
+	
+	m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
+
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+
+	m_pModelCom->Set_Animation("cine_weapon_idle", TRUE, 1.f, 0.f);
 
 	return S_OK;
 }
 
 void CWeapon::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
 }
 
 void CWeapon::Update(_float fTimeDelta)
 {	
-	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
-	for (size_t i = 0; i < 3; i++)	
-		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
-	
-		
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CWeapon::Late_Update(_float fTimeDelta)
 {
+	_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+	_matrix		ParentMatrix = XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	_matrix		MyMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+
+	for (size_t i = 0; i < 3; i++)
+		MyMatrix.r[i] = XMVector3Normalize(MyMatrix.r[i]);
+	for (size_t i = 0; i < 3; i++)
+		SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
+	for (size_t i = 0; i < 3; i++)
+		ParentMatrix.r[i] = XMVector3Normalize(ParentMatrix.r[i]);
+	//m_pTransformCom->Get_WorldMatrixPtr())
+
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		MyMatrix * SocketMatrix * ParentMatrix);
+	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(&m_CombinedWorldMatrix));
+	// 
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -79,7 +93,10 @@ HRESULT CWeapon::Render()
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
@@ -126,7 +143,7 @@ HRESULT CWeapon::Ready_Components()
 		return E_FAIL;
 	
 	/* Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

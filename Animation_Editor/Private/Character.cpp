@@ -5,6 +5,7 @@
 #include "Face_Character.h"
 #include "Hair_Character.h"
 #include "PonyTail_Character.h"
+#include "HairPin_Character.h"
 #include "Weapon.h"
 #include "GameInstance.h"
 
@@ -208,15 +209,24 @@ HRESULT CCharacter::Ready_PartObjects()
 
 	//CBody_Character* pPart_Body = dynamic_cast<CBody_Character*>(Find_PartObject(TEXT("Part_Body")));
 
-	//CWeapon::WEAPON_DESC	WeaponDesc{};
-	//WeaponDesc.pParentState = &m_iState;
-	//WeaponDesc.pSocketMatrix = pPart_Body->Get_BoneMatrixPtr("SWORD");
-	//WeaponDesc.pParentTransform = m_pTransformCom;
-	//
-	///* Part_Weapon */
-	//if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon"),
-	//	TEXT("Part_Weapon"), &WeaponDesc)))
-	//	return E_FAIL;
+	CWeapon::WEAPON_DESC	WeaponDesc{};
+	WeaponDesc.pSocketMatrix = m_pPart_Body->Get_BoneMatrixPtr("Weapon");
+	WeaponDesc.pParentTransform = m_pTransformCom;
+	
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon"),
+		TEXT("Part_Weapon"), &WeaponDesc)))
+		return E_FAIL;
+	
+
+	CHairPin_Character::HAIRPIN_CHARACTER_DESC HairPinDesc{};
+	HairPinDesc.pSocketMatrix = m_pPart_Body->Get_BoneMatrixPtr("SC_HairACC");
+	HairPinDesc.pParentTransform = m_pTransformCom;
+	
+	/* Part_HairPin */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_HairPin"),
+		TEXT("Part_HairPin"), &HairPinDesc)))
+		return E_FAIL;
 	
 
 
