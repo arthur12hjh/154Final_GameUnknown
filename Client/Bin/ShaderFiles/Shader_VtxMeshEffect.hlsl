@@ -1,6 +1,10 @@
 
 #include "Engine_Shader_Defines.hlsli"
 
+/* ±Ì¿Ã ∑ª¥ı≈∏∞Ÿ ∏∂Ω∫≈∑øÎ */
+bool g_IsMaskingDepthB;
+bool g_IsMaskingDepthW;
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 vector g_vColor = vector(1.f, 1.f, 1.f, 1.f);
 vector g_vSize = vector(1.f, 0.f, 1.f, 0.f);

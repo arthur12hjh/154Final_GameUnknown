@@ -89,6 +89,7 @@ public :
 	void	Set_Active_ReserveDeferred(const _wstring& strReserveDeferredTag, _bool bFlag);
 	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
 	void	Change_ShaderSetting(LEVEL eLevelID, _uint iIndex = 0);
+	void	Set_CinematicLights(_uint iFlag);
 #pragma endregion
 
 #pragma region LOCKON
@@ -119,6 +120,7 @@ public:
 	HRESULT											Load_Level_CinematicObjectData(const _char* szFilePath);
 	_bool											Is_CinematicPlaying();
 	HRESULT											Skip_Cinematic();
+	map<_wstring, class CCinematicObject*>*				Get_CinematicObjectsMap();
 #pragma endregion
 
 	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���

@@ -62,7 +62,16 @@ public:
 
 	virtual void SetActive()override;
 
+	void							Set_DepthMaskingB(_bool bFlag) { m_isDepthMaskingB = bFlag; }
+	_bool							Get_DepthMaskingB() { return m_isDepthMaskingB; }
+
+	void							Set_DepthMaskingW(_bool bFlag) { m_isDepthMaskingW = bFlag; }
+	_bool							Get_DepthMaskingW() { return m_isDepthMaskingW; }
+
 protected :
+	_bool							m_isDepthMaskingB = { false };
+	_bool							m_isDepthMaskingW = { false };
+
 	_bool							m_bIsActionEnabled = { true };
 	const _float4x4*				m_pSocketMatrix = { nullptr };
 
@@ -72,7 +81,7 @@ protected :
 
 	_float							m_fImpactForce = {};
 	CCharacterController*			m_pCCT = { nullptr };
-
+	
 public:
 	virtual CGameObject*			Clone(void* pArg) override;
 	virtual void					Free() override;

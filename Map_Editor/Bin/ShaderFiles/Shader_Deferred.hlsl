@@ -54,7 +54,7 @@ Texture2DArray g_CascadeShadowTexture;
 
 float g_fCascadeEnds[6] = { 
     0.1f,
-	10.0f,
+	6.0f,
 	20.0f,
 	40.f,
 	100.f,
@@ -72,6 +72,16 @@ float g_fFalloff;
 float g_fTheta;
 float g_fPhi;
 
+#define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+#define FXAA_EDGE_THRESHOLD_MIN  (1.0/24.0)
+#define FXAA_SEARCH_STEPS        32
+#define FXAA_SEARCH_ACCELERATION 1
+#define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+#define FXAA_SUBPIX              1
+#define FXAA_SUBPIX_FASTER       0
+#define FXAA_SUBPIX_CAP          (3.0/4.0)
+#define FXAA_SUBPIX_TRIM         (1.0/4.0)
+#define FXAA_SUBPIX_TRIM_SCALE (1.0/(1.0 - FXAA_SUBPIX_TRIM))
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -199,12 +209,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // 역광 SSS BackScatter
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f) * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }
-
+    
     return Out;
 }
 
@@ -419,6 +428,9 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     for (uint i = 0; i < 5; ++i)
         iIdx += (fViewZ >= g_fCascadeEnds[i + 1]);
     
+    //캐스케이드가 5개니까..
+    iIdx = min(iIdx, 4);
+    
     vector vPosition;
     
     // 로컬위치 * 월드 * 뷰 * 투영 / w 
@@ -564,6 +576,70 @@ PS_OUT_COMBINED_SHADOW PS_MAIN_COMBINE_SHADOW(PS_IN In)
     return Out;
 }
 
+//FXAA용 메서드. HDR 이후에 처리된다.
+PS_OUT_BACKBUFFER PS_MAIN_FXAA(PS_IN In)
+{
+    PS_OUT_BACKBUFFER Out;
+   
+    Out.vBackBuffer = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float2 vTexel = float2(1.f / g_iWinSizeX, 1.f / g_iWinSizeY);
+    float3 vColorN = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(0.f, vTexel.y * -1.f));
+    float3 vColorS = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(0.f, vTexel.y * 1.f));
+    float3 vColorW = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(vTexel.x * -1.f, 0.f));
+    float3 vColorE = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + float2(vTexel.x * 1.f, 0.f));
+    float3 vColorM = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fLuminanceN = FxaaLuma(vColorN);
+    float fLuminanceS = FxaaLuma(vColorS);
+    float fLuminanceW = FxaaLuma(vColorW);
+    float fLuminanceE = FxaaLuma(vColorE);
+    float fLuminanceM = FxaaLuma(vColorM);
+    
+    //가장 휘도가 적은 곳.
+    float fRangeMin = min(fLuminanceM, min(min(fLuminanceN, fLuminanceS), min(fLuminanceW, fLuminanceE)));
+    //가장 휘도가 높은 곳. 
+    float fRangeMax = max(fLuminanceM, max(max(fLuminanceN, fLuminanceS), max(fLuminanceW, fLuminanceE)));
+    
+    //contrast를 구한다.
+    float fRange = fRangeMax - fRangeMin;
+    
+    if (fRange < max(FXAA_EDGE_THRESHOLD_MIN, fRangeMax * FXAA_EDGE_THRESHOLD)) 
+        return Out;
+    
+    //휘도 차이가 많이 나는 곳으로 방향이 정해진다. 
+    float2 vDir;
+    vDir.x = -((fLuminanceN + fLuminanceS) - (fLuminanceE + fLuminanceW));
+    vDir.y = ((fLuminanceN + fLuminanceS) - (fLuminanceE + fLuminanceW));
+    
+    vDir *= vTexel; // 텍셀 단위로 스케일
+
+    float SPAN_MAX = 8.0f;
+    vDir = clamp(vDir, -SPAN_MAX, SPAN_MAX) * vTexel;
+    
+    float3 vC1 = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + vDir * -0.5).rgb;
+    float3 vC2 = g_ScreenTexture.Sample(DefaultSampler, In.vTexcoord + vDir * -0.5).rgb;
+
+    float3 vCA = 0.5 * (vC1 + vC2);
+    float fLuminanceA = FxaaLuma(vCA);
+
+    float3 vCB = vCA * 0.5 + Out.vBackBuffer.xyz * 0.5;
+    float fLuminanceB = FxaaLuma(vCB);
+    
+    if (fLuminanceB < fRangeMin || fLuminanceB > fRangeMax)
+        Out.vBackBuffer.xyz = vCA;
+    else
+        Out.vBackBuffer.xyz = vCB;
+
+    // subpixel blend
+    // 여기 인자화 해야됨.
+    Out.vBackBuffer.xyz = lerp(Out.vBackBuffer.xyz, vCA, 0.6f);
+
+    Out.vBackBuffer = float4(Out.vBackBuffer.xyz, 1.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 { 
     // idx 0 
@@ -700,6 +776,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINE_SHADOW();
+    }
+    // idx 13
+    pass FXAA
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_FXAA();
     }
 }
 

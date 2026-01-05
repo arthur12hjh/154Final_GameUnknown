@@ -29,8 +29,11 @@ public:
 	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc) { m_bIsActive = TRUE; m_iCinematicCode = CinematicNodeDesc.iActiveIndex; return S_OK; }
 
 	_wstring Get_ObjectTag() const { return m_szObjectTag; }
+	//Bip001-Pelvis 있어야 사용가능. 없으면 아쉬운거지 ㅇㅇ
+	_matrix Get_CinematicWorldPos();
 
 	virtual HRESULT Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference);
+
 
 protected:
 	_wstring m_szObjectTag;

@@ -396,8 +396,11 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::CREATE_TARGETLIGHT:
             CGameManager::GetInstance()->Change_ShaderSetting(static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID()), CinematicNodeDesc.iActiveIndex);
             break;
-        case CINEMATICNODE_STATE::END:
 
+        case CINEMATICNODE_STATE::SET_CINEMATICLIGHT:
+            CGameManager::GetInstance()->Set_CinematicLights(CinematicNodeDesc.iActiveIndex);
+            break;
+        case CINEMATICNODE_STATE::END:
             break;
     }
 }

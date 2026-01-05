@@ -179,7 +179,7 @@ public:
 #pragma endregion
 
 #pragma region LIGHT_MANAGER
-	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
+	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight**  pOutLight = nullptr);
 	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	HRESULT								Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	class CLight*						Find_Light(_uint iIndex);

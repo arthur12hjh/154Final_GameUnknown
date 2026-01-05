@@ -180,6 +180,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 void CPlayer::Priority_Update(_float fTimeDelta)
 {
+	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+		return;
+
 	m_pTransformCom->Update_PreWorldMatrix();
 	m_pCCT->Update_PrePxPosition(m_pTransformCom);
 
@@ -188,6 +191,9 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
+	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+		return;
+
 	__super::Update(fTimeDelta);
 
 	m_pGameManager->Lockon(fTimeDelta);
@@ -214,6 +220,8 @@ void CPlayer::Update(_float fTimeDelta)
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
+	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+		return;
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
@@ -243,7 +251,7 @@ HRESULT CPlayer::Render_MotionBlur()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
-	if (true == m_PlayerDesc.isInvincible)
+	if (true == m_PlayerDesc.isInvincible || VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
 		return S_OK;
 
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
@@ -317,18 +325,20 @@ _int CPlayer::GetSkillDataID()
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
 	m_fTestTimer += fTimeDelta;
-	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
+	m_fShieldTimer += fTimeDelta;
+
+	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy && m_fTestTimer >= 2.0)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
 		m_fTestTimer = 0.f;
 	}
 
-	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield)
+	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield && m_fShieldTimer >= 10.0f)
 		//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentShield += 4;
-		m_fTestTimer = 0.f;
+		m_fShieldTimer = 0.f;
 	}
 
 

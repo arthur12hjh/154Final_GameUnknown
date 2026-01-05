@@ -34,7 +34,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
-
+	
 private:
 	CModel* m_pBodyModelCom = { nullptr };
 
