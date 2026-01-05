@@ -47,17 +47,14 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 		pChannel->getCurrentSound(&pSound);
 		pChannel->getUserData(&pUserData);
 
-		_uint iSoundTotalLength{}, iPosition;
+		_uint iSoundTotalLength{};
 		pSound->getLength(&iSoundTotalLength, FMOD_TIMEUNIT_MS);
-		pChannel->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
 
-		if (iPosition >= iSoundTotalLength)
+		if (pUserData)
 		{
-			if (pUserData)
-			{
-				auto pUserCalllBack = static_cast<function<void(FMOD_CHANNELCONTROL * channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)>*>(pUserData);
-				(*pUserCalllBack)(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
-			}
+			auto pUserCalllBack = static_cast<SOUND_CALLBACK_DESC*>(pUserData);
+			if (pUserCalllBack->pChannelTrackPosition >= iSoundTotalLength)
+				pUserCalllBack->EndCallBackFunc(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
 		}
 	}
 	break;
@@ -107,7 +104,8 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 		{
 			m_pFinishedFunction[eID] = pFinishedCallBack;
 			m_pChannelArr[eID]->setCallback(Finished_BGMSoundCallBack);
-			m_pChannelArr[eID]->setUserData(&m_pFinishedFunction[eID]);
+			m_ChannelEndCallBacks[eID].EndCallBackFunc = m_pFinishedFunction[eID];
+			m_pChannelArr[eID]->setUserData(&m_ChannelEndCallBacks[eID]);
 		}
 	}
 
@@ -141,9 +139,10 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 		{
 			m_pFinishedFunction[CHANNELID::BGM] = pFinishedCallBack;
 			m_pChannelArr[CHANNELID::BGM]->setCallback(Finished_BGMSoundCallBack);
-			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_pFinishedFunction[CHANNELID::BGM]);
+
+			m_ChannelEndCallBacks[CHANNELID::BGM].EndCallBackFunc = m_pFinishedFunction[CHANNELID::BGM];
+			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_ChannelEndCallBacks[CHANNELID::BGM]);
 		}
-			
 	}
 
 	m_pSystem->update();
@@ -188,6 +187,9 @@ void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 
 void CSound_Manager::Tick(_float fTimeDelta)
 {
+	for (_uint i = 0; i < CHANNELID::END; ++i)
+		m_pChannelArr[i]->getPosition(&m_ChannelEndCallBacks[i].pChannelTrackPosition, FMOD_TIMEUNIT_MS);
+
 	m_pSystem->update();
 }
 

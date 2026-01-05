@@ -321,6 +321,21 @@ namespace Engine
 		float					fWeight;
 	}BINVERTEXWEIGHT;
 
+	typedef struct binMeshMorphKey					// Morph Target
+	{
+		float					fTime;
+		vector<unsigned int>	vValues;
+		vector<float>			vWeights;
+		unsigned int			iNumValuesAndWeights;
+	}BINMESHMORPHKEY;
+
+	typedef struct binMeshMorphAnim
+	{
+		char					szName[MAX_PATH];
+		unsigned int			iNumKeys;
+		vector<binMeshMorphKey>	vKeys;
+	}BINMESHMORPHANIM;
+
 	typedef struct binVectorKey
 	{
 		float					fTime;
@@ -371,6 +386,31 @@ namespace Engine
 		vector<binBone>				vBones;
 		char						szName[MAX_PATH];
 	}BINMESH;
+
+	typedef struct binAnimMesh
+	{
+		/* binMesh에도 있는 정점 수 */
+		unsigned int				iNumVertices;
+		unsigned int				iNumFaces;
+		unsigned int				iNumBones;
+		unsigned int				iMaterialIndex;
+		/* 정점. 아 이러면 아예 로드 방식 자체를 기존 FBX Parser랑 다르게 해야할듯 */
+		vector<XMFLOAT3>			vPositions;
+
+		/* binMesh에도 있는 mNormals */
+		vector<XMFLOAT3>			vNormals;
+
+		/* binMesh에도 있는 mTangents */
+		vector<XMFLOAT3>			vTangents;
+
+		/* binMesh에도 있는 mBitangents */
+		vector<XMFLOAT3>			vBinormals;
+
+		/* binMesh에도 있는 mTextureCoords */
+		vector<vector<XMFLOAT2>>	vTextureCoords;
+
+		char						szName[MAX_PATH];
+	}BINANIMMESH;
 
 	typedef struct binMaterial
 	{
