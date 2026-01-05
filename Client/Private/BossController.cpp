@@ -128,7 +128,17 @@ HRESULT CBossController::Damage(void* pArg)
                     {
                         bIsHitAble = false;
                         m_pBlackBoard->EnterGroggy();
-                        pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+
+                        CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+                        switch (ePhase)
+                        {
+                        case CBossBlackBoard::BOSS_PAHSE::FIRST:
+                            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                            break;
+                        case CBossBlackBoard::BOSS_PAHSE::SECOND:
+                            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK);
+                            break;
+                        }
                     }
                 }
                 else
@@ -174,7 +184,19 @@ HRESULT CBossController::Damage(void* pArg)
         else if (CBossBlackBoard::BOSS_STATE::GROGGY == m_pBlackBoard->GetCurState())
         {
             if (SKILL_PROPERTY::EXCUTION & pDamageSKillDesc->eProPerty)
-                bIsHitAble = m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+            {
+                CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+                switch (ePhase)
+                {
+                case CBossBlackBoard::BOSS_PAHSE::FIRST :
+                    bIsHitAble = m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+                    break;
+                case CBossBlackBoard::BOSS_PAHSE::SECOND:
+                    pNayitba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
+                    bIsHitAble = m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK);
+                    break;
+                }
+            }
             else
             {
                 bIsHitAble = false;

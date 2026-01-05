@@ -216,6 +216,11 @@ HRESULT CCinematicManager::Skip_Cinematic()
     return S_OK;
 }
 
+map<_wstring, CCinematicObject*>* CCinematicManager::Get_CinematicObjectsMap()
+{
+    return &m_CinematicObjectsMap;
+}
+
 HRESULT CCinematicManager::Reset_Cinematic()
 {
     m_bIsCinematicPlaying = FALSE;

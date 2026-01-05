@@ -47,12 +47,15 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 		pChannel->getCurrentSound(&pSound);
 		pChannel->getUserData(&pUserData);
 
+		_uint iSoundTotalLength{};
+		pSound->getLength(&iSoundTotalLength, FMOD_TIMEUNIT_MS);
+
 		if (pUserData)
 		{
-			auto pUserCalllBack = static_cast<function<void(FMOD_CHANNELCONTROL * channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)>*>(pUserData);
-			(*pUserCalllBack)(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+			auto pUserCalllBack = static_cast<SOUND_CALLBACK_DESC*>(pUserData);
+			if (pUserCalllBack->pChannelTrackPosition >= iSoundTotalLength)
+				pUserCalllBack->EndCallBackFunc(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
 		}
-
 	}
 	break;
 	case FMOD_CHANNELCONTROL_CHANNELGROUP:
@@ -83,6 +86,12 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 
 	bool bPlay = FALSE;
 
+	if (m_pChannelArr[eID])
+	{
+		m_pChannelArr[eID]->stop();
+		m_pChannelArr[eID] = nullptr;
+	}
+
 	FMOD_RESULT res = m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[eID]);
 	if (res != FMOD_OK) {
 		printf("playSound error: %s\n", FMOD_ErrorString(res));
@@ -95,7 +104,8 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 		{
 			m_pFinishedFunction[eID] = pFinishedCallBack;
 			m_pChannelArr[eID]->setCallback(Finished_BGMSoundCallBack);
-			m_pChannelArr[eID]->setUserData(&m_pFinishedFunction[eID]);
+			m_ChannelEndCallBacks[eID].EndCallBackFunc = m_pFinishedFunction[eID];
+			m_pChannelArr[eID]->setUserData(&m_ChannelEndCallBacks[eID]);
 		}
 	}
 
@@ -113,6 +123,12 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	if (iter == m_mapSound.end())
 		return;
 
+	if (m_pChannelArr[CHANNELID::BGM])
+	{
+		m_pChannelArr[CHANNELID::BGM]->stop();
+		m_pChannelArr[CHANNELID::BGM] = nullptr;
+	}
+
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[CHANNELID::BGM]);
 	m_pChannelArr[CHANNELID::BGM]->setMode(FMOD_LOOP_NORMAL);
 	m_pChannelArr[CHANNELID::BGM]->setVolume(fVolume);
@@ -123,9 +139,10 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 		{
 			m_pFinishedFunction[CHANNELID::BGM] = pFinishedCallBack;
 			m_pChannelArr[CHANNELID::BGM]->setCallback(Finished_BGMSoundCallBack);
-			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_pFinishedFunction[CHANNELID::BGM]);
+
+			m_ChannelEndCallBacks[CHANNELID::BGM].EndCallBackFunc = m_pFinishedFunction[CHANNELID::BGM];
+			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_ChannelEndCallBacks[CHANNELID::BGM]);
 		}
-			
 	}
 
 	m_pSystem->update();
@@ -133,13 +150,33 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
-	m_pChannelArr[eID]->stop();
+	_bool bIsChannelPlaying;
+	if (m_pChannelArr[eID])
+	{
+		m_pChannelArr[eID]->isPlaying(&bIsChannelPlaying);
+		if (bIsChannelPlaying)
+		{
+			m_pChannelArr[eID]->stop();
+			m_pChannelArr[eID] = nullptr;
+		}
+	}
 }
 
 void CSound_Manager::Manager_StopAll()
 {
+	_bool bIsChannelPlaying;
 	for (int i = 0; i < CHANNELID::END; ++i)
-		m_pChannelArr[i]->stop();
+	{
+		if (m_pChannelArr[i])
+		{
+			m_pChannelArr[i]->isPlaying(&bIsChannelPlaying);
+			if (bIsChannelPlaying)
+			{
+				m_pChannelArr[i]->stop();
+				m_pChannelArr[i] = nullptr;
+			}
+		}
+	}
 }
 
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
@@ -150,6 +187,9 @@ void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 
 void CSound_Manager::Tick(_float fTimeDelta)
 {
+	for (_uint i = 0; i < CHANNELID::END; ++i)
+		m_pChannelArr[i]->getPosition(&m_ChannelEndCallBacks[i].pChannelTrackPosition, FMOD_TIMEUNIT_MS);
+
 	m_pSystem->update();
 }
 

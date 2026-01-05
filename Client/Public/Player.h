@@ -95,7 +95,7 @@ private:
 
 private:
 	void Execution_Nayitba();
-	void LinkAttack_Nayitba();
+	void LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType);
 	
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

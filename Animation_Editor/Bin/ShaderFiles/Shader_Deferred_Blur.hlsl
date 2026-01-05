@@ -87,7 +87,6 @@ PS_OUT_BLUR PS_MAIN_EMISSIVE_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     
-    /*
     float vSize = 0.f;
     for (int i = -6; i < 7; ++i)
     {
@@ -97,11 +96,10 @@ PS_OUT_BLUR PS_MAIN_EMISSIVE_X(PS_IN In)
         vColor += g_fWeights[i + 6] * g_BlurTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
     }
-    */
 
-    //    Out.vBlur = vColor / vSize * 2.f;
+    Out.vBlur = vColor / vSize * 2.f;
     
-    Out.vBlur = g_BlurTexture.Sample(ClampSampler, In.vTexcoord) * 2.f;
+    //Out.vBlur = g_BlurTexture.Sample(ClampSampler, In.vTexcoord) * 2.f;
     return Out;
 }
 
@@ -111,8 +109,7 @@ PS_OUT_BLUR PS_MAIN_EMISSIVE_Y(PS_IN In)
     
     float2 vTexcoord;
     float4 vColor = 0.f;
-    /*
-        float vSize = 0.f;
+    float vSize = 0.f;
     
     for (int i = -6; i < 7; ++i)
     {
@@ -124,9 +121,9 @@ PS_OUT_BLUR PS_MAIN_EMISSIVE_Y(PS_IN In)
     }
     
     Out.vBlur = vColor / vSize * 2.f;
-    */
+
     
-    Out.vBlur = g_BlurTexture.Sample(ClampSampler, In.vTexcoord) * 2.f;
+    //Out.vBlur = g_BlurTexture.Sample(ClampSampler, In.vTexcoord) * 2.f;
     
     return Out;
 }

@@ -396,7 +396,10 @@
       <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\WaveTrail.h">
-      <Filter>01.Utility\03.Components\Trail</Filter>
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MontionTrailComponent.h">
+      <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -764,7 +767,10 @@
       <Filter>01.Utility\05.Renderer\Deferred\VolumeFog</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\WaveTrail.cpp">
-      <Filter>01.Utility\03.Components\Trail</Filter>
+      <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MontionTrailComponent.cpp">
+      <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1217,6 +1223,12 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail\MotionTrail">
+      <UniqueIdentifier>{1f7628bc-afff-4cc7-be6b-aafe44bdcbec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Trail\WaveTrail">
+      <UniqueIdentifier>{750af727-4c73-4246-8bd6-ab6fc8801dc4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

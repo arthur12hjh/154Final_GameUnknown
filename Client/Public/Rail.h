@@ -32,7 +32,7 @@ private:
 	_float					m_fTimeArr[3] = { 0.f, 0.f, 0.f };
 	_bool					m_bIsColorArr[3] = { false, false, false };
 
-	_float					m_fColorWeight = { 0.f };
+	_float					m_fColorWeightArr[3] = { 0.f, 0.f, 0.f };
 	_float					m_fTimeAcc = { 0.f };
 	_bool					m_bIsColorChange = { false };
 

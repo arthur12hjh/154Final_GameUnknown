@@ -36,36 +36,55 @@ void CRail::Priority_Update(_float fTimeDelta)
 void CRail::Update(_float fTimeDelta)
 {
     _bool* pIsIdxFlags[3] = { &m_bIsIdx0, &m_bIsIdx1, &m_bIsIdx2 };
-    _bool bIsAnyActive = false;
+    _bool bIsAnyActive[3] = { false, false, false };
 
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    {
+        m_bIsColorArr[0] = true;
+        m_bIsIdx0 = true;
+        m_fTimeArr[0] = 0.f;
+        m_fColorWeightArr[0] = 0.f; // 만약 처음부터 다시 차오르게 하고 싶다면 주석 해제
+    }
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
     {
         m_bIsColorArr[0] = true;
         m_bIsIdx0 = true;
         m_fTimeArr[0] = 0.f;
-        m_fColorWeight = 0.f; // 만약 처음부터 다시 차오르게 하고 싶다면 주석 해제
     }
 
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K))
+    {
+        m_bIsColorArr[1] = true;
+        m_bIsIdx1 = true;
+        m_fTimeArr[1] = 0.f;
+        m_fColorWeightArr[1] = 0.f;
+    }
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
     {
         m_bIsColorArr[1] = true;
         m_bIsIdx1 = true;
         m_fTimeArr[1] = 0.f;
-        m_fColorWeight = 0.f;
     }
 
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+    {
+        m_bIsColorArr[2] = true;
+        m_bIsIdx2 = true;
+        m_fTimeArr[2] = 0.f;
+        m_fColorWeightArr[2] = 0.f;
+    }
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
     {
         m_bIsColorArr[2] = true;
         m_bIsIdx2 = true;
         m_fTimeArr[2] = 0.f;
-        m_fColorWeight = 0.f;
     }
+
     for (_uint i = 0; i < 3; i++)
     {
         if (m_bIsColorArr[i])
         {
-            bIsAnyActive = true;
+            bIsAnyActive[i] = true;
             m_fTimeArr[i] += fTimeDelta;
 
             if (m_fTimeArr[i] > 0.2f)
@@ -77,18 +96,21 @@ void CRail::Update(_float fTimeDelta)
         }
     }
 
-    if (bIsAnyActive)
+    for (_uint i = 0; i < 3; i++)
     {
-        m_fColorWeight += fTimeDelta * 2.f;
+        if (bIsAnyActive[i])
+        {
+            m_fColorWeightArr[i] += fTimeDelta * 5.f;
 
-        if (m_fColorWeight > 1.f)
-            m_fColorWeight = 1.f;
-    }
-    else
-    {
-        m_fColorWeight -= fTimeDelta * 2.f;
-        if (m_fColorWeight < 0.f)
-            m_fColorWeight = 0.f;
+            if (m_fColorWeightArr[i] > 1.f)
+                m_fColorWeightArr[i] = 1.f;
+        }
+        else
+        {
+            m_fColorWeightArr[i] -= fTimeDelta * 5.f;
+            if (m_fColorWeightArr[i] < 0.f)
+                m_fColorWeightArr[i] = 0.f;
+        }
     }
 }
 
@@ -107,7 +129,11 @@ HRESULT CRail::Render()
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
 
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fColorWeight", &m_fColorWeight, sizeof(_float))))
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fWeight0", &m_fColorWeightArr[0], sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fWeight1", &m_fColorWeightArr[1], sizeof(_float))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fWeight2", &m_fColorWeightArr[2], sizeof(_float))))
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_bIsIdx0", &m_bIsIdx0, sizeof(_bool))))
