@@ -219,6 +219,38 @@ namespace Engine
 		};
 	}VTX_NONEANIM_INSTANCE_DESC;
 
+	typedef struct tagVertexMotionTrailInstance_Model
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vTranslation;
+
+		XMUINT2				iNumber;
+		XMFLOAT2			vLifeTime;
+	}VTX_MOTION_TRAIL_INSTANCE_MODEL;
+
+	typedef struct tagVertexMotionTrailInstanceDesc
+	{
+		static constexpr unsigned int					iNumElements = { 13 };
+		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+			{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_UINT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 1, 72, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		};
+	}VTX_MOTION_TRAIL_INSTANCE_MODEL_DESC;
+
 	typedef struct tagVertexModelInstanceParticleDesc
 	{
 		static constexpr unsigned int					iNumElements = { 10 };
@@ -584,6 +616,52 @@ namespace Engine
 	} VOLUMEFOG_DESC;
 
 #pragma endregion
+
+	typedef struct ComputeBoneInfo
+	{
+		int			iParentIndex;
+		XMINT3		_padding;
+	}COMPUTE_BONEINFO;
+
+	typedef struct ComputeChannelInfo
+	{
+		unsigned int		iBoneIndex;
+		unsigned int		iCurrentKeyFrameIndex;
+		unsigned int		iNumKeyFrames;
+		unsigned int		iKeyFrameOffset;
+	}COMPUTE_CHANNELINFO;
+
+	typedef struct ComputeKeyFrameInfo
+	{
+		XMFLOAT3		vScale;
+		float			padding01;
+		XMFLOAT4		vRotation;
+		XMFLOAT3		vTranslation;
+		float			fTrackPosition;
+	}COMPUTE_KEYFRAMEINFO;
+
+	typedef struct AnimationGlobalBuffer
+	{
+		XMFLOAT4X4		g_PreTransformMatrix;
+		float			g_fCurrentTrackPosition;
+		float			g_fTimeDelta;
+		float			g_fTickPerSecond;
+		float			g_fDuration;
+
+		unsigned int	g_bIsLoop;
+		unsigned int	g_iNumBones;
+		unsigned int	g_iNumChannels;
+		unsigned int	g_iRootIndex;
+
+		float			g_fBlendRatio;
+		XMFLOAT3			_padding;
+	}COMPUTE_GLOBALBUFFER;
+
+	typedef struct BoneTransformMatrixOut
+	{
+		XMFLOAT4X4 BoneLocalTransformMatrix;
+		XMFLOAT4X4 BoneCombinedTransformMatrix;
+	}COMPUTE_BONEMATRIX_OUT;
 }
 
 #endif // Engine_Struct_h__

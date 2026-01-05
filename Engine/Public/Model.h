@@ -9,53 +9,6 @@ class CTransform;
 
 class ENGINE_DLL CModel : public CComponent
 {
-public:
-	typedef struct ComputeBoneInfo
-	{
-		_int		iParentIndex;	
-		_int3		_padding;
-	}COMPUTE_BONEINFO;
-
-	typedef struct ComputeChannelInfo
-	{
-		_uint		iBoneIndex;
-		_uint		iCurrentKeyFrameIndex;
-		_uint		iNumKeyFrames;
-		_uint		iKeyFrameOffset;
-	}COMPUTE_CHANNELINFO;
-
-	typedef struct ComputeKeyFrameInfo
-	{
-		_float3			vScale;
-		_float			padding01;
-		_float4			vRotation;
-		_float3			vTranslation;
-		_float			fTrackPosition;
-	}COMPUTE_KEYFRAMEINFO;
-
-	typedef struct AnimationGlobalBuffer
-	{
-		_float4x4		g_PreTransformMatrix;
-		_float			g_fCurrentTrackPosition;
-		_float			g_fTimeDelta;
-		_float			g_fTickPerSecond;
-		_float			g_fDuration;
-
-		_uint			g_bIsLoop;
-		_uint			g_iNumBones;
-		_uint			g_iNumChannels;
-		_uint			g_iRootIndex;
-
-		_float			g_fBlendRatio;
-		_float3			_padding;
-	}COMPUTE_GLOBALBUFFER;
-
-	typedef struct BoneTransformMatrixOut
-	{
-		_float4x4 BoneLocalTransformMatrix;
-		_float4x4 BoneCombinedTransformMatrix;
-	}COMPUTE_BONEMATRIX_OUT;
-
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CModel(const CModel& Prototype);
@@ -182,7 +135,10 @@ public:
 
 	_bool			IsAnimationFinished() { return m_isFinish; }
 	_bool			CompareAnimationTag(const _char* szAnimationTag);
-	aiTextureType Convert_TextureType(TEXTURE_TYPE eType);
+	aiTextureType	Convert_TextureType(TEXTURE_TYPE eType);
+
+	// 이거 모션트레일 전용 PreBoneMatrix Copy해오는겁니다.
+	ID3D11Buffer*			Get_PreBoneMatrix();
 
 
 	virtual HRESULT Render(_uint iMeshIndex);
@@ -199,30 +155,29 @@ private:
 	class CComputeShader* m_pComputeShaderCom = { nullptr };
 	class CComputeShader* m_pCombinedMatrixComputeShaderCom = { nullptr };
 
-	COMPUTE_GLOBALBUFFER		m_GlobalBuffer;
+	COMPUTE_GLOBALBUFFER			m_GlobalBuffer;
 
-	ID3D11Buffer* m_pOutSource = { nullptr };
-	ID3D11Buffer* m_pRootSource = { nullptr };
-	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
-	ID3D11Buffer* m_pLerpBoneMatrices = { nullptr };
-	ID3D11Buffer* m_pOutReadBack = { nullptr };
-	ID3D11Buffer* m_pOutRootReadBack = { nullptr };
+	ID3D11Buffer*					m_pOutSource = { nullptr };
+	ID3D11Buffer*					m_pRootSource = { nullptr };
+	ID3D11Buffer*					m_pPreBoneMatrices = { nullptr };
+	ID3D11Buffer*					m_pLerpBoneMatrices = { nullptr };
+	ID3D11Buffer*					m_pOutReadBack = { nullptr };
+	ID3D11Buffer*					m_pOutRootReadBack = { nullptr };
 
-	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
-	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView*		m_pBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView*		m_pPreBoneMatricesSRV = { nullptr };
 
-	unordered_map<string, _int>	m_AnimationIndexMap;
+	unordered_map<string, _int>		m_AnimationIndexMap;
+	unordered_map<_int, _int>		m_PartialBoneCountMap;
 
-	unordered_map<_int, _int>	m_PartialBoneCountMap;
+	_uint							m_iNumMeshes = {};
+	vector<class CMesh*>			m_Meshes;
 
-	_uint						m_iNumMeshes = {};
-	vector<class CMesh*>		m_Meshes;
+	_uint							m_iNumMaterials = {};
+	vector<class CMaterial*>		m_Materials;
 
-	_uint						m_iNumMaterials = {};
-	vector<class CMaterial*>	m_Materials;
-
-	vector<class CBone*>		m_Bones;
-	vector<_float4x4>			m_GlobalOffsetMatrices;
+	vector<class CBone*>			m_Bones;
+	vector<_float4x4>				m_GlobalOffsetMatrices;
 
 	vector<ID3D11ShaderResourceView*>		m_pChannelSRVList;
 	vector<ID3D11ShaderResourceView*>		m_pKeyFrameSRVList;

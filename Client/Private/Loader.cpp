@@ -2795,6 +2795,12 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_MotionTrail");
+	pProtoDesc.pPrototype = CMontionTrailComponent::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_MonsterFSM */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Monster_FSM");
 	pProtoDesc.pPrototype = CMonsterFSM::Create(m_pDevice, m_pContext);

@@ -1092,9 +1092,6 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\DoF\ShaderFile">
       <UniqueIdentifier>{92854abc-ff3c-4e22-a211-b150eaf6d061}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\Trail">
-      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\23.Event">
       <UniqueIdentifier>{26c2ab48-b081-48a3-bf6b-84b7bcb5269b}</UniqueIdentifier>
     </Filter>
@@ -1224,6 +1221,9 @@
     <Filter Include="01.Utility\05.Renderer\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\03.Components\Trail\MotionTrail">
       <UniqueIdentifier>{1f7628bc-afff-4cc7-be6b-aafe44bdcbec}</UniqueIdentifier>
     </Filter>
@@ -1300,6 +1300,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Distortion\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\EngineShader_MotionTrail.hlsl">
+      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Model</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
