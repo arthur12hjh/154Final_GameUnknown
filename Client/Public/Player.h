@@ -57,7 +57,7 @@ public:
 	// 나중에 한번에 정리할게요.
 	void Update_TestLogic(_float fTimeDelta);
 	_float m_fTestTimer = { 0.f };
-
+	_float m_fShieldTimer = { 0.f };
 private:
 	struct Player_Desc			m_PlayerDesc = {};
 	CCollider*					m_pColliderCom = { nullptr };

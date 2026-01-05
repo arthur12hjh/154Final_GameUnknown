@@ -1,5 +1,9 @@
 #include "Client_Shader_Utils.hlsli"
 
+/* ±Ì¿Ã ∑ª¥ı≈∏∞Ÿ ∏∂Ω∫≈∑øÎ */
+bool g_IsMaskingDepthB;
+bool g_IsMaskingDepthW;
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 textureCUBE g_Texture;
 float g_fWeight0, g_fWeight1, g_fWeight2;
