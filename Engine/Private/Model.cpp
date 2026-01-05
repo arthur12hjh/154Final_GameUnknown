@@ -1049,38 +1049,6 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
-    {
-        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
-        
-        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
-        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
-        {
-            COMPUTE_BONEMATRIX_OUT* pOut =
-                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
-        
-            for (auto& BoneCountIndex : m_PartialBoneCountMap)
-            {
-                _int iBoneIndex = BoneCountIndex.first;
-        
-                m_Bones[iBoneIndex]->Set_TransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
-        
-                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
-                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
-            }
-        
-            m_pContext->Unmap(m_pOutReadBack, 0);
-        }
-    }
-
-
-    // 루트모션 적용
-    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
-    {
-        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
-        Apply_RootMotion(pTransform, fRootMotionMagnification);
-    }
 
 
     // 애니메이션 트랙 업데이트
@@ -1128,6 +1096,38 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     Bind_ComputeShader(fScaledDeltaTime);
 
+    if (m_pOutReadBack && !m_PartialBoneCountMap.empty())
+    {
+        m_pContext->CopyResource(m_pOutReadBack, m_pOutSource);
+
+        D3D11_MAPPED_SUBRESOURCE MappedSubResouce{};
+        if (SUCCEEDED(m_pContext->Map(m_pOutReadBack, 0, D3D11_MAP_READ, 0, &MappedSubResouce)))
+        {
+            COMPUTE_BONEMATRIX_OUT* pOut =
+                reinterpret_cast<COMPUTE_BONEMATRIX_OUT*>(MappedSubResouce.pData);
+
+            for (auto& BoneCountIndex : m_PartialBoneCountMap)
+            {
+                _int iBoneIndex = BoneCountIndex.first;
+
+                m_Bones[iBoneIndex]->Set_TransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneLocalTransformMatrix));
+
+                m_Bones[iBoneIndex]->Set_CombinedTransformationMatrix(
+                    XMLoadFloat4x4(&pOut[iBoneIndex].BoneCombinedTransformMatrix));
+            }
+
+            m_pContext->Unmap(m_pOutReadBack, 0);
+        }
+    }
+
+
+    // 루트모션 적용
+    if (pTransform && fRootMotionMagnification != 0.f && m_pOutRootReadBack)
+    {
+        m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
+        Apply_RootMotion(pTransform, fRootMotionMagnification);
+    }
 
     return m_isFinish;
 }

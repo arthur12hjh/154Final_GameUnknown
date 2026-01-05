@@ -26,6 +26,7 @@
 #include "Face_Character.h"
 #include "Hair_Character.h"
 #include "PonyTail_Character.h"
+#include "HairPin_Character.h"
 #include "Body_Dororong.h"
 #include "Body_Gigas.h"
 #include "Body_Extra.h"
@@ -77,7 +78,7 @@ HRESULT CLoader::Loading()
 	case LEVEL::EDITOR:
 	{
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}
@@ -191,6 +192,12 @@ HRESULT CLoader::Loading_For_Editor()
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Cinematic_Gorilla"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Scarlet_Face_Morph */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face_Morph.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Scarlet_Weapon */
@@ -381,10 +388,14 @@ HRESULT CLoader::Loading_For_Editor()
 	//	CMonster::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 	//
-	///* For.Prototype_GameObject_Weapon */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon"),
-	//	CWeapon::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	/* For.Prototype_GameObject_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Weapon"),
+		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	/* For.Prototype_GameObject_HairPin */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_HairPin"),
+		CHairPin_Character::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	while (m_pGameInstance->IsWorkThread());
 	m_strMessage = TEXT("절대 로딩이 완료되지 않았습니다...");
@@ -397,6 +408,8 @@ HRESULT CLoader::Loading_For_Editor()
 HRESULT CLoader::Loading_For_Player(void* pArg)
 {
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::EDITOR);
 
 	string szFrontPath = "../Bin/Resources/Models/Character/PC/Eve/Animation/";
 	_wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
@@ -422,6 +435,23 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_20.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Weapon */
+	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Weapon");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_W_Sword_ANI01.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
+	/* For.Prototype_Component_Model_HairPin */
+	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_HairPin");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_ACC_HairPin.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
 
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Eve_CombinedAnimationTest"),
 	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Character/Eve_body_psk7th/CH_P_EVE_09_nosimplify.bin", PreMatrix))))

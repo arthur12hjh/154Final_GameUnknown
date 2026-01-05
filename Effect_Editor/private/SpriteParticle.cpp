@@ -160,6 +160,9 @@ void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
@@ -245,6 +248,9 @@ void CSpriteParticle::Set_Replay(SPRITE_PARTICLE_DATA tData)
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat4(&m_tData.fPosition));
@@ -307,6 +313,9 @@ void CSpriteParticle::Update(SPRITE_PARTICLE_DATA tData)
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
+		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
 		break;
 	}
 

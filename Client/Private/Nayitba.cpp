@@ -78,7 +78,6 @@ HRESULT CNaytiba::Initialize(void* pArg)
 	// Bip001_Spine2
 
 	m_pLockOnMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Spine");
-	m_pHeadBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szHeadBoneName);
 	m_pLinkTargetBoneMatrix = m_pBodyModelCom->Get_BoneMatrixPtr("SC_LinkTarget");
 
 	return S_OK;
@@ -127,24 +126,22 @@ void CNaytiba::Update(_float fTimeDelta)
 
 	}
 
+	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+	{
+		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
+		m_pTargetCom->Target_Search(m_pAISenceCom->GetSearchAllObject());
+		m_pColliderCom->UpdateColiision(WorldMatrix);
+	}
+	
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
 		if (m_pLockOnMatrix)
 			XMStoreFloat3(&m_MonsterInfo.vLockOnPoint, (SpineMatrix * WorldMatrix).r[3]);
 
-		if (m_pHeadBoneMatrix)
-			XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, (XMLoadFloat4x4(m_pHeadBoneMatrix) * WorldMatrix).r[3]);
+		XMStoreFloat3(&m_MonsterInfo.vStatusBarPoint, m_pTransformCom->Get_State(STATE::POSITION));
+		m_MonsterInfo.vStatusBarPoint.y += static_cast<COBBCollider *>(m_pColliderCom)->GetBounding().Extents.y * 2.f;
 	}
 
-	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
-	{
-		m_pAISenceCom->UpdatSenceComponent(fTimeDelta);
-		m_pTargetCom->Target_Search(m_pAISenceCom->GetSearchAllObject());
-
-		WorldMatrix.r[3] += SpineMatrix.r[3];
-		m_pColliderCom->UpdateColiision(WorldMatrix);
-	}
-	
 	__super::Update(fTimeDelta);
 }
 
@@ -592,6 +589,7 @@ HRESULT CNaytiba::ADD_Components()
 	/* Com_Collider_AABB */
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 	OBBDesc.vSize = m_pInitMonsterInfo->fColliderExtents;
+	OBBDesc.vCenter = { 0.f, m_pInitMonsterInfo->fColliderExtents.y, 0.f };
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;

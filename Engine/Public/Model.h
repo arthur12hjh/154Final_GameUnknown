@@ -7,7 +7,7 @@ NS_BEGIN(Engine)
 
 class CTransform;
 
-class ENGINE_DLL CModel final : public CComponent
+class ENGINE_DLL CModel : public CComponent
 {
 public:
 	typedef struct ComputeBoneInfo

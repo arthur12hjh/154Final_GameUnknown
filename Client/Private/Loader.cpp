@@ -40,6 +40,7 @@
 #include "Face_Player.h"
 #include "Hair_Player.h"
 #include "PonyTail_Player.h"
+#include "Hairpin_Player.h"
 #include "CameraBone_Player.h"
 #pragma endregion
 
@@ -608,6 +609,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
 		"g_ORSSTexture", TRUE);
 
+	PreMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Hairpin"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_ACC_HairPin.binx", PreMatrix))))
+		return E_FAIL;
+
 	/// < 모델에 텍스쳐 맵 바인딩 하는 함수 >
 	/// 
 	/// -> 선행 조건 : 모델을 Add_Prototype하고, Get_Prototype을 통해 가져온다.
@@ -648,7 +654,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	// _wstring szPlayerTag = TEXT("Prototype_Component_Model_Eve_Body_24_TypeB");
 	// 
 	// vector<string> szTargetTagList;
-	// szTargetTagList.push_back("DaeJaeHoon`");
+	// szTargetTagList.push_back("BaboJaeHoon`");
 	// szTargetTagList.push_back("sunho");
 	// szTargetTagList.push_back("jindol");
 	// szTargetTagList.push_back("Chanbin");
@@ -788,6 +794,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_PonyTail_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_PonyTail_Player"),
 		CPonyTail_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_PonyTail_Player */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Hairpin_Player"),
+		CHairpin_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
@@ -1171,11 +1182,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-	vector<string> szTargetTagList;
-	szTargetTagList.push_back("Haed");
-	
-	CModel* pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
-	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 	
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	/* For.Prototype_Component_Model_Minion11 */
@@ -1216,14 +1222,6 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
-
-
-	
-	szTargetTagList.clear();
-	szTargetTagList.push_back("Haed001_end");
-	
-	pModel = static_cast<CModel*>(pProtoDesc.pPrototype);
-	pModel->Change_BoneTag("Bip001-Head", szTargetTagList);
 
 	/* For.Prototype_Component_Model_StatueA */
 	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));

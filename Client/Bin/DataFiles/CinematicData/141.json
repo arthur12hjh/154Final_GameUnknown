@@ -139,16 +139,10 @@
                 "szObjectTag": ""
             },
             {
-                "eState": 7,
-                "fTrackPosition": 102.4,
-                "iActiveIndex": 0,
+                "eState": 12,
+                "fTrackPosition": 102.0,
+                "iActiveIndex": 1,
                 "szObjectTag": ""
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 102.4,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster"
             },
 	{
                 "eState": 9,
@@ -166,6 +160,18 @@
   	   	"fInputFloat": 0.0
         	       }
     	   ]
+            },
+            {
+                "eState": 7,
+                "fTrackPosition": 102.4,
+                "iActiveIndex": 0,
+                "szObjectTag": ""
+            },
+            {
+                "eState": 2,
+                "fTrackPosition": 102.4,
+                "iActiveIndex": 0,
+                "szObjectTag": "Layer_Monster"
             }
         ],
         "iCinematicID": 141,

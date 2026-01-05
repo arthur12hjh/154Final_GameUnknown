@@ -7,6 +7,23 @@
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
+	{
+                "eState": 10,
+                "fTrackPosition": 0.0,
+                "iActiveIndex": 1,
+                "szObjectTag": "Layer_Npc",
+	   "CinematicIndexDataList": [
+        	       {
+      	   	"iActiveIndex": 1,
+      	   	"szObjectTag": "Layer_Npc",
+ 	   	"vPosition": [741.467, 2.0, 646.534],
+ 	   	"vRotation": [0.0, 0.0, 0.0, 1.0],
+  	   	"vScale": [1.0, 1.0, 1.0],
+  	   	"iInputInt": 0,
+  	   	"fInputFloat": 0.0
+        	       }
+    	   ]
+            },
             {
                 "eState": 1,
                 "fTrackPosition": 0.0,
