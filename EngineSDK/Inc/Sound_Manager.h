@@ -2,6 +2,13 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+
+typedef struct SoundCallBackDesc
+{
+	function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> EndCallBackFunc;
+	_uint							pChannelTrackPosition;
+}SOUND_CALLBACK_DESC;
+
 class CSound_Manager final : public CBase
 {
 private :
@@ -26,9 +33,12 @@ public:
 
 private:
 	// 사운드 리소스 정보를 갖는 객체 
-	map<TCHAR*, FMOD::Sound*> m_mapSound;
+	map<TCHAR*, FMOD::Sound*>	m_mapSound;
+
 	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체 
-	FMOD::Channel* m_pChannelArr[CHANNELID::END];
+	FMOD::Channel*				m_pChannelArr[CHANNELID::END];
+	SOUND_CALLBACK_DESC			m_ChannelEndCallBacks[CHANNELID::END];
+
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
 	FMOD::System* m_pSystem;
 

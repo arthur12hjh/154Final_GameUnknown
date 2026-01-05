@@ -8,6 +8,12 @@ NS_END
 NS_BEGIN(Engine)
 class CBeatSaberSpawner final : public CCharacter
 {
+public :
+	typedef struct BeatSaberSpanwerDesc : public GAMEOBJECT_DESC
+	{
+		const _float4x4*			pPlayerTransform = { nullptr };
+	}BEATSABER_SPAWNER_DESC;
+
 private:
 	CBeatSaberSpawner(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBeatSaberSpawner(const CBeatSaberSpawner& rhs);
@@ -27,6 +33,7 @@ private:
 	CCollider*							m_pColliderCom = { nullptr };
 	queue<NOTE_DATA_DESC>				m_SpawnList = {};
 	
+	const _float4x4*					m_pPlayerTransform = { nullptr };
 	_bool								m_bIsPlay = true;
 
 private:

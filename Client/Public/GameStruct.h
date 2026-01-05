@@ -575,7 +575,7 @@ namespace Client
 
 	// LINK_ATTACK -> 그로기 상태에서 들어가는값
 	// EXECUTION_ATTACK -> 처형 상태에서 들어가는값
-	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, EXECUTION_ATTACK, END};
+	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, PHASE2_LINKATTACK, EXECUTION_ATTACK, END};
 
 	typedef struct TransportDesc
 	{
