@@ -66,6 +66,9 @@ void CTrailData::Set_Data(TRAIL_DATA tData)
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 	Ready_Components();
 }

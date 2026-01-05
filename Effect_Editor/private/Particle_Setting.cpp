@@ -1384,10 +1384,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
             case 6:
                 szRender = "DISTORTION";
                 break;
+            case 7:
+                szRender = "MOTIONBLUR";
+                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 6; ++i) {
+                for (_uint i = 0; i <= 7; ++i) {
                     _bool sel = i == m_tMeshData.iSelectRender;
                     switch (i)
                     {
@@ -1411,6 +1414,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         break;
                     case 6:
                         szRender = "DISTORTION";
+                        break;
+                    case 7:
+                        szRender = "MOTIONBLUR";
                         break;
                     }
                     if (ImGui::Selectable(szRender.c_str(), sel))
@@ -1913,10 +1919,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 case 6:
                     szRender = "DISTORTION";
                     break;
+                case 7:
+                    szRender = "MOTIONBLUR";
+                    break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 0; i <= 6; ++i) {
+                    for (_uint i = 0; i <= 7; ++i) {
                         _bool sel = i == ENUM_CLASS(m_tSpriteParticleData.iSelectRender);
                         switch (i)
                         {
@@ -1940,6 +1949,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                             break;
                         case 6:
                             szRender = "DISTORTION";
+                            break;
+                        case 7:
+                            szRender = "MOTIONBLUR";
                             break;
                         }
                         if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2367,10 +2379,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
                 case 6:
                     szRender = "DISTORTION";
                     break;
+                case 7:
+                    szRender = "MOTIONBLUR";
+                    break;
                 }
                 if (ImGui::BeginCombo("RenderType", szRender.c_str()))
                 {
-                    for (_uint i = 0; i <= 6; ++i) {
+                    for (_uint i = 0; i <= 7; ++i) {
                         _bool sel = i == m_tParticleData.iSelectRender;
                         switch (i) {
                         case 0:
@@ -2393,6 +2408,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                             break;
                         case 6:
                             szRender = "DISTORTION";
+                            break;
+                        case 7:
+                            szRender = "MOTIONBLUR";
                             break;
                         }
                         if (ImGui::Selectable(szRender.c_str(), sel))
@@ -2564,10 +2582,13 @@ void CParticle_Setting::Update(_float fTimeDelta)
             case 6:
                 szRender = "DISTORTION";
                 break;
+            case 7:
+                szRender = "MOTIONBLUR";
+                break;
             }
             if (ImGui::BeginCombo("RenderType", szRender.c_str()))
             {
-                for (_uint i = 0; i <= 6; ++i) {
+                for (_uint i = 0; i <= 7; ++i) {
 
                     _bool sel = i == ENUM_CLASS(m_tTrailData.iSelectRender);
                     switch (i)
@@ -2592,6 +2613,9 @@ void CParticle_Setting::Update(_float fTimeDelta)
                         break;
                     case 6:
                         szRender = "DISTORTION";
+                        break;
+                    case 7:
+                        szRender = "MOTIONBLUR";
                         break;
                     }
                     if (ImGui::Selectable(szRender.c_str(), sel))
