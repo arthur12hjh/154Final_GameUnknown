@@ -16,13 +16,13 @@ HRESULT CCustomFont::Initialize(const _tchar* pFontFilePath)
 	return S_OK;
 }
 
-HRESULT CCustomFont::Render(const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale)
+HRESULT CCustomFont::Render(const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale, _float2 vOrigin)
 {
 	m_pBatch->Begin();
 
-	_float2 Zero{ 0.f, 0.f };
+	//_float2 Zero{ 0.f, 0.f };
 
-	m_pFont->DrawString(m_pBatch, pText, vPosition, vColor, 0.f, Zero, fScale);
+	m_pFont->DrawString(m_pBatch, pText, vPosition, vColor, 0.f, vOrigin, fScale);
 
 	m_pBatch->End();
 

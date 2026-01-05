@@ -253,6 +253,7 @@
     <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\..\Client\Private\TargetComponent.cpp" />
+    <ClCompile Include="..\..\Client\Private\TargetLight.cpp" />
     <ClCompile Include="..\..\Client\Private\TestQuest.cpp" />
     <ClCompile Include="..\..\Client\Private\TrailData.cpp" />
     <ClCompile Include="..\..\Client\Private\TrailEffect.cpp" />
@@ -310,7 +311,9 @@
     <ClCompile Include="..\..\Client\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapperLineFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UISkillWrapperOnFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UISongSelector.cpp" />
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
+    <ClCompile Include="..\..\Client\Private\UITriggerKey.cpp" />
     <ClCompile Include="..\..\Client\Private\UIUnlockFX.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />

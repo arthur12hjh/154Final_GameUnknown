@@ -1,0 +1,24 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Position",
+            "vEndParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                -1600.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 0.25,
+    "isBeapBeap": false,
+    "isLoop": false,
+    "isInfluenceChildren": true,
+    "szAnimTag": "Open_Song_Selector"
+}
