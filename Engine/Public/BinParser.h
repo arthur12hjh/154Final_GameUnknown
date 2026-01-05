@@ -20,10 +20,12 @@ private:
 
 public:
 	HRESULT Initialize();
-	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut); // 구버전 파서
+	HRESULT ReadBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);			// 구버전 파서
 	HRESULT ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
-	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut); // 구버전 파서
+	HRESULT ReadBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);		// 셰이프 키(모프 타겟) 전용 bin파일
+	HRESULT WriteBin(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);			// 구버전 파서
 	HRESULT WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);
+	HRESULT WriteBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut);		// 셰이프 키(모프 타겟) 전용 bin파일
 
 private:
 	char* ReadString(ifstream& fileBinaryStream);

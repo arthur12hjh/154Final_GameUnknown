@@ -321,6 +321,21 @@ namespace Engine
 		float					fWeight;
 	}BINVERTEXWEIGHT;
 
+	typedef struct binMeshMorphKey					// Morph Target
+	{
+		float					fTime;
+		vector<unsigned int>	vValues;
+		vector<float>			vWeights;
+		unsigned int			iNumValuesAndWeights;
+	}BINMESHMORPHKEY;
+
+	typedef struct binMeshMorphAnim					// Morph Target
+	{
+		char					szName[MAX_PATH];
+		unsigned int			iNumKeys;
+		vector<binMeshMorphKey>	vKeys;
+	}BINMESHMORPHANIM;
+
 	typedef struct binVectorKey
 	{
 		float					fTime;
@@ -333,7 +348,6 @@ namespace Engine
 		unsigned int			iNumWeights;
 		vector<binVertexWeight>	vWeights;
 		XMFLOAT4X4				OffsetMatrix;
-		//binNode*				pNode;
 	}BINBONE;
 
 	typedef struct binChannel
@@ -349,12 +363,43 @@ namespace Engine
 
 	typedef struct binAnimation
 	{
-		char					szName[MAX_PATH];
-		float					fDuration;
-		float					fTicksPerSecond;
-		unsigned int			iNumChannels;
-		vector<binChannel>		vChannels;
+		char						szName[MAX_PATH];
+		float						fDuration;
+		float						fTicksPerSecond;
+		unsigned int				iNumChannels;
+		vector<binChannel>			vChannels;
 	}BINANIMATION;
+
+	typedef struct binMorphAnimation		// 모프 타겟 애니메이션
+	{
+		char						szName[MAX_PATH];
+		float						fDuration;
+		float						fTicksPerSecond;
+		unsigned int				iNumChannels;
+		vector<binMeshMorphAnim>	vMorphAnimations;
+	}BINMORPHANIMATION;
+
+	typedef struct binAnimMesh					// Morph Target
+	{
+		/* binMesh에도 있는 정점 수 */
+		unsigned int				iNumVertices;
+		/* 정점. 아 이러면 아예 로드 방식 자체를 기존 FBX Parser랑 다르게 해야할듯 */
+		vector<XMFLOAT3>			vPositions;
+
+		/* binMesh에도 있는 mNormals */
+		vector<XMFLOAT3>			vNormals;
+
+		/* binMesh에도 있는 mTangents */
+		vector<XMFLOAT3>			vTangents;
+
+		/* binMesh에도 있는 mBitangents */
+		vector<XMFLOAT3>			vBinormals;
+
+		/* binMesh에도 있는 mTextureCoords */
+		vector<vector<XMFLOAT2>>	vTextureCoords;
+
+		char						szName[MAX_PATH];
+	}BINANIMMESH;
 
 	typedef struct binMesh
 	{
@@ -369,8 +414,10 @@ namespace Engine
 		vector<vector<XMFLOAT2>>	vTextureCoords;
 		vector<binFace>				vFaces;
 		vector<binBone>				vBones;
+		vector<binAnimMesh>			vAnimMesh;				// 셰이프 그룹
 		char						szName[MAX_PATH];
 	}BINMESH;
+
 
 	typedef struct binMaterial
 	{
