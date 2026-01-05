@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT Initialize(const _tchar* pFontFilePath);
-	HRESULT Render(const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale = 1.f);	
+	HRESULT Render(const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale = 1.f, _float2 vOrigin = _float2(0.f, 0.f));
 
 	_float2 Get_Text_Size(const _tchar* pText, bool bIgnoreWhitespace = true, float fScale = 1.f) const;
 

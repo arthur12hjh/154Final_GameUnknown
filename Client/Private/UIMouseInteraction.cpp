@@ -97,7 +97,7 @@ void CUIMouseInteraction::Update(_float fTimeDelta)
 			UI_EVENT_ARG_DESC Arg{};
 			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
 			Arg.pData = &bActive;
-			__super::Trigger_Event(TEXT("MaouseInteraction_Active"), &Arg);
+			__super::Trigger_Event(TEXT("MouseInteraction_Active"), &Arg);
 
 			break;
 		}

@@ -488,8 +488,10 @@
     <ClInclude Include="..\Public\UISkillSlot.h" />
     <ClInclude Include="..\Public\UISkillWrapper.h" />
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+    <ClInclude Include="..\Public\UISongSelector.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\Public\UITriggerKey.h" />
     <ClInclude Include="..\Public\UIUnlockFX.h" />
     <ClInclude Include="..\Public\UIWorldWrapper.h" />
     <ClInclude Include="..\public\StaticInteraction.h" />
@@ -851,7 +853,9 @@
     <ClCompile Include="..\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIBossStaminaFX.cpp" />
+    <ClCompile Include="..\Private\UISongSelector.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\Private\UITriggerKey.cpp" />
     <ClCompile Include="..\Private\UIUnlockFX.cpp" />
     <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\private\StaticInteraction.cpp" />

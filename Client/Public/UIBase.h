@@ -108,6 +108,8 @@ public:
 	_bool IsAnimFinished(const _wstring& szAnimTag) const;
 	_bool IsAnimPlaying() const { return m_bAnimPlaying; }
 
+	void Text_Split(const wchar_t* text, vector<_wstring>& pOut);
+
 #ifdef _DEBUG
 	void Render_Debug_Rect();
 #endif

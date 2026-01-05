@@ -1,0 +1,37 @@
+[
+    {
+        "TextureDesc": {
+            "iPass": 0,
+            "iTextureIndex": 0,
+            "szProtoTag": "Prototype_Component_UI_Texture_Overlay",
+            "szTextureComTag": "Com_Texture_UI_BackGround"
+        },
+        "fAlpha": 1.0,
+        "fOffsetX": 0.0,
+        "fOffsetY": 0.0,
+        "fRotation": 0.0,
+        "fSizeX": 1600.0,
+        "fSizeY": 900.0,
+        "fX": 800.0,
+        "fY": 450.0,
+        "iDepth": 20,
+        "iDrawType": 1,
+        "iLevel": 5,
+        "iRenderGroup": 9,
+        "iVisibility": 0,
+        "szAnimTags": [
+            {
+                "szAnimTag": "Intro",
+                "szPrefabTag": "FadeOut_3"
+            },
+            {
+                "szAnimTag": "Outro",
+                "szPrefabTag": "FadeIn_3"
+            }
+        ],
+        "szLayerTag": "Layer_BeatSaber_Overlay",
+        "szProtoTag": "Prototype_GameObject_UI_Panel",
+        "szUIID": "UI_Layer_BeatSaber_Overlay_0",
+        "szUITag": "BeatSaber_Overlay"
+    }
+]

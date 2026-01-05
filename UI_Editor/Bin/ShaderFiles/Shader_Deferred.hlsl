@@ -54,7 +54,7 @@ Texture2DArray g_CascadeShadowTexture;
 
 float g_fCascadeEnds[6] = { 
     0.1f,
-	10.0f,
+	6.0f,
 	20.0f,
 	40.f,
 	100.f,
@@ -209,8 +209,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // 역광 SSS BackScatter
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f) * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }
@@ -428,6 +427,9 @@ PS_OUT_COMBINED PS_MAIN_COMBINED(PS_IN In)
     [unroll]
     for (uint i = 0; i < 5; ++i)
         iIdx += (fViewZ >= g_fCascadeEnds[i + 1]);
+    
+    //캐스케이드가 5개니까..
+    iIdx = min(iIdx, 4);
     
     vector vPosition;
     
