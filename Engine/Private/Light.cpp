@@ -52,6 +52,11 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc)
     return S_OK;
 }
 
+void CLight::Set_Position(_vector vPos)
+{
+	XMStoreFloat4(&m_LightDesc.vPosition, vPos);
+}
+
 void CLight::SetLightInfo(const LIGHT_DESC& Desc)
 {
 	m_LightDesc = Desc;

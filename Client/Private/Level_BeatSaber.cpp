@@ -18,7 +18,7 @@ CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CLevel_BeatSaber::Initialize()
 {
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
 
     if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
         return E_FAIL;
@@ -174,10 +174,10 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Camera(const _wstring& strLayerTag)
 
     CameraDesc.fFov = XMConvertToRadians(60.0f);
     CameraDesc.fNear = 0.1f;
-    CameraDesc.fFar = 30.f;
+    CameraDesc.fFar = 100.f;
     //CameraDesc.vEye = _float3(-1.1f, 1.9f, -3.8f);
-    CameraDesc.vEye = _float3(-1.5f, 2.5f, -4.f);
-    CameraDesc.vAt = _float3(50.f, 1.f, 50.f);
+    CameraDesc.vEye = _float3(-3.871f, 9.062f, -4.583f);
+    CameraDesc.vAt = _float3(30.f, -5.5f, 30.f);
     CameraDesc.fSpeedPerSec = 5.f;
     CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
     CameraDesc.fMouseSensor = 0.1f;
@@ -194,7 +194,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { -2.5f, 4.f, -4.5f };
+    Desc.vPosition = { 0.f, 4.f, -0.6f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
 
@@ -240,7 +240,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { 20.f, 1.f, 20.f };
+    Desc.vPosition = { 30.f, 4.f, 30.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
     Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();

@@ -728,7 +728,7 @@ const CAMERA_INFO& CGameInstance::Get_CurrentCamInfo()
 
 #pragma region LIGHT_MANAGER
 
-HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOutLight)
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight** pOutLight)
 {
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }

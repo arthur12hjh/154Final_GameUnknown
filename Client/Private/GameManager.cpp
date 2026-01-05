@@ -268,6 +268,11 @@ void CGameManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIndex)
     m_pShaderManager->Change_ShaderSetting(eLevelID, iIndex);
 }
 
+void CGameManager::Set_CinematicLights(_uint iFlag)
+{
+    m_pShaderManager->Set_CinematicLights(iFlag);
+}
+
 #pragma region LOCKON
 
 CNaytiba* CGameManager::Get_LockonTarget()
@@ -357,6 +362,10 @@ _bool CGameManager::Is_CinematicPlaying()
 HRESULT CGameManager::Skip_Cinematic()
 {
     return m_pCinematicManager->Skip_Cinematic();
+}
+map<_wstring, CCinematicObject*>* CGameManager::Get_CinematicObjectsMap()
+{
+    return m_pCinematicManager->Get_CinematicObjectsMap();
 }
 #pragma endregion
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CinematicObject.h"
 
+#include "PartObject.h"
 
 CCinematicObject::CCinematicObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter(pDevice, pContext)
@@ -32,6 +33,12 @@ HRESULT CCinematicObject::Initialize(void* pArg)
 HRESULT CCinematicObject::Set_Cinematic_Object(const ANIM_NOTIFY& NotifyReference)
 {
 	return S_OK;
+}
+
+_matrix CCinematicObject::Get_CinematicWorldPos()
+{
+	return 	XMLoadFloat4x4(Find_PartObject(TEXT("Part_Body"))->Get_BoneMatrixPtr("Bip001-Pelvis")) *
+		XMLoadFloat4x4(Find_PartObject(TEXT("Part_Body"))->Get_CombinedMatrixPtr());
 }
 
 CCinematicObject* CCinematicObject::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

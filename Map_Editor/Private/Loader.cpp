@@ -252,7 +252,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Reed_Mask"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png"), 1))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Texture_Sky */

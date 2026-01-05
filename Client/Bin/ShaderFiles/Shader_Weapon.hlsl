@@ -1,10 +1,6 @@
 #include "Client_Shader_Utils.hlsli"
 #include "Client_Shader_VtxMesh_Defines.hlsli"
 
-/* ±Ì¿Ã ∑ª¥ı≈∏∞Ÿ ∏∂Ω∫≈∑øÎ */
-bool g_IsMaskingDepthB;
-bool g_IsMaskingDepthW;
-
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_DiffuseTexture;
@@ -106,7 +102,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
@@ -124,7 +120,7 @@ PS_OUT PS_MAIN_SKYBOX(PS_IN In)
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
@@ -157,7 +153,7 @@ PS_OUT PS_MOON(PS_IN In)
     Out.vDiffuse.a = vMtrlDiffuse.a;
    
     
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = Out.vDiffuse;
 
     Out.vEmissive = Out.vDiffuse;
@@ -187,7 +183,7 @@ PS_OUT PS_MOON_GAMEOBJECT(PS_IN In)
     
     Out.vDiffuse = float4(0.f, 0.f, 0.f, 0.f);
     Out.vNormal = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(finalDiffuseColor + vEmissiveColor, 1.f);
@@ -208,7 +204,7 @@ PS_OUT PS_MAIN_EMISSIVE(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse + Calc_Emissive(g_EmissiveTexture, vMtrlDiffuse, In.vTexcoord) * 5.f;
     
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
@@ -259,7 +255,7 @@ PS_OUT PS_MAIN_TREE(PS_IN In)
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
     Out.vORM = float4(1.f, 1.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);

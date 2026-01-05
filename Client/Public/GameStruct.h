@@ -507,6 +507,7 @@ namespace Client
 		MOVE_NPC,				// 10
 		CREATE_TRIGGERBOX,		// 11
 		CREATE_TARGETLIGHT,		// 12
+		SET_CINEMATICLIGHT,		// 13
 		END };
 
 	typedef struct Cinematic_Index_Desc

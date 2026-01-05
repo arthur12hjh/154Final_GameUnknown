@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Light.h"
+#include "CinematicObject.h"
 
 CTargetLight::CTargetLight()  
     : m_pGameInstance { CGameInstance::GetInstance() }
@@ -42,14 +43,32 @@ HRESULT CTargetLight::Initialize(void* pArg)
 
 void CTargetLight::Chase_Target()
 {
-    if(true == m_isActive)
-        m_pLightCom->Set_Position(m_pTarget->GetTransform()->Get_State(STATE::POSITION));
+    if (false == m_isActive)
+        return;
+
+    switch (m_isCinematic)
+    {
+    case true :
+        m_pLightCom->Set_Position(static_cast<CCinematicObject*>(m_pTarget)->Get_CinematicWorldPos().r[3] 
+            + XMVectorSet(0.f, 7.f, 0.f, 0.f));
+        break;
+
+    case false:
+        m_pLightCom->Set_Position(m_pTarget->GetTransform()->Get_State(STATE::POSITION) 
+            + XMVectorSet(0.f, 7.f, 0.f, 0.f));
+        break;
+
+    default:
+        return;
+    }
+
 }
 
 HRESULT CTargetLight::Setting_Desc(TARGETLIGHT_DESC* pDesc)
 {   
-    m_pGameInstance->Add_Light(pDesc->tLightDesc, m_pLightCom);
+    m_pGameInstance->Add_Light(pDesc->tLightDesc, &m_pLightCom);
     m_pTarget = pDesc->pTarget;
+    m_isCinematic = pDesc->isCinematic;
 
     return S_OK;
 }
