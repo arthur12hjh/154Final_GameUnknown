@@ -18,6 +18,9 @@ private:
 	virtual ~CMoon() = default;
 
 public:
+	void Set_FactorColor(_vector vColor) { m_vFactorColor = vColor; }
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Priority_Update(_float fTimeDelta) override;
@@ -29,6 +32,8 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	_uint   m_iRenderCount = { 0 };
+	_vector m_vFactorColor = { 1.f, 1.f, 1.f, 1.f };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

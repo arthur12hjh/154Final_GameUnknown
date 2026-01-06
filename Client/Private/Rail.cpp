@@ -38,42 +38,42 @@ void CRail::Update(_float fTimeDelta)
     _bool* pIsIdxFlags[3] = { &m_bIsIdx0, &m_bIsIdx1, &m_bIsIdx2 };
     _bool bIsAnyActive[3] = { false, false, false };
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_A))
     {
         m_bIsColorArr[0] = true;
         m_bIsIdx0 = true;
         m_fTimeArr[0] = 0.f;
         m_fColorWeightArr[0] = 0.f; // 만약 처음부터 다시 차오르게 하고 싶다면 주석 해제
     }
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
     {
         m_bIsColorArr[0] = true;
         m_bIsIdx0 = true;
         m_fTimeArr[0] = 0.f;
     }
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K) || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_S))
     {
         m_bIsColorArr[1] = true;
         m_bIsIdx1 = true;
         m_fTimeArr[1] = 0.f;
         m_fColorWeightArr[1] = 0.f;
     }
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
     {
         m_bIsColorArr[1] = true;
         m_bIsIdx1 = true;
         m_fTimeArr[1] = 0.f;
     }
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L) || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_D))
     {
         m_bIsColorArr[2] = true;
         m_bIsIdx2 = true;
         m_fTimeArr[2] = 0.f;
         m_fColorWeightArr[2] = 0.f;
     }
-    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+    if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
     {
         m_bIsColorArr[2] = true;
         m_bIsIdx2 = true;

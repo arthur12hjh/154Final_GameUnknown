@@ -157,7 +157,7 @@ HRESULT CLightTool::Render()
 		m_bIsDeplayDirLight = false;
 		m_bIsDeplaySpotLight = false;
 	}
-
+	ImGui::SameLine();
 	if (ImGui::Button("Directional_Light"))
 	{
 		m_bIsDeplayDirLight = true;
@@ -173,7 +173,7 @@ HRESULT CLightTool::Render()
 
 		m_pGameInstance->Add_Light(LightDesc);
 	}
-
+	ImGui::SameLine();
 	if (ImGui::Button("Spot_Light"))
 	{
 		m_bIsDeplaySpotLight = true;
@@ -187,7 +187,6 @@ HRESULT CLightTool::Render()
 		m_bIsDeplayDirLight = false;
 		m_bIsDeplaySpotLight = false;
 	}
-
 	if (ImGui::Button("Delete"))
 	{
 		m_pLights = m_pGameInstance->GetAllLight();
@@ -201,7 +200,7 @@ HRESULT CLightTool::Render()
 		}
 
 	}
-
+	ImGui::SameLine();
 	if (ImGui::Button("Delete_Latest"))
 	{
 		m_pLights = m_pGameInstance->GetAllLight();
@@ -213,7 +212,7 @@ HRESULT CLightTool::Render()
 		}
 
 	}
-
+	ImGui::SameLine();
 	if (ImGui::Button("Delete_Select"))
 	{
 		if (m_pSelectedLight != nullptr)
@@ -466,11 +465,15 @@ HRESULT CLightTool::Render()
 	ImGui::Spacing();
 
 	// 빛 세이브 / 로드
+
+	static _char szSaveDororongFilePath[256] = "../Bin/DataFiles/LightData.bin";
+	ImGui::InputText("Light Save File Path", szSaveDororongFilePath, sizeof(szSaveDororongFilePath));
+
 	ImGui::Text("Save  /  Load");
 	if (ImGui::Button("Save"))
 	{
 		// 빛 오브젝트 저장
-		if (FAILED(Save_Light_Objects()))
+		if (FAILED(Save_Light_Objects(szSaveDororongFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"빛 오브젝트 저장 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -479,10 +482,14 @@ HRESULT CLightTool::Render()
 			MessageBoxW(g_hWnd, L"빛 오브젝트 저장 성공.", L"알림", MB_OK);
 		}
 	}
-	ImGui::SameLine();
+	ImGui::Spacing();
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+	static _char szLoadDororongFilePath[256] = "../Bin/DataFiles/LightData.bin";
+	ImGui::InputText("Light Load File Path", szLoadDororongFilePath, sizeof(szLoadDororongFilePath));
 	if (ImGui::Button("Load"))
 	{
-		if (FAILED(Load_Light_Objects()))
+		if (FAILED(Load_Light_Objects(szLoadDororongFilePath)))
 		{
 			MessageBoxW(g_hWnd, L"빛 오브젝트 로드 실패", L"알림", MB_OK | MB_ICONERROR);
 		}
@@ -497,7 +504,7 @@ HRESULT CLightTool::Render()
 	return S_OK;
 }
 
-HRESULT CLightTool::Save_Light_Objects()
+HRESULT CLightTool::Save_Light_Objects(const _char* szFilePath)
 {
 #ifdef _DEBUG
 
@@ -540,10 +547,11 @@ HRESULT CLightTool::Save_Light_Objects()
 	// 
 	// 
 	// 1. POINT 라이트만 따로 수집
-	vector<CLight*> PointLights;
+
+	list<CLight*> PointLights;
 	for (auto& pLight : *m_pLights)
 	{
-		if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT)
+		if (pLight->Get_LightDesc()->eType == LIGHT_TYPE::POINT || pLight->Get_LightDesc()->eType == LIGHT_TYPE::SPOT)
 		{
 			PointLights.push_back(pLight);
 		}
@@ -552,7 +560,7 @@ HRESULT CLightTool::Save_Light_Objects()
 	if (PointLights.empty())
 		return S_OK;
 
-	std::ofstream ofs("../Bin/DataFiles/LightData.bin", std::ios::binary);
+	std::ofstream ofs(szFilePath, std::ios::binary);
 	if (!ofs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);
@@ -574,11 +582,11 @@ HRESULT CLightTool::Save_Light_Objects()
 	return S_OK;
 }
 
-HRESULT CLightTool::Load_Light_Objects()
+HRESULT CLightTool::Load_Light_Objects(const _char* szFilePath)
 {
 #ifdef _DEBUG
 
-	std::ifstream ifs("../Bin/DataFiles/LightData.bin", std::ios::binary);
+	std::ifstream ifs(szFilePath, std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open LightData", L"Error", MB_OK | MB_ICONERROR);

@@ -196,6 +196,7 @@
     <ClInclude Include="..\public\Desert_Architecture.h" />
     <ClInclude Include="..\public\Desert_Grass.h" />
     <ClInclude Include="..\public\Desert_Tree.h" />
+    <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Dororong_Saber.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pad.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="..\private\Desert_Architecture.cpp" />
     <ClCompile Include="..\private\Desert_Grass.cpp" />
     <ClCompile Include="..\private\Desert_Tree.cpp" />
+    <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Dororong_Saber.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pad.cpp" />

@@ -1162,6 +1162,9 @@
     <Filter Include="02.GameObjects\TraceLight">
       <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\DororongBox">
+      <UniqueIdentifier>{04382a77-8f9f-4fe3-a29a-e91a55d4af75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2227,6 +2230,9 @@
     <ClInclude Include="..\Public\TargetLight.h">
       <Filter>02.GameObjects\TraceLight</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DororongBox.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3255,6 +3261,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TargetLight.cpp">
       <Filter>02.GameObjects\TraceLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DororongBox.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

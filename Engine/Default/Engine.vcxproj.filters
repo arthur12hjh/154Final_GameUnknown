@@ -401,6 +401,15 @@
     <ClInclude Include="..\public\MontionTrailComponent.h">
       <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MorphAnimation.h">
+      <Filter>01.Utility\03.Components\Model\MorphAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MorphChannel.h">
+      <Filter>01.Utility\03.Components\Model\MorphAnimation\MorphChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShapeKey.h">
+      <Filter>01.Utility\03.Components\Model\ShapeKey</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -772,6 +781,15 @@
     <ClCompile Include="..\private\MontionTrailComponent.cpp">
       <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\MorphAnimation.cpp">
+      <Filter>01.Utility\03.Components\Model\MorphAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MorphChannel.cpp">
+      <Filter>01.Utility\03.Components\Model\MorphAnimation\MorphChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ShapeKey.cpp">
+      <Filter>01.Utility\03.Components\Model\ShapeKey</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Utility">
@@ -1092,9 +1110,6 @@
     <Filter Include="01.Utility\05.Renderer\Deferred\DoF\ShaderFile">
       <UniqueIdentifier>{92854abc-ff3c-4e22-a211-b150eaf6d061}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\Trail">
-      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\23.Event">
       <UniqueIdentifier>{26c2ab48-b081-48a3-bf6b-84b7bcb5269b}</UniqueIdentifier>
     </Filter>
@@ -1224,11 +1239,23 @@
     <Filter Include="01.Utility\05.Renderer\Emissive">
       <UniqueIdentifier>{1c0eba73-589a-4605-ae29-40e959f2c30e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Components\Trail">
+      <UniqueIdentifier>{189aa040-8907-4619-8ed0-5e70ba06e9ef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\03.Components\Trail\MotionTrail">
       <UniqueIdentifier>{1f7628bc-afff-4cc7-be6b-aafe44bdcbec}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Components\Trail\WaveTrail">
       <UniqueIdentifier>{750af727-4c73-4246-8bd6-ab6fc8801dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Model\MorphAnimation">
+      <UniqueIdentifier>{1e5c98a5-8381-4f1e-bf2b-24b3e504c7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Model\MorphAnimation\MorphChannel">
+      <UniqueIdentifier>{4576ff79-6fe8-4f38-b6a6-be3de61964ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\Model\ShapeKey">
+      <UniqueIdentifier>{36be3205-b71e-4a8a-8aac-3c9d61ba7260}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1300,6 +1327,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Distortion\ShaderFile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\EngineShader_MotionTrail.hlsl">
+      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Model</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

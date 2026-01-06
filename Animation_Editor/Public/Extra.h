@@ -15,6 +15,7 @@ public:
 	typedef struct tagExtra_Desc
 	{
 		_wstring szModelTag;
+		_bool	isFacial = FALSE;
 	}EXTRA_DESC;
 
 private:
@@ -41,6 +42,7 @@ private:
 
 	_wstring m_szModelTag;
 
+	_bool m_bIsFacial = { FALSE };
 
 private:
 	HRESULT Ready_Components();

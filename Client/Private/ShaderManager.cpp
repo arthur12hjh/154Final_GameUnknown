@@ -12,6 +12,7 @@
 #include "Nayitba.h"
 #include "Effect.h"
 #include "CinematicObject.h"
+#include "Moon.h"
 
 CShaderManager::CShaderManager()
     : m_pGameInstance { CGameInstance::GetInstance()}
@@ -57,6 +58,54 @@ CShader* CShaderManager::Get_Shader(LEVEL eLevelID, const _wstring& strShaderTag
 /* 등록된 후처리들은 일단 다 처리해준다. */
 void CShaderManager::Update(_float fTimeDelta)
 {
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F8))
+    {
+#pragma region DIRECTIONAL
+        m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
+        m_pDirectionalLightDesc->vDiffuse = _float4(0.32f, 0.32f, 0.32f, 1.f);
+#pragma endregion
+
+#pragma region MB
+        * m_pMotionBlurDesc->fCamBlurScale = { 0.05f };
+        *m_pMotionBlurDesc->fObjectBlurScale = { 1.f };
+        *m_pMotionBlurDesc->fBias = { 0.8f };
+        *m_pMotionBlurDesc->iSampleCount = { 16 };
+#pragma endregion
+
+#pragma region FOG
+        * m_pFogDesc->vFogColor = { 0.031f, 0.058f, 0.094f, 1.0000f };
+        *m_pFogDesc->fFogStart = { 0.f };
+        *m_pFogDesc->fFogEnd = { 285 };
+        *m_pFogDesc->fFogPowerMin = { 0.5f };
+        *m_pFogDesc->fFogPowerMax = { 1.f };
+        *m_pFogDesc->fSkyboxFogPower = { 0.2f };
+#pragma endregion
+
+#pragma region SSAO
+        * m_pSSAODesc->fRadiusMin = { 0.26f };
+        *m_pSSAODesc->fRadiusMax = { 5.f };
+        *m_pSSAODesc->fBiasMin = { 0.029f };
+        *m_pSSAODesc->fBiasMax = { 0.059f };
+        *m_pSSAODesc->fIntensity = { 0.68f };
+#pragma endregion
+
+#pragma region HDR
+        * m_pHDRDesc->fHDRExposure = { 1.52f };
+#pragma endregion
+
+#pragma region VOLUMEFOG
+        m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG = 0.f;
+        m_pVolumeFogDesc->pInscatterDesc->Density = 1.28f;
+        m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.08f;
+        m_pVolumeFogDesc->pInscatterDesc->NoiseContrast = 0.572f;
+        m_pVolumeFogDesc->pInscatterDesc->NoiseScale = 0.006f;
+        m_pVolumeFogDesc->pInscatterDesc->NoiseStrength = 2.f;
+        m_pVolumeFogDesc->pInscatterDesc->StartDistance = 36.f;
+        m_pVolumeFogDesc->pInscatterDesc->FogAmbient = _float4(0.141f, 0.172f, 0.2f, 0.149f);
+        m_pVolumeFogDesc->pInscatterDesc->LightColor = _float4(0.f, 0.f, 0.f, 1.f);
+#pragma endregion
+    }
+
     LEVEL eLevel = static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID());
 
     if(eLevel != LEVEL::END && eLevel != LEVEL::LOADING)
@@ -77,6 +126,12 @@ void CShaderManager::Update(_float fTimeDelta)
     for (auto iter : m_CinematicTargetLights)
     {
         iter->Chase_Target();
+    }
+
+
+    if (true == m_isScarletPhase2LerpTriggerOn)
+    {
+        Load_Scarlet_Phase2_ShaderSettings(fTimeDelta);
     }
 }
 
@@ -161,7 +216,26 @@ void CShaderManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIdx)
         }
         else if (2 == iIdx)
         {
-            Load_Scarlet_Phase2_ShaderSettings();
+            m_isScarletPhase2LerpTriggerOn = true;
+            m_fScarletPhase2LerpTimeAcc = 0.f;
+
+
+            m_pPlayer->Set_DepthMaskingB(true);
+            m_pScarlet->Set_DepthMaskingB(true);
+
+            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            EffectDesc.fRotationPerSec = 1.f;
+            EffectDesc.fSpeedPerSec = 1.f;
+            EffectDesc.pWorldMatrix = {};
+            EffectDesc.pRootMatrix = {};
+            EffectDesc.pDir = {};
+            EffectDesc.vPos = XMVectorSet(250.f, 5.f, 250.f, 1.f);
+            EffectDesc.fRot = {};
+            EffectDesc.fSize = 0.8f;
+            EffectDesc.fSpeed = 1.05f;
+
+            m_pMapEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
+                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
         }
         else if (3 == iIdx)
         {
@@ -272,8 +346,31 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
         CTargetLight* pTargetLight = CTargetLight::Create(&Desc);
         m_CinematicTargetLights.push_back(pTargetLight);
         pTargetLight->Set_Active(VISIBILITY::HIDDEN);
+        pTargetLight->Set_Range(0.f);
     }
 #pragma endregion
+    
+    //미리 포인터로 들고있게 하자
+    m_pMoon = static_cast<CMoon*>(*m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::SCARLET), TEXT("Layer_Moon"))->begin());
+    m_pMoon->Set_FactorColor(XMVectorSet(1.f, 1.f, 1.f, 1.f));
+
+    m_ScarletPhase2LerpCache.vDirDiffuseStart = m_pDirectionalLightDesc->vDiffuse;
+
+    m_ScarletPhase2LerpCache.vFogColorStart = *m_pFogDesc->vFogColor;
+    m_ScarletPhase2LerpCache.fFogEndStart = *m_pFogDesc->fFogEnd;
+    m_ScarletPhase2LerpCache.fFogPowerMinStart = *m_pFogDesc->fFogPowerMin;
+    m_ScarletPhase2LerpCache.fFogPowerMaxStart = *m_pFogDesc->fFogPowerMax;
+    m_ScarletPhase2LerpCache.fSkyboxFogPowerStart = *m_pFogDesc->fSkyboxFogPower;
+
+    m_ScarletPhase2LerpCache.VolAsymmetryStart = m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG;
+    m_ScarletPhase2LerpCache.VolDensityStart = m_pVolumeFogDesc->pInscatterDesc->Density;
+    m_ScarletPhase2LerpCache.VolIntensityStart = m_pVolumeFogDesc->pInscatterDesc->Intensity;
+    m_ScarletPhase2LerpCache.VolNoiseContrastStart = m_pVolumeFogDesc->pInscatterDesc->NoiseContrast;
+    m_ScarletPhase2LerpCache.VolNoiseScaleStart = m_pVolumeFogDesc->pInscatterDesc->NoiseScale;
+    m_ScarletPhase2LerpCache.VolNoiseStrengthStart = m_pVolumeFogDesc->pInscatterDesc->NoiseStrength;
+    m_ScarletPhase2LerpCache.VolStartDistanceStart = m_pVolumeFogDesc->pInscatterDesc->StartDistance;
+    m_ScarletPhase2LerpCache.VolFogAmbientStart = m_pVolumeFogDesc->pInscatterDesc->FogAmbient;
+    m_ScarletPhase2LerpCache.VolLightColorStart = m_pVolumeFogDesc->pInscatterDesc->LightColor;
 }
 
 void CShaderManager::Load_TargetLights()
@@ -305,53 +402,77 @@ void CShaderManager::Load_TargetLights()
 #pragma endregion
 }
 
-void CShaderManager::Load_Scarlet_Phase2_ShaderSettings()
+void CShaderManager::Load_Scarlet_Phase2_ShaderSettings(_float fTimeDelta)
 {
-    map<_wstring, CCinematicObject*>* pCinematicObjects = CGameManager::GetInstance()->Get_CinematicObjectsMap();
-    
-    m_pPlayer->Set_DepthMaskingB(true);
-    m_pScarlet->Set_DepthMaskingB(true);
+    m_fScarletPhase2LerpTimeAcc += fTimeDelta;
+    _float fT = m_fScarletPhase2LerpTimeAcc / m_fScarletPhase2LerpTime;
 
-    CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-    EffectDesc.fRotationPerSec = 1.f;
-    EffectDesc.fSpeedPerSec = 1.f;
-    EffectDesc.pWorldMatrix = {};
-    EffectDesc.pRootMatrix = {};
-    EffectDesc.pDir = {};
-    EffectDesc.vPos = XMVectorSet(250.f, 5.f, 250.f, 1.f);
-    EffectDesc.fRot = {};
-    EffectDesc.fSize = 0.8f;
-    EffectDesc.fSpeed = 1.05f;
+    if (fT >= 1.f)
+    {
+        fT = 1.f;
+        m_isScarletPhase2LerpTriggerOn = false; // 더 이상 업데이트 안 함
+        m_fScarletPhase2LerpTimeAcc = 0.f;
+    }
 
-    m_pMapEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sakura"),
-        ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+    if (m_pMoon)
+    {
+        _vector vStart = XMVectorSet(1.f, 1.f, 1.f, 1.f);          // 1페이즈 상수
+        _vector vTarget = XMVectorSet(2.f, 0.7f, 0.7f, 1.f);        // 2페이즈 상수
+        _vector vCol = XMVectorLerp(vStart, vTarget, fT);
+        m_pMoon->Set_FactorColor(vCol);
+    }
 
 #pragma region DIRECTIONAL
-    m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
-    m_pDirectionalLightDesc->vDiffuse = _float4(0.654f, 0.f, 0.f, 1.f);
+    _float4 vDirTarget = _float4(0.654f, 0.f, 0.f, 1.f); // 기존 Phase2 상수
+    XMStoreFloat4(&m_pDirectionalLightDesc->vDiffuse, XMVectorLerp(XMLoadFloat4(&m_ScarletPhase2LerpCache.vDirDiffuseStart), 
+        XMLoadFloat4(&vDirTarget), fT));
 #pragma endregion
 
 #pragma region FOG
-    *m_pFogDesc->vFogColor = { 0.f, 0.f, 0.f, 1.f };
-    *m_pFogDesc->fFogStart = { 0.f };
-    *m_pFogDesc->fFogEnd = { 285.f };
-    *m_pFogDesc->fFogPowerMin = { 0.5f };
-    *m_pFogDesc->fFogPowerMax = { 1.f };
-    *m_pFogDesc->fSkyboxFogPower = { 0.22f };
+    _float4 vFogTarget = _float4(0.f, 0.f, 0.f, 1.f);
+    _float  fFogEndTar = 285.f;
+    _float  fFogPowMinTar = 0.5f;
+    _float  fFogPowMaxTar = 1.f;
+    _float  fSkyFogTar = 0.22f;
+
+    XMStoreFloat4(&(*m_pFogDesc->vFogColor), XMVectorLerp( 
+        XMLoadFloat4(&m_ScarletPhase2LerpCache.vFogColorStart), XMLoadFloat4(&vFogTarget), fT));
+
+    *m_pFogDesc->fFogEnd = Lerp<_float>(m_ScarletPhase2LerpCache.fFogEndStart, fFogEndTar, fT);
+    *m_pFogDesc->fFogPowerMin = Lerp<_float>(m_ScarletPhase2LerpCache.fFogPowerMinStart, fFogPowMinTar, fT);
+    *m_pFogDesc->fFogPowerMax = Lerp<_float>(m_ScarletPhase2LerpCache.fFogPowerMaxStart, fFogPowMaxTar, fT);
+    *m_pFogDesc->fSkyboxFogPower = Lerp<_float>(m_ScarletPhase2LerpCache.fSkyboxFogPowerStart, fSkyFogTar, fT);
 #pragma endregion
 
 #pragma region VOLUMEFOG
-    m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG = 0.f;
-    m_pVolumeFogDesc->pInscatterDesc->Density = 1.28f;
-    m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.11f;
-    m_pVolumeFogDesc->pInscatterDesc->NoiseContrast = 0.572f;
-    m_pVolumeFogDesc->pInscatterDesc->NoiseScale = 0.004f;
-    m_pVolumeFogDesc->pInscatterDesc->NoiseStrength = 1.67f;
-    m_pVolumeFogDesc->pInscatterDesc->StartDistance = 5.8f;
-    m_pVolumeFogDesc->pInscatterDesc->FogAmbient = _float4(0.094f, 0.094f, 0.094f, 0.149f);
-    m_pVolumeFogDesc->pInscatterDesc->LightColor = _float4(0.129f, 0.129f, 0.129f, 0.129f);
-#pragma endregion
+    auto* pInscatter = m_pVolumeFogDesc->pInscatterDesc;
 
+    _float  AsymTar = 0.f;
+    _float  DenTar = 1.28f;
+    _float  IntTar = 0.11f;
+    _float  NoiseConTar = 0.572f;
+    _float  NoiseScaleTar = 0.004f;
+    _float  NoiseStrTar = 1.67f;
+    _float  StartDistTar = 5.8f;
+
+    _float4 FogAmbTar = _float4(0.094f, 0.094f, 0.094f, 0.149f);
+    _float4 LightColTar = _float4(0.129f, 0.129f, 0.129f, 0.129f);
+
+    pInscatter->AsymmetryParameterG = Lerp<_float>(m_ScarletPhase2LerpCache.VolAsymmetryStart, AsymTar, fT);
+    pInscatter->Density = Lerp<_float>(m_ScarletPhase2LerpCache.VolDensityStart, DenTar, fT);
+    pInscatter->Intensity = Lerp<_float>(m_ScarletPhase2LerpCache.VolIntensityStart, IntTar, fT);
+    pInscatter->NoiseContrast = Lerp<_float>(m_ScarletPhase2LerpCache.VolNoiseContrastStart, NoiseConTar, fT);
+    pInscatter->NoiseScale = Lerp<_float>(m_ScarletPhase2LerpCache.VolNoiseScaleStart, NoiseScaleTar, fT);
+    pInscatter->NoiseStrength = Lerp<_float>(m_ScarletPhase2LerpCache.VolNoiseStrengthStart, NoiseStrTar, fT);
+    pInscatter->StartDistance = Lerp<_float>(m_ScarletPhase2LerpCache.VolStartDistanceStart, StartDistTar, fT);
+
+    XMStoreFloat4(&pInscatter->FogAmbient, XMVectorLerp(
+            XMLoadFloat4(&m_ScarletPhase2LerpCache.VolFogAmbientStart), XMLoadFloat4(&FogAmbTar), fT));
+
+    XMStoreFloat4(&pInscatter->LightColor,XMVectorLerp(
+            XMLoadFloat4(&m_ScarletPhase2LerpCache.VolLightColorStart), XMLoadFloat4(&LightColTar), fT));
+#pragma endregion
 }
 
 /* 스칼렛 사라지면서 터진다.. */
@@ -385,7 +506,10 @@ void CShaderManager::Set_CinematicLights(_uint iFlag)
     }
 
     for (auto& iter : m_CinematicTargetLights)
+    {
         iter->Set_Active(bFlag);
+        iter->Set_Range(12.f);
+    }
 
     for (auto& Pair : m_TargetLights)
         Pair.second->Set_Active(bObjFlag);
@@ -425,6 +549,10 @@ void CShaderManager::Free()
         m_Shaders[i].clear();
     }
     Safe_Delete_Array(m_Shaders);
+
+    for (auto& iter : m_CinematicTargetLights)
+        Safe_Release(iter);
+    m_CinematicTargetLights.clear();
 
     for (auto& iter : m_ReserveDeferredShaders)
     {

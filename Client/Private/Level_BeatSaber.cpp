@@ -334,6 +334,7 @@ HRESULT CLevel_BeatSaber::Load_Dororong_Saber_Objects(const _char* szFilePath)
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return S_OK;
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return S_OK;
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return S_OK;
+    if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_DororongBox"), TEXT("Layer_DororongBox")))) return S_OK;
 
     ifs.close();
 

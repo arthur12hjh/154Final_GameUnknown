@@ -679,6 +679,33 @@ HRESULT CBinParser::ReadBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, 
 
 				meshTmp.vFaces.push_back(bFace);
 			}
+
+
+			/// <여기에 Mesh :: AnimMesh 정보 넣기>
+			fileBinaryStream.read((_char*)(&meshTmp.iNumAnimMeshes), sizeof(meshTmp.iNumAnimMeshes));
+			for (size_t j = 0; j < meshTmp.iNumAnimMeshes; ++j)
+			{
+				binAnimMesh AnimMeshTmp;
+				fileBinaryStream.read((_char*)(&AnimMeshTmp.iNumVertices), sizeof(AnimMeshTmp.iNumVertices));
+				for (_uint k = 0; k < AnimMeshTmp.iNumVertices; ++k)
+				{
+					AnimMeshTmp.vDeltaPositions.push_back(ReadFloat3(fileBinaryStream));
+				}
+				for (_uint k = 0; k < AnimMeshTmp.iNumVertices; ++k)
+				{
+					AnimMeshTmp.vDeltaNormals.push_back(ReadFloat3(fileBinaryStream));
+				}
+
+				szTemp = ReadString(fileBinaryStream);
+				strcpy_s(AnimMeshTmp.szName, szTemp);
+				Safe_Delete(szTemp);
+
+				meshTmp.vAnimMesh.push_back(AnimMeshTmp);
+			}
+
+			/// </end>
+
+
 			szTemp = ReadString(fileBinaryStream);
 			strcpy_s(meshTmp.szName, szTemp);
 			Safe_Delete(szTemp);
@@ -768,6 +795,58 @@ HRESULT CBinParser::ReadBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, 
 
 			pModel->vAnimations.push_back(AnimTmp);
 		}
+
+		/// <여기에 Model :: MorphAnimation 정보 넣기>
+		for (size_t j = 0; j < pModel->iNumAnimations; ++j)
+		{
+			binMorphAnimation MorphAnimTmp;
+
+			fileBinaryStream.read((_char*)(&MorphAnimTmp.fDuration), sizeof(MorphAnimTmp.fDuration));
+			fileBinaryStream.read((_char*)(&MorphAnimTmp.fTicksPerSecond), sizeof(MorphAnimTmp.fTicksPerSecond));
+			fileBinaryStream.read((_char*)(&MorphAnimTmp.iNumMorphChannels), sizeof(MorphAnimTmp.iNumMorphChannels));
+
+			for (_uint k = 0; k < MorphAnimTmp.iNumMorphChannels; ++k)
+			{
+				binMeshMorphChannel MorphChannelTmp;
+
+				fileBinaryStream.read((_char*)(&MorphChannelTmp.iNumKeys), sizeof(MorphChannelTmp.iNumKeys));
+				
+				for (_uint l = 0; l < MorphChannelTmp.iNumKeys; ++l)
+				{
+					binMeshMorphKey MorphKeyTmp;
+
+					fileBinaryStream.read((_char*)(&MorphKeyTmp.fTime), sizeof(MorphKeyTmp.fTime));
+					fileBinaryStream.read((_char*)(&MorphKeyTmp.iNumValuesAndWeights), sizeof(MorphKeyTmp.iNumValuesAndWeights));
+					for (_uint m = 0; m < MorphKeyTmp.iNumValuesAndWeights; ++m)
+					{
+						_uint iValue;
+						fileBinaryStream.read((_char*)(&iValue), sizeof(iValue));
+						MorphKeyTmp.vValues.push_back(iValue);
+					}
+					for (_uint m = 0; m < MorphKeyTmp.iNumValuesAndWeights; ++m)
+					{
+						_float fWeight;
+						fileBinaryStream.read((_char*)(&fWeight), sizeof(fWeight));
+						MorphKeyTmp.vWeights.push_back(fWeight);
+					}
+					MorphChannelTmp.vKeys.push_back(MorphKeyTmp);
+				}
+				szTemp = ReadString(fileBinaryStream);
+				strcpy_s(MorphChannelTmp.szName, szTemp);
+				Safe_Delete(szTemp);
+
+				MorphAnimTmp.vMorphChannels.push_back(MorphChannelTmp);
+			}
+
+			szTemp = ReadString(fileBinaryStream);
+			strcpy_s(MorphAnimTmp.szName, szTemp);
+			Safe_Delete(szTemp);
+
+			pModel->vMorphAnimations.push_back(MorphAnimTmp);
+		}
+		/// </end>
+
+
 	}
 
 	*ppOut = pModel;
@@ -1005,6 +1084,22 @@ HRESULT CBinParser::WriteBinMorph(const _char* pModelFilePath, MODEL_TYPE eType,
 				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vFaces[j].vIndices[2]), sizeof(meshTmp.vFaces[j].vIndices[2]));
 			}
 
+			fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.iNumAnimMeshes),sizeof(meshTmp.iNumAnimMeshes));
+			for (size_t j = 0; j < meshTmp.iNumAnimMeshes; ++j)
+			{
+				fileBinaryStream.write(reinterpret_cast<_char*>(&meshTmp.vAnimMesh[j].iNumVertices), sizeof(meshTmp.vAnimMesh[j].iNumVertices));
+				for (size_t k = 0; k < meshTmp.vAnimMesh[j].iNumVertices; ++k)
+				{
+					fileBinaryStream.write((_char*)(&meshTmp.vAnimMesh[j].vDeltaPositions[k]), sizeof(meshTmp.vAnimMesh[j].vDeltaPositions[k]));
+				}
+				for (size_t k = 0; k < meshTmp.vAnimMesh[j].iNumVertices; ++k)
+				{
+					fileBinaryStream.write((_char*)(&meshTmp.vAnimMesh[j].vDeltaNormals[k] ), sizeof(meshTmp.vAnimMesh[j].vDeltaNormals[k]));
+				}
+
+				WriteString(fileBinaryStream, meshTmp.vAnimMesh[j].szName);
+			}
+
 			WriteString(fileBinaryStream, meshTmp.szName);
 		}
 
@@ -1061,6 +1156,41 @@ HRESULT CBinParser::WriteBinMorph(const _char* pModelFilePath, MODEL_TYPE eType,
 
 			}
 
+		}
+
+		for (size_t i = 0; i < pModel->iNumAnimations; ++i)
+		{
+			binMorphAnimation MorphAnimTmp = pModel->vMorphAnimations[i];
+
+			fileBinaryStream.write((_char*)(&MorphAnimTmp.fDuration), sizeof(MorphAnimTmp.fDuration));
+			fileBinaryStream.write((_char*)(&MorphAnimTmp.fTicksPerSecond), sizeof(MorphAnimTmp.fTicksPerSecond));
+			fileBinaryStream.write((_char*)(&MorphAnimTmp.iNumMorphChannels), sizeof(MorphAnimTmp.iNumMorphChannels));
+
+			for (size_t j = 0; j < MorphAnimTmp.iNumMorphChannels; ++j)
+			{
+				binMeshMorphChannel MorphChannelTmp = MorphAnimTmp.vMorphChannels[j];
+				
+				fileBinaryStream.write((_char*)(&MorphChannelTmp.iNumKeys), sizeof(MorphChannelTmp.iNumKeys));
+
+				for (size_t k = 0; k < MorphChannelTmp.iNumKeys; ++k)
+				{
+					binMeshMorphKey keyTmp = MorphChannelTmp.vKeys[k];
+					fileBinaryStream.write((_char*)(&keyTmp.fTime), sizeof(keyTmp.fTime));
+					fileBinaryStream.write((_char*)(&keyTmp.iNumValuesAndWeights), sizeof(keyTmp.iNumValuesAndWeights));
+					for (size_t l = 0; l < keyTmp.iNumValuesAndWeights; ++l)
+					{
+						fileBinaryStream.write((_char*)(&keyTmp.vValues[l]), sizeof(keyTmp.vValues[l]));
+					}
+					for (size_t l = 0; l < keyTmp.iNumValuesAndWeights; ++l)
+					{
+						fileBinaryStream.write((_char*)(&keyTmp.vWeights[l]), sizeof(keyTmp.vWeights[l]));
+					}
+				}
+				
+				WriteString(fileBinaryStream, MorphChannelTmp.szName);
+			}
+
+			WriteString(fileBinaryStream, MorphAnimTmp.szName);
 		}
 
 
