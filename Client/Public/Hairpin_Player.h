@@ -39,7 +39,7 @@ public:
 
 	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
 private:
-	CModel* m_pBodyModelCom = { nullptr };
+	CModel*						m_pBodyModelCom = { nullptr };
 
 	_float3						m_vRotationQuaternion;
 	_tchar						m_szRotationAngle[MAX_PATH];

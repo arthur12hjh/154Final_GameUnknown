@@ -130,11 +130,7 @@ void CFace_Player::Priority_Update(_float fTimeDelta)
 
 void CFace_Player::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
-		m_pMotionTrailCom->EnableMotionTrail(true);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
-		m_pMotionTrailCom->EnableMotionTrail(false);
 }
 
 void CFace_Player::Late_Update(_float fTimeDelta)
@@ -142,16 +138,16 @@ void CFace_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
+	m_pMotionTrail->Update_Trail(fTimeDelta);
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pMotionTrailCom->Update_Trail(fTimeDelta);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrailCom);
 #ifdef _DEBUG
 
 #endif
@@ -272,11 +268,11 @@ HRESULT CFace_Player::Ready_Components()
 	MotionTrailCom.fLifeTime = 3.f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
-		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrailCom), &MotionTrailCom)))
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
 		return E_FAIL;
 
-	m_pMotionTrailCom->SetMotionTrailColor({ 0.f , 1.f, 0.f, 1.f });
-	m_pMotionTrailCom->SetRimLight(0.1f, 0.7f);
+	m_pMotionTrail->SetMotionTrailColor({ 0.f , 1.f, 0.f, 1.f });
+	m_pMotionTrail->SetRimLight(0.1f, 0.7f);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Face"),
@@ -390,7 +386,6 @@ void CFace_Player::Free()
 
 	Safe_Release(m_pSpecDetailTextureCom);
 
-	Safe_Release(m_pMotionTrailCom);
 	Safe_Release(m_pSSSAOCom);
 	Safe_Release(m_pRigidBody);
 }

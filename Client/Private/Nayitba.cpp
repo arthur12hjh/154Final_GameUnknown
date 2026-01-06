@@ -1094,7 +1094,7 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 		 if (fRadian <= XMConvertToRadians(pNotify->fNumData01))
 		 {
 			 _vector vBulletTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
-			 vBulletTargetPos.m128_f32[1] += 2.f;
+			 vBulletTargetPos.m128_f32[1] += 2.5f;
 
 			XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
 			bTraceBullet = false;
@@ -1104,7 +1104,7 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	 if (bTraceBullet)
 	 {
 		 _vector vBulletTargetPos = vOwnerPos + vLook * 50.f;
-		 vBulletTargetPos.m128_f32[1] += 2.f;
+		 vBulletTargetPos.m128_f32[1] += 2.5f;
 		 XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
 	 }
 		 

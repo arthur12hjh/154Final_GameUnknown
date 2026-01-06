@@ -22,6 +22,7 @@
 #include "PlayerCCTQueryFilterCallback.h"
 
 #include "PlayerFSM.h"
+#include "Player_Parts.h"
 #include "PlayerState.h"
 #include "Prob_Interaction.h"
  
@@ -158,8 +159,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pColliderCom->SetOwner(this);
 
 	SetVisibility(VISIBILITY::VISIBLE);
+	MotionTrailRimLight(0.1f, 0.7f, { 1.f , 0.f, 0.f, 1.f });
 
-	//
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	//EffectDesc.fRotationPerSec = 1.f;
 	//EffectDesc.fSpeedPerSec = 1.f;
@@ -210,6 +211,12 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
 	Update_ReactionSkillInput(fTimeDelta);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
+		MotionTrailEnable(true);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
+		MotionTrailEnable(false);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -907,6 +914,24 @@ void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
 	if(pHitBox)
 		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
+}
+
+void CPlayer::MotionTrailEnable(_bool bIsEnable)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->EnableMotionTrail(bIsEnable);
+	}
+}
+
+void CPlayer::MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->SetMotionTrailRimLight(fRimLightPower, fRimLightIntensity, vColor);
+	}
 }
 
 void CPlayer::Execution_Nayitba()

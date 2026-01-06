@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Player_Parts.h"
 
+#include "GameInstance.h"
 #include "GameManager.h"
 
 CPlayer_Parts::CPlayer_Parts(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -50,9 +51,25 @@ HRESULT CPlayer_Parts::Render()
     return S_OK;
 }
 
+void CPlayer_Parts::EnableMotionTrail(_bool bIsEnable)
+{
+    if (m_pMotionTrail)
+        m_pMotionTrail->EnableMotionTrail(bIsEnable);
+}
+
+void CPlayer_Parts::SetMotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor)
+{
+    if (m_pMotionTrail)
+    {
+        m_pMotionTrail->SetMotionTrailColor(vColor);
+        m_pMotionTrail->SetRimLight(fRimLightPower, fRimLightIntensity);
+    }
+}
+
 void CPlayer_Parts::Free()
 {
     __super::Free();
 
     Safe_Release(m_pGameManager);
+    Safe_Release(m_pMotionTrail);
 }

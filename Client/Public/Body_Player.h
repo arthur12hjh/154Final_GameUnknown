@@ -9,7 +9,6 @@ class CShader;
 class CCollider;
 class CRigidBody;
 class CJointChain;
-class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -51,7 +50,6 @@ public:
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	CMotionTrailComponent*		m_pMotionTrail = { nullptr };
 
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };

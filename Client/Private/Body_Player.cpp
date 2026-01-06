@@ -154,12 +154,11 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 	}
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
 	
 	m_pMotionTrail->Update_Trail(fTimeDelta);
-	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
@@ -284,9 +283,6 @@ HRESULT CBody_Player::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
 		return E_FAIL;
-
-	m_pMotionTrail->SetMotionTrailColor({ 1.f , 0.f, 0.f, 1.f });
-	m_pMotionTrail->SetRimLight(0.1f, 0.7f);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
@@ -755,6 +751,4 @@ void CBody_Player::Free()
 		Safe_Release(Pair.second);
 	}
 	m_RootRigidBodies.clear();
-
-	Safe_Release(m_pMotionTrail);
 }

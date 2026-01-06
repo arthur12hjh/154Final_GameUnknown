@@ -10,7 +10,6 @@ class CCollider;
 class CBone;
 class CTexture;
 class CRigidBody;
-class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -57,7 +56,6 @@ private:
 	CTexture*						m_pSpecDetailTextureCom = { nullptr };
 	CTexture*						m_pSSSAOCom = { nullptr };
 	CRigidBody*						m_pRigidBody = { nullptr };
-	CMotionTrailComponent*			m_pMotionTrailCom = { nullptr };
 
 private:
 	HRESULT Ready_Components();
