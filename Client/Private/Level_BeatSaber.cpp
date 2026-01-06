@@ -83,6 +83,16 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
     }*/
 
     // 결과창 테스트용
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+    {
+        auto pGameClear = static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"));
+
+        if (pGameClear)
+        {
+            //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
+            static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show"));
+        }
+    }
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
     {
         static_cast<CUIHUD*>(m_pHUD)->Open_Result();
@@ -90,6 +100,10 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
     {
         static_cast<CUIHUD*>(m_pHUD)->Close_Result();
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+    {
+        static_cast<CUIHUD*>(m_pHUD)->Open_Song_Selector();
     }
 }
 

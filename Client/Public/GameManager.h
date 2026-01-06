@@ -101,6 +101,9 @@ public:
 	void		Start_Lockon();
 	_float		Get_CurMinDist();
 	_bool		Get_Lockon();
+	void		Force_Lockon(_float fTimeDelta);
+	void		Force_LockOff();
+
 
 #pragma endregion
 

@@ -658,6 +658,15 @@
     <ClCompile Include="..\..\Client\Private\TargetLight.cpp">
       <Filter>999. CPP From Client\05. ETC</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\VideoPlayer.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UIVideoThumbnail.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\Sky_Dororong.cpp">
+      <Filter>999. CPP From Client\05. Beatsaber</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
