@@ -62,7 +62,8 @@ private:
 	_float2 m_vThumbnailOffset{1600.f, 0.f};
 
 	_float m_fTimeAcc{ 0.f };
-	_float m_fScale{ 3.f };
+	_float m_fGlowPower{ 15.f };
+	_float m_fScale{ 5.f };
 
 private:
 	HRESULT Render_Text();

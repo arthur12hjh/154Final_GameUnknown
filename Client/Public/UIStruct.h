@@ -2,6 +2,17 @@
 #include "Engine_Defines.h"
 #include "UIObject.h"
 
+#include <mfapi.h>
+#include <mfobjects.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include <propvarutil.h>
+
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
+#pragma comment(lib, "propsys.lib")
+
 namespace Client
 {
 	enum class UI_SHADER_PASS {
@@ -12,7 +23,7 @@ namespace Client
 		STAMINA_FX, LOCKON, OWNGOLD, POPUP, COSTUME_ANSWER,
 		COSTUME_BUTTONS, UNLOCK_FX, LOADING_BLOCK, MAP_SELECTOR, SHOP,
 		SHOP_SLOT, ITEM_ICON, NEON_NUMBER, COMBO, SCORE,
-		RANK, DORORONG_SABER_RESULT, DORORONG_SABER_RESULT_GLOW, DORORONG_SABER_SONG_SELECTOR
+		RANK, DORORONG_SABER_RESULT, DORORONG_SABER_RESULT_GLOW, DORORONG_SABER_SONG_SELECTOR, VIDEO		
 	};
 
 	typedef struct tagSkillInfoDesc
