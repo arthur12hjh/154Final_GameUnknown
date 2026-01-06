@@ -137,6 +137,9 @@
     <Filter Include="02.GameObjects\Entity\Character\HairPin_Character">
       <UniqueIdentifier>{43e1ea84-565d-4efd-b359-289baeb1d9d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Entity\Extra\Facial_Extra">
+      <UniqueIdentifier>{542b85ea-8bda-4bf1-b73a-75a33d307dfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -280,6 +283,9 @@
     <ClInclude Include="..\Public\HairPin_Character.h">
       <Filter>02.GameObjects\Entity\Character\HairPin_Character</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Facial_Extra.h">
+      <Filter>02.GameObjects\Entity\Extra\Facial_Extra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -408,6 +414,9 @@
     <ClCompile Include="..\Private\HairPin_Character.cpp">
       <Filter>02.GameObjects\Entity\Character\HairPin_Character</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Facial_Extra.cpp">
+      <Filter>02.GameObjects\Entity\Extra\Facial_Extra</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -444,5 +453,22 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli">
+      <Filter>97.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli">
+      <Filter>97.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli">
+      <Filter>97.ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>
