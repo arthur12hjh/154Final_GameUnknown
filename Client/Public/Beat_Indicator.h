@@ -31,7 +31,12 @@ private:
 private:
 	_float					m_fColorWeight = { 0.f };
 	_float					m_fTimeAcc = { 0.f };
+	_float					m_fRandom;
+	_float					m_fBounceTimer;
+
 	_bool					m_bIsColorChange = { false };
+
+
 
 public:
 	static CBeat_Indicator* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

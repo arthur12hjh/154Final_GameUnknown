@@ -6,9 +6,11 @@ bool g_IsMaskingDepthW;
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 textureCUBE g_Texture;
+texture2D g_MaskTexture;
 float g_fWeight0, g_fWeight1, g_fWeight2;
 float g_fFar;
 float g_fTime;
+float g_fBeatRandom;  // 비트인디케이터 올라가는 막대 사이즈 랜덤값
 float g_fColorWeight;
 float g_fOutlineWidth = 0.02f;
 bool g_bIsIdx0, g_bIsIdx1, g_bIsIdx2;
@@ -99,6 +101,11 @@ struct PS_OUT
     float4 vBloom : SV_TARGET5;
 };
 
+float Random(float2 st)
+{
+    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -124,11 +131,11 @@ PS_OUT PS_RAIL(PS_IN In)
     float4 vBrightLime = float4(0.5f, 1.0f, 0.0f, 1.0f);
 
     float4 vColors[5];
-    vColors[0] = float4(0.0f, 0.2f, 0.0f, 1.0f);
-    vColors[1] = float4(0.1f, 0.4f, 0.0f, 1.0f);
-    vColors[2] = float4(0.3f, 0.7f, 0.0f, 1.0f);
-    vColors[3] = float4(0.5f, 1.0f, 0.0f, 1.0f);
-    vColors[4] = float4(0.8f, 1.0f, 0.5f, 1.0f);
+    vColors[0] = float4(0.30f, 0.70f, 0.00f, 1.0f); // 진한 연두 (Start)
+    vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
+    vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
+    vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
+    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝은 연두 (End)
     
     float fXPos = (In.vTexcoord.x + 0.5f);
     int iIdx = (int) floor(fXPos * 3.0f);
@@ -164,7 +171,7 @@ PS_OUT PS_RAIL(PS_IN In)
     float fHeightMask = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
 
     float4 vBaseColor = vBlack;
-    if (bIsActive)
+    if (fMyWeight > 0.0001f)
     {
         //vBaseColor = lerp(vBlack, vBrightLime, fHeightMask);
         vBaseColor = lerp(vBlack, vTargetColor, fHeightMask);
@@ -297,7 +304,9 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
 
     float4 vTargetColor = lerp(vColors[clamp(iIdx, 0, 9)], vColors[clamp(iIdx + 1, 0, 9)], smoothstep(0.0f, 1.0f, fWeight));
 
-    float fThreshold = lerp(-0.4f, 0.4f, g_fColorWeight);
+    float fSmoothWeight = lerp(0.f, 1.f, g_fColorWeight);
+    
+    float fThreshold = lerp(-0.4f, g_fBeatRandom, fSmoothWeight);
     float fHeight = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
 
     float4 vBaseColor = lerp(vBlack, vTargetColor, fHeight);
@@ -334,6 +343,60 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
     else
     {
         Out.vColor = vBaseColor;
+    }
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    return Out;
+}
+
+PS_OUT PS_MAIN_BOX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
+    float4 vPink = float4(1.f, 0.75f, 0.8f, 1.f);
+    float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
+    float4 vBaseColor = lerp(vBlack, vPink, g_fColorWeight);
+
+    float3 vLocalNormal = normalize(In.vNormal);
+    bool bIsFrontFace = vLocalNormal.z < -0.8f;
+
+    float4 vFinalColor = vBaseColor;
+
+    if (bIsFrontFace)
+    {
+        float2 vUV = In.vTexcoord.xy + 0.5f;
+        float4 vMask = g_MaskTexture.Sample(DefaultSampler, vUV);
+
+        if (vMask.r > 0.5f)
+        {
+            vFinalColor = vWhite * (1.f + g_fColorWeight * 2.f);
+        }
+    }
+
+    float3 vAbsPos = abs(In.vTexcoord);
+    
+    float fEdgeWidth = 0.48f;
+    
+    int iEdgeCount = 0;
+    if (vAbsPos.x > fEdgeWidth)
+        iEdgeCount++;
+    if (vAbsPos.y > fEdgeWidth)
+        iEdgeCount++;
+    if (vAbsPos.z > fEdgeWidth)
+        iEdgeCount++;
+    
+    if (iEdgeCount >= 2)
+    {
+        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+    }
+    else
+    {
+        Out.vColor = vFinalColor;
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -398,5 +461,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BEAT_INDICATOR();
+    }
+
+    // idx 5
+    pass Box
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BOX();
     }
 }
