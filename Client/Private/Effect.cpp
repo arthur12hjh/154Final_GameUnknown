@@ -55,6 +55,12 @@ HRESULT CEffect::Initialize(void* pArg)
         m_fSpeed = 0 == pDesc->fSpeed ? 1 : pDesc->fSpeed;
         if (nullptr != pDesc->pDir) {
             m_pTransformCom->LookAt(m_pTransformCom->Get_State(STATE::POSITION) + XMLoadFloat3(pDesc->pDir));
+            if (0 != pDesc->fRot.x)
+                m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), pDesc->fRot.x);
+            if (0 != pDesc->fRot.y)
+                m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), pDesc->fRot.y);
+            if (0 != pDesc->fRot.z)
+                m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::LOOK), pDesc->fRot.z);
         }
         m_iFloor = pDesc->iFloor;
     }
