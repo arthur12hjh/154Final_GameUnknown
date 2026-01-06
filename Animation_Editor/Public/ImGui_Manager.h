@@ -34,6 +34,7 @@ private:
 
 	void Create_Character(const _wstring& szCharacterTag);
 	void Create_Extra(const _wstring& szModelTag);
+	void Create_Facial(const _wstring& szModelTag);
 	void Kill_Character();
 
 private:

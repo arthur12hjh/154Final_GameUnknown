@@ -331,6 +331,13 @@ namespace Engine
 		float			fTrackPosition;
 	}KEYFRAME;
 
+	typedef struct tagMorphKeyFrame
+	{
+		float					fTrackPosition;
+		vector<unsigned int>	vValues;
+		vector<float>			vWeights;
+	}MORPH_KEYFRAME;
+
 	typedef struct tagCameraKeyFrame : public KEYFRAME
 	{
 		float			fFov;
@@ -366,28 +373,21 @@ namespace Engine
 	{
 		unsigned int			iVertexId;
 		float					fWeight;
-	}BINVERTEXWEIGHT;
-
-	typedef struct binMeshMorphKey					// Morph Target
-	{
-		float					fTime;
-		vector<unsigned int>	vValues;
-		vector<float>			vWeights;
-		unsigned int			iNumValuesAndWeights;
-	}BINMESHMORPHKEY;
-
-	typedef struct binMeshMorphAnim					// Morph Target
-	{
-		char					szName[MAX_PATH];
-		unsigned int			iNumKeys;
-		vector<binMeshMorphKey>	vKeys;
-	}BINMESHMORPHANIM;
+	}BINVERTEXWEIGHT;	
 
 	typedef struct binVectorKey
 	{
 		float					fTime;
 		XMFLOAT4				vValue;
 	}BINVECTORKEY;
+
+	typedef struct binMeshMorphKey					// Morph Target
+	{
+		float					fTime;
+		unsigned int			iNumValuesAndWeights;
+		vector<unsigned int>	vValues;
+		vector<float>			vWeights;
+	}BINMESHMORPHKEY;
 
 	typedef struct binBone
 	{
@@ -399,14 +399,21 @@ namespace Engine
 
 	typedef struct binChannel
 	{
-		char szName[MAX_PATH];
-		unsigned int iNumScalingKeys;
-		unsigned int iNumRotationKeys;
-		unsigned int iNumPositionKeys;
-		vector<binVectorKey> cScalingKeys;
-		vector<binVectorKey> cRotationKeys;
-		vector<binVectorKey> cPositionKeys;
+		char					szName[MAX_PATH];
+		unsigned int			iNumScalingKeys;
+		unsigned int			iNumRotationKeys;
+		unsigned int			iNumPositionKeys;
+		vector<binVectorKey>	cScalingKeys;
+		vector<binVectorKey>	cRotationKeys;
+		vector<binVectorKey>	cPositionKeys;
 	}BINCHANNEL;
+
+	typedef struct binMeshMorphChannel					// aiMorphMeshAnim
+	{
+		char					szName[MAX_PATH];
+		unsigned int			iNumKeys;
+		vector<binMeshMorphKey>	vKeys;
+	}BINMESHMORPHCHANNEL;
 
 	typedef struct binAnimation
 	{
@@ -422,29 +429,18 @@ namespace Engine
 		char						szName[MAX_PATH];
 		float						fDuration;
 		float						fTicksPerSecond;
-		unsigned int				iNumChannels;
-		vector<binMeshMorphAnim>	vMorphAnimations;
+		unsigned int				iNumMorphChannels;
+		vector<binMeshMorphChannel>	vMorphChannels;
 	}BINMORPHANIMATION;
 
 	typedef struct binAnimMesh					// Morph Target
 	{
 		/* binMesh에도 있는 정점 수 */
 		unsigned int				iNumVertices;
-		/* 정점. 아 이러면 아예 로드 방식 자체를 기존 FBX Parser랑 다르게 해야할듯 */
-		vector<XMFLOAT3>			vPositions;
-
-		/* binMesh에도 있는 mNormals */
-		vector<XMFLOAT3>			vNormals;
-
-		/* binMesh에도 있는 mTangents */
-		vector<XMFLOAT3>			vTangents;
-
-		/* binMesh에도 있는 mBitangents */
-		vector<XMFLOAT3>			vBinormals;
-
-		/* binMesh에도 있는 mTextureCoords */
-		vector<vector<XMFLOAT2>>	vTextureCoords;
-
+		/* 절차값당 Position 변화량 */
+		vector<XMFLOAT3>			vDeltaPositions;
+		/* 절차값당 Normal 변화량 */
+		vector<XMFLOAT3>			vDeltaNormals;
 		char						szName[MAX_PATH];
 	}BINANIMMESH;
 
@@ -454,6 +450,7 @@ namespace Engine
 		unsigned int				iNumFaces;
 		unsigned int				iNumBones;
 		unsigned int				iMaterialIndex;
+		unsigned int				iNumAnimMeshes;
 		vector<XMFLOAT3>			vPositions;
 		vector<XMFLOAT3>			vNormals;
 		vector<XMFLOAT3>			vTangents;
@@ -464,7 +461,6 @@ namespace Engine
 		vector<binAnimMesh>			vAnimMesh;				// 셰이프 그룹
 		char						szName[MAX_PATH];
 	}BINMESH;
-
 
 	typedef struct binMaterial
 	{
@@ -515,6 +511,7 @@ namespace Engine
 		vector<binMesh>				vMeshes;
 		vector<binMaterial>			vMaterials;
 		vector<binAnimation>		vAnimations;
+		vector<binMorphAnimation>	vMorphAnimations;
 	}BINMODEL;
 
 

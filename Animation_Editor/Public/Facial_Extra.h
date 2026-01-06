@@ -11,34 +11,21 @@ NS_END
 
 NS_BEGIN(Animation_Editor)
 
-class CBody_Extra final : public CPartObject
+class CFacial_Extra final : public CPartObject
 {
 
 public:
-	enum class FACE_MATERIAL {
-		//이 4개는 그냥 둬야함
-		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR,
-
-		MI_CH_M_NA_961_Head, MI_CH_M_NA_961_Eyebrow, MI_CH_M_NA_961_Eyes,
-		MI_CH_M_NA_961_Lens, MI_CH_M_NA_961_Eyelashes, MI_CH_M_NA_961_Tearline,
-		MI_CH_M_NA_961_Eyeshadow, MI_CH_M_NA_961_EyeBlend, MI_CH_M_NA_961_NoseShadow,
-		MI_CH_M_NA_961_Teeth
-	};
-
-	typedef struct tagBody_Extra_Desc : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagFacial_Extra_Desc : public CPartObject::PARTOBJECT_DESC
 	{
 		_wstring szModelTag;
-	}BODY_EXTRA_DESC;
+	}FACIAL_EXTRA_DESC;
 private:
-	CBody_Extra(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CBody_Extra(const CBody_Extra& Prototype);
-	virtual ~CBody_Extra() = default;
+	CFacial_Extra(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CFacial_Extra(const CFacial_Extra& Prototype);
+	virtual ~CFacial_Extra() = default;
 
 public:
 	const _float4x4* Get_BoneMatrixPtr(const _char* pBoneName);
-
-	HRESULT								Mapping_Shader_Material(_uint iIdx);
-
 	_bool isFinish_Att();
 
 public:
@@ -65,7 +52,7 @@ private:
 	HRESULT Bind_ShaderResources();
 
 public:
-	static CBody_Extra* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CFacial_Extra* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

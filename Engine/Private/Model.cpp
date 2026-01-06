@@ -6,6 +6,8 @@
 #include "Material.h"
 #include "Animation.h"
 #include "Channel.h"
+#include "ShapeKey.h"
+#include "MorphAnimation.h"
 #include "ComputeShader.h"
 #include "GameInstance.h"
 #include "StringHelper.h"
@@ -110,6 +112,11 @@ vector<class CBone*>* CModel::Get_Bones()
 vector<class CMaterial*>* CModel::Get_Materials()
 {
     return &m_Materials;
+}
+
+_int CModel::Get_ShapeIndex(const _char* pShapeName) const
+{
+    return _int();
 }
 
 _uint CModel::Get_AnimationKeyFrameIndex() const
@@ -870,14 +877,30 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
         char szDrive[MAX_PATH] = {};
         char szDir[MAX_PATH] = {};
         char szFileName[MAX_PATH] = {};
-        char szBinExtractor[MAX_PATH] = { ".binx" };
-        _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
-        strcat_s(szBinModelFilePath, szDrive);
-        strcat_s(szBinModelFilePath, szDir);
-        strcat_s(szBinModelFilePath, szFileName);
-        strcat_s(szBinModelFilePath, szBinExtractor);
+        if (eType != MODEL_TYPE::FACIAL)
+        {
+            char szBinExtractor[MAX_PATH] = { ".binx" };
+            _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+            strcat_s(szBinModelFilePath, szDrive);
+            strcat_s(szBinModelFilePath, szDir);
+            strcat_s(szBinModelFilePath, szFileName);
+            strcat_s(szBinModelFilePath, szBinExtractor);
 
-        m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
+            m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
+        }
+        else
+        {
+            char szBinExtractor[MAX_PATH] = { ".binMorph" };
+            _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+            strcat_s(szBinModelFilePath, szDrive);
+            strcat_s(szBinModelFilePath, szDir);
+            strcat_s(szBinModelFilePath, szFileName);
+            strcat_s(szBinModelFilePath, szBinExtractor);
+
+            m_pGameInstance->WriteBinMorph(szBinModelFilePath, eType, &m_pModel);
+        }
+
+
 
         //m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
         //if (nullptr == m_pAIScene)
@@ -922,6 +945,12 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
         if (FAILED(m_pGameInstance->ReadBinx(pModelFilePath, eType, &m_pModel)))
             return E_FAIL;
     }
+    else if (false == strcmp(".binMorph", szEXT))
+    {
+        strcpy_s(szBinModelFilePath, pModelFilePath);
+        if (FAILED(m_pGameInstance->ReadBinMorph(pModelFilePath, eType, &m_pModel)))
+            return E_FAIL;
+    }
     else
         return E_FAIL;
 
@@ -939,14 +968,26 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
         Ready_Bones(&m_pModel->vNodes[m_pModel->iRootNodeIndex], -1);
     }
 
+
     if (FAILED(Ready_Meshes()))
         return E_FAIL;
 
     if (FAILED(Ready_Materials(pModelFilePath)))
         return E_FAIL;
 
+    if (eType == MODEL_TYPE::FACIAL)
+    {
+        if (FAILED(Ready_ShapeKeys()))
+            return E_FAIL;
+
+        if (FAILED(Ready_MorphAnimations()))
+            return E_FAIL;
+    }
+
+
     if (FAILED(Ready_Animations()))
         return E_FAIL;
+
 
     if (FAILED(Mapping_OffsetMatrix()))
         return E_FAIL;
@@ -955,7 +996,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
     strcpy_s(m_ModelFilePath, szBinModelFilePath);
 #endif
 
-    if (m_eType == MODEL_TYPE::ANIM)
+    if (m_eType == MODEL_TYPE::ANIM
+        || m_eType == MODEL_TYPE::FACIAL)
     {
         Initialize_AnimationIndexMap();
 
@@ -969,7 +1011,8 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
 HRESULT CModel::Initialize(void* pArg)
 {
-    if (m_eType == MODEL_TYPE::ANIM)
+    if (m_eType == MODEL_TYPE::ANIM
+        || m_eType == MODEL_TYPE::FACIAL)
     {
         if (FAILED(Ready_ComputeShader()))
             return E_FAIL;
@@ -1272,6 +1315,39 @@ HRESULT CModel::Ready_Animations()
         Mapping_Animation(pAnimation);
 
         m_Animations.push_back(pAnimation);
+    }
+
+    return S_OK;
+}
+
+HRESULT CModel::Ready_ShapeKeys()
+{
+    m_iNumShapeKeys = m_pModel->vMeshes[0].iNumAnimMeshes;
+
+    for (size_t i = 0; i < m_iNumShapeKeys; i++)
+    {
+        CShapeKey* pShapeKey = CShapeKey::Create(this, &m_pModel->vMeshes[0].vAnimMesh[i]);
+        if (nullptr == pShapeKey)
+            return E_FAIL;
+
+        m_ShapeKeys.push_back(pShapeKey);
+    }
+
+    return S_OK;
+}
+
+HRESULT CModel::Ready_MorphAnimations()
+{
+    m_iNumMorphAnimations = m_pModel->iNumAnimations;
+    m_iNumAnimations = 0;
+
+    for (size_t i = 0; i < m_iNumMorphAnimations; i++)
+    {
+        CMorphAnimation* pMorphAnimation = CMorphAnimation::Create(this, &m_pModel->vMorphAnimations[i]);
+        if (nullptr == pMorphAnimation)
+            return E_FAIL;
+
+        m_MorphAnimations.push_back(pMorphAnimation);
     }
 
     return S_OK;
