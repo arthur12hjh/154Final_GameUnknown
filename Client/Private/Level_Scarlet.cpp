@@ -247,7 +247,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 267.f, 10.f, 120.f };
+	Desc.vPosition = { 265.f, 5.f, 70.f };
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
