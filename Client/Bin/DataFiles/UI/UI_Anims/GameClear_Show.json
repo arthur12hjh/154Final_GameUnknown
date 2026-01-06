@@ -1,0 +1,39 @@
+{
+    "Tracks": [
+        {
+            "szTrackTag": "Alpha",
+            "vEndParam": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "szTrackTag": "GlowIntensity",
+            "vEndParam": [
+                0.75,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "vStartParam": [
+                5.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
+    "fDuration": 1.0,
+    "isBeapBeap": false,
+    "isLoop": false,
+    "isInfluenceChildren": true,
+    "szAnimTag": "GameClear_Show"
+}

@@ -2,12 +2,6 @@
     {
         "Children": [
             {
-                "TextureDesc": {
-                    "iPass": 0,
-                    "iTextureIndex": 0,
-                    "szProtoTag": "Prototype_Component_UI_Texture_Song_Thumbnail",
-                    "szTextureComTag": "Com_Texture_UI_Song_Thumbnail"
-                },
                 "fAlpha": 1.0,
                 "fOffsetX": 1600.0,
                 "fOffsetY": 0.0,
@@ -32,9 +26,9 @@
                     }
                 ],
                 "szLayerTag": "Layer_BeatSaber_Result",
-                "szProtoTag": "Prototype_GameObject_UI_Image",
-                "szUIID": "UI_Thumbnail_1-1",
-                "szUITag": "UI_Thumbnail"
+                "szProtoTag": "Prototype_GameObject_UI_VideoThumbnail",
+                "szUIID": "UI_VideoThumbnail_1",
+                "szUITag": "UI_VideoThumbnail"
             }
         ],
         "fAlpha": 1.0,

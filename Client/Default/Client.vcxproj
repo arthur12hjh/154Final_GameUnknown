@@ -494,11 +494,13 @@
     <ClInclude Include="..\Public\UIText.h" />
     <ClInclude Include="..\Public\UITriggerKey.h" />
     <ClInclude Include="..\Public\UIUnlockFX.h" />
+    <ClInclude Include="..\Public\UIVideoThumbnail.h" />
     <ClInclude Include="..\Public\UIWorldWrapper.h" />
     <ClInclude Include="..\public\StaticInteraction.h" />
     <ClInclude Include="..\Public\UIPanel.h" />
     <ClInclude Include="..\Public\UIWrapper.h" />
     <ClInclude Include="..\Public\VelocityExample.h" />
+    <ClInclude Include="..\Public\VideoPlayer.h" />
     <ClInclude Include="..\public\Virtual_Wall.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
@@ -859,11 +861,13 @@
     <ClCompile Include="..\Private\UIText.cpp" />
     <ClCompile Include="..\Private\UITriggerKey.cpp" />
     <ClCompile Include="..\Private\UIUnlockFX.cpp" />
+    <ClCompile Include="..\Private\UIVideoThumbnail.cpp" />
     <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\private\StaticInteraction.cpp" />
     <ClCompile Include="..\Private\UIPanel.cpp" />
     <ClCompile Include="..\Private\UIWrapper.cpp" />
     <ClCompile Include="..\Private\VelocityExample.cpp" />
+    <ClCompile Include="..\Private\VideoPlayer.cpp" />
     <ClCompile Include="..\private\Virtual_Wall.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />

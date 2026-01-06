@@ -250,6 +250,7 @@
     <ClCompile Include="..\..\Client\Private\ScarletBlackBoard.cpp" />
     <ClCompile Include="..\..\Client\Private\ShaderManager.cpp" />
     <ClCompile Include="..\..\Client\Private\Sky.cpp" />
+    <ClCompile Include="..\..\Client\Private\Sky_Dororong.cpp" />
     <ClCompile Include="..\..\Client\Private\SpriteEffect.cpp" />
     <ClCompile Include="..\..\Client\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\..\Client\Private\TargetComponent.cpp" />
@@ -315,8 +316,10 @@
     <ClCompile Include="..\..\Client\Private\UIText.cpp" />
     <ClCompile Include="..\..\Client\Private\UITriggerKey.cpp" />
     <ClCompile Include="..\..\Client\Private\UIUnlockFX.cpp" />
+    <ClCompile Include="..\..\Client\Private\UIVideoThumbnail.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\..\Client\Private\UIWrapper.cpp" />
+    <ClCompile Include="..\..\Client\Private\VideoPlayer.cpp" />
     <ClCompile Include="..\..\Client\Private\Weapon.cpp" />
     <ClCompile Include="..\ImgUI\GUIManager.cpp" />
     <ClCompile Include="..\ImgUI\imgui.cpp">

@@ -1162,6 +1162,12 @@
     <Filter Include="02.GameObjects\TraceLight">
       <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\VideoPlayer">
+      <UniqueIdentifier>{e454af81-f1c5-4ab3-b488-9e758a095512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail">
+      <UniqueIdentifier>{93f57e66-efac-41b6-bf7e-a4cd20cf9907}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Dororong_Saber\DororongBox">
       <UniqueIdentifier>{04382a77-8f9f-4fe3-a29a-e91a55d4af75}</UniqueIdentifier>
     </Filter>
@@ -2230,6 +2236,12 @@
     <ClInclude Include="..\Public\TargetLight.h">
       <Filter>02.GameObjects\TraceLight</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VideoPlayer.h">
+      <Filter>02.GameObjects\UIObjects\VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIVideoThumbnail.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\DororongBox.h">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClInclude>
@@ -3261,6 +3273,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\TargetLight.cpp">
       <Filter>02.GameObjects\TraceLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VideoPlayer.cpp">
+      <Filter>02.GameObjects\UIObjects\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIVideoThumbnail.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DororongBox.cpp">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>

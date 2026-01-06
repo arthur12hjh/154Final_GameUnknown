@@ -5,6 +5,8 @@
 #include "GameManager.h"
 #include "UIHUD.h"
 
+#include "UIVideoThumbnail.h"
+
 CUISongSelector::CUISongSelector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -28,7 +30,7 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_Songs.reserve(2);
+	m_SongDescs.reserve(2);
 
 	/*for (size_t i = 0; i < 10; ++i)
 	{
@@ -38,8 +40,20 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 		m_Songs.push_back(szText);
 	}*/
 
-	m_Songs.push_back(TEXT("[NIKKE 오리지널 송]\nNIKKE DORODORA ODORO"));
-	m_Songs.push_back(TEXT("asdlkfja"));
+	SONG_DESC Desc{};
+	Desc.szSongName = TEXT("[NIKKE 오리지널 송]\nNIKKE DORODORA ODORO");
+	_stprintf_s(Desc.szVideoTag, TEXT("DoroDoro"));
+	m_SongDescs.push_back(Desc);
+
+	Desc.szSongName = TEXT("Be My Light(Test)");
+	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
+	m_SongDescs.push_back(Desc);
+
+	Desc.szSongName = TEXT("TEST");
+	_stprintf_s(Desc.szVideoTag, TEXT("Test"));
+	m_SongDescs.push_back(Desc);
+
+
 	/*m_Songs.push_back(TEXT("asdl"));
 	m_Songs.push_back(TEXT("asdlkfjafsdfs"));
 	m_Songs.push_back(TEXT("asdlkfss"));
@@ -65,7 +79,6 @@ void CUISongSelector::Update(_float fTimeDelta)
 	__super::Update(fTimeDelta);
 
 	Update_SongIndex(fTimeDelta);
-	Update_Thumbnail();
 
 	// ENTER 입력
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_RETURN) && !m_bActiveEnter)
@@ -166,6 +179,8 @@ void CUISongSelector::Late_Update(_float fTimeDelta)
 
 		m_bActiveEnter = false;
 		m_bActiveEsc = false;
+
+		Update_Thumbnail();
 	}
 
 	if (m_isOpen && m_isClosing && IsAnimFinished(TEXT("Close_Song_Selector")))
@@ -236,11 +251,9 @@ void CUISongSelector::Open_Song_Selector()
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
-	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail"));
 	if (pThumbnail)
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Open_Song_Selector"), 0.25f);
-
-	pThumbnail->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex = m_iCurrentIndex;
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail"), TEXT("Open_Song_Selector"), 0.25f);
 
 	Safe_Release(pHUD);
 
@@ -252,10 +265,11 @@ void CUISongSelector::Close_Song_Selector()
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+	CUIVideoThumbnail* pThumbnail = dynamic_cast<CUIVideoThumbnail*>(pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail")));
+	pThumbnail->Stop();
 
 	if (pThumbnail)
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Close_Song_Selector"), 0.25f);
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail"), TEXT("Close_Song_Selector"), 0.25f);
 
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Close_Song_Selector"));
 
@@ -374,11 +388,11 @@ HRESULT CUISongSelector::Render_Text()
 	for (_int slot = -half; slot <= half; ++slot)
 	{
 		// 실제 곡 인덱스 (무한 루프)
-		_int songIndex = (baseIndex + slot) % (_int)m_Songs.size();
+		_int songIndex = (baseIndex + slot) % (_int)m_SongDescs.size();
 		if (songIndex < 0)
-			songIndex += (_int)m_Songs.size();
+			songIndex += (_int)m_SongDescs.size();
 
-		const wstring& text = m_Songs[songIndex];
+		const wstring& text = m_SongDescs[songIndex].szSongName;
 
 		// Y 위치
 		_float y = centerY + (slot * m_fItemGap) - localOffset;
@@ -448,13 +462,15 @@ void CUISongSelector::Update_SongIndex(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
 	{
-		m_iCurrentIndex = (m_iCurrentIndex - 1 + m_Songs.size()) % m_Songs.size();
-		m_fTargetScroll -= m_fItemGap;
+		m_iCurrentIndex = (m_iCurrentIndex + 1) % m_SongDescs.size();
+		m_fTargetScroll += m_fItemGap;
+		Update_Thumbnail();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
 	{
-		m_iCurrentIndex = (m_iCurrentIndex + 1) % m_Songs.size();
-		m_fTargetScroll += m_fItemGap;
+		m_iCurrentIndex = (m_iCurrentIndex - 1 + m_SongDescs.size()) % m_SongDescs.size();
+		m_fTargetScroll -= m_fItemGap;
+		Update_Thumbnail();
 	}
 	float delta = m_fTargetScroll - m_fScroll;
 
@@ -469,12 +485,13 @@ void CUISongSelector::Update_SongIndex(_float fTimeDelta)
 void CUISongSelector::Update_Thumbnail()
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+	CUIVideoThumbnail* pThumbnail = dynamic_cast<CUIVideoThumbnail*>(pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail")));
 
-	/*if (pThumbnail)
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Open_Result"), 0.125f);*/
-
-	pThumbnail->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex = m_iCurrentIndex;
+	if (pThumbnail)
+	{
+		pThumbnail->Set_Source(m_SongDescs[m_iCurrentIndex].szVideoTag);
+		pThumbnail->Play();
+	}
 
 	Safe_Release(pHUD);
 }
