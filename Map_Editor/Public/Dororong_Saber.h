@@ -7,6 +7,7 @@ class CModel;
 class CShader;
 class CVIBuffer_Cube;
 class CCollider;
+class CTexture;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -31,6 +32,7 @@ protected:
 	class CCollider*		m_pCollider = { nullptr };
 	class CShader*			m_pShaderCom = { nullptr };
 	class CVIBuffer_Cube*	m_pVIBufferCom = { nullptr };
+	class CTexture*			m_pTextureCom = { nullptr };
 
 protected:
 	_float					m_fColorWeight = { 0.f };

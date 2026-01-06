@@ -6,12 +6,12 @@ NS_BEGIN(Engine)
 NS_END
 
 NS_BEGIN(Tool_Map)
-class CPad : public CDororong_Saber
+class CDororongBox : public CDororong_Saber
 {
 private:
-	CPad(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CPad(const CPad& Prototype);
-	virtual ~CPad() = default;
+	CDororongBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CDororongBox(const CDororongBox& Prototype);
+	virtual ~CDororongBox() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -28,7 +28,7 @@ private:
 	HRESULT					Bind_ShaderResources();
 
 public:
-	static CPad* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CDororongBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void			Free() override;
 };

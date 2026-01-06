@@ -35,8 +35,8 @@ public:
 	HRESULT Render();
 
 
-	HRESULT Save_Light_Objects();
-	HRESULT Load_Light_Objects();
+	HRESULT Save_Light_Objects(const _char* szFilePath);
+	HRESULT Load_Light_Objects(const _char* szFilePath);
 
 	void Update_Light_Properties();
 	void Load_Selected_Light_Desc();

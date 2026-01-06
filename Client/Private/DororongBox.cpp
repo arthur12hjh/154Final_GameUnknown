@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "Beat_Indicator.h"
+#include "DororongBox.h"
 #include "GameInstance.h"
 
-CBeat_Indicator::CBeat_Indicator(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CDororongBox::CDororongBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CActor(pDevice, pContext)
 {
 }
 
-CBeat_Indicator::CBeat_Indicator(const CBeat_Indicator& Prototype) :
+CDororongBox::CDororongBox(const CDororongBox& Prototype) :
     CActor(Prototype)
 {
 }
 
-HRESULT CBeat_Indicator::Initialize_Prototype()
+HRESULT CDororongBox::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CBeat_Indicator::Initialize(void* pArg)
+HRESULT CDororongBox::Initialize(void* pArg)
 {
 
     if (FAILED(__super::Initialize(pArg)))
@@ -26,29 +26,18 @@ HRESULT CBeat_Indicator::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    m_fBounceTimer = 0.f;
-
     return S_OK;
 }
 
-void CBeat_Indicator::Priority_Update(_float fTimeDelta)
+void CDororongBox::Priority_Update(_float fTimeDelta)
 {
 }
 
-void CBeat_Indicator::Update(_float fTimeDelta)
+void CDororongBox::Update(_float fTimeDelta)
 {
-    _float fBounceTime = 0.4f;
-    m_fBounceTimer += fTimeDelta;
-
-    /*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K) ||
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))*/
-    if (m_fBounceTimer > fBounceTime)
+    /*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
     {
         m_bIsColorChange = true;
-        //m_fColorWeight = 0.f;
-        m_fRandom = (rand() / (float)RAND_MAX) * 0.4f;
-        m_fBounceTimer = 0.f;
 
     }
     if (m_bIsColorChange)
@@ -65,17 +54,16 @@ void CBeat_Indicator::Update(_float fTimeDelta)
         }
     }
     else {
-        m_fColorWeight -= fTimeDelta * 8.f;
+        m_fColorWeight -= fTimeDelta * 3.f;
 
         if (m_fColorWeight < 0.f)
             m_fColorWeight = 0.f;
 
         m_fTimeAcc = 0.f;
-    }
-
+    }*/
 }
 
-void CBeat_Indicator::Late_Update(_float fTimeDelta)
+void CDororongBox::Late_Update(_float fTimeDelta)
 {
     /*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {*/
@@ -90,29 +78,28 @@ void CBeat_Indicator::Late_Update(_float fTimeDelta)
 
 }
 
-HRESULT CBeat_Indicator::Render()
+HRESULT CDororongBox::Render()
 {
     if (FAILED(Bind_ShaderResources()))
         return E_FAIL;
 
+    /* COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+     pObbCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
+
+     if (FAILED(m_pShaderCom->Begin(0)))
+         return E_FAIL;*/
+
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fColorWeight", &m_fColorWeight, sizeof(_float))))
         return E_FAIL;
 
-    if (FAILED(m_pShaderCom->Bind_RawValue("g_fBeatRandom", &m_fRandom, sizeof(_float))))
-        return E_FAIL;
-
-    /*m_pShaderCom->Begin(1);
-    m_pVIBufferCom->Bind_Resources();
-    m_pVIBufferCom->Render();*/
-
-    m_pShaderCom->Begin(4);
+    m_pShaderCom->Begin(5);
     m_pVIBufferCom->Bind_Resources();
     m_pVIBufferCom->Render();
 
     return S_OK;
 }
 
-HRESULT CBeat_Indicator::Ready_Components()
+HRESULT CDororongBox::Ready_Components()
 {
     /* Com_Shader */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxCube"),
@@ -124,11 +111,15 @@ HRESULT CBeat_Indicator::Ready_Components()
         TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
         return E_FAIL;
 
+    /* Com_VIBuffer */
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_DororongMask"),
+        TEXT("Com_Mask"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+        return E_FAIL;
 
     return S_OK;
 }
 
-HRESULT CBeat_Indicator::Bind_ShaderResources()
+HRESULT CDororongBox::Bind_ShaderResources()
 {
     if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
         return E_FAIL;
@@ -138,34 +129,38 @@ HRESULT CBeat_Indicator::Bind_ShaderResources()
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
         return E_FAIL;
 
+    if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_MaskTexture")))
+        return E_FAIL;
+
+
     return S_OK;
 }
 
-CBeat_Indicator* CBeat_Indicator::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDororongBox* CDororongBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CBeat_Indicator* pBeat_Indicator = new CBeat_Indicator(pDevice, pContext);
-    if (FAILED(pBeat_Indicator->Initialize_Prototype()))
+    CDororongBox* pDororongBox = new CDororongBox(pDevice, pContext);
+    if (FAILED(pDororongBox->Initialize_Prototype()))
     {
-        Safe_Release(pBeat_Indicator);
-        MSG_BOX("Create Fail : Beat_Indicator");
+        Safe_Release(pDororongBox);
+        MSG_BOX("Create Fail : DororongBox");
     }
-    return pBeat_Indicator;
+    return pDororongBox;
 }
 
-CGameObject* CBeat_Indicator::Clone(void* pArg)
+CGameObject* CDororongBox::Clone(void* pArg)
 {
-    CBeat_Indicator* pBeat_Indicator = new CBeat_Indicator(*this);
-    if (FAILED(pBeat_Indicator->Initialize(pArg)))
+    CDororongBox* pDororongBox = new CDororongBox(*this);
+    if (FAILED(pDororongBox->Initialize(pArg)))
     {
-        Safe_Release(pBeat_Indicator);
-        MSG_BOX("Create Fail : Beat_Indicator");
+        Safe_Release(pDororongBox);
+        MSG_BOX("Create Fail : DororongBox");
     }
-    return pBeat_Indicator;
+    return pDororongBox;
 }
 
-void CBeat_Indicator::Free()
+void CDororongBox::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pVIBufferCom);
+    Safe_Release(m_pTextureCom);
 }

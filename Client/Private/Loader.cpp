@@ -197,6 +197,7 @@
 #include "Pad.h"
 #include "Rail.h"
 #include "Beat_Indicator.h"
+#include "DororongBox.h"
 #include "Sky_Dororong.h"
 #pragma endregion
 
@@ -498,6 +499,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+
 
 	/* For.Prototype_Component_Model_Sky_Scarlet */
 	_matrix	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -7602,6 +7604,13 @@ HRESULT CLoader::Loading_For_BeatSaber_Map(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Texture_DororongBoxMask */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_DororongMask");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Dororong/Jonnadaechung.png"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_GameObject_Sky_Dororong */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Sky_Dororong");
 	pProtoDesc.pPrototype = CSky_Dororong::Create(m_pDevice, m_pContext);
@@ -7626,6 +7635,13 @@ HRESULT CLoader::Loading_For_BeatSaber_Map(void* pArg)
 	/* For.Prototype_GameObject_Beat_Indicator */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Beat_Indicator");
 	pProtoDesc.pPrototype = CBeat_Indicator::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_DororongBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_DororongBox");
+	pProtoDesc.pPrototype = CDororongBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
