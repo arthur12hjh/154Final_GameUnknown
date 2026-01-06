@@ -498,6 +498,11 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);
 }
 
+HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CComponent* pRenderComponent)
+{
+	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderComponent);
+}
+
 const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
 {
 	return m_pRenderer->Get_Renderer_Matrix(eType);

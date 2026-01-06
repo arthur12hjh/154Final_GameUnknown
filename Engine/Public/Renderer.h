@@ -57,6 +57,8 @@ public:
 public:
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CComponent* pRenderComponent);
+
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	HRESULT				Initialize();
 	void				Update(_float fTimeDelta);
@@ -76,7 +78,9 @@ private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
+
 	list<class CGameObject*>			m_RenderObjects[ENUM_CLASS(RENDER::END)];
+	list<class CComponent*>				m_RenderComponents[ENUM_CLASS(RENDER::END)];
 
 private:
 	class CShader*						m_pShader = { nullptr };

@@ -2801,7 +2801,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_MotionTrail");
-	pProtoDesc.pPrototype = CMontionTrailComponent::Create(m_pDevice, m_pContext);
+	pProtoDesc.pPrototype = CMotionTrailComponent::Create(m_pDevice, m_pContext, 60);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

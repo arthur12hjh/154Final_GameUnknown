@@ -155,7 +155,9 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
+	
 	m_pMotionTrail->Update_Trail(fTimeDelta);
+	m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 	if (m_bIsActive)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -198,8 +200,6 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 	}
 
-	if(m_pMotionTrail->IsEnableMotionTrail())
-		m_pMotionTrail->Render();
 	return S_OK;
 }
 
@@ -274,14 +274,19 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 	
 	/* Com_MotionTrail */
-	CMontionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
 	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pModelCom;
 	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
-	MotionTrailCom.fLifeTime = 0.5f;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 3.f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
 		return E_FAIL;
+
+	m_pMotionTrail->SetMotionTrailColor({ 1.f , 0.f, 0.f, 1.f });
+	m_pMotionTrail->SetRimLight(0.1f, 0.7f);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),

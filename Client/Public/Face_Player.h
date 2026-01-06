@@ -10,6 +10,7 @@ class CCollider;
 class CBone;
 class CTexture;
 class CRigidBody;
+class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -51,11 +52,13 @@ public:
 	virtual HRESULT Render_MotionBlur() override;
 
 private:
-	CModel* m_pBodyModelCom = { nullptr };
+	CModel*							m_pBodyModelCom = { nullptr };
 	// 아래 둘은 테스트용 텍스쳐입니다 혹시 치우고 싶으시면 말씀좀
-	CTexture* m_pSpecDetailTextureCom = { nullptr };
-	CTexture* m_pSSSAOCom = { nullptr };
-	CRigidBody* m_pRigidBody = { nullptr };
+	CTexture*						m_pSpecDetailTextureCom = { nullptr };
+	CTexture*						m_pSSSAOCom = { nullptr };
+	CRigidBody*						m_pRigidBody = { nullptr };
+	CMotionTrailComponent*			m_pMotionTrailCom = { nullptr };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();

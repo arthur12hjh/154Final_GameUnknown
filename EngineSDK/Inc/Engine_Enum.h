@@ -108,6 +108,7 @@ namespace Engine
 		NONBLEND,
 		BLOOM,
 		NONLIGHT,
+		NONLIGHT_COMPONENT,
 		BLUR,
 		GLOW,
 		METABALL,

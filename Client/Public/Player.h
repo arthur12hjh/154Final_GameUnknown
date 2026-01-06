@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 class CCollider;
 class CNavigation;
 class CCharacterController;
-class CMontionTrailComponent;
+class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)

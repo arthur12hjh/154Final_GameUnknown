@@ -96,6 +96,8 @@ public:
 
 #pragma region RENDERER
 	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT				Add_RenderGroup(RENDER eRenderGroup, class CComponent* pRenderComponent);
+
 	const _float4x4*	Get_Renderer_Matrix(D3DTS eType = D3DTS::END);
 	HRESULT				Set_ScreenSize(_uint iSizeX, _uint iSizeY);
 	void				Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);

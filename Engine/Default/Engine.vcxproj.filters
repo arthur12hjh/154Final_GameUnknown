@@ -398,7 +398,7 @@
     <ClInclude Include="..\Public\WaveTrail.h">
       <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MontionTrailComponent.h">
+    <ClInclude Include="..\public\MotionTrailComponent.h">
       <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClInclude>
   </ItemGroup>
@@ -769,7 +769,7 @@
     <ClCompile Include="..\Private\WaveTrail.cpp">
       <Filter>01.Utility\03.Components\Trail\WaveTrail</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MontionTrailComponent.cpp">
+    <ClCompile Include="..\private\MotionTrailComponent.cpp">
       <Filter>01.Utility\03.Components\Trail\MotionTrail</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1300,9 +1300,6 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred_Distortion.hlsl">
       <Filter>01.Utility\05.Renderer\Deferred\Distortion\ShaderFile</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\EngineShader_MotionTrail.hlsl">
-      <Filter>01.Utility\98.ShaderFiles\VIBuffer\Model</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
