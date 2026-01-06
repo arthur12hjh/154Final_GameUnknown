@@ -1774,6 +1774,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 
 
 	/* For.Prototype_Component_Effect_Gigas_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blink");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blink.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Gigas_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/GigasSparkParticle.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);

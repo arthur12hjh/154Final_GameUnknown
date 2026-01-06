@@ -974,12 +974,6 @@ PS_NONLIGHT_OUT PS_LASER_LIGHTNING_BLOOM(PS_IN In)
 PS_NONLIGHT_OUT PS_SHOCK_MOTION_BLUR(PS_IN In)
 {
     PS_NONLIGHT_OUT Out;
-    matrix worldmat = g_CamMatrix;
-    worldmat._11_12_13_14 = normalize(worldmat._11_12_13_14);
-    worldmat._21_22_23_24 = normalize(worldmat._21_22_23_24);
-    worldmat._31_32_33_34 = normalize(-worldmat._31_32_33_34);
-    worldmat._41_42_43_44 = float4(0, 0, 0, 1);
-    //float4 pos = mul(g_WorldMatrix._41_42_43_44 - In.vWorldPos, worldmat);
     float4 pos = In.vProjPos - In.vWorldPos;
     pos.x *= -1;
     //pos.xy += pos.z;
