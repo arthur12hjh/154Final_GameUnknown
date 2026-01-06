@@ -649,6 +649,15 @@
     <ClCompile Include="..\..\Client\Private\UIResult.cpp">
       <Filter>999. CPP From Client\00. UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UISongSelector.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\UITriggerKey.cpp">
+      <Filter>999. CPP From Client\00. UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Client\Private\TargetLight.cpp">
+      <Filter>999. CPP From Client\05. ETC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

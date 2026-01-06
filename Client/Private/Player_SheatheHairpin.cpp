@@ -20,7 +20,7 @@ PLAYER_TRANSITION_DESC CPlayer_SheatheHairpin::Update(_float fTimeDelta)
 {
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
-
+	 
     _vector vCameraLook = XMVector3Normalize(XMVectorSetY(XMLoadFloat4(m_pGameInstance->Get_CamLook()), 0.f));
     _bool isWalking = { false };
 

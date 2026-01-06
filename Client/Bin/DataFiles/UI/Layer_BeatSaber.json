@@ -3,10 +3,10 @@
         "Children": [
             {
                 "fAlpha": 1.0,
-                "fOffsetX": 600.0,
+                "fOffsetX": 560.0,
                 "fOffsetY": 0.0,
                 "fRotation": 0.0,
-                "fSizeX": 360.0,
+                "fSizeX": 400.0,
                 "fSizeY": 80.0,
                 "fX": 800.0,
                 "fY": 450.0,
@@ -15,6 +15,22 @@
                 "iLevel": 5,
                 "iRenderGroup": 9,
                 "iVisibility": 0,
+                "szEvents": {
+                    "Score_Result": [
+                        {
+                            "szActionTag": "Score_Result",
+                            "szArg": "Score_Result",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "Rank_Result": [
+                        {
+                            "szActionTag": "Rank_Result",
+                            "szArg": "Rank_Result",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
                 "szLayerTag": "Layer_BeatSaber",
                 "szProtoTag": "Prototype_GameObject_UI_Score",
                 "szUIID": "UI_Score_0",
@@ -23,7 +39,7 @@
             {
                 "fAlpha": 1.0,
                 "fOffsetX": 0.0,
-                "fOffsetY": 0.0,
+                "fOffsetY": -260.0,
                 "fRotation": 0.0,
                 "fSizeX": 384.0,
                 "fSizeY": 188.0,
@@ -34,6 +50,15 @@
                 "iLevel": 5,
                 "iRenderGroup": 9,
                 "iVisibility": 0,
+                "szEvents": {
+                    "Combo_Result": [
+                        {
+                            "szActionTag": "Combo_Result",
+                            "szArg": "Combo_Result",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
                 "szLayerTag": "Layer_BeatSaber",
                 "szProtoTag": "Prototype_GameObject_UI_NeonNumber",
                 "szUIID": "UI_ComboScore_0",

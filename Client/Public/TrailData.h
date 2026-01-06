@@ -46,6 +46,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	void	Add_RenderGroup();
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_MotionBlur() override;
 	void	Set_Data(TRAIL_DATA tData);
 	TRAIL_DATA	Get_Data() { return m_tData; }
 	HRESULT	Bind_Texture(CShader* pShader);

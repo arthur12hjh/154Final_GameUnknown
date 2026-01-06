@@ -38,7 +38,9 @@ void CBeat_Indicator::Update(_float fTimeDelta)
     /*_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCollider->UpdateColiision(WorldMat);*/
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J))
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) ||
+        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K) ||
+        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
     {
         m_bIsColorChange = true;
 
@@ -57,7 +59,7 @@ void CBeat_Indicator::Update(_float fTimeDelta)
         }
     }
     else {
-        m_fColorWeight -= fTimeDelta * 3.f;
+        m_fColorWeight -= fTimeDelta * 8.f;
 
         if (m_fColorWeight < 0.f)
             m_fColorWeight = 0.f;
@@ -155,4 +157,6 @@ CGameObject* CBeat_Indicator::Clone(void* pArg)
 void CBeat_Indicator::Free()
 {
     __super::Free();
+
+    Safe_Release(m_pVIBufferCom);
 }

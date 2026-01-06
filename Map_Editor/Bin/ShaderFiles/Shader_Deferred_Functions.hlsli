@@ -4,24 +4,29 @@
 #include "Engine_Shader_Defines.hlsli"
 #include "Shader_Deferred_Defines.hlsli"
 
+float FxaaLuma(float3 rgb)
+{
+    return rgb.y * (0.587 / 0.299) + rgb.x;
+}
+
 float4 GetWorldPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, matrix ProjMatrixInv, matrix ViewMatrixInv)
 {
-    // ÁÂÇ¥ º¹±¸
+    // ì¢Œí‘œ ë³µêµ¬
     float4 vDepthDesc = DepthTexture.Sample(DefaultSampler, vTexcoord);
     float fViewZ = vDepthDesc.y * fFar;
 
-    /* ÁÂÇ¥º¯È¯Àº Æ²¸°°Å ¾ø°í.. */
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä * Åõ¿µ / w */
+    /* ì¢Œí‘œë³€í™˜ì€ í‹€ë¦°ê±° ì—†ê³ .. */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·° * íˆ¬ì˜ / w */
     vector vPosition;
     vPosition.x = vTexcoord.x * 2.f - 1.f;
     vPosition.y = vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä * Åõ¿µ  */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·° * íˆ¬ì˜  */
     vPosition = vPosition * fViewZ;
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä  */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·°  */
     vPosition = mul(vPosition, ProjMatrixInv);
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå   */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ   */
     vPosition = mul(vPosition, ViewMatrixInv);
     
     return vPosition;
@@ -29,20 +34,20 @@ float4 GetWorldPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, ma
 
 float4 GetViewPosition(texture2D DepthTexture, float fFar, float2 vTexcoord, matrix ProjMatrixInv)
 {
-    // ÁÂÇ¥ º¹±¸
+    // ì¢Œí‘œ ë³µêµ¬
     float4 vDepthDesc = DepthTexture.Sample(DefaultSampler, vTexcoord);
     float fViewZ = vDepthDesc.y * fFar;
 
-    /* ÁÂÇ¥º¯È¯Àº Æ²¸°°Å ¾ø°í.. */
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä * Åõ¿µ / w */
+    /* ì¢Œí‘œë³€í™˜ì€ í‹€ë¦°ê±° ì—†ê³ .. */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·° * íˆ¬ì˜ / w */
     vector vPosition;
     vPosition.x = vTexcoord.x * 2.f - 1.f;
     vPosition.y = vTexcoord.y * -2.f + 1.f;
     vPosition.z = vDepthDesc.x;
     vPosition.w = 1.f;
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä * Åõ¿µ  */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·° * íˆ¬ì˜  */
     vPosition = vPosition * fViewZ;
-    /* ·ÎÄÃÀ§Ä¡ * ¿ùµå * ºä  */
+    /* ë¡œì»¬ìœ„ì¹˜ * ì›”ë“œ * ë·°  */
     vPosition = mul(vPosition, ProjMatrixInv);
     
     return vPosition;
@@ -54,59 +59,23 @@ inline float BayerDither(float2 pixelPos)
     uint y = (uint) pixelPos.y & 3; // % 4
 
     uint v = Bayer4x4[y][x]; // 0 ~ 15
-    return (v + 0.5f) / 16.0f; // 0 ~ 1 »çÀÌ °ª
+    return (v + 0.5f) / 16.0f; // 0 ~ 1 ì‚¬ì´ ê°’
 }
 
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
-/*
-        float fSum = 0.0f;
-    
     float2 vTexcoord;
     
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
-    // ÅØ¼¿ »çÀÌÁî´Â Ä³½ºÄÉÀÌµå ÇØ»óµµ¿¡ ¸ÂÃç¾ß ÇÔ
-    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f) * 2.f;
-
-    // 0 ~ 1 »çÀÌ·Î Á¤±ÔÈ­µÈ ±íÀÌ¿¡¼­ ºñ±³ÇÏ´Ï±î..
-    float fBias = 0.0002f;
-
-    // Ä³½ºÄÉÀÌµå ¹ÛÀÌ¸é shadow Àû¿ëÇÏÁö ¾ÊÀ½
-    if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
-        return 1.f;
-
-    [unroll]
-    for (int iX = -1; iX <= 1; ++iX)
-    {
-        [unroll]
-        for (int iY = -1; iY <= 1; ++iY)
-        {
-            float2 vOffset = float2(iX, iY) * vTexel;
-            vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord + vOffset, iSlice));
-            // Åõ¿µÇà·Ä±îÁö¸¸ °öÇß´Ù¸é w¿¡ ºä½ºÆäÀÌ½º »óÀÇ z°ª ³²¾ÆÀÖÀ»°Å°í,
-            // ±×¸²ÀÚ¿£ Far·Î Á¤±ÔÈ­ÇÑ 0~1»çÀÌ °ªÀÎ ºä ½ºÆäÀÌ½º »óÀÇ z°¡ ÀÖÀ¸´Ï±î ¾ì ´Ù½Ã far °öÇØ¼­ ¿¬»ê. 
-            fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
-        }
-    }
-
-    fSum /= 9.0f;
-    return lerp(1.0f, 0.6f, fSum);
-    */
-   
-    float2 vTexcoord;
-    
-    vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
-    vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
-
-    // ÅØ¼¿ »çÀÌÁî´Â Ä³½ºÄÉÀÌµå ÇØ»óµµ¿¡ ¸ÂÃç¾ß ÇÔ
+    // í…ì…€ ì‚¬ì´ì¦ˆëŠ” ìºìŠ¤ì¼€ì´ë“œ í•´ìƒë„ì— ë§ì¶°ì•¼ í•¨
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
-    // 0 ~ 1 »çÀÌ·Î Á¤±ÔÈ­µÈ ±íÀÌ¿¡¼­ ºñ±³ÇÏ´Ï±î..
-    float fBias = 0.0008f;
+    // 0 ~ 1 ì‚¬ì´ë¡œ ì •ê·œí™”ëœ ê¹Šì´ì—ì„œ ë¹„êµí•˜ë‹ˆê¹Œ..
+    float fBias = 0.00007f;
 
-    // Ä³½ºÄÉÀÌµå ¹ÛÀÌ¸é shadow Àû¿ëÇÏÁö ¾ÊÀ½
+    // ìºìŠ¤ì¼€ì´ë“œ ë°–ì´ë©´ shadow ì ìš©í•˜ì§€ ì•ŠìŒ
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
         return 1.f;
             
@@ -123,15 +92,15 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     float fSum = 0.0f;
-    float fBias = 0.0008f;
+    float fBias = 0.00007f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;
     
     //_uint2 m_vStaticShadowMapSize = { 16384, 8192 };
-    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f) * 2.f; // ±×¸²ÀÚ¸Ê ÇØ»óµµ¿¡ ¸Â°Ô Á¶Á¤
+    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f) * 2.f; // ê·¸ë¦¼ìë§µ í•´ìƒë„ì— ë§ê²Œ ì¡°ì •
 
-    // PCF 3x3 »ùÇÃ
+    // PCF 3x3 ìƒ˜í”Œ
     for (int x = -1; x <= 1; ++x)
     {
         for (int y = -1; y <= 1; ++y)
@@ -142,8 +111,8 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
         }
     }
     
-    fSum /= 9.0f; // Æò±Õ (3x3)
-    return lerp(1.0f, 0.5f, fSum); // ±×¸²ÀÚ °­µµ Àû¿ë
+    fSum /= 9.0f; // í‰ê·  (3x3)
+    return lerp(1.0f, 0.5f, fSum); // ê·¸ë¦¼ì ê°•ë„ ì ìš©
     
     
     //################################# NONE PCF
@@ -165,7 +134,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)
 {
-    // ºí·¯ ¿¬»ê
+    // ë¸”ëŸ¬ ì—°ì‚°
     float4 vBlurColor = BlurTexture.Sample(DefaultSampler, vTexcoord);
     
     return vBlurColor;
@@ -173,7 +142,7 @@ inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)
 
 inline float4 Calc_Glow(texture2D GlowTexture, float2 vTexcoord)
 {
-    // ºí·¯ ¿¬»ê
+    // ë¸”ëŸ¬ ì—°ì‚°
     float4 vGlowColor = GlowTexture.Sample(DefaultSampler, vTexcoord);
     
     return vGlowColor;
@@ -215,7 +184,7 @@ float4 Calc_VolumeFog(vector vBackBuffer, texture2D FogTexture , float2 vTexCoor
     return float4(vResult, vBackBuffer.a);
 }
 
-/* ºí·ë Ä¿ºê ¼ö½Ä 3°³. HALO3 ¿¡¼­ ³ª¿Ô´Ù´Âµ¥ ÀÏ´Ü °¡Á®¿È..*/
+/* ë¸”ë£¸ ì»¤ë¸Œ ìˆ˜ì‹ 3ê°œ. HALO3 ì—ì„œ ë‚˜ì™”ë‹¤ëŠ”ë° ì¼ë‹¨ ê°€ì ¸ì˜´..*/
 float GetBloomCurve(float fIntensity)
 {
     float fResult = fIntensity;
@@ -248,20 +217,20 @@ float Geometry_SchlickGGX(float NdotV, float fK)
 float Geometry_Smith(float3 vNormal, float3 vFromView, float3 vFromLight, float k)
 {
     // Geometry Obstruction     
-    // Ã¶ÀÌ ÀÖ´Â, ÁÖ·Î Æ¢¾î³ª¿Â Àå¾Ö¹°
+    // ì² ì´ ìˆëŠ”, ì£¼ë¡œ íŠ€ì–´ë‚˜ì˜¨ ì¥ì• ë¬¼
     float NdotV = saturate(dot(vNormal, vFromView));
     
     // Geometry Shadowing       
-    // ¿ä°¡ ÀÖ´Â, ÁÖ·Î À½Ç« µé¾î°£ Àå¾Ö¹° (±×·¡¼­ ¼ÎµµÀ×)
+    // ìš”ê°€ ìˆëŠ”, ì£¼ë¡œ ìŒí‘¹ ë“¤ì–´ê°„ ì¥ì• ë¬¼ (ê·¸ë˜ì„œ ì…°ë„ì‰)
     float NdotL = saturate(dot(vNormal, vFromLight));
 
-    // ¿äÃ¶ÀÌ °ñ°í·ç ÀÖ´Ù°í °¡Á¤ÇÏ°í Àû´çÈ÷ ¼¯À½
+    // ìš”ì² ì´ ê³¨ê³ ë£¨ ìˆë‹¤ê³  ê°€ì •í•˜ê³  ì ë‹¹íˆ ì„ìŒ
     return Geometry_SchlickGGX(NdotV, k) * Geometry_SchlickGGX(NdotL, k);
 }
 
 float3 Fresnel_Schlick(float cosTheta, float3 F0)
 {
-    // ¸ğ¼­¸® ºÎºĞÀÇ ¹İ»ç
+    // ëª¨ì„œë¦¬ ë¶€ë¶„ì˜ ë°˜ì‚¬
     return F0 + (1.0f - F0) * pow(1.0f - cosTheta, 5.0f);
 }
 
@@ -275,11 +244,11 @@ PS_OUT_LIGHT PBR_Light(
     Out.vSpecular = 0;
     
     float3 vHalf = normalize(vFromView + vFromLight);
-    float fNdotL = saturate(dot(vNormal, vFromLight));
-    float fNdotV = saturate(dot(vNormal, vFromView));
+    float fNdotL = saturate(dot(vNormal, vFromLight)); // ì¡°ëª… ìª½
+    float fNdotV = saturate(dot(vNormal, vFromView)); // ì¹´ë©”ë¼ ìª½
 
-    // Roughness floor (ÀÚ±Û°Å¸² ¹æÁö)
-    fRoughness = max(fRoughness, 0.6f);
+    // Roughness floor (ìê¸€ê±°ë¦¼ ë°©ì§€)
+    fRoughness = max(fRoughness, 0.4f);
     float fAlpha = max(fRoughness * fRoughness, 0.36f);
     float fK = ((fRoughness + 0.5f) * (fRoughness + 0.5f)) / 8.f;
 
@@ -293,32 +262,37 @@ PS_OUT_LIGHT PBR_Light(
     float fDenom = max(4.f * fNdotL * fNdotV, 1e-7);
     float3 vSpecBRDF = vNumerator / fDenom;
 
-    float fSpecBoostMetal = lerp(1.0f, 4.0f, saturate(fMetallic)); 
-    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic); 
-
-    // ºñ±İ¼ÓÀÌ¸é ¾àÇÏ°Ô, ±İ¼ÓÀÌ¸é ¸Å¿ì °­ÇÏ°Ô
-    float fFinalSpecBoost = lerp(fSpecBoostNonMetal, fSpecBoostMetal, fMetallic);
-    vSpecBRDF *= fFinalSpecBoost;
-
-    // ½ºÆäÅ§·¯ µğÇ»Áî ÁÙÀÌ±â
+    // ìŠ¤í˜í˜ëŸ¬ ë””í“¨ì¦ˆ ì¤„ì´ê¸°
     float3 vKS = vF;
 
-    float fNonMetalFactor = 1.0f - fMetallic;
-    // ºñ±İ¼Ó ÂÊÀº ±×´ë·Î, ¸ŞÅ»¸¯ ÂÊÀº ´õ »¡¸® Á×µµ·Ï Á¦°ö
-    fNonMetalFactor *= fNonMetalFactor;
-
+    // ===== Base Diffuse (ê¸°ì¡´ ë¹„ê¸ˆì† ë¡œì§) =====
+    //float fNonMetalFactor = 1.0f - fMetallic;
+    //fNonMetalFactor *= fNonMetalFactor;
+    float fNonMetalFactor = lerp(1.0f, 0.2f, fMetallic);
+    
     float3 vKD = (1.f - vKS) * fNonMetalFactor;
     vKD *= 0.8f;
 
-    // ºñ±İ¼Ó ¹İ»ç ¾àÇÏ°Ô º¸Á¤
+    // ===== Metallic diffuse floor =====
+    // ê¸ˆì†ì—ì„œë„ ì™„ì „íˆ 0ìœ¼ë¡œ ì£½ì§€ ì•Šë„ë¡ ë””í“¨ì¦ˆë¥¼ ì¡°ê¸ˆ ë‚¨ê¹€
+    float fMetalDiffuseFloor = 0.20f; 
+    float fMetalBlend = smoothstep(0.4f, 1.0f, fMetallic);
+
+    // vKDê°€ 0ìœ¼ë¡œ ìˆ˜ë ´í• ìˆ˜ë¡ floor ê°’ ìª½ìœ¼ë¡œ ë³´ì •
+    float3 vKDMetal = lerp(vKD, fMetalDiffuseFloor.xxx, fMetalBlend);
+
+    // ê¸ˆì†ë§Œ ë³´ì •, ë¹„ê¸ˆì†ì€ ì›ë˜ ê°’ ìœ ì§€
+    vKD = lerp(vKD, vKDMetal, fMetalBlend);
+
+    // ë¹„ê¸ˆì† ë°˜ì‚¬ ì•½í•˜ê²Œ ë³´ì •
     if (fMetallic < 0.1f)
     {
-        vSpecBRDF *= 0.4f; // ºñ±İ¼Ó ¡æ ¹İ»ç±¤ ¾àÈ­
-        vKD *= 1.1f; // ¹İ»ç ÁÙ¾úÀ¸´Ï ¾Ëº£µµ Á¶±İ º¸Á¤
+        vSpecBRDF *= 0.4f;
+        vKD *= 1.1f;
     }
 
-    // ¿ª±¤ µğÇ»Áî °­È­
-    float fBackLight = saturate(dot(vNormal, -vFromLight)); // µÚ¿¡¼­ ºñÄ¡´Â Á¶¸í
+    // --------- ì—­ê´‘ ë””í“¨ì¦ˆ ê°•í™” (ì›ë˜ ì½”ë“œ ìœ ì§€) ----------
+    float fBackLight = saturate(dot(vNormal, -vFromLight)); // ë’¤ì—ì„œ ë¹„ì¹˜ëŠ” ì¡°ëª…
     float fBackBoost = smoothstep(0.f, 1.0f, fBackLight);
     
     float fBackBoostForDiffuse = fBackBoost * (1.0f - fMetallic);
@@ -326,31 +300,53 @@ PS_OUT_LIGHT PBR_Light(
 
     vKD *= fBackDiffuseBoost;
 
-    // Á÷Á¢±¤ µğÇ»Áî
+    // NdotL ë‚®ì€ ì–´ë‘ìš´ ë©´ì—ì„œëŠ” ìŠ¤í™ ì ì  0ìœ¼ë¡œ
+    float fLightSideMask = smoothstep(0.1f, 0.35f, fNdotL);
+    // NdotV ë‚®ì€ ì‹¤ë£¨ì—£(ê°€ì¥ìë¦¬)ì—ì„œë„ ìŠ¤í™ ì¤„ì´ê¸°
+    float fViewSideMask = smoothstep(0.1f, 0.30f, fNdotV);
+    // ë‘˜ ë‹¤ ë§Œì¡±í•˜ëŠ” ì˜ì—­(= ì •ë©´ì— ê°€ê¹ê³  ë°ì€ ë©´)ì—ì„œë§Œ ìŠ¤í™ ê°•í•˜ê²Œ
+    float fSpecMask = fLightSideMask * fViewSideMask;
+
+    // FinalSpecBoostë„ ì´ ë§ˆìŠ¤í¬ ì•ˆì—ì„œë§Œ ë¨¹ê²Œ
+    float fSpecBoostMetal = lerp(1.0f, 3.0f, saturate(fMetallic));
+    float fSpecBoostNonMetal = lerp(0.1f, 1.0f, fMetallic);
+    float fFinalSpecBoost = lerp(fSpecBoostNonMetal, fSpecBoostMetal, fMetallic);
+
+    float fSpecBoost = lerp(1.0f, fFinalSpecBoost, fSpecMask);
+
+    // ê¸°ë³¸ GGX ìŠ¤í™ + ë¶€ìŠ¤íŠ¸ ë‘˜ ë‹¤ ì—­ê´‘/ì‹¤ë£¨ì—£ì—ì„œ ê°™ì´ ê°ì‡ 
+    vSpecBRDF *= fSpecBoost * fSpecMask;
+
+    // ì§ì ‘ê´‘ ë””í“¨ì¦ˆ
     Out.vShade = float4((vKD * vAlbedo) * (fNdotL * fAttenuation) * vLightColor, 1.f);
 
-    // È¯°æ±¤(SSAO Àû¿ë)
+    // í™˜ê²½ê´‘(SSAO ì ìš©)
+    float fMetalAmbFloor = 0.25f;
+    float fAmbMetalMask = lerp(1.0f, fMetalAmbFloor, fMetallic);
+    
     float3 vDiffuseAmb = vAlbedo * lerp(0.2f, 0.5f, 1 - fRoughness);
-    vDiffuseAmb *= (1 - fMetallic) * fSSAO;
+    vDiffuseAmb *= fAmbMetalMask * fSSAO;
+    
     Out.vShade.xyz += vDiffuseAmb;
 
-    // Á÷Á¢ ½ºÆäÅ§·¯
+    // ì§ì ‘ ìŠ¤í˜í˜ëŸ¬
     Out.vSpecular = float4(vSpecBRDF * vLightColor * fAttenuation * fNdotL, 1.f);
 
-    // ¾Úºñ¾ğÆ® ½ºÆäÅ§·¯
+    // ì•°ë¹„ì–¸íŠ¸ ìŠ¤í˜í˜ëŸ¬ë„ ê°™ì€ ë§ˆìŠ¤í¬ë¡œ ì¤„ì—¬ì„œ ì‹¤ë£¨ì—£ í•˜ì–€ í…Œë‘ë¦¬ ì œê±°
     float3 vFAmb = Fresnel_Schlick(saturate(dot(vNormal, vFromView)), vF0);
     float3 vAmbientSpec = vFAmb * lerp(0.02f, 0.08f, fMetallic) * (1 - fRoughness * fRoughness);
+    vAmbientSpec *= fSpecMask;
     Out.vSpecular.xyz += vAmbientSpec;
 
-    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView)); 
-    float fRimMask = (1.0f - fMetallic) * fBackLight * fViewEdge;
+    // (ì˜µì…˜) ë¦¼ ìŠ¤í™ì€ ì¼ë‹¨ êº¼ë‘” ìƒíƒœ ìœ ì§€
+    float fViewEdge = saturate(1.0f - dot(vNormal, vFromView));
+    float fRimMask = (1.0f - fMetallic) * fViewEdge * fBackLight;
 
     float3 vRimF = Fresnel_Schlick(fViewEdge, vF0);
     float fRimIntensity = 1.5f;
-
     float3 vRimSpec = vRimF * fRimIntensity * fRimMask;
 
-    Out.vSpecular.xyz += vRimSpec * vAlbedo * fAttenuation;
+    //Out.vSpecular.xyz += vRimSpec * vAlbedo * fAttenuation;
     
     return Out;
 }

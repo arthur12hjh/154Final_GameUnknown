@@ -37,6 +37,8 @@ public:
 	
 	void												Reset_SocketMatrix(_float4x4* pSocketMatrix = nullptr);
 	void												Set_Render(_bool isActive) { SetActive(isActive); }
+	//골반 본을 기준으로 한 시네마틱 객체의 위치를 가져온다.
+	_matrix												Get_CinematicWorldPos();
 
 private:
 	_wstring											m_szModelTag;

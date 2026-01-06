@@ -256,6 +256,9 @@
 
 #include "UINeonNumber.h"
 #include "UIScore.h"
+#include "UIResult.h"
+#include "UISongSelector.h"
+#include "UITriggerKey.h"
 
 #pragma endregion
 
@@ -589,9 +592,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair_MS.binx");
 	//잠깐바꿔놓음
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_v3.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_short.binx");
 
 	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
@@ -1082,7 +1085,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Texture_Reed_Mask");
-	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1);
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png"), 1);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1515,7 +1518,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 
 	/* For.Prototype_Component_Shader_VtxTrail */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Shader_VtxTrail");
-	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	PrototypeDesc.pPrototype = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTrailEffect.hlsl"), VTXTRAIL::Elements, VTXTRAIL::iNumElements);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	m_pGameManager->Add_Shader(m_eNextLevelID, PrototypeDesc.szPrototypeName, static_cast<CShader*>(PrototypeDesc.pPrototype));
 
@@ -8443,6 +8446,13 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
 
+	/* For.Prototype_Component_UI_Texture_Overlay */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Overlay");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_NeonNumber */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_NeonNumber");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/NeonNumber/Neon_Number.png"), 1);
@@ -8464,6 +8474,78 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Score */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Score");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/ETC/Score.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Rank */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Rank");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Rank/Rank_%d.png"), 5);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Result_BG */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Result_BG");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/Result_BG_%d.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Song_Thumbnail */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Song_Thumbnail");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Thumbnail/Song_Thumbnail_%d.dds"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Song_Selector_BG */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Song_Selector_BG");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Selector/Song_Selector_BG_%d.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Interaction_Key */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Key");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/KeyIcon_%d.dds"), 6);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Interaction_Hold_Gauge */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Hold_Gauge.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Interaction_FX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Interaction_FX");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/Interaction/Interaction_FX_%d.dds"), 3);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Song_Selector_Arrows */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Song_Selector_Arrows");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Selector/Song_Selector_Arrows.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_Song_Selected */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Song_Selected");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Selector/Song_Selected.dds"), 1);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/*===========================================================================================*/
+
 	/* For.Prototype_GameObject_UI_NeonNumber */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_NeonNumber");
 	pProtoDesc.pPrototype = CUINeonNumber::Create(m_pDevice, m_pContext);
@@ -8477,6 +8559,57 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_Song_Selector */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Song_Selector");
+	pProtoDesc.pPrototype = CUISongSelector::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_TriggerKey */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_TriggerKey");
+	pProtoDesc.pPrototype = CUITriggerKey::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_InteractionFX */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_InteractionFX");
+	pProtoDesc.pPrototype = CUIInteractionFX::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_GameObject_UI_Result */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Result");
+	pProtoDesc.pPrototype = CUIResult::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/*===========================================================================================*/
+
+	///* For.Prototype_GameObject_UI_Panel */
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Panel");
+	//pProtoDesc.pPrototype = CUIPanel::Create(m_pDevice, m_pContext);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//
+	///* For.Prototype_GameObject_UI_Wrapper */
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Wrapper");
+	//pProtoDesc.pPrototype = CUIWrapper::Create(m_pDevice, m_pContext);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
+	//
+	///* For.Prototype_GameObject_UI_Image */
+	//pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Image");
+	//pProtoDesc.pPrototype = CUIImage::Create(m_pDevice, m_pContext);
+	//if (nullptr == pProtoDesc.pPrototype)
+	//	return E_FAIL;
+	//Desc->pAddObejct.push_back(pProtoDesc);
 
 	return S_OK;
 }

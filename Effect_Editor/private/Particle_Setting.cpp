@@ -1125,10 +1125,10 @@ void CParticle_Setting::Update(_float fTimeDelta)
     }
     if (3 == m_iSelectMeshParticle) {
 
-        m_pTransform->Set_State(STATE::RIGHT, m_pTrailEffect->GetTransform()->Get_State(STATE::RIGHT));
-        m_pTransform->Set_State(STATE::UP, m_pTrailEffect->GetTransform()->Get_State(STATE::UP));
-        m_pTransform->Set_State(STATE::LOOK, m_pTrailEffect->GetTransform()->Get_State(STATE::LOOK));
-        m_pTransform->Set_State(STATE::POSITION, m_pTrailEffect->GetTransform()->Get_State(STATE::POSITION));
+        //m_pTransform->Set_State(STATE::RIGHT, m_pTrailEffect->GetTransform()->Get_State(STATE::RIGHT));
+        //m_pTransform->Set_State(STATE::UP, m_pTrailEffect->GetTransform()->Get_State(STATE::UP));
+        //m_pTransform->Set_State(STATE::LOOK, m_pTrailEffect->GetTransform()->Get_State(STATE::LOOK));
+        //m_pTransform->Set_State(STATE::POSITION, m_pTrailEffect->GetTransform()->Get_State(STATE::POSITION));
         ImGui::InputText("File", m_SaveFile, IM_ARRAYSIZE(m_SaveFile));
         if (ImGui::Button("Save", btn)) {
             Save_TrailBinary(m_SaveFile);

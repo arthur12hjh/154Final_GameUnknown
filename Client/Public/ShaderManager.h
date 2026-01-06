@@ -21,6 +21,30 @@ NS_BEGIN(Client)
 class CShaderManager : public CBase
 {
 private:
+	typedef struct tagScarletPhase2Cache {
+		// Directional
+		_float4 vDirDiffuseStart;
+
+		// Fog
+		_float4 vFogColorStart;
+		_float  fFogEndStart;
+		_float  fFogPowerMinStart;
+		_float  fFogPowerMaxStart;
+		_float  fSkyboxFogPowerStart;
+
+		// Volume Fog
+		_float  VolAsymmetryStart;
+		_float  VolDensityStart;
+		_float  VolIntensityStart;
+		_float  VolNoiseContrastStart;
+		_float  VolNoiseScaleStart;
+		_float  VolNoiseStrengthStart;
+		_float  VolStartDistanceStart;
+		_float4 VolFogAmbientStart;
+		_float4 VolLightColorStart;
+	} SCARLET_PHASE2_LERP_CACHE;
+
+private:
 	CShaderManager();
 	virtual ~CShaderManager() = default;
 
@@ -43,6 +67,8 @@ public:
 	/* 파일 입출력으로 하는게 좋을거같긴한데 */
 	/* 시간없어서 일단 Switch문으로 변환 */
 	void Change_ShaderSetting(LEVEL eLevelID, _uint iIdx = 0);
+	void Set_CinematicLights(_uint iFlag);
+
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	map<_wstring, class CShader*>* m_Shaders = {};
@@ -58,13 +84,30 @@ private:
 	LIGHT_DESC* m_pDirectionalLightDesc = { nullptr };
 	VOLUMEFOG_DESC* m_pVolumeFogDesc = { nullptr };
 
-	vector<class CTargetLight*> m_TargetLights = {};
+	//플레이어, 홍련용 타겟 라이트
+	map<_wstring, class CTargetLight*> m_TargetLights = {};
+	//시네마틱 모델들 전용 타겟 라이트
+	vector<class CTargetLight*> m_CinematicTargetLights = {};
+
+	class CNaytiba* m_pScarlet = { nullptr };
+	class CPlayer*  m_pPlayer = { nullptr };
+	class CEffect*	m_pMapEffect = { nullptr };
+	//달은 빨갛게 해줘야지
+	class CMoon*	m_pMoon = { nullptr };
+
+	//홍련 2페이즈 넘어갈때 Lerp용
+	_bool m_isScarletPhase2LerpTriggerOn = { false };
+	_float m_fScarletPhase2LerpTime = { 1.f };
+	_float m_fScarletPhase2LerpTimeAcc = { 0.f };
+
+	SCARLET_PHASE2_LERP_CACHE m_ScarletPhase2LerpCache;
 
 private:
 	void Load_Desert_ShaderSettings();
 	void Load_Scarlet_ShaderSettings();
 	void Load_TargetLights();
-	void Load_Scarlet_Phase2_ShaderSettings();
+	void Load_Scarlet_Phase2_ShaderSettings(_float fTimeDelta);
+	void Load_Scarlet_BattleEnd_ShaderSettings();
 
 	/* 홍련맵 셰이더 */
 	/*

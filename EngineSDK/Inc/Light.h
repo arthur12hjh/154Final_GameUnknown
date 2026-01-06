@@ -19,7 +19,7 @@ private:
 
 public:
 	
-	void			  Set_Position(_vector vPos) { XMStoreFloat4(&m_LightDesc.vPosition, vPos); }
+	void			  Set_Position(_vector vPos);
 	void			  Set_Range(_float fRange) { m_LightDesc.fRange = fRange; }
 	void			  Set_Diffuse(_vector vDiffuse) { XMStoreFloat4(&m_LightDesc.vDiffuse, vDiffuse); }
 

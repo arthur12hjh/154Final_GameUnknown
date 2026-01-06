@@ -40,6 +40,12 @@ HRESULT CTrailData::Render()
 	return S_OK;
 }
 
+HRESULT CTrailData::Render_MotionBlur()
+{
+	m_pTrail->Render(this);
+	return S_OK;
+}
+
 void CTrailData::Set_Data(TRAIL_DATA tData)
 {
 	m_tData = tData;

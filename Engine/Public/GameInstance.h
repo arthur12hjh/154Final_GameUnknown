@@ -179,7 +179,7 @@ public:
 #pragma endregion
 
 #pragma region LIGHT_MANAGER
-	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight*	pOutLight = nullptr);
+	HRESULT								Add_Light(const LIGHT_DESC& LightDesc, class CLight**  pOutLight = nullptr);
 	HRESULT								Render_Lights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	HRESULT								Render_VolumetricLights(class CShader* pShader, class CVIBuffer* pVIBuffer);
 	class CLight*						Find_Light(_uint iIndex);
@@ -195,7 +195,7 @@ public:
 
 #pragma region FONT_MANAGER
 	HRESULT						Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
-	HRESULT						Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f ,1.f), _float fScale = 1.f);
+	HRESULT						Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f ,1.f), _float fScale = 1.f, _float2 vOrigin = _float2(0.f, 0.f));
 	_float2						Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace = true, float fScale = 1.f);
 #pragma endregion
 

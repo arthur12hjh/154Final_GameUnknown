@@ -36,6 +36,8 @@ public:
 	HRESULT						Skip_Cinematic();
 	_bool						Is_CinematicPlaying() const { return m_bIsCinematicPlaying; }
 
+	map<_wstring, CCinematicObject*>* Get_CinematicObjectsMap();
+
 private:
 	CGameInstance*				m_pGameInstance = { nullptr };
 	class CPlayer*				m_pPlayer = { nullptr };

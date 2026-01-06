@@ -27,7 +27,7 @@ private:
 	_float4			m_vLow = { 0.f, 0.f, 0.f, 1.f };
 	ID3D11Buffer*	m_pVB = { nullptr };
 	ID3D11Buffer*	m_pIB = { nullptr };
-	VTXPOSTEX*		m_pVTXPOSTEXs = { nullptr };
+	VTXTRAIL*		m_pVTXTrails = { nullptr };
 	_vector*		m_pPostions = { nullptr };
 	_uint			m_iNumPositionPresent = {};
 	_uint			m_iNumPresent = {};
@@ -35,6 +35,7 @@ private:
 	_uint			m_iNumPositions = {};
 	_uint			m_iNumVertices = {};
 	_uint			m_iNumIndices = {};
+	_uint			m_iNumRemove = {};
 	_float			m_fTime = {};
 
 	_float4			m_vPreHighPositions[3]{};

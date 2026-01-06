@@ -135,7 +135,7 @@ CLight_Manager::CLight_Manager()
 }
 #endif // _DEBUG
 
-HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight)
+HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight** pOutLight)
 {
     CLight* pLight = nullptr;
 #ifdef _DEBUG
@@ -148,8 +148,8 @@ HRESULT CLight_Manager::Add_Light(const LIGHT_DESC& LightDesc, CLight* pOutLight
 
     if (pOutLight)
     {
-        pOutLight = pLight;
-        Safe_AddRef(pOutLight);
+        *pOutLight = pLight;
+        Safe_AddRef(pLight);
     }
 
     m_Lights.push_back(pLight);

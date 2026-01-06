@@ -64,6 +64,10 @@ void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Close_Result();
 	}
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Open_Song_Selector();
+	}
 
 	/*if (m_isOverlay && m_pHUD)
 	{
@@ -115,12 +119,15 @@ HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 
 	SetHUD(pUIHUD);
 
-	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_GARA"))))
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Overlay"))))
+		return E_FAIL;
+	
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Song_Selector"))))
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
 		return E_FAIL;
-
+	
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Result"))))
 		return E_FAIL;
 
