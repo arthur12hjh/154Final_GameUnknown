@@ -36,6 +36,8 @@ public:
 	_vector						Get_LockOnPoint();
 
 	// 실질적인 락온 로직이 들어가있음. 락온 모드일때 세팅해주는 함수.
+	void						Force_Lockon(_float fTimeDelta);
+	void						Force_LockOff();
 	void						Lockon(_float fTimeDelta);
 	void						Start_Lockon();
 	void						Check_LinkAttack();

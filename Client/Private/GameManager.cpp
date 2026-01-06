@@ -301,6 +301,16 @@ _bool CGameManager::Get_Lockon()
     return m_pLockonManager->Get_Lockon();
 }
 
+void CGameManager::Force_Lockon(_float fTimeDelta)
+{
+    m_pLockonManager->Force_Lockon(fTimeDelta);
+}
+
+void CGameManager::Force_LockOff()
+{
+    m_pLockonManager->Force_LockOff();
+}
+
 #pragma endregion
 
 #pragma region Pool Manager
