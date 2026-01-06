@@ -313,11 +313,15 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
 {
     PS_OUT_LIGHT Out;
     
+    float4 vAlbedo = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.0f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * g_fFar;
+    
+    float4 vORMDesc = g_ORMTexture.Sample(DefaultSampler, In.vTexcoord);
     
     vector vPosition;
     
@@ -339,7 +343,15 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     vector vLightToPixel = vPosition - g_vLightPos;
     float fDistance = length(vLightToPixel);
     
-    //
+    // 노멀벡터
+    float3 N = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    // 카메라 -> 위치
+    float3 V = normalize((vPosition - g_vCamPosition).xyz);
+    // 위치 -> 빛
+    vector LOrigin = (vPosition - g_vLightPos) * -1.f;
+    // 정규화한 위치 -> 빛 벡터
+    vector L = normalize(LOrigin);
+    
     float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
     
     // 각도 감쇠
@@ -370,15 +382,64 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     
     float fFinalAtt = fAtt * fSpotAtt;
     
+    //pbr 적용하면서 변수이름좀 바꿧습니다 
+    /*    
     vector vSurfaceNormal = normalize(vNormal);
     vector vViewDir = normalize(vPosition - g_vCamPosition) * -1.f;
-    vector vReflect = reflect(vLightDir, vSurfaceNormal);
+    vector vReflect = reflect(vLightDir, vSurfaceNormal);   
+    */ 
+  
+    float AO = vORMDesc.r;
+    float Rough = vORMDesc.g;
+    float MetalSrc = vORMDesc.b;
+    float A = vORMDesc.a;
+
+    float Metallic = 0.f;
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
     
-    //vector vLook = vPosition - g_vCamPosition;
-    //vector vReflect = reflect(normalize(vLightDir), vNormal);
+    bool isPBR = (AO != 0.f || Rough != 0.f || MetalSrc != 0.f || A != 0.f);
+    bool isORSS = isPBR && (A > 0.f);
+    bool isORM = isPBR && (A == 0.f);
+
+    // Phong
+    if (!isPBR)
+    {
+        float fNdotL = dot(N, L.xyz);
+        float3 vReflect = reflect(-L.xyz, N);
+   
+        Out.vShade = fFinalAtt * (g_vLightDiffuse * saturate(max(fNdotL, 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
+        Out.vSpecular = fFinalAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(V * -1.f, normalize(vReflect)), 0.f), 50.f));
     
-    Out.vShade = fFinalAtt * (g_vLightDiffuse * saturate(max(dot(vSurfaceNormal, vLightDir), 0.f) + (g_vLightAmbient * g_vMtrlAmbient)));
-    Out.vSpecular = fFinalAtt * ((g_vLightSpecular * g_vMtrlSpecular) * pow(max(dot(vViewDir, vReflect), 0.f), 50.f));
+        return Out;
+    }
+
+    // ORSS(피부)
+    if (isORSS)
+    {
+        AO = vORMDesc.r;
+        Rough = vORMDesc.g;
+        float specFactor = saturate(vORMDesc.b);
+        Metallic = 0.f;
+
+        float3 baseF0 = float3(0.028f, 0.028f, 0.028f);
+        F0 = baseF0 + specFactor * 0.05f;
+    }
+    // ORM (orm 마스크) 
+    else if (isORM)
+    {
+        AO = vORMDesc.r;
+        Rough = vORMDesc.g;
+        Metallic = saturate(vORMDesc.b);
+        F0 = lerp(float3(0.04f, 0.04f, 0.04f), vAlbedo.rgb, Metallic);
+    }
+
+    float AOStr = lerp(1.0f, 1.2f, AO);
+    Out = PBR_Light(N, -V, L.xyz, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
+    
+    Out.vShade *= fFinalAtt;
+    Out.vSpecular *= fFinalAtt;
+    
+    Out.vShade.rgb *= AOStr;
     
     return Out;
 }
