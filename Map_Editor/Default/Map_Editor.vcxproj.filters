@@ -256,6 +256,9 @@
     <Filter Include="02.GameObjects\Maps\Dororong_Saber\Beat_Indicator">
       <UniqueIdentifier>{5f5dc749-562b-4ce5-9e0b-18e646fda969}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Dororong_Saber\Dororong_Box">
+      <UniqueIdentifier>{01260953-ea8b-4d68-9124-f523f3560f7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -602,6 +605,9 @@
     <ClInclude Include="..\public\Dororong_Saber.h">
       <Filter>02.GameObjects\Maps\Dororong_Saber</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DororongBox.h">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -931,6 +937,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Dororong_Saber.cpp">
       <Filter>02.GameObjects\Maps\Dororong_Saber</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DororongBox.cpp">
+      <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

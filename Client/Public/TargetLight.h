@@ -21,6 +21,7 @@ public:
 	typedef struct tagTargetLightDesc {
 		LIGHT_DESC tLightDesc = {};
 		class CGameObject* pTarget = { nullptr };
+		_bool      isCinematic = { false };
 	} TARGETLIGHT_DESC;
  
 private:
@@ -38,10 +39,11 @@ public:
 
 private:
 	//외부에서 조절해주려면 들고있긴 해야하니까..
-	CLight* m_pLightCom = { nullptr };
-	CGameObject* m_pTarget = { nullptr };
-	_bool		m_isActive = { true };
 	class CGameInstance* m_pGameInstance = { nullptr };
+	CGameObject* m_pTarget = { nullptr };
+	CLight*		 m_pLightCom = { nullptr };
+	_bool		 m_isActive = { true };
+	_bool        m_isCinematic = { false };
 
 private:
 	HRESULT Setting_Desc(TARGETLIGHT_DESC* pDesc);

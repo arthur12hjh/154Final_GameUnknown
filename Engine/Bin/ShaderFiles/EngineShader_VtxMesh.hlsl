@@ -1,6 +1,17 @@
 #include "Engine_Shader_Defines.hlsli"
+#include "Shader_Compute_CombinedMatrices.hlsl"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+
+Texture2D           g_DiffuseTexture;
+Texture2D           g_ORMTexture;
+Texture2D           g_NormalTexture;
+
+float               g_vStartColor;
+float               g_vEndColor;
+matrix              g_OffsetMatrices[512];
+
+StructuredBuffer<BoneTransformMatrix>           g_BoneMatrixBuffer : register(t18);
 
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
@@ -12,6 +23,7 @@ struct VS_IN
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
     float2 vTexcoord : TEXCOORD0;
+
 };
 
 struct VS_OUT

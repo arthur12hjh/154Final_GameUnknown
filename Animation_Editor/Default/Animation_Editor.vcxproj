@@ -159,6 +159,7 @@
     <ClInclude Include="..\Public\Extra.h" />
     <ClInclude Include="..\Public\Face_Character.h" />
     <ClInclude Include="..\Public\Face_Scarlet.h" />
+    <ClInclude Include="..\Public\Facial_Extra.h" />
     <ClInclude Include="..\Public\Gigas.h" />
     <ClInclude Include="..\Public\Glass_Scarlet.h" />
     <ClInclude Include="..\Public\Grid.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="..\Private\Extra.cpp" />
     <ClCompile Include="..\Private\Face_Character.cpp" />
     <ClCompile Include="..\Private\Face_Scarlet.cpp" />
+    <ClCompile Include="..\Private\Facial_Extra.cpp" />
     <ClCompile Include="..\Private\Gigas.cpp" />
     <ClCompile Include="..\Private\Glass_Scarlet.cpp" />
     <ClCompile Include="..\Private\Grid.cpp" />
@@ -267,6 +269,14 @@
     <ResourceCompile Include="Animation_Editor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Eve_Face.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimMesh.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -295,6 +305,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Client_Shader_Utils.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxAnimMesh_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\Client_Shader_VtxMesh_Defines.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

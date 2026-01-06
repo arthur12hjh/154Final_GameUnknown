@@ -187,7 +187,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     }
 
     float AOStr = lerp(1.0f, 1.2f, AO);
-    Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, g_vLightDiffuse.xyz, 1.f, F0, 1.f);
+    Out = PBR_Light(N, -V, L, vAlbedo.rgb, Metallic, Rough, vDepthDesc.z != 1 ? g_vLightDiffuse.xyz : float3(0.5f, 0.5f, 0.5f), 1.f, F0, 1.f);
     Out.vShade.rgb *= AOStr;
 
     // ORSS라면, SSS 추가
@@ -209,8 +209,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // 역광 SSS BackScatter
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f) * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }

@@ -46,6 +46,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_MotionBlur() override;
 	void	Set_Components(TRAIL_DATA tData);
 	void	Update(TRAIL_DATA tData);
 	TRAIL_DATA	Get_Data() { return m_tData; }

@@ -728,7 +728,7 @@ const CAMERA_INFO& CGameInstance::Get_CurrentCamInfo()
 
 #pragma region LIGHT_MANAGER
 
-HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOutLight)
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight** pOutLight)
 {
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
@@ -1226,9 +1226,19 @@ HRESULT CGameInstance::ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, b
 	return m_pBinParser->ReadBinx(pModelFilePath, eType, ppOut);
 }
 
+HRESULT CGameInstance::ReadBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->ReadBinMorph(pModelFilePath, eType, ppOut);
+}
+
 HRESULT CGameInstance::WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
 {
 	return m_pBinParser->WriteBinx(pModelFilePath, eType, ppOut);
+}
+
+HRESULT CGameInstance::WriteBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->WriteBinMorph(pModelFilePath, eType, ppOut);
 }
 
 #pragma endregion

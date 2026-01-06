@@ -112,8 +112,9 @@ void CLevel_Scarlet::FontRender()
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
+	/* 어차피 셰이더 매니저에서 세팅해줌*/
 	LIGHT_DESC			LightDesc{};
-	//방향성 광원 추가 코드.
+
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4(1.05f, 1.02f, 0.93f, 1.f);
 	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
@@ -122,6 +123,8 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 
 	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
 		return E_FAIL;
+
+	Load_Light_Data();
 
 	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
 	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
@@ -134,46 +137,6 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
 	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
-		return E_FAIL;
-
-	/*LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-
-		// 빛 정보 로딩 함수. 나중에 반드시 켜야됩니다
-	Load_Light_Data();
-
-	/*LIGHT_DESC			LightDesc{};
-
-	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.5f, 0.5f, 0.5f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	LightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;*/
-
-	LightDesc.eType = LIGHT_TYPE::POINT;
-	LightDesc.vDiffuse = _float4(1.f, 0.0f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
-	LightDesc.vSpecular = LightDesc.vDiffuse;
-	LightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
-
-	if (FAILED(m_pGameInstance->Add_Light(LightDesc)))
-		return E_FAIL;
-
-	CASCADE_SHADOW_DESC		ShadowDesc{};
-	ShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
-
-	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(ShadowDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -271,8 +234,9 @@ HRESULT CLevel_Scarlet::Ready_Layer_Sky(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
 		return E_FAIL;
 
+	/* 달은 레이어 분리해야됩니다 */
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
-		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
+		ENUM_CLASS(LEVEL::SCARLET), TEXT("Layer_Moon"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -283,7 +247,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 217.f, 52.f, 250.f };
+	Desc.vPosition = { 265.f, 5.f, 70.f };
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 

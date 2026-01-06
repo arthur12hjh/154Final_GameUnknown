@@ -243,6 +243,8 @@ popd</Command>
     <ClInclude Include="..\public\Metaball.h" />
     <ClInclude Include="..\public\Model.h" />
     <ClInclude Include="..\public\MontionTrailComponent.h" />
+    <ClInclude Include="..\Public\MorphAnimation.h" />
+    <ClInclude Include="..\Public\MorphChannel.h" />
     <ClInclude Include="..\Public\MotionBlur.h" />
     <ClInclude Include="..\public\Navigation.h" />
     <ClInclude Include="..\Public\OBBCollider.h" />
@@ -269,6 +271,7 @@ popd</Command>
     <ClInclude Include="..\public\SelectNode.h" />
     <ClInclude Include="..\public\Service.h" />
     <ClInclude Include="..\public\Shader.h" />
+    <ClInclude Include="..\Public\ShapeKey.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\SphereCollider.h" />
     <ClInclude Include="..\public\SquenceNode.h" />
@@ -369,6 +372,8 @@ popd</Command>
     <ClCompile Include="..\private\Metaball.cpp" />
     <ClCompile Include="..\private\Model.cpp" />
     <ClCompile Include="..\private\MontionTrailComponent.cpp" />
+    <ClCompile Include="..\Private\MorphAnimation.cpp" />
+    <ClCompile Include="..\Private\MorphChannel.cpp" />
     <ClCompile Include="..\Private\MotionBlur.cpp" />
     <ClCompile Include="..\private\Navigation.cpp" />
     <ClCompile Include="..\Private\OBBCollider.cpp" />
@@ -394,6 +399,7 @@ popd</Command>
     <ClCompile Include="..\private\SelectNode.cpp" />
     <ClCompile Include="..\private\Service.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
+    <ClCompile Include="..\Private\ShapeKey.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\SphereCollider.cpp" />
     <ClCompile Include="..\private\SquenceNode.cpp" />
@@ -426,6 +432,7 @@ popd</Command>
     <ClCompile Include="..\Private\WaveTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\EngineShader_MotionTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />

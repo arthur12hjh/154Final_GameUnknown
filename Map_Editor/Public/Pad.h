@@ -3,10 +3,6 @@
 #include "Dororong_Saber.h"
 
 NS_BEGIN(Engine)
-class CModel;
-class CShader;
-class CVIBuffer_Cube;
-class CCollider;
 NS_END
 
 NS_BEGIN(Tool_Map)

@@ -2,6 +2,7 @@
 #include "NaytibaBeam_Part.h"
 
 #include "GameInstance.h"
+#include "Character.h"
 
 CNaytibaBeam_Part::CNaytibaBeam_Part(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -93,6 +94,12 @@ HRESULT CNaytibaBeam_Part::Ready_Components()
 
 HRESULT CNaytibaBeam_Part::Bind_ShaderResources()
 {
+    _bool bFlag = static_cast<CCharacter*>(m_pParent)->Get_DepthMaskingB();
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+
     if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
         return E_FAIL;
 

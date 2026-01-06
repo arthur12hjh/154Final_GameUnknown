@@ -235,42 +235,42 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	//m_pSkillData.push(m_pGameManager->Find_SkillData(51));
-	//SelectAttackData();
+	m_pSkillData.push(m_pGameManager->Find_SkillData(29));
+	SelectAttackData();
 
 	//EntranceAttack();
-	if (false == m_pBlackBoard->IsPhaseLastAttack())
-	{
-		if (m_pBlackBoard->bIsEnableEntarnceAttack())
-		{
-			EntranceAttack();
-		}
-		else if (m_pBlackBoard->bIsReflectExcution())
-		{
-			m_pSkillData.push(m_pGameManager->Find_SkillData(40));
-			SelectAttackData();
-		}
-		else
-		{
-			CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
-			if (false == m_pBlackBoard->IsParryAttack())
-			{
-				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
-					SecondPhaseNormalAttack();
-				else
-					NormalAttackPattern();
-			}
-		}
-	}
-	else
-	{
-		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
-		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
-		SelectAttackData();
-	}
+	//if (false == m_pBlackBoard->IsPhaseLastAttack())
+	//{
+	//	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+	//	{
+	//		EntranceAttack();
+	//	}
+	//	else if (m_pBlackBoard->bIsReflectExcution())
+	//	{
+	//		m_pSkillData.push(m_pGameManager->Find_SkillData(40));
+	//		SelectAttackData();
+	//	}
+	//	else
+	//	{
+	//		CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+	//		if (false == m_pBlackBoard->IsParryAttack())
+	//		{
+	//			if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
+	//				SecondPhaseNormalAttack();
+	//			else
+	//				NormalAttackPattern();
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(34));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(35));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(36));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(51));
+	//	m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+	//	SelectAttackData();
+	//}
 
 	return true;
 }

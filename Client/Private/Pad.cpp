@@ -159,4 +159,6 @@ CGameObject* CPad::Clone(void* pArg)
 void CPad::Free()
 {
     __super::Free();
+
+    Safe_Release(m_pVIBufferCom);
 }

@@ -1,5 +1,9 @@
 #include "Engine_Shader_Defines.hlsli"
 
+/* ±Ì¿Ã ∑ª¥ı≈∏∞Ÿ ∏∂Ω∫≈∑øÎ */
+bool g_IsMaskingDepthB;
+bool g_IsMaskingDepthW;
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_Texture;

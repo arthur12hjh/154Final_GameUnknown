@@ -21,7 +21,8 @@ texture2D g_MaskTexture, g_DiffuseTexture, g_DissolveTexture;
 texture2D g_DepthTexture;
 struct VS_IN
 {
-    float3 vPosition : POSITION;
+    float3 vPosition : POSITION0;
+    float3 vDirection : POSITION1;
     float2 vTexcoord : TEXCOORD0;
 };
 
@@ -30,6 +31,7 @@ struct VS_OUT
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
+    float3 vDirection : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -40,22 +42,13 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.vTexcoord = In.vTexcoord;
     Out.vProjPos = Out.vPosition;
+    
+    float4 dir = mul(vector(In.vDirection, 1.f), g_ViewMatrix);
+    float3 vDir = mul(dir, g_ProjMatrix).xyz;
+    Out.vDirection = vDir - Out.vPosition.xyz;
+    
     return Out;
 }
-
-struct GS_IN
-{
-    float4 vPosition : POSITION;
-    float2 vLifeTime : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
-
-struct GS_OUT
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
 
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
@@ -66,6 +59,7 @@ struct PS_IN
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
+    float3 vDirection : TEXCOORD2;
 };
 
 struct PS_NONLIGHT_OUT
@@ -205,7 +199,6 @@ PS_NONLIGHT_OUT PS_SCARLET_SLASH_NOISE(PS_IN In)
     
     
     float2 MaskTexcoord = float2(1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
-    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x / 180) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
     float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     
     float2 uv = In.vTexcoord;
@@ -300,6 +293,58 @@ PS_NONLIGHT_OUT PS_SLASH_REVERS_BLOOM(PS_IN In)
         discard;
     Out.vDiffuse.rgb *= Out.vDiffuse.a;
     Out.vDiffuse.a = 1;
+    return Out;
+}
+
+PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float3 pos = In.vDirection;
+    
+    
+    float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+
+    
+    pos.x *= -1;
+    Out.vDiffuse.xy = pos.xy * 0.1 * g_vColor.a * g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r * g_fDissolveUVSize.x;
+    Out.vDiffuse.zw = 0;
+    if (0.01f >= length(Out.vDiffuse.xy))
+        discard;
+    return Out;
+}
+
+PS_NONLIGHT_OUT PS_SCARLET_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float3 pos = In.vDirection;
+    
+    
+    
+    float2 MaskTexcoord = float2(1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 uv = In.vTexcoord;
+    
+    float dist = distance(uv, float2(0.5, 0.5));
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, DissolveTexcoord).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0) * 0.4;
+    
+    float2 uvDistorted = uv + distort;
+    
+    float4 col = g_DissolveTexture.Sample(MirrorSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, MaskTexcoord).r;
+    
+    col.r *= mask;
+    pos.x *= -1;
+    Out.vDiffuse.xy = pos.xy * 0.1 * saturate(pow(g_vColor.a * lerp(0.4, 1, saturate(col.r)) * 5, 1.5)) * saturate(col.r * 5) * 2;
+    Out.vDiffuse.zw = 0;
+    if (0.01f >= length(Out.vDiffuse.xy))
+        discard;
+    //Out.vDiffuse.rg = In.vTexcoord.xy;
+    //Out.vDiffuse.b = 0;
+    //Out.vDiffuse.a = 1;
     return Out;
 }
 
@@ -415,5 +460,24 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH_REVERS_BLOOM();
     }
-
+    // idx 11
+    pass Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTION_BLUR();
+    }
+    // idx 12
+    pass Scarlet_Slash_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SCARLET_MOTION_BLUR();
+    }
 }

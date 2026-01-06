@@ -46,6 +46,17 @@ struct VS_OUT
     int vSeed : SEED;
 };
 
+struct VS_YSIZE_OUT
+{
+    float4 vPosition : POSITION;
+    row_major float4x4 TransformMatrix : WORLD;
+    float2 fSize : PSIZE;
+    float2 vLifeTime : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float4 vOnePos : TEXCOORD2;
+    int vSeed : SEED;
+};
+
 VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
 {
     VS_OUT Out;
@@ -96,11 +107,76 @@ VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
     return Out;
 }
 
+VS_YSIZE_OUT VS_YSIZE(VS_IN In, uint id : SV_InstanceID)
+{
+    VS_YSIZE_OUT Out;
+   
+    vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
+    
+    if (g_bisSpectrum)
+        Out.vPosition = vPosition;
+    else
+        Out.vPosition = mul(vPosition, g_WorldMatrix);
+    
+    
+    float time = In.vLifeTime.x / In.vLifeTime.y;
+    float3 fInTime = float3(0, 0, 0);
+    float3 fOutTime = float3(-1, 0, 0);
+    for (int i = 0; i < g_iSizeCount; ++i)
+    {
+        if (g_fSizeDiagram[i].x <= time)
+        {
+            fInTime.x = g_fSizeDiagram[i].x;
+            fInTime.y = g_fSizeDiagram[i].y;
+            fInTime.z = g_fSizeDiagram[i].z;
+        }
+        if (g_fSizeDiagram[i].x > time)
+        {
+            fOutTime.x = g_fSizeDiagram[i].x;
+            fOutTime.y = g_fSizeDiagram[i].y;
+            fOutTime.z = g_fSizeDiagram[i].z;
+            break;
+        }
+    }
+    if (-1 == fOutTime.x)
+    {
+        Out.fSize.x = length(In.TransformMatrix._11_12_13) * fInTime.y;
+        Out.fSize.y = length(In.TransformMatrix._11_12_13) / fInTime.y;
+    }
+    else
+    {
+        float t = (time - fInTime.x) / (fOutTime.x - fInTime.x);
+        float fSize = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * fInTime.y
+     + (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(fInTime.z)) * (fOutTime.x - fInTime.x) * 100
+     + (-2 * pow(t, 3) + 3 * pow(t, 2)) * fOutTime.y
+     + (pow(t, 3) - pow(t, 2)) * tan(radians(fOutTime.z)) * (fOutTime.x - fInTime.x) * 100;
+        Out.fSize.x = length(In.TransformMatrix._11_12_13) * fSize;
+        Out.fSize.y = length(In.TransformMatrix._11_12_13) / fSize;
+    }
+    Out.vLifeTime = In.vLifeTime;
+    Out.vProjPos = Out.vPosition;
+    Out.vOnePos = vector(In.vPosition, 1);
+    Out.vSeed = id;
+    Out.TransformMatrix = In.TransformMatrix;
+    return Out;
+}
+
 struct GS_IN
 {
     float4 vPosition : POSITION;
     row_major float4x4 TransformMatrix : WORLD;
     float fSize : PSIZE;
+    float2 vLifeTime : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float4 vOnePos : TEXCOORD2;
+    int vSeed : SEED;
+};
+
+struct GS_YSIZE_IN
+{
+    float4 vPosition : POSITION;
+    row_major float4x4 TransformMatrix : WORLD;
+    float2 fSize : PSIZE;
     float2 vLifeTime : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
     float4 vOnePos : TEXCOORD2;
@@ -642,7 +718,7 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
      + (-2 * pow(t, 3) + 3 * pow(t, 2)) * 180
      + (pow(t, 3) - pow(t, 2)) * tan(radians(0)) * 100;
     
-    float angle = radians(g_fAngle + fSize);
+    float angle = radians(g_fAngle + fSize * g_fDiffuseUVSize.x);
     float s = sin(angle);
     float c = cos(angle);
     float3 vRight = -normalize(g_CamMatrix._11_12_13);
@@ -987,6 +1063,166 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos - float4(vL, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+}
+
+[maxvertexcount(6)]
+void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
+{
+    GS_WEIGHT_OUT Out[4];
+    float3 vR;
+    float3 vL;
+        
+    float angle = radians(g_fAngle);
+    float s = sin(angle);
+    float c = cos(angle);
+    switch (g_iBillboard % 4)
+    {
+        case 0:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(In[0].TransformMatrix._11_12_13);
+        
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize.x * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize.y * 0.5f);
+            }
+            break;
+        case 1:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+    
+    
+                float3 vRightRot = normalize(vRight * c + vUp * s);
+                float3 vLookRot = normalize(vUp * c - vRight * s);
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize.x * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize.y * 0.5f);
+            }
+            break;
+        case 2:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(float4(cross(normalize(g_CamMatrix._31_32_33), vLook), 0));
+    
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize.x * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize.y * 0.5f);
+            }
+            break;
+        case 3:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+                float3 localUp = normalize(float3(
+    In[0].TransformMatrix._31,
+    In[0].TransformMatrix._32,
+    In[0].TransformMatrix._33));
+        
+                float projRight = dot(localUp, vRight);
+                float projUp = dot(localUp, vUp);
+        
+        
+        
+                float3 up = normalize(mul(float3(In[0].TransformMatrix._31, In[0].TransformMatrix._32, In[0].TransformMatrix._33), g_CamMatrix._31_32_33));
+                float angle = atan2(projUp, projRight) + radians(g_fAngle);
+    
+                float s = sin(angle);
+                float c = cos(angle);
+    
+                float3 vRightRot = vRight * c + vUp * s;
+                float3 vLookRot = vUp * c - vRight * s;
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize.x * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize.y * 0.5f);
+            }
+            break;
+    }
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    if (4 <= g_iBillboard)
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL * 2, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL * 2, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0), matVP);
+                                                              
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+    else
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -2188,6 +2424,151 @@ PS_NONLIGHT_OUT PS_SCARLET_BOOM_SPHERE_NONLIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.a = 1;
     return Out;
 }
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_BLINK_GLOW(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = pow(g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord) * saturate(In.vLifeTime.x * 7) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3) * g_fDissolveUVSize.x, g_fDissolveUVSize.y);
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    Out.vDiffuse.a = maxColor;
+    if (0.1 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_BLINK_GLOW_BLOOM(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = pow(g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord) * saturate(In.vLifeTime.x * 7) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 3) * g_fDissolveUVSize.x, g_fDissolveUVSize.y);
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.a = maxColor;
+    if (0.1 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    if (0.49995f <= In.vTexcoord.x && 0.50005f >= In.vTexcoord.x || 0.49995f <= In.vTexcoord.y && 0.50005f >= In.vTexcoord.y)
+    {
+        Out.vDiffuse = g_vColor * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord) * saturate(In.vLifeTime.x * 3) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 1.5f);
+        float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+        Out.vDiffuse.a = maxColor;
+        //if (0.1 >= Out.vDiffuse.a)
+            discard;
+        Out.vDiffuse.a = 1;
+    }else
+        discard;
+    discard;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    if (0.49995f <= In.vTexcoord.x && 0.50005f >= In.vTexcoord.x || 0.49995f <= In.vTexcoord.y && 0.50005f >= In.vTexcoord.y)
+    {
+        Out.vDiffuse = g_vColor * g_MaskTexture.Sample(DefaultSampler, In.vTexcoord) * saturate(In.vLifeTime.x * 3) * saturate((In.vLifeTime.y - In.vLifeTime.x) * 1.5f);
+        float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.a = maxColor;
+        if (0 >= Out.vDiffuse.a)
+            discard;
+        Out.vDiffuse.rgb *= Out.vDiffuse.a;
+        Out.vDiffuse.a = 1;
+    }else
+        discard;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r, g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * g_fDissolveUVSpeed.x);
+    //Out.vDiffuse.a = saturate(pow(Out.vDiffuse.a * 2, 2));
+    
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = lerp(0.3, 0.5, saturate(exp(-linearDepth * 20)));
+    if (0.1 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW_BLOOM(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r, g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).a) * saturate((In.vLifeTime.y - In.vLifeTime.x) * g_fDissolveUVSpeed.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
 
 
 BlendState BS_Dust
@@ -2567,5 +2948,64 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_NONLIGHT_THUNDER_BILLBOARD();
         PixelShader = compile ps_5_0 PS_ELECTRIC_BLOOM();
     }
-
+    // idx 35
+    pass Blink_Glow
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_YSIZE();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_YSIZE_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_BLINK_GLOW();
+    }
+    // idx 36
+    pass Blink_Glow_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_YSIZE();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_YSIZE_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_BLINK_GLOW_BLOOM();
+    }
+    // idx 37
+    pass Small_Cross_Glow
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_SMALL_CROSS_GLOW();
+    }
+    // idx 38
+    pass Small_Cross_Glow_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_SMALL_CROSS_GLOW_BLOOM();
+    }
+    // idx 39
+    pass Flare_Rotation
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
+        PixelShader = compile ps_5_0 PS_ROTATION_FLARE_GLOW();
+    }
+    // idx 40
+    pass Flare_Rotation_Rotation
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
+        PixelShader = compile ps_5_0 PS_ROTATION_FLARE_GLOW_BLOOM();
+    }
 }

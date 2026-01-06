@@ -1,5 +1,9 @@
 #include "Client_Shader_Utils.hlsli"
 
+/* 깊이 렌더타겟 마스킹용 */
+bool g_IsMaskingDepthB;
+bool g_IsMaskingDepthW;
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 Texture2D g_DiffuseTexture;

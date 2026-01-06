@@ -96,6 +96,7 @@
 #include "Pad.h"
 #include "Rail.h"
 #include "Beat_Indicator.h"
+#include "DororongBox.h"
 #pragma endregion
 
 
@@ -187,7 +188,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Wall(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Building(pArg); });
 
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Sky_Texture(pArg); });
 
 		hr = Loading_For_Desert();
@@ -252,7 +253,7 @@ HRESULT CLoader::Loading_For_Village()
 
 	/* For.Prototype_Component_Texture_Reed_Mask */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_Reed_Mask"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask2.png"), 1))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Terrain/ReedMask.png"), 1))))
 		return E_FAIL;
 
 	///* For.Prototype_Component_Texture_Sky */
@@ -2239,7 +2240,7 @@ HRESULT CLoader::Loading_For_Desert_Archi(void* pArg)
 	/* For.Prototype_Component_Model_Lift_Platform */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Lift_Platform");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Platform.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Desert/Lift/Lift_Platform.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -3789,6 +3790,11 @@ HRESULT CLoader::Loading_For_Sky_Texture(void* pArg)
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Sky/galaxy+X.png"), 1))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_Sky_Desert */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Texture_DororongMask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Dororong/Jonnadaechung.png"), 1))))
+		return E_FAIL;
+
 	/* For.Prototype_GameObject_Pad */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Pad");
 	pProtoDesc.pPrototype = CPad::Create(m_pDevice, m_pContext);
@@ -3806,6 +3812,13 @@ HRESULT CLoader::Loading_For_Sky_Texture(void* pArg)
 	/* For.Prototype_GameObject_Beat_Indicator */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Beat_Indicator");
 	pProtoDesc.pPrototype = CBeat_Indicator::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_DororongBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_DororongBox");
+	pProtoDesc.pPrototype = CDororongBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

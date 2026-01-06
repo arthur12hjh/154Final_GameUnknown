@@ -1,11 +1,19 @@
 #include "Client_Shader_Utils.hlsli"
 
+/* 깊이 렌더타겟 마스킹용 */
+bool g_IsMaskingDepthB;
+bool g_IsMaskingDepthW;
+
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 textureCUBE g_Texture;
+texture2D g_MaskTexture;
+float g_fWeight0, g_fWeight1, g_fWeight2;
 float g_fFar;
 float g_fTime;
+float g_fBeatRandom;  // 비트인디케이터 올라가는 막대 사이즈 랜덤값
 float g_fColorWeight;
 float g_fOutlineWidth = 0.02f;
+bool g_bIsIdx0, g_bIsIdx1, g_bIsIdx2;
 
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
@@ -40,7 +48,8 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), matWVP)).xyz;
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
-    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */     
+    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */  
+    Out.vPosition.z -= 0.00001f;
     Out.vTexcoord = In.vTexcoord;    
     Out.vProjPos = Out.vPosition;
     return Out;
@@ -92,6 +101,11 @@ struct PS_OUT
     float4 vBloom : SV_TARGET5;
 };
 
+float Random(float2 st)
+{
+    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
 /* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
 PS_OUT PS_MAIN(PS_IN In)
 {
@@ -111,46 +125,96 @@ PS_OUT PS_RAIL(PS_IN In)
     PS_OUT Out;
     float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
     float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
-    float4 vSkyBlue = float4(0.4f, 0.9f, 1.0f, 1.0f); // 요청하신 하늘색
+    float4 vSkyBlue = float4(0.4f, 0.9f, 1.0f, 1.0f);
 
+    // 모든 칸 색상을 밝은 연두로 통일
+    float4 vBrightLime = float4(0.5f, 1.0f, 0.0f, 1.0f);
+
+    float4 vColors[5];
+    vColors[0] = float4(0.30f, 0.70f, 0.00f, 1.0f); // 진한 연두 (Start)
+    vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
+    vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
+    vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
+    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝은 연두 (End)
+    
+    float fXPos = (In.vTexcoord.x + 0.5f);
+    int iIdx = (int) floor(fXPos * 3.0f);
+    iIdx = clamp(iIdx, 0, 2);
+
+    float fYPos = (In.vTexcoord.y + 0.5f);
+    float fColorIdx = fYPos * 4.0f;
+    int iColorIdx = (int) floor(fColorIdx);
+    float fWeight = frac(fColorIdx);
+
+    float4 vTargetColor = lerp(vColors[clamp(iColorIdx, 0, 4)], vColors[clamp(iColorIdx + 1, 0, 4)], smoothstep(0.0f, 1.0f, fWeight));
+    
+    // 현재 픽셀이 속한 칸이 활성화되었는지 확인
+    bool bIsActive = false;
+    float fMyWeight = 0.f;
+    if (iIdx == 0)
+    {
+        bIsActive = g_bIsIdx0;
+        fMyWeight = g_fWeight0;
+    }
+    else if (iIdx == 1)
+    {
+        bIsActive = g_bIsIdx1;
+        fMyWeight = g_fWeight1;
+    }
+    else if (iIdx == 2)
+    {
+        bIsActive = g_bIsIdx2;
+        fMyWeight = g_fWeight2;
+    }
+
+    float fThreshold = lerp(-0.49f, 0.4f, fMyWeight);
+    float fHeightMask = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
+
+    float4 vBaseColor = vBlack;
+    if (fMyWeight > 0.0001f)
+    {
+        //vBaseColor = lerp(vBlack, vBrightLime, fHeightMask);
+        vBaseColor = lerp(vBlack, vTargetColor, fHeightMask);
+    }
+    
     float3 vAbsPos = abs(In.vTexcoord);
     
-    // [수정] z축은 무시하고 x축(좌우) 위치만 기준으로 테두리를 결정합니다.
+    float fEdgeWidth = 0.45f;
     float fCurrentPos = vAbsPos.x;
 
-    if (fCurrentPos > 0.45f)
+    if (vAbsPos.x > 0.45f && vAbsPos.z > 0.45f)
     {
         float4 vGradColor;
-
+    
         // 구간 1: 하늘
-        if (fCurrentPos <= 0.479f)
+        if (vAbsPos.x <= 0.465f && vAbsPos.z <= 0.50f)
         {
-            float fRatio = (fCurrentPos - 0.45f) / (0.479f - 0.45f);
+            float fRatio = (vAbsPos.x - 0.45f) / (0.465f - 0.45f);
             vGradColor = lerp(vSkyBlue, vWhite, fRatio);
         }
         // 구간 2: 흰색
-        else if (fCurrentPos <= 0.48f)
+        else if (vAbsPos.x <= 0.467f && vAbsPos.z <= 0.50f)
         {
             vGradColor = vWhite;
         }
         // 구간 3: 하늘
-        else if (fCurrentPos <= 0.50f)
+        else if (vAbsPos.x <= 0.50f && vAbsPos.z <= 0.5f)
         {
-            float fRatio = (fCurrentPos - 0.48f) / (0.50f - 0.48f);
+            float fRatio = (vAbsPos.x - 0.467f) / (0.50f - 0.467f);
             vGradColor = lerp(vWhite, vSkyBlue, fRatio);
         }
         else
         {
             vGradColor = vBlack;
         }
-
+    
         Out.vColor = vGradColor;
-        Out.vColor.a = 1.0f;
     }
     else
     {
-        Out.vColor = vBlack;
+        Out.vColor = vBaseColor;
     }
+    Out.vColor.a = 1.0f;
 
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
@@ -180,11 +244,13 @@ PS_OUT PS_MAIN_PAD(PS_IN In)
     // 1. 기본 면 색상 계산 (초록 ↔ 파랑 Lerp)
     float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
     float4 vPink = float4(1.f, 0.75f, 0.8f, 1.f);
+    float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
+    float4 vSkyBlue = float4(0.4f, 0.9f, 1.0f, 1.0f); // 요청하신 하늘색
     float4 vBaseColor = lerp(vBlack, vPink, g_fColorWeight);
 
     float3 vAbsPos = abs(In.vTexcoord);
     
-    float fEdgeWidth = 0.48f; // 이 값을 낮추면 테두리가 두꺼워집니다.
+    float fEdgeWidth = 0.48f; 
     
     int iEdgeCount = 0;
     if (vAbsPos.x > fEdgeWidth)
@@ -193,14 +259,14 @@ PS_OUT PS_MAIN_PAD(PS_IN In)
         iEdgeCount++;
     if (vAbsPos.z > fEdgeWidth)
         iEdgeCount++;
-
+    
     if (iEdgeCount >= 2)
     {
-        Out.vColor = float4(1.f, 1.f, 1.f, 1.f); 
+        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
     }
     else
     {
-        Out.vColor = vBaseColor; 
+        Out.vColor = vBaseColor;
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -216,17 +282,37 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
     PS_OUT Out;
 
     float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
-    float4 vPink = float4(1.f, 0.75f, 0.8f, 1.f);
+    float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
+    float4 vSkyBlue = float4(0.4f, 0.9f, 1.0f, 1.0f);
+
+    float4 vColors[10];
+    vColors[0] = float4(0.2f, 0.0f, 0.2f, 1.0f); // 딥 퍼플 (가장 어두움)
+    vColors[1] = float4(0.35f, 0.0f, 0.4f, 1.0f);
+    vColors[2] = float4(0.5f, 0.0f, 0.6f, 1.0f);
+    vColors[3] = float4(0.65f, 0.0f, 0.7f, 1.0f);
+    vColors[4] = float4(0.8f, 0.1f, 0.6f, 1.0f); // 마젠타 계열
+    vColors[5] = float4(1.0f, 0.2f, 0.5f, 1.0f); // 핫 핑크
+    vColors[6] = float4(1.0f, 0.4f, 0.7f, 1.0f);
+    vColors[7] = float4(1.0f, 0.6f, 0.9f, 1.0f); // 밝은 핑크
+    vColors[8] = float4(0.9f, 0.7f, 1.0f, 1.0f); // 연보라
+    vColors[9] = float4(1.0f, 0.9f, 1.0f, 1.0f); // 화이트 핑크 (가장 밝음)
+
+    float fPos = (In.vTexcoord.y + 0.5f);
+    float fColorIdx = fPos * 9.0f;
+    int iIdx = (int) floor(fColorIdx);
+    float fWeight = frac(fColorIdx);
+
+    float4 vTargetColor = lerp(vColors[clamp(iIdx, 0, 9)], vColors[clamp(iIdx + 1, 0, 9)], smoothstep(0.0f, 1.0f, fWeight));
+
+    float fSmoothWeight = lerp(0.f, 1.f, g_fColorWeight);
     
-    float fThreshold = lerp(-0.5f, 0.2f, g_fColorWeight);
-    
+    float fThreshold = lerp(-0.4f, g_fBeatRandom, fSmoothWeight);
     float fHeight = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
-    
-    float4 vBaseColor = lerp(vBlack, vPink, fHeight);
+
+    float4 vBaseColor = lerp(vBlack, vTargetColor, fHeight);
     
     float3 vAbsPos = abs(In.vTexcoord);
-    
-    float fEdgeWidth = 0.48f; // 이 값을 낮추면 테두리가 두꺼워집니다.
+    float fEdgeWidth = 0.48f;
     
     int iEdgeCount = 0;
     if (vAbsPos.x > fEdgeWidth)
@@ -238,11 +324,79 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
 
     if (iEdgeCount >= 2)
     {
-        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+        float fDistX = abs(vAbsPos.x - 0.485f);
+        float fDistY = abs(vAbsPos.y - 0.485f);
+        float fDistZ = abs(vAbsPos.z - 0.485f);
+
+        float fMinDist = 1.0f;
+        if (vAbsPos.x > fEdgeWidth)
+            fMinDist = min(fMinDist, fDistX);
+        if (vAbsPos.y > fEdgeWidth)
+            fMinDist = min(fMinDist, fDistY);
+        if (vAbsPos.z > fEdgeWidth)
+            fMinDist = min(fMinDist, fDistZ);
+
+        float fFinalMask = 1.0f - smoothstep(0.0f, 0.015f, fMinDist);
+        Out.vColor = lerp(vSkyBlue, vWhite, fFinalMask);
+        Out.vColor.a = 1.0f;
     }
     else
     {
         Out.vColor = vBaseColor;
+    }
+    
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    return Out;
+}
+
+PS_OUT PS_MAIN_BOX(PS_IN In)
+{
+    PS_OUT Out;
+
+    float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
+    float4 vPink = float4(1.f, 0.75f, 0.8f, 1.f);
+    float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
+    float4 vBaseColor = lerp(vBlack, vPink, g_fColorWeight);
+
+    float3 vLocalNormal = normalize(In.vNormal);
+    bool bIsFrontFace = vLocalNormal.z < -0.8f;
+
+    float4 vFinalColor = vBaseColor;
+
+    if (bIsFrontFace)
+    {
+        float2 vUV = In.vTexcoord.xy + 0.5f;
+        float4 vMask = g_MaskTexture.Sample(DefaultSampler, vUV);
+
+        if (vMask.r > 0.5f)
+        {
+            vFinalColor = vWhite * (1.f + g_fColorWeight * 2.f);
+        }
+    }
+
+    float3 vAbsPos = abs(In.vTexcoord);
+    
+    float fEdgeWidth = 0.48f;
+    
+    int iEdgeCount = 0;
+    if (vAbsPos.x > fEdgeWidth)
+        iEdgeCount++;
+    if (vAbsPos.y > fEdgeWidth)
+        iEdgeCount++;
+    if (vAbsPos.z > fEdgeWidth)
+        iEdgeCount++;
+    
+    if (iEdgeCount >= 2)
+    {
+        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+    }
+    else
+    {
+        Out.vColor = vFinalColor;
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
@@ -307,5 +461,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BEAT_INDICATOR();
+    }
+
+    // idx 5
+    pass Box
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BOX();
     }
 }
