@@ -426,6 +426,7 @@ popd</Command>
     <ClCompile Include="..\Private\WaveTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\EngineShader_MotionTrail.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VIPoint.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\EngineShader_VtxMesh.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />

@@ -69,13 +69,15 @@ void CUIResult::Update(_float fTimeDelta)
 		if (m_fTimeAcc >= 3.5f)
 		{
 			m_isShowRank = true;
-			
+
 			float scaleT = (m_fTimeAcc - 3.5f) / 0.25f; // 2ÃÊ
 			scaleT = min(scaleT, 1.f);
 
 			m_fScale = 3.f + (1.f - 3.f) * scaleT;
 		}
 	}
+	else
+		return;
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
 		Close_Result();
@@ -83,6 +85,45 @@ void CUIResult::Update(_float fTimeDelta)
 
 void CUIResult::Late_Update(_float fTimeDelta)
 {
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	if (!pHUD)
+	{
+		Safe_Release(pHUD);
+		return;
+	}
+
+	auto pOverlay = pHUD->Get_UIObject(TEXT("Layer_BeatSaber_Overlay"), TEXT("BeatSaber_Overlay"));
+
+	if (m_isOpen && m_isOpening && pOverlay->IsAnimFinished(TEXT("Outro")))
+	{
+		m_pGameInstance->SetGamePause(true);
+
+		auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Open_Result"));
+
+		if (AnimTag != m_tUIDesc.m_AnimTags.end())
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
+
+		auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+
+		if (pThumbnail)
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Open_Result"), 0.125f);
+
+		pThumbnail->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex = 1;
+
+		m_eVisibility = VISIBILITY::VISIBLE;
+
+		for (auto& pChild : m_Children)
+			Update_Children(pChild);
+
+		m_isOpening = false;
+	}
+
+	Safe_Release(pHUD);
+
+	if (!m_isOpen)
+		return;
+
 	__super::Late_Update(fTimeDelta);
 
 	if (FAILED(SetUp_Combo()))
@@ -93,6 +134,9 @@ void CUIResult::Late_Update(_float fTimeDelta)
 
 HRESULT CUIResult::Render()
 {
+	if (!m_isOpen)
+		return S_OK;
+
 	__super::Render();
 
 	if (FAILED(Bind_ShaderResources()))
@@ -129,26 +173,15 @@ HRESULT CUIResult::Render()
 void CUIResult::Open_Result()
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Open_Result"));
 
-	if (AnimTag != m_tUIDesc.m_AnimTags.end())
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
-
-	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
-
-	if (pThumbnail)
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Open_Result"), 0.125f);
-
-	pThumbnail->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex = 1;
+	auto pOverlay = pHUD->Get_UIObject(TEXT("Layer_BeatSaber_Overlay"), TEXT("BeatSaber_Overlay"));
+	if (pOverlay)
+		pHUD->Anim_Play(TEXT("Layer_BeatSaber_Overlay"), TEXT("BeatSaber_Overlay"), TEXT("Outro"));
 
 	Safe_Release(pHUD);
 
-	m_eVisibility = VISIBILITY::VISIBLE;
-
-	for(auto& pChild : m_Children)
-		Update_Children(pChild);
-
 	m_isOpen = true;
+	m_isOpening = true;
 }
 
 void CUIResult::Close_Result()
@@ -164,6 +197,8 @@ void CUIResult::Close_Result()
 
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first, 0.25f);
+
+	pHUD->Open_Song_Selector();
 
 	m_isShowCombo = false;
 	m_isShowScore = false;

@@ -262,12 +262,12 @@ HRESULT CUISimpleKey::Ready_Components()
 		return E_FAIL;
 	
 	/* Com_Texture_UI_Interaction_Key */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, TEXT("Prototype_Component_UI_Texture_Interaction_Key"),
 		TEXT("Com_Texture_UI_Interaction_Key"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
 	/* Com_Texture_UI_Interaction_Hold_Gauge */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge"),
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, TEXT("Prototype_Component_UI_Texture_Interaction_Hold_Gauge"),
 		TEXT("Com_Texture_UI_Interaction_Hold_Gauge"), reinterpret_cast<CComponent**>(&m_pHoldGaugeTextureCom))))
 		return E_FAIL;
 

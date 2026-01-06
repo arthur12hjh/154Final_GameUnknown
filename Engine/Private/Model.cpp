@@ -1049,8 +1049,6 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
 
     const _uint iNumBones = (_uint)m_Bones.size();
 
-
-
     // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_Animations[m_iCurrentAnimIndex]->Update_TrackPosition(m_Bones, m_isLoop, fScaledDeltaTime, m_fEndTrackPosition);
@@ -1075,6 +1073,7 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_pContext->CopyResource(m_pLerpBoneMatrices, m_pOutSource);
         m_pComputeShaderCom->Update_BufferResource(CComputeShader::BUFFER_TYPE::INPUT, 4, m_pLerpBoneMatrices);
     }
+
     m_pContext->CopyResource(m_pPreBoneMatrices, m_pOutSource);
 
     if (m_isLerp)
@@ -1193,6 +1192,12 @@ aiTextureType CModel::Convert_TextureType(TEXTURE_TYPE eType)
     }
 
     return aiTextureType_NONE;
+}
+
+ID3D11Buffer* CModel::Get_PreBoneMatrix()
+{
+    Safe_AddRef(m_pPreBoneMatrices);
+    return m_pPreBoneMatrices;
 }
 
 HRESULT CModel::Render(_uint iMeshIndex)

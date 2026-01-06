@@ -604,6 +604,12 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
 
 HRESULT CNayitbaPartBody::Bind_ShaderResources()
 {
+    _bool bFlag = static_cast<CCharacter*>(m_pParent)->Get_DepthMaskingB();
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+
     if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
         return E_FAIL;
 

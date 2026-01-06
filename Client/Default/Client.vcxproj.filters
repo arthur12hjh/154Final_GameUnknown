@@ -1153,8 +1153,17 @@
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\ShaderFile">
       <UniqueIdentifier>{499e9a0a-73a6-40c7-9533-677840501515}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector">
+      <UniqueIdentifier>{5a6f274d-b730-4b22-9e21-a031d3a597ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey">
+      <UniqueIdentifier>{52b87961-1c6e-4cfb-9d58-3ef44f1df75b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\TraceLight">
       <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map\Dororong_Saber\DororongBox">
+      <UniqueIdentifier>{04382a77-8f9f-4fe3-a29a-e91a55d4af75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2212,8 +2221,17 @@
     <ClInclude Include="..\public\Bullet_Split.h">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UISongSelector.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UITriggerKey.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\TargetLight.h">
       <Filter>02.GameObjects\TraceLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DororongBox.h">
+      <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3235,8 +3253,17 @@
     <ClCompile Include="..\private\Bullet_Split.cpp">
       <Filter>02.GameObjects\Actor\Bullet\Bullet_Split</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UISongSelector.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UITriggerKey.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\TargetLight.cpp">
       <Filter>02.GameObjects\TraceLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DororongBox.cpp">
+      <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

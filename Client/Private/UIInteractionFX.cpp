@@ -86,7 +86,7 @@ HRESULT CUIInteractionFX::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
+	if (FAILED(__super::Add_Component(m_tUIDesc.iLevel, TEXT("Prototype_Component_UI_Texture_Interaction_FX"),
 		TEXT("Com_Texture_UI_Interaction_FX"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 

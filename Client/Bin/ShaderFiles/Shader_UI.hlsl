@@ -1718,7 +1718,7 @@ PS_OUT PS_SCORE(PS_IN In)
     
     float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
     
-    Icon.rgb += Icon.rgb;
+    //Icon.rgb += Icon.rgb * Icon.a;
     
     //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
     //    discard;
@@ -1748,6 +1748,8 @@ PS_OUT PS_RANK(PS_IN In)
     
     float4 Rank = g_Texture0.Sample(ClampSampler, ScaleUV);
     
+    //Rank.rgb += Rank.rgb * Rank.a;
+    
     Out.vColor = Rank;
     
     if (Out.vColor.a <= 0.0f)
@@ -1766,23 +1768,14 @@ PS_OUT PS_DORORONG_SABER_RESULT(PS_IN In)
     
     float2 uv = In.vTexcoord;
     
-    float2 ThumbnailUV = uv;
-    ThumbnailUV -= float2(0.f, 0.f);
-    ThumbnailUV += float2(0.f, 0.f);
-    
-    float4 Thumbnail = g_Texture1.Sample(ClampSampler, ThumbnailUV);
-    
     float2 ScaleUV = uv;
     ScaleUV -= float2(1.f + (g_Result_BG_Offset.x / 1600.f), 0.5f);
-    //ScaleUV -= float2(1.f, 0.5f);
     ScaleUV /= float2(680.f / 1600.f, 1.f);
     ScaleUV += float2(1.f + (g_Result_BG_Offset.x / 1600.f), 0.5f);
-    //ScaleUV += float2(1.f, 0.5f);
     
     float4 BG = g_Texture0.Sample(ClampSampler, ScaleUV);
     
     float4 result = BG;
-    //result = lerp(result, BG, BG.a);
     
     Out.vColor = result;
     
@@ -1834,6 +1827,53 @@ PS_OUT PS_DORORONG_SABER_RESULT_GLOW(PS_IN In)
 }
 
 /*------------------[E_DORORONG_SABER_RESULT_GLOW]----------------*/
+
+/*------------------[S_DORORONG_SABER_SONG_SELECTOR]----------------*/
+
+PS_OUT PS_DORORONG_SABER_SONG_SELECTOR(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 uv = In.vTexcoord;
+    
+    float2 ScaleUV = uv;
+    ScaleUV -= float2((0.f + g_Result_BG_Offset.x) / 820.f, 0.5f);
+    ScaleUV /= float2(820.f / 1600.f, 1.f);
+    ScaleUV += float2((0.f + g_Result_BG_Offset.x) / 820.f, 0.5f);
+    
+    float4 BG = g_Texture0.Sample(ClampSampler, ScaleUV);
+    
+    float2 ArrowsUV = uv;
+    ArrowsUV -= float2(320.f/ 1600.f, 460.f / 900.f);
+    ArrowsUV /= float2(60.f / 1600.f, 570.f / 900.f);
+    ArrowsUV += float2(320.f / 1600.f, 460.f / 900.f);
+    
+    float4 Arrows = g_Texture1.Sample(ClampSampler, ArrowsUV);
+    
+    Arrows.a *= g_Alpha;
+    
+    float2 SelectedBGUV = uv;
+    SelectedBGUV -= float2(266.f / 1600.f, 460.f / 900.f);
+    SelectedBGUV /= float2(216.f / 1600.f, 108.f / 900.f);
+    SelectedBGUV += float2(266.f / 1600.f, 460.f / 900.f);
+    
+    float4 SelectedBG = g_Texture2.Sample(ClampSampler, SelectedBGUV);
+   
+    SelectedBG.a *= g_Alpha;
+    
+    float4 result = BG;
+    result = lerp(result, Arrows, Arrows.a);
+    result = lerp(result, SelectedBG, SelectedBG.a);
+    
+    Out.vColor = result;
+    
+    if (Out.vColor.a <= 0.0f)
+        discard;
+    
+    return Out;
+}
+
+/*------------------[E_DORORONG_SABER_SONG_SELECTOR]----------------*/
 
 technique11 DefaultTechnique
 {
@@ -2203,7 +2243,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RANK();
@@ -2227,5 +2267,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DORORONG_SABER_RESULT_GLOW();
+    }
+
+    pass DORORONG_SABER_SONG_SELECTOR // 38
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DORORONG_SABER_SONG_SELECTOR();
     }
 }

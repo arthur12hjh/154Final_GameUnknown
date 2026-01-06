@@ -33,7 +33,6 @@ public:
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CTrail*		m_pTrail = { nullptr };
-	CTrail* m_pTrail2[3] = {nullptr};
 	_float		m_fSpeed = { 1.f };
 	_float		m_fTime = {};
 	_uint	m_iSelect = {};

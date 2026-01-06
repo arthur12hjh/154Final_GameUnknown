@@ -9,6 +9,7 @@ class CShader;
 class CCollider;
 class CRigidBody;
 class CJointChain;
+class CMontionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -48,7 +49,9 @@ public:
 	virtual HRESULT Render_MotionBlur() override;
 
 private:
-	CCollider*			m_pColliderCom = { nullptr };
+	CCollider*					m_pColliderCom = { nullptr };
+	CMontionTrailComponent*		m_pMotionTrail = { nullptr };
+
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };
 

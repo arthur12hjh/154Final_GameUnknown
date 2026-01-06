@@ -166,6 +166,7 @@
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
     <ClInclude Include="..\public\DisplayBox.h" />
+    <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
     <ClInclude Include="..\public\BeatSaber_IdleState.h" />
     <ClInclude Include="..\public\BeatSaber_MoveState.h" />
@@ -488,8 +489,10 @@
     <ClInclude Include="..\Public\UISkillSlot.h" />
     <ClInclude Include="..\Public\UISkillWrapper.h" />
     <ClInclude Include="..\Public\UISkillWrapperOnFX.h" />
+    <ClInclude Include="..\Public\UISongSelector.h" />
     <ClInclude Include="..\Public\UIStruct.h" />
     <ClInclude Include="..\Public\UIText.h" />
+    <ClInclude Include="..\Public\UITriggerKey.h" />
     <ClInclude Include="..\Public\UIUnlockFX.h" />
     <ClInclude Include="..\Public\UIWorldWrapper.h" />
     <ClInclude Include="..\public\StaticInteraction.h" />
@@ -514,6 +517,7 @@
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
     <ClCompile Include="..\private\DisplayBox.cpp" />
+    <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
     <ClCompile Include="..\private\BeatSaber_IdleState.cpp" />
     <ClCompile Include="..\private\BeatSaber_MoveState.cpp" />
@@ -851,7 +855,9 @@
     <ClCompile Include="..\Private\UISkillWrapper.cpp" />
     <ClCompile Include="..\Private\UISkillWrapperOnFX.cpp" />
     <ClCompile Include="..\Private\UIBossStaminaFX.cpp" />
+    <ClCompile Include="..\Private\UISongSelector.cpp" />
     <ClCompile Include="..\Private\UIText.cpp" />
+    <ClCompile Include="..\Private\UITriggerKey.cpp" />
     <ClCompile Include="..\Private\UIUnlockFX.cpp" />
     <ClCompile Include="..\Private\UIWorldWrapper.cpp" />
     <ClCompile Include="..\private\StaticInteraction.cpp" />

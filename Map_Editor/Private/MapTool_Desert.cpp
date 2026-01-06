@@ -1960,6 +1960,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Beat_Indicator"); layerTag = TEXT("Layer_Beat_Indicator");
 					pDesc.pComponentTag == nullptr;
 					break;
+
+				case DESESRT_RUIN_OBJECT::DORORONG_BOX:
+					protoTag = TEXT("Prototype_GameObject_DororongBox"); layerTag = TEXT("Layer_DororongBox");
+					pDesc.pComponentTag == nullptr;
+					break;
 #pragma endregion
 
 #pragma region Terrain
@@ -1993,7 +1998,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
 				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PAD || m_eCurrentObject == DESESRT_RUIN_OBJECT::RAIL || m_eCurrentObject == DESESRT_RUIN_OBJECT::INDICATOR)
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PAD || m_eCurrentObject == DESESRT_RUIN_OBJECT::RAIL || m_eCurrentObject == DESESRT_RUIN_OBJECT::INDICATOR || m_eCurrentObject == DESESRT_RUIN_OBJECT::DORORONG_BOX)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, nullptr);
 				}
@@ -4550,7 +4555,7 @@ HRESULT CMapTool_Desert::Render()
 		ImGui::Text("DORORONG_SABER Objects");
 		_int nSelectedModel = -1;
 
-		const _char* modelNames[] = { "Pad", "Rail", "Beat_Indicator" };
+		const _char* modelNames[] = { "Pad", "Rail", "Beat_Indicator", "DororongBox"};
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -4570,6 +4575,11 @@ HRESULT CMapTool_Desert::Render()
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::INDICATOR;
 					m_CurrentLayerName = TEXT("Layer_Beat_Indicator");
+				}
+				else if (nSelectedModel == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::DORORONG_BOX;
+					m_CurrentLayerName = TEXT("Layer_DororongBox");
 				}
 
 			}
@@ -5042,9 +5052,10 @@ HRESULT CMapTool_Desert::Save_Dororong_Saber_Objects(const _char* szFilePath)
 		return E_FAIL;
 	}
 
-	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Pad")))) return S_OK;
-	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Rail")))) return S_OK;
-	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Beat_Indicator")))) return S_OK;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Pad")))) return E_FAIL;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Rail")))) return E_FAIL;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Beat_Indicator")))) return E_FAIL;
+	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_DororongBox")))) return E_FAIL;
 
 	ofs.close();
 
@@ -5361,9 +5372,10 @@ HRESULT CMapTool_Desert::Load_Dororong_Saber_Objects(const _char* szFilePath)
 		return E_FAIL;
 	}
 
-	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return S_OK;
-	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return S_OK;
-	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return S_OK;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return E_FAIL;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return E_FAIL;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return E_FAIL;
+	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_DororongBox"), TEXT("Layer_DororongBox")))) return E_FAIL;
 
 	ifs.close();
 

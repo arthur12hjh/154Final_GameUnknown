@@ -728,7 +728,7 @@ const CAMERA_INFO& CGameInstance::Get_CurrentCamInfo()
 
 #pragma region LIGHT_MANAGER
 
-HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight* pOutLight)
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc, class CLight** pOutLight)
 {
 	return m_pLight_Manager->Add_Light(LightDesc, pOutLight);
 }
@@ -777,9 +777,9 @@ HRESULT CGameInstance::Add_Font(const _wstring& strFontTag, const _tchar* pFontF
 	return m_pFont_Manager->Add_Font(strFontTag, pFontFilePath);
 }
 
-HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale)
+HRESULT CGameInstance::Render_Text(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor, _float fScale, _float2 vOrigin)
 {
-	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor, fScale);
+	return m_pFont_Manager->Render(strFontTag, pText, vPosition, vColor, fScale, vOrigin);
 }
 
 _float2 CGameInstance::Get_Text_Size(const _wstring& strFontTag, const _tchar* pText, bool bIgnoreWhitespace, float fScale)

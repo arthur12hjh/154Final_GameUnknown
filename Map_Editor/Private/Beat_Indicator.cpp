@@ -26,6 +26,8 @@ HRESULT CBeat_Indicator::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
+    m_fBounceTimer = 0.f;
+
     return S_OK;
 }
 
@@ -38,11 +40,18 @@ void CBeat_Indicator::Update(_float fTimeDelta)
     /*_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCollider->UpdateColiision(WorldMat);*/
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) || 
+    _float fBounceTime = 0.4f;
+    m_fBounceTimer += fTimeDelta;
+
+    /*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_J) || 
         m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K) || 
-        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+        m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))*/
+    if(m_fBounceTimer > fBounceTime)
     {
         m_bIsColorChange = true;
+        //m_fColorWeight = 0.f;
+        m_fRandom = (rand() / (float)RAND_MAX) * 0.4f;
+        m_fBounceTimer = 0.f;
 
     }
     if (m_bIsColorChange)
@@ -59,7 +68,7 @@ void CBeat_Indicator::Update(_float fTimeDelta)
         }
     }
     else {
-        m_fColorWeight -= fTimeDelta * 3.f;
+        m_fColorWeight -= fTimeDelta * 8.f;
 
         if (m_fColorWeight < 0.f)
             m_fColorWeight = 0.f;
@@ -90,6 +99,9 @@ HRESULT CBeat_Indicator::Render()
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fColorWeight", &m_fColorWeight, sizeof(_float))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fBeatRandom", &m_fRandom, sizeof(_float))))
         return E_FAIL;
 
     /*m_pShaderCom->Begin(1);

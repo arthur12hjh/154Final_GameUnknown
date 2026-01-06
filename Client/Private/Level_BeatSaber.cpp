@@ -18,7 +18,7 @@ CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CLevel_BeatSaber::Initialize()
 {
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
 
     if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
         return E_FAIL;
@@ -44,8 +44,8 @@ HRESULT CLevel_BeatSaber::Initialize()
     if (FAILED(Ready_Layer_BeatSpawner(TEXT("Layer_BeatSaberSpawner"))))
 
         return E_FAIL;
-  /*  if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
-        return E_FAIL;*/
+    if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
+        return E_FAIL;
 
     Load_Dororong_Saber_Objects("../../Map_Editor/Bin/DataFiles/Dororong_Saber.bin");
 
@@ -56,11 +56,11 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 {
     __super::Update(fTimeDelta);
 
-    if (m_isOverlay && m_pHUD)
+    /*if (m_isOverlay && m_pHUD)
     {
         static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
         m_isOverlay = false;
-    }
+    }*/
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
         Play_GameBGM(TEXT("Test"), 1.f);
@@ -76,10 +76,20 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
         return;
     }
 
-    if (m_bChangeLevel && !m_bLevelTransitioning)
+    /*if (m_bChangeLevel && !m_bLevelTransitioning)
     {
         dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));
         m_bLevelTransitioning = true;
+    }*/
+
+    // 결과창 테스트용
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
+    {
+        static_cast<CUIHUD*>(m_pHUD)->Open_Result();
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
+    {
+        static_cast<CUIHUD*>(m_pHUD)->Close_Result();
     }
 }
 
@@ -164,10 +174,10 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Camera(const _wstring& strLayerTag)
 
     CameraDesc.fFov = XMConvertToRadians(60.0f);
     CameraDesc.fNear = 0.1f;
-    CameraDesc.fFar = 30.f;
+    CameraDesc.fFar = 100.f;
     //CameraDesc.vEye = _float3(-1.1f, 1.9f, -3.8f);
-    CameraDesc.vEye = _float3(-1.5f, 2.5f, -4.f);
-    CameraDesc.vAt = _float3(50.f, 1.f, 50.f);
+    CameraDesc.vEye = _float3(-3.871f, 9.062f, -4.583f);
+    CameraDesc.vAt = _float3(30.f, -5.5f, 30.f);
     CameraDesc.fSpeedPerSec = 5.f;
     CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
     CameraDesc.fMouseSensor = 0.1f;
@@ -184,7 +194,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { -2.5f, 4.f, -4.5f };
+    Desc.vPosition = { 0.f, 4.f, -0.6f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
 
@@ -205,7 +215,16 @@ HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
     SetHUD(pUIHUD);
     pUIHUD->Set_Show_Debug_Rect(false);
 
+    if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Overlay"))))
+        return E_FAIL;
+
+    if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Song_Selector"))))
+        return E_FAIL;
+
     if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
+        return E_FAIL;
+
+    if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Result"))))
         return E_FAIL;
 
     return S_OK;
@@ -221,7 +240,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { 20.f, 1.f, 20.f };
+    Desc.vPosition = { 30.f, 4.f, 30.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
     Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();
@@ -315,6 +334,7 @@ HRESULT CLevel_BeatSaber::Load_Dororong_Saber_Objects(const _char* szFilePath)
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Pad"), TEXT("Layer_Pad")))) return S_OK;
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return S_OK;
     if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return S_OK;
+    if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_DororongBox"), TEXT("Layer_DororongBox")))) return S_OK;
 
     ifs.close();
 
