@@ -337,7 +337,9 @@ void CNaytiba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 
 void CNaytiba::PlayDeadEffect()
 {
-	m_pDropCom->ItemDrop(1);
+	if(NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+		m_pDropCom->ItemDrop(1);
+
 	m_pPartBody->Play_DeadEffect();
 }
 
