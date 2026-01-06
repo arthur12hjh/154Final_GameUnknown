@@ -1,179 +1,186 @@
 [
     {
-        "CinematicNodeTrackList": [
+      "CinematicNodeTrackList": [
+        {
+          "eState": 7,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 20,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 20,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
+        },
+        {
+          "eState": 4,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 4,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1311,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 5.0,
+          "iActiveIndex": 1312,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 8.0,
+          "iActiveIndex": 1313,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter03"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 14.0,
+          "iActiveIndex": 1314,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter04"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 18.0,
+          "iActiveIndex": 1315,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter05"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 30.0,
+          "iActiveIndex": 1316,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter06"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 37.0,
+          "iActiveIndex": 1317,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter07"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 44.0,
+          "iActiveIndex": 1318,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter08"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 53.6,
+          "iActiveIndex": 1319,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter09"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 55.8,
+          "iActiveIndex": 1320,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter10"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 65.8,
+          "iActiveIndex": 1321,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter11"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 71.8,
+          "iActiveIndex": 1322,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter12"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 78.0,
+          "iActiveIndex": 1323,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter13"
+        },
+        {
+          "eState": 2,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 9,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player",
+          "CinematicIndexDataList": [
             {
-                "eState": 7,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 20,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 20,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
-            },
-            {
-                "eState": 4,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-            {
-                "eState": 4,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 1311,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter01"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 5.0,
-                "iActiveIndex": 1312,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter02"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 8.0,
-                "iActiveIndex": 1313,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter03"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 14.0,
-                "iActiveIndex": 1314,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter04"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 18.0,
-                "iActiveIndex": 1315,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter05"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 30.0,
-                "iActiveIndex": 1316,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter06"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 37.0,
-                "iActiveIndex": 1317,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter07"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 44.0,
-                "iActiveIndex": 1318,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter08"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 53.6,
-                "iActiveIndex": 1319,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter09"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 55.8,
-                "iActiveIndex": 1320,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter10"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 65.8,
-                "iActiveIndex": 1321,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter11"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 71.8,
-                "iActiveIndex": 1322,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter12"
-            },
-	{
-                "eState": 3,
-                "fTrackPosition": 78.0,
-                "iActiveIndex": 1323,
-                "szObjectTag": "ActionCamera_ScarletBattleEnter13"
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 102.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-	{
-                "eState": 9,
-                "fTrackPosition": 102.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player",
-	   "CinematicIndexDataList": [
-        	       {
-      	   	"iActiveIndex": 0,
-      	   	"szObjectTag": "Layer_Player",
- 	   	"vPosition": [251.874, 8.0, 224.907],
- 	   	"vRotation": [251.874, 8.0, 225.907, 1.0],
-  	   	"vScale": [1.0, 1.0, 1.0],
-  	   	"iInputInt": 0,
-  	   	"fInputFloat": 0.0
-        	       }
-    	   ]
-            },
-            {
-                "eState": 6,
-                "fTrackPosition": 102.0,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 12,
-                "fTrackPosition": 102.0,
-                "iActiveIndex": 1,
-                "szObjectTag": ""
-            },
-	{
-                "eState": 9,
-                "fTrackPosition": 102.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster",
-	   "CinematicIndexDataList": [
-        	       {
-      	   	"iActiveIndex": 0,
-      	   	"szObjectTag": "Layer_Monster",
- 	   	"vPosition": [257.977, 8.0, 256.289],
- 	   	"vRotation": [257.977, 8.0, 255.289, 1.0],
-  	   	"vScale": [1.0, 1.0, 1.0],
-  	   	"iInputInt": 0,
-  	   	"fInputFloat": 0.0
-        	       }
-    	   ]
-            },
-            {
-                "eState": 7,
-                "fTrackPosition": 102.4,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 102.4,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster"
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Player",
+              "vPosition": [ 251.874, 8.0, 224.907 ],
+              "vRotation": [ 251.874, 8.0, 225.907, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
             }
-        ],
+          ]
+        },
+        {
+          "eState": 6,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 12,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 14,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+
+        {
+          "eState": 9,
+          "fTrackPosition": 102.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster",
+          "CinematicIndexDataList": [
+            {
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Monster",
+              "vPosition": [ 257.977, 8.0, 256.289 ],
+              "vRotation": [ 257.977, 8.0, 255.289, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
+            }
+          ]
+        },
+        {
+          "eState": 7,
+          "fTrackPosition": 102.4,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 2,
+          "fTrackPosition": 102.4,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster"
+        }
+      ],
         "iCinematicID": 141,
         "szCinematicName": "ScarletBattlePhaseChange01"
     }
