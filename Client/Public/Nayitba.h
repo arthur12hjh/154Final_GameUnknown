@@ -63,7 +63,6 @@ public:
 	void									SetActive(_bool bIsActive) override;
 	void									SetActive() override;
 	void									SetActiveMonster(_bool bIsFlag);
-
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 

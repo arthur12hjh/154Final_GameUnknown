@@ -209,8 +209,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // ¿ª±¤ SSS BackScatter
         float back = saturate(dot(-N, L));
-        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f)
-                         * pow(back, 1.1f) * 0.25f;
+        float3 backSSS = vAlbedo.rgb * float3(1.0f, 0.7f, 0.7f) * pow(back, 1.1f) * 0.25f;
 
         Out.vShade.rgb += backSSS;
     }

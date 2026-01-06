@@ -41,6 +41,13 @@ HRESULT CTrailData::Render()
 	return S_OK;
 }
 
+HRESULT CTrailData::Render_MotionBlur()
+{
+	m_pTrail->Render(this);
+	m_iRenderCount++;
+	return S_OK;
+}
+
 void CTrailData::Set_Components(TRAIL_DATA tData)
 {
 	m_tData = tData;
@@ -95,6 +102,9 @@ void CTrailData::Set_Components(TRAIL_DATA tData)
 	case 6:
 		m_eRender = RENDER::DISTORTION;
 		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
+		break;
 	}
 }
 
@@ -124,6 +134,9 @@ void CTrailData::Update(TRAIL_DATA tData)
 		break;
 	case 6:
 		m_eRender = RENDER::DISTORTION;
+		break;
+	case 7:
+		m_eRender = RENDER::MOTIONBLUR;
 		break;
 	}
 }

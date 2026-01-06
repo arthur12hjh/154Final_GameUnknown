@@ -6,7 +6,7 @@
 #include "Model.h"
 
 #include "GameInstance.h"
-
+#include "GameManager.h"
 #include "Player.h"
 
 CHair_Player::CHair_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -187,6 +187,15 @@ HRESULT CHair_Player::Ready_Components()
 
 HRESULT CHair_Player::Bind_ShaderResources()
 {
+	CPlayer* pPlayer = m_pGameManager->GetGameCharacter();
+	Safe_Release(pPlayer);
+	_bool bFlag = static_cast<CCharacter*>(pPlayer)->Get_DepthMaskingB();
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;

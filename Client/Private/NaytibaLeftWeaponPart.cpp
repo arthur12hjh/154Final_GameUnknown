@@ -8,6 +8,7 @@
 #include "Trail.h"
 #include "TrailEffect.h"
 #include "StringHelper.h"
+#include "Character.h"
 
 CNaytibaLeftWeaponPart::CNaytibaLeftWeaponPart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -344,6 +345,12 @@ HRESULT CNaytibaLeftWeaponPart::Ready_Components(const WEAPON_DESC& Desc)
 
 HRESULT CNaytibaLeftWeaponPart::Bind_ShaderResources()
 {
+    _bool bFlag = static_cast<CCharacter*>(m_pParent)->Get_DepthMaskingB();
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+        return E_FAIL;
+
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
