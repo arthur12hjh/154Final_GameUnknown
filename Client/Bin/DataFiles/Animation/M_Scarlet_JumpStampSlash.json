@@ -882,7 +882,7 @@
                 ]
             },
             {
-                "fNumData01": 2.1,
+                "fNumData01": 2.0999999046325684,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -907,7 +907,7 @@
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.1,
+                    0.10000000149011612,
                     0.0
                 ],
                 "vNotifyRotation": [

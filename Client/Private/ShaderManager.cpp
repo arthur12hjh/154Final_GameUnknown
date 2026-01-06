@@ -546,6 +546,10 @@ void CShaderManager::Free()
     }
     Safe_Delete_Array(m_Shaders);
 
+    for (auto& iter : m_CinematicTargetLights)
+        Safe_Release(iter);
+    m_CinematicTargetLights.clear();
+
     for (auto& iter : m_ReserveDeferredShaders)
     {
         Safe_Release(iter.second);
