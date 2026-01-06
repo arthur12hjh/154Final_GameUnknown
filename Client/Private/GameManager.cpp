@@ -76,12 +76,16 @@ void CGameManager::SavePlayerDesc()
 {
     const PLAYER_DESC* SavePlayerDesc = m_pPlayer->Get_Desc();
          
-    m_pSavePlayerDesc = make_pair(*SavePlayerDesc, true);
-    m_pSavePlayerDesc.first.pPlayerTransform = nullptr;
-    m_pSavePlayerDesc.first.pPlayerController = nullptr;
-    m_pSavePlayerDesc.first.pLinkAttackTarget = nullptr;
-    m_pSavePlayerDesc.first.pGrabBone = nullptr;
-    m_pSavePlayerDesc.first.pGrabAttackter = nullptr;
+    Save_Level_PlayerData Desc = {};
+    Desc.PlayerData = *SavePlayerDesc;
+    XMStoreFloat3(&Desc.vOldPosition, SavePlayerDesc->pPlayerTransform->Get_State(STATE::POSITION));
+
+    m_pSavePlayerDesc = make_pair(Desc, true);
+    m_pSavePlayerDesc.first.PlayerData.pPlayerTransform = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pPlayerController = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pLinkAttackTarget = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pGrabBone = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pGrabAttackter = nullptr;
 }
 
 _bool CGameManager::LoadPlayerDesc(PLAYER_DESC& PlayerDesc)

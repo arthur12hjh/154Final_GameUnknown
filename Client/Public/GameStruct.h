@@ -645,4 +645,10 @@ namespace Client
 		DIRECTION	ePreDirection;
 		DIRECTION	eDirection;
 	}BEATSABER_CHARACTER_DESC;
+
+	typedef struct Save_Level_PlayerData
+	{
+		PLAYER_DESC			PlayerData;
+		_float3				vOldPosition;
+	}SAVE_LEVEL_PLAYERDATA;
 }

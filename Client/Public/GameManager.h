@@ -123,7 +123,7 @@ public:
 	HRESULT											Load_Level_CinematicObjectData(const _char* szFilePath);
 	_bool											Is_CinematicPlaying();
 	HRESULT											Skip_Cinematic();
-	map<_wstring, class CCinematicObject*>*				Get_CinematicObjectsMap();
+	map<_wstring, class CCinematicObject*>*			Get_CinematicObjectsMap();
 #pragma endregion
 
 	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���
@@ -148,8 +148,8 @@ private :
 	
 	class CPlayer*									m_pPlayer = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
-	pair<PLAYER_DESC, _bool>						m_pSavePlayerDesc = {};
-
+	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
+	
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
