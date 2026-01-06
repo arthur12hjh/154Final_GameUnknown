@@ -45,6 +45,7 @@ void CUINeonNumber::Update(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 	{
 		m_iCombo += (_uint)m_pGameInstance->Random(1.f, 4.f);
+		m_iAccuracy = (_uint)m_pGameInstance->Random(0.f, 4.f);
 		m_iHighCombo = max(m_iHighCombo, m_iCombo);
 	}
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
@@ -53,7 +54,18 @@ void CUINeonNumber::Update(_float fTimeDelta)
 	if(m_iCombo != m_iPrevCombo)
 	{
 		m_fScaleRatio = 1.2f;
+		m_fAlpha = 1.f;
+		m_fTimeAcc = 0.f;
 		m_iPrevCombo = m_iCombo;
+	}
+
+	if (m_fAlpha > 0.f)
+	{
+		m_fTimeAcc += fTimeDelta;
+		float alphaT = (m_fTimeAcc) / 1.f; // 2ÃÊ
+		alphaT = min(alphaT, 1.f);
+
+		m_fAlpha = 1.f - alphaT;
 	}
 
 	if (m_fScaleRatio > 1.f)
@@ -133,8 +145,8 @@ HRESULT CUINeonNumber::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Combo"),
-		TEXT("Com_Texture_UI_Combo"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Accuracy"),
+		TEXT("Com_Texture_UI_Accuracy"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -150,11 +162,15 @@ HRESULT CUINeonNumber::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", m_iAccuracy)))
 		return E_FAIL;
 
 	if(FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_fScaleRatio, sizeof(_float))))
 		return E_FAIL;
+	if(FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+
 
 	return S_OK;
 }
@@ -215,7 +231,7 @@ HRESULT CUINeonNumber::SetUp_NeonNumber()
 
 	for (size_t i = 0; i < ATLAS_COL; ++i)
 	{
-		_float2 vPos = _float2{ (vScale.x * fRatio * (i % ATLAS_COL)) - (fWidth * 0.5f), -((vScale.y * fRatio * (i / ATLAS_COL)) - (fHeight * 0.5f) + (20.f / 188.f)) };
+		_float2 vPos = _float2{ (vScale.x * fRatio * (i % ATLAS_COL)) - (fWidth * 0.5f), -((vScale.y * fRatio * (i / ATLAS_COL)) - (fHeight * 0.5f) + (40.f / 188.f)) };
 
 		_uint iCombo = 0;
 
@@ -264,6 +280,8 @@ HRESULT CUINeonNumber::Bind_NeonNumberShaderResources()
 
 	_float2 atlasCount = { 5.f, 2.f };
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_AtlasCount", &atlasCount, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

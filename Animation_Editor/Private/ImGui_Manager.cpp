@@ -199,6 +199,37 @@ void CImGui_Manager::Create_Extra(const _wstring& szModelTag)
 	}
 }
 
+void CImGui_Manager::Create_Facial(const _wstring& szModelTag)
+{
+	if (nullptr != m_pSelectedObject)
+	{
+		m_pSelectedObject->Set_Dead(TRUE);
+		m_iSelectedAnimationIndex = 0;
+		m_iSelectedEventIndex = 0;
+		m_iBeforeEventIndex = -1;
+		m_iSelectedMaterial = 0;
+		m_pAnimationList = nullptr;
+		m_pSelectedObject = nullptr;
+
+	}
+	CExtra::EXTRA_DESC ExtraDesc = {};
+	ExtraDesc.szModelTag = szModelTag;
+	ExtraDesc.isFacial = TRUE;
+	
+	m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Extra"), ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"), &ExtraDesc);
+
+	list<CGameObject*>* pObjLists = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::EDITOR), TEXT("Layer_Player"));
+
+	m_pSelectedObject = pObjLists->back();
+
+	m_pAnimationList = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_AnimationList();
+
+	if (nullptr == m_pAnimationEventMap)
+	{
+		m_pAnimationEventMap = m_pTool_Manager->Get_AnimationEventMapPtr();
+	}
+}
+
 void CImGui_Manager::Kill_Character()
 {
 	if (nullptr == m_pSelectedObject)
@@ -552,7 +583,8 @@ void CImGui_Manager::Update_KeyFrameTool()
 void CImGui_Manager::Update_TimeLine()
 {
 
-	if (nullptr == m_pAnimationList)
+	if (nullptr == m_pAnimationList
+		|| m_pAnimationList->size() == 0)
 	{
 		ImGui::Text("Select Animation");
 		return;

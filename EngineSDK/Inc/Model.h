@@ -38,6 +38,8 @@ public:
 	_int Get_BoneIndex(const _char* pBoneName) const;
 	// </end>
 
+	_int Get_ShapeIndex(const _char* pShapeName) const;
+
 	_uint Get_AnimationKeyFrameIndex() const;
 	_float Get_fTrackPosition() const;
 
@@ -182,6 +184,20 @@ private:
 	vector<ID3D11ShaderResourceView*>		m_pChannelSRVList;
 	vector<ID3D11ShaderResourceView*>		m_pKeyFrameSRVList;
 
+#pragma region FACIAL METHOD
+	// 페이셜 모델 관련 처리들. ShapeKey(AnimMesh)와 MorphAnimation은 사실 Mesh단에서 처리해줘야한다.
+	// 굳이 그런 복잡한 로직 별로임 ㅇㅅㅇ.. 걍 모델로 끌고 나오자
+	_uint m_iNumShapeKeys;
+	vector <class CShapeKey*> m_ShapeKeys;
+
+	_uint							m_iNumMorphAnimations;
+	_int							m_iCurrentMorphAnimIndex = { -1 };
+	_bool							m_isMorphLoop = { false };
+	_bool							m_isMorphFinish = { false };
+	_float							m_fMorphAnimationPlayRate = 1.f;
+	vector<class CMorphAnimation*>	m_MorphAnimations;
+#pragma endregion
+
 	_float4x4					m_PreRootMatrix{};
 	_float4x4					m_CurRootMatrix{};
 
@@ -216,6 +232,14 @@ private:
 	HRESULT Ready_Materials(const _char* pModelFilePath);
 	HRESULT Ready_Bones(binNode* pNode, _int iParentIndex);
 	HRESULT Ready_Animations();
+
+#pragma region FACIAL METHOD
+	// 페이셜 모델 관련 처리들. ShapeKey(AnimMesh)와 MorphAnimation은 사실 Mesh단에서 처리해줘야한다.
+	// 굳이 그런 복잡한 로직 별로임 ㅇㅅㅇ.. 걍 모델로 끌고 나오자
+	HRESULT Ready_ShapeKeys();
+	HRESULT Ready_MorphAnimations();
+#pragma endregion
+
 	HRESULT Ready_ComputeShader();
 
 	HRESULT Ready_SkeletonBones(CModel* pSkeleton);

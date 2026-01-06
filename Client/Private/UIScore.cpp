@@ -101,17 +101,17 @@ HRESULT CUIScore::Render()
 {
 	__super::Render();
 
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::RANK))))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Bind_Resources()))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
+	//if (FAILED(Bind_ShaderResources()))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(UI_SHADER_PASS::RANK))))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pVIBufferCom->Bind_Resources()))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pVIBufferCom->Render()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_Score()))
 		return E_FAIL;

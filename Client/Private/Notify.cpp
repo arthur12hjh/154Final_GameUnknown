@@ -286,7 +286,19 @@ HRESULT CNotify::Notify_Play_SFX(const ANIM_NOTIFY& AnimNotify)
 		_TCHAR szPartObjectName[MAX_PATH];
 		CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg07.c_str(), szPartObjectName);
 		const _float4x4* pBodyMatrix = m_pCharacter->Get_PartObject(szPartObjectName)->Get_CombinedMatrixPtr();
-		EffectDesc.vPos = XMVectorSet(XMVectorGetX(EffectDesc.vPos) + matTransform._41, XMVectorGetY(EffectDesc.vPos) + pBodyMatrix->_42, XMVectorGetZ(EffectDesc.vPos) + matTransform._43, 1);
+
+		_matrix mat = XMLoadFloat4x4(&matTransform);
+		_vector vRight = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), XMLoadFloat4x4(pBodyMatrix).r[2]));
+		_vector vLook = XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 0), vRight));
+		_vector vUp = XMVector3Normalize(XMVector3Cross(vLook, vRight));
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = mat.r[3];
+		EffectDesc.vPos = XMVectorSetY(EffectDesc.vPos, pBodyMatrix->_42);
+		EffectDesc.vPos += vRight * AnimNotify.vNotifyPosition.x;
+		EffectDesc.vPos += vUp * AnimNotify.vNotifyPosition.y;
+		EffectDesc.vPos += vLook * AnimNotify.vNotifyPosition.z;
+
 	}
 
 	_TCHAR szEffectTag[MAX_PATH];

@@ -346,6 +346,7 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
         CTargetLight* pTargetLight = CTargetLight::Create(&Desc);
         m_CinematicTargetLights.push_back(pTargetLight);
         pTargetLight->Set_Active(VISIBILITY::HIDDEN);
+        pTargetLight->Set_Range(0.f);
     }
 #pragma endregion
     
@@ -505,7 +506,10 @@ void CShaderManager::Set_CinematicLights(_uint iFlag)
     }
 
     for (auto& iter : m_CinematicTargetLights)
+    {
         iter->Set_Active(bFlag);
+        iter->Set_Range(12.f);
+    }
 
     for (auto& Pair : m_TargetLights)
         Pair.second->Set_Active(bObjFlag);

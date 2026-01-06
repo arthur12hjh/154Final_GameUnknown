@@ -138,6 +138,12 @@
           "fTrackPosition": 70.4,
           "iActiveIndex": 0,
           "szObjectTag": ""
+        },
+        {
+          "eState": 15,
+          "fTrackPosition": 70.4,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
         }
       ],
         "iCinematicID": 143,

@@ -103,11 +103,7 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
-	if (m_tData.fDelayTime > m_fTime)
-	{
-		return;
-	}
-	else if ((0 < m_tData.fEndTime && m_tData.fEndTime + 1.f <= m_fTime)) {
+	if ((0 < m_tData.fEndTime && m_tData.fEndTime + 1.f <= m_fTime)) {
 		m_isDead = true;
 		return;
 	}

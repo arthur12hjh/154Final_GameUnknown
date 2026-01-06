@@ -260,6 +260,9 @@
 #include "UIResult.h"
 #include "UISongSelector.h"
 #include "UITriggerKey.h"
+#include "UIVideoThumbnail.h"
+
+#include "VideoPlayer.h"
 
 #pragma endregion
 
@@ -1774,6 +1777,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 
 	
 
+
+	/* For.Prototype_Component_Effect_Gigas_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blink");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blink.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Gigas_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Spark");
@@ -8462,6 +8470,13 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
 
+	/* For.Prototype_Component_VideoPlayer */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VideoPlayer");
+	pProtoDesc.pPrototype = CVideoPlayer::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Overlay");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
@@ -8560,6 +8575,20 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Accuracy */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Accuracy");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Accuracy/Accuracy_%d.png"), 4);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_GameClear */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_GameClear");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/GameClear_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/*===========================================================================================*/
 
 	/* For.Prototype_GameObject_UI_NeonNumber */
@@ -8600,6 +8629,13 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	/* For.Prototype_GameObject_UI_Result */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Result");
 	pProtoDesc.pPrototype = CUIResult::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_VideoThumbnail */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_VideoThumbnail");
+	pProtoDesc.pPrototype = CUIVideoThumbnail::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

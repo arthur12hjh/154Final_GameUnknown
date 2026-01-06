@@ -63,6 +63,44 @@
                 "szProtoTag": "Prototype_GameObject_UI_NeonNumber",
                 "szUIID": "UI_ComboScore_0",
                 "szUITag": "UI_ComboScore"
+            },
+            {
+                "TextureDesc": {
+                    "iPass": 3,
+                    "iTextureIndex": 1,
+                    "szProtoTag": "Prototype_Component_UI_Texture_GameClear",
+                    "szTextureComTag": "Com_Texture_UI_GameClear"
+                },
+                "Shader": {
+                    "bUseGlow": true,
+                    "bUseScale": true,
+                    "fGlowIntensity": 0.0,
+                    "fGlowSpread": 0.0,
+                    "fScale": 0.0
+                },
+                "fAlpha": 0.0,
+                "fOffsetX": 0.0,
+                "fOffsetY": 0.0,
+                "fRotation": 0.0,
+                "fSizeX": 440.0,
+                "fSizeY": 220.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 3,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szAnimTags": [
+                    {
+                        "szAnimTag": "GameClear_Show",
+                        "szPrefabTag": "GameClear_Show"
+                    }
+                ],
+                "szLayerTag": "Layer_BeatSaber",
+                "szProtoTag": "Prototype_GameObject_UI_Image",
+                "szUIID": "UI_GameClear_1",
+                "szUITag": "UI_GameClear"
             }
         ],
         "fAlpha": 1.0,

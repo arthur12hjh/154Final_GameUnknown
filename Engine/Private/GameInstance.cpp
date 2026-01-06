@@ -1231,9 +1231,19 @@ HRESULT CGameInstance::ReadBinx(const _char* pModelFilePath, MODEL_TYPE eType, b
 	return m_pBinParser->ReadBinx(pModelFilePath, eType, ppOut);
 }
 
+HRESULT CGameInstance::ReadBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->ReadBinMorph(pModelFilePath, eType, ppOut);
+}
+
 HRESULT CGameInstance::WriteBinx(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
 {
 	return m_pBinParser->WriteBinx(pModelFilePath, eType, ppOut);
+}
+
+HRESULT CGameInstance::WriteBinMorph(const _char* pModelFilePath, MODEL_TYPE eType, binModel** ppOut)
+{
+	return m_pBinParser->WriteBinMorph(pModelFilePath, eType, ppOut);
 }
 
 #pragma endregion
