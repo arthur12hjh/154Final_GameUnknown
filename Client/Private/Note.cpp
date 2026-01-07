@@ -92,6 +92,11 @@ HRESULT CNote::Render()
     return S_OK;
 }
 
+void CNote::OverlapTime(_float fDeltaTime)
+{
+    m_OverlapTime += fDeltaTime;
+}
+
 HRESULT CNote::Ready_Components()
 {
     /* Com_Model */
