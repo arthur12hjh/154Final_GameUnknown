@@ -25,13 +25,15 @@ HRESULT CNote::Initialize(void* pArg)
         return E_FAIL;
 
     NOTE_DESC* pDsec = static_cast<NOTE_DESC*>(pArg);
-    m_vTargetPoint = pDsec->vTargetPoint;
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
     // 여기서 램덤으로 방향을 6방향중에서 
     m_fNoteSpeed = 10.f;
     SettingNoteDirection();
+    _vector vDir = XMVector3Normalize(XMLoadFloat3(&pDsec->vTargetPoint) - m_pTransformCom->Get_State(STATE::POSITION));
+    XMStoreFloat3(&m_vTargetDir, vDir);
+
     return S_OK;
 }
 
@@ -44,10 +46,7 @@ void CNote::Update(_float fTimeDelta)
 {
     m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-    _vector vPos = m_pTransformCom->Get_State(STATE::POSITION);
-    _vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
-
-    _vector vDir = XMVector3Normalize(vTargetPos - vPos);
+    _vector vDir = XMLoadFloat3(&m_vTargetDir);
     m_pTransformCom->Move_Direction(fTimeDelta, vDir, m_fNoteSpeed);
 
     m_pModelCom->Play_Animation(fTimeDelta);
@@ -155,13 +154,13 @@ void CNote::SettingNoteDirection()
     {
     case 0 :
         m_NoteData.eDirection = DIRECTION::LEFT;
-        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
-        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
+        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
+        m_NoteData.vBoundAnimFrame = { 18.f, 30.f };
         break;
     case 1:
         m_NoteData.eDirection = DIRECTION::RIGHT;
-        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
-        m_NoteData.vBoundAnimFrame = { 28.f, 30.f };
+        m_pModelCom->Set_Animation("N_Dororong_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
+        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
         break;
     case 2:
         m_NoteData.eDirection = DIRECTION::RIGHT_FRONT;
@@ -175,13 +174,13 @@ void CNote::SettingNoteDirection()
         break;
     case 4:
         m_NoteData.eDirection = DIRECTION::LEFT_BACK;
-        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
-        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
+        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
+        m_NoteData.vBoundAnimFrame = { 28.f, 30.f };
         break;
     case 5:
         m_NoteData.eDirection = DIRECTION::RIGHT_BACK;
-        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 30.f, 30.f);
-        m_NoteData.vBoundAnimFrame = { 28.f, 30.f };
+        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 10.f, 10.f);
+        m_NoteData.vBoundAnimFrame = { 8.f, 10.f };
         break;
     }
 }

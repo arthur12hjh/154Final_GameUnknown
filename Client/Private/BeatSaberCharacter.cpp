@@ -44,8 +44,9 @@ HRESULT CBeatSaberCharacter::Initialize(void* pArg)
 		return E_FAIL;
 
 	auto pOBBCollider = static_cast<COBBCollider*>(m_pColliderCom);
-	m_BoxSizeZ = pOBBCollider->GetBounding().Extents.z;
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
+	m_BoxSizeZ = pOBBCollider->GetBounding().Extents.z;
 	return S_OK;
 }
 
@@ -146,6 +147,7 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
 	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlapEnd(vHitPoint, vHitDir, pHitActor); });
 
 	CBeatSaberFsm::STATEMACHINE_DESC FsmDesc = {};
 	FsmDesc.pOwner = this;
@@ -190,7 +192,6 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
-
 		m_CharacterDesc.eDirection = DIRECTION::LEFT;
 		bIsMove = true;
 	}
@@ -231,7 +232,6 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 		if (pNoteData.eDirection == m_CharacterDesc.eDirection)
 		{
 			_float fAnimFrame = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
-
 			if (pNoteData.vBoundAnimFrame.x <= fAnimFrame && fAnimFrame <= pNoteData.vBoundAnimFrame.y)
 			{
 				_float fOverlapTime = pNote->GetOverlapTime();
@@ -246,33 +246,41 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					// 퍼팩트
 					m_CharacterDesc.iScore += 100;
 					m_CharacterDesc.iComboCnt++;
+					bIsSuccess = true;
 				}
 				else if (0.7 > fLength)
 				{
 					m_CharacterDesc.iScore += 50;
 					m_CharacterDesc.iComboCnt++;
+					bIsSuccess = true;
 				}
 				else
 				{
-					// 배드
+					m_CharacterDesc.iComboCnt = 0;
 					bIsSuccess = true;
 				}
 			}
 		}
 
-		if (!bIsSuccess)
-		{
-			m_CharacterDesc.iGameLife--;
-			m_CharacterDesc.iComboCnt = 0;
-		}
-
-		pNote->Set_Dead(true);
+		if (bIsSuccess)
+			pHitActor->Set_Dead(true);
 	}
 
-	if (0 >= m_CharacterDesc.iGameLife)
+}
+
+void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	if (false == m_isDead)
 	{
-		// 게임 실패
-		// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+		m_CharacterDesc.iGameLife--;
+		m_CharacterDesc.iComboCnt = 0;
+
+		if (0 >= m_CharacterDesc.iGameLife)
+		{
+			// 게임 실패
+			// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+		}
+		pHitActor->Set_Dead(true);
 	}
 }
 

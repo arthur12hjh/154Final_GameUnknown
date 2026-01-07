@@ -56,7 +56,7 @@ private :
 	NOTE_DATA_DESC					m_NoteData = {};
 	_float							m_OverlapTime = { };
 
-	_float3							m_vTargetPoint = {};
+	_float3							m_vTargetDir = {};
 	_float							m_fNoteSpeed = { 2.f };
 
 private :

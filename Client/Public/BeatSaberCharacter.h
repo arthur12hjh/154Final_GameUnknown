@@ -45,6 +45,7 @@ private :
 
 	void							Key_Input(_float fTimeDelta);
 	void							OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void							OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
 	static	CBeatSaberCharacter*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
