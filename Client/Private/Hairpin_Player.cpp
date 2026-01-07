@@ -7,6 +7,7 @@
 
 #include "Body_Player.h"
 #include "Player.h"
+#include "Model.h"
 
 CHairpin_Player::CHairpin_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer_Parts{ pDevice, pContext }

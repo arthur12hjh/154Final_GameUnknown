@@ -12,18 +12,18 @@
 #include "UIHUD.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	CProb_Interaction(pDevice, pContext)
+    CProb_Interaction(pDevice, pContext)
 {
 }
 
 CCanBox::CCanBox(const CCanBox& Prototype) :
-	CProb_Interaction(Prototype)
+    CProb_Interaction(Prototype)
 {
 }
 
 HRESULT CCanBox::Initialize_Prototype()
 {
-	return S_OK;
+    return S_OK;
 }
 
 HRESULT CCanBox::Initialize(void* pArg)
@@ -37,7 +37,7 @@ HRESULT CCanBox::Initialize(void* pArg)
         return E_FAIL;
 
     m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
-    m_pModelCom->Set_AnimationIndex(1, false);
+    m_pModelCom->Set_AnimationIndex(0, false);
 
     m_pInteractionCom->Set_Duration(0.f);
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -77,7 +77,7 @@ void CCanBox::Update(_float fTimeDelta)
                 if (INTERACTION_STATE::LOCK != m_pInteractionCom->Get_InterState())
                     m_pInteractionCom->Set_InterState(INTERACTION_STATE::LOCK);
             }
-                
+
             m_pModelCom->Play_Animation(0.f);
         }
     }
@@ -85,50 +85,50 @@ void CCanBox::Update(_float fTimeDelta)
 
 void CCanBox::Late_Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
-	{
-        if(INTERACTION_STATE::ACTIVE > m_pInteractionCom->Get_InterState())
-		    m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+    if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
+    {
+        if (INTERACTION_STATE::ACTIVE > m_pInteractionCom->Get_InterState())
+            m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 #ifdef _DEBUG
-		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+        m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 
-		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	}
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+    }
 }
 
 HRESULT CCanBox::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
+    if (FAILED(Bind_ShaderResources()))
+        return E_FAIL;
 
-	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+    _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-       if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
-           return E_FAIL;
+    for (size_t i = 0; i < iNumMeshes; i++)
+    {
+        if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
+            return E_FAIL;
 
-       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-           return E_FAIL;
+        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+            return E_FAIL;
 
-       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-           return E_FAIL;
+        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+            return E_FAIL;
 
-       //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-       //    return E_FAIL;
+        //if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+        //    return E_FAIL;
 
-       if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-           return E_FAIL;
+        if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+            return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;
-	}
+        if (FAILED(m_pShaderCom->Begin(0)))
+            return E_FAIL;
+        if (FAILED(m_pModelCom->Render(i)))
+            return E_FAIL;
+    }
 
-	return S_OK;
+    return S_OK;
 }
 
 HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
@@ -159,7 +159,7 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_OverlapCallBack(); };
     InteractionDesc.EndCallBackFunc = [&]() { this->End_OverlapCallBack(); };
-    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject * pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
+    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_CallBack(fTimeDelta, pActionObject); };
 
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_InteractionBinder"),
         TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))

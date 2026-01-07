@@ -22,7 +22,7 @@ public:
 private:
 	PLAYER_DIRECTION m_eDirection = {};
 	PLAYER_BATTLEWALK_DESC m_tNextStateDesc = {};
-
+	_float m_fLerp = { 0.6f };
 public:
 	static	CPlayer_LockonJustEvadeState* Create(void* pArg);
 	virtual	void			   Free() override;

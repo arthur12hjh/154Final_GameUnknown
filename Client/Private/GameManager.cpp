@@ -288,6 +288,11 @@ void CGameManager::Set_CinematicLights(_uint iFlag)
     m_pShaderManager->Set_CinematicLights(iFlag);
 }
 
+void CGameManager::Set_ScarletPatternFog(_bool bFlag, _float fLerpTime)
+{
+    m_pShaderManager->Set_ScarletPatternFog(bFlag, fLerpTime);
+}
+
 #pragma region LOCKON
 
 CNaytiba* CGameManager::Get_LockonTarget()

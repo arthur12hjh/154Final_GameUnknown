@@ -130,9 +130,12 @@ void CShaderManager::Update(_float fTimeDelta)
 
 
     if (true == m_isScarletPhase2LerpTriggerOn)
-    {
         Load_Scarlet_Phase2_ShaderSettings(fTimeDelta);
-    }
+    
+    if (true == m_isScarletPhase2 && true == m_isScarletPatternFogActivated)
+        Load_Scarlet_Pattern_Fog(fTimeDelta);
+    else if (true == m_isScarletPhase2 && false == m_isScarletPatternFogActivated)
+        Load_Scarlet_Normal_Fog(fTimeDelta);
 }
 
 void CShaderManager::Clear(LEVEL eLevelID)
@@ -216,6 +219,8 @@ void CShaderManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIdx)
         }
         else if (2 == iIdx)
         {
+            //2페이즈임을 체크. 
+            m_isScarletPhase2 = true;
             m_isScarletPhase2LerpTriggerOn = true;
             m_fScarletPhase2LerpTimeAcc = 0.f;
 
@@ -487,6 +492,56 @@ void CShaderManager::Load_Scarlet_BattleEnd_ShaderSettings()
         m_pMapEffect->End();
         m_pMapEffect = nullptr;
     }
+}
+
+void CShaderManager::Load_Scarlet_Pattern_Fog(_float fTimeDelta)
+{
+    m_fScarletPatternFogTimeAcc += fTimeDelta;
+    _float fT = m_fScarletPatternFogTimeAcc / m_fScarletPatternFogLerpTime;
+
+    if (fT >= 1.f)
+        fT = 1.f;
+
+#pragma region FOG
+    _float4 vFogTarget = _float4(0.f, 0.f, 0.f, 1.f);
+    _float  fFogEndTar = 56.f;
+    _float  fFogPowMinTar = 0.f;
+    _float  fFogPowMaxTar = 1.f;
+    _float  fSkyFogTar = 0.22f;
+
+    XMStoreFloat4(&(*m_pFogDesc->vFogColor), XMVectorLerp(
+        XMLoadFloat4(&m_ScarletPhase2LerpCache.vFogColorStart), XMLoadFloat4(&vFogTarget), fT));
+
+    *m_pFogDesc->fFogEnd = Lerp<_float>(m_ScarletPhase2LerpCache.fFogEndStart, fFogEndTar, fT);
+    *m_pFogDesc->fFogPowerMin = Lerp<_float>(m_ScarletPhase2LerpCache.fFogPowerMinStart, fFogPowMinTar, fT);
+    *m_pFogDesc->fFogPowerMax = Lerp<_float>(m_ScarletPhase2LerpCache.fFogPowerMaxStart, fFogPowMaxTar, fT);
+    *m_pFogDesc->fSkyboxFogPower = Lerp<_float>(m_ScarletPhase2LerpCache.fSkyboxFogPowerStart, fSkyFogTar, fT);
+#pragma endregion
+}
+
+void CShaderManager::Load_Scarlet_Normal_Fog(_float fTimeDelta)
+{
+    m_fScarletPatternFogTimeAcc += fTimeDelta;
+    _float fT = m_fScarletPatternFogTimeAcc / m_fScarletPatternFogLerpTime;
+
+    if (fT >= 1.f)
+        fT = 1.f;
+
+#pragma region FOG
+    _float4 vFogTarget = _float4(0.f, 0.f, 0.f, 1.f);
+    _float  fFogEndTar = 285.f;
+    _float  fFogPowMinTar = 0.5f;
+    _float  fFogPowMaxTar = 1.f;
+    _float  fSkyFogTar = 0.22f;
+
+    XMStoreFloat4(&(*m_pFogDesc->vFogColor), XMVectorLerp(
+        XMLoadFloat4(&m_ScarletPhase2LerpCache.vFogColorStart), XMLoadFloat4(&vFogTarget), fT));
+
+    *m_pFogDesc->fFogEnd = Lerp<_float>(56.f, fFogEndTar, fT);
+    *m_pFogDesc->fFogPowerMin = Lerp<_float>(0.f, fFogPowMinTar, fT);
+    *m_pFogDesc->fFogPowerMax = Lerp<_float>(1.f, fFogPowMaxTar, fT);
+    *m_pFogDesc->fSkyboxFogPower = Lerp<_float>(0.22f, fSkyFogTar, fT);
+#pragma endregion
 }
 
 void CShaderManager::Set_CinematicLights(_uint iFlag)

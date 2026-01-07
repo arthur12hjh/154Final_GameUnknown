@@ -40,8 +40,8 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
     //락온 중이니까 lock은 계속 들어가지.
     //- XMVector3Normalize(vTargetLook) * fRadius
     m_Desc->pPlayerTransform->Set_State(STATE::POSITION, 
-        XMVectorSetY(vTargetPos + XMVector3Normalize(vPlayerToMonster) * fRadius * 4.f, XMVectorGetY(vPlayerPos)));
-    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos + XMVector3Normalize(vPlayerToMonster) * fRadius * 4.f, XMVectorGetY(vPlayerPos)));
+        XMVectorSetY(vTargetPos + XMVector3Normalize(vPlayerToMonster) * fRadius * 2.f, XMVectorGetY(vPlayerPos)));
+    m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetPos + XMVector3Normalize(vPlayerToMonster) * fRadius * 2.f, XMVectorGetY(vPlayerPos)));
 
     m_Desc->pPlayerTransform->LookAt(XMVectorSetY(vTargetPos, 
         XMVectorGetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION))));
@@ -53,11 +53,17 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
     //ratio 받아와서 세팅
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
+    m_fLerp += fAnimationRatio;
+
+    if (m_fLerp >= 1.f)
+        m_fLerp = 1.f;
+
+    m_pGameInstance->SetGameSpeed(m_fLerp);
+
     if (true == isAnimFinished)
     {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
         m_pGameInstance->Active_DoF(false, 0.2f);
-        m_pGameInstance->SetGameSpeed(1.f);
     }
 
     return m_tNextState;

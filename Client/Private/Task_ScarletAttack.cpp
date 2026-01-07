@@ -202,8 +202,8 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	/*m_pSkillData.push(m_pGameManager->Find_SkillData(26));
 	SelectAttackData();*/
 
-	EntranceAttack();
-	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
+	//EntranceAttack();
+	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
@@ -228,6 +228,8 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	}
 	else
 	{
+		m_pGameManager->Set_ScarletPatternFog(true, 0.4f);
+
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
@@ -239,7 +241,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		m_FinishedDelayDesc.vKeyFrame = { 153, 153 };
 		m_FinishedDelayDesc.vStopFrame = { 0, 8 };
 		SelectAttackData();
-	}*/
+	}
 
 	return true;
 }
@@ -289,6 +291,8 @@ void CTask_ScarletAttack::EntranceAttack()
 	break;
 
 	case CBossBlackBoard::BOSS_PAHSE::SECOND:
+		//여기서 안개처리 시작
+		m_pGameManager->Set_ScarletPatternFog(true, 4.f);
 		m_pSkillData.push(m_pGameManager->Find_SkillData(56));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
@@ -301,7 +305,6 @@ void CTask_ScarletAttack::EntranceAttack()
 		m_FinishedDelayDesc.vStopFrame = { 0, 4 };
 		break;
 	}
-
 	SelectAttackData(); 
 }
 
@@ -1286,10 +1289,22 @@ void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)
 void CTask_ScarletAttack::Clear_ScarletAttackTask()
 {
 	if (m_pBlackBoard->IsPhaseLastAttack())
+	{
 		m_pBlackBoard->SetPhaseLastAttack(false);
+		m_pGameManager->Set_ScarletPatternFog(false, 1.f);
+
+	}
 
 	if (m_pBlackBoard->bIsEnableEntarnceAttack())
+	{
 		m_pBlackBoard->SetEntarnceAttack(false);
+
+		if (CBossBlackBoard::BOSS_PAHSE::SECOND == m_pBlackBoard->Get_BossPhase())
+		{
+			//안개 패턴 끝날때
+			m_pGameManager->Set_ScarletPatternFog(false, 2.f);
+		}
+	}
 
 	if (m_pBlackBoard->bIsReflectExcution())
 		m_pBlackBoard->SetRefelctExcution(false);
