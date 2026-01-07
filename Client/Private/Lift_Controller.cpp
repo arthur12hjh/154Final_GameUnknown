@@ -69,7 +69,7 @@ void CLift_Controller::Update(_float fTimeDelta)
 		{
 			_vector vControllerPos = m_pTransformCom->Get_State(STATE::LOOK);
 			_vector vPlatformPosition = m_pLiftPlatform->GetTransform()->Get_State(STATE::POSITION);
-			WorldMat.r[3] += vPlatformPosition + vControllerPos * -4.8f;
+			WorldMat.r[3] = vPlatformPosition + vControllerPos * -4.8f;
 			WorldMat.r[3].m128_f32[3] = 1.f;
 
 			m_vLiftPlatformPos = vPlatformPosition;
@@ -78,6 +78,8 @@ void CLift_Controller::Update(_float fTimeDelta)
 	}
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pInteractionCom->Update_Com(WorldMat);
+	m_pRigidBody->Update_PxTransform(WorldMat);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
 	if (m_pLiftPlatform && m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
@@ -85,8 +87,6 @@ void CLift_Controller::Update(_float fTimeDelta)
 		if (!m_pLiftPlatform->GetPlatformMove())
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	}
-
-	//m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
