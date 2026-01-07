@@ -11,7 +11,7 @@ CPlayer_LockonJustEvadeState::CPlayer_LockonJustEvadeState()
 
 void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 {
-	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.4f);
+	m_pGameInstance->Active_RadialBlur(1.f, 16, 0.5f);
 
 	m_eState = PLAYER_STATE::JUST_EVADE;
 	m_Desc->isInvincible = true;
@@ -42,7 +42,7 @@ void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 		m_eDirection = PLAYER_DIRECTION::BACKWARD;
 	}
 
-	m_pGameInstance->SetGameSpeed(0.7f);
+	m_pGameInstance->SetGameSpeed(0.6f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_LockonJustEvadeState::Update(_float fTimeDelta)
@@ -71,8 +71,24 @@ PLAYER_TRANSITION_DESC CPlayer_LockonJustEvadeState::Update(_float fTimeDelta)
 		break;
 	}
 
-	if(0.4 <= fAnimationRatio)
-		m_pGameInstance->SetGameSpeed(1.f);
+	if (PLAYER_DIRECTION::BACKWARD == m_eDirection && 0.4f <= fAnimationRatio)
+	{
+		m_fLerp += fTimeDelta * 10.f;
+
+		if (m_fLerp >= 1.f)
+			m_fLerp = 1.f;
+
+		m_pGameInstance->SetGameSpeed(m_fLerp);
+	}
+	else if (0.5f <= fAnimationRatio)
+	{
+		m_fLerp += fTimeDelta * 10.f;
+
+		if (m_fLerp >= 1.f)
+			m_fLerp = 1.f;
+	
+		m_pGameInstance->SetGameSpeed(m_fLerp);
+	}
 
 	if (true == isAnimFinished)
 		m_tNextState.eNextState = PLAYER_STATE::IDLE;

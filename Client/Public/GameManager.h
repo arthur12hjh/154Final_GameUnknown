@@ -90,6 +90,7 @@ public :
 	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
 	void	Change_ShaderSetting(LEVEL eLevelID, _uint iIndex = 0);
 	void	Set_CinematicLights(_uint iFlag);
+	void	Set_ScarletPatternFog(_bool bFlag, _float fLerpTime = 4.f);
 #pragma endregion
 
 #pragma region LOCKON
