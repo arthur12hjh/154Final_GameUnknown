@@ -34,24 +34,24 @@ HRESULT CItem::Initialize(void* pArg)
 	m_fAmount = pDesc->fAmount;
 	m_fDropForce = pDesc->fDropForce;
 
-	_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
-	_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
+	//_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
+	//_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
 
-	m_pTransformCom->Set_State(STATE::POSITION, vOwnerPos + XMVectorSet(0.f, 2.f, 0.f, 0.f));
+	//m_pTransformCom->Set_State(STATE::POSITION, vOwnerPos + XMVectorSet(0.f, 2.f, 0.f, 0.f));
 
-	_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 1.f);
-	vBezirPoint.m128_f32[1] += 5.f;
-	XMStoreFloat3(&m_CurvePoins[4], vDropPoint);
+	//_vector vBezirPoint = XMVectorLerp(vOwnerPos, vDropPoint, 1.f);
+	//vBezirPoint.m128_f32[1] += 5.f;
+	//XMStoreFloat3(&m_CurvePoins[4], vDropPoint);
 
-	_vector vCenterPoint = (vOwnerPos + vBezirPoint) / 2.f;
-	XMStoreFloat3(&m_CurvePoins[2], vCenterPoint);
+	//_vector vCenterPoint = (vOwnerPos + vBezirPoint) / 2.f;
+	//XMStoreFloat3(&m_CurvePoins[2], vCenterPoint);
 
-	_vector vCenterRightPoint = (vCenterPoint + vBezirPoint) / 2.f;
-	XMStoreFloat3(&m_CurvePoins[3], vCenterRightPoint);
+	//_vector vCenterRightPoint = (vCenterPoint + vBezirPoint) / 2.f;
+	//XMStoreFloat3(&m_CurvePoins[3], vCenterRightPoint);
 
-	_vector vCenterLeftPoint = (vOwnerPos + vCenterPoint) / 2.f;
-	XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
-	XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
+	//_vector vCenterLeftPoint = (vOwnerPos + vCenterPoint) / 2.f;
+	//XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
+	//XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
 
 
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;

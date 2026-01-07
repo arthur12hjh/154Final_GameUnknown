@@ -152,14 +152,16 @@ void CNaytiba::Late_Update(_float fTimeDelta)
 
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+
+	if (false == m_isDead)
 	{
 		m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-		m_pGameInstance->ADD_Collider(m_pColliderCom);
+		
 	}
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
-
 		__super::Late_Update(fTimeDelta);
 
 #ifdef _DEBUG
@@ -195,6 +197,16 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
+	// 데미지를 입을떄 히트렉에 걸리게 하자
+	// 0. 보스는 히트랙 조금 줄여
+	// 1. 히트랙은 평타만
+	// 2. 잡몹들은 확실하게 히트렉 주자.
+
+	// 1,2타 때 1프레임
+	// 3,4타 때 2프레임
+	// -> 그냥 줘도 될듯?
+	m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
+
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	if (nullptr == pDesc->pSkillData)
 		return E_FAIL;
@@ -214,7 +226,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	{
 		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-		m_pCCT->Set_Active(false);
+		
 	}
 
 	VisibleStatusUI(0.f);
@@ -337,7 +349,10 @@ void CNaytiba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
 
 void CNaytiba::PlayDeadEffect()
 {
-	m_pDropCom->ItemDrop(1);
+	if(NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+		m_pDropCom->ItemDrop(1);
+
+	m_pCCT->Set_Active(false);
 	m_pPartBody->Play_DeadEffect();
 }
 
@@ -366,6 +381,11 @@ void CNaytiba::Excution()
 CGameObject* CNaytiba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
+}
+
+void CNaytiba::SetVelocity(_bool bIsFlag, _float fVelocity)
+{
+	m_pCCT->Set_Gravity(bIsFlag, fVelocity);
 }
 
 void CNaytiba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)
@@ -1044,7 +1064,7 @@ void CNaytiba::CreateHitBox(const AnimNotify* pNotify)
 }
 
 void CNaytiba::SpawnObject(const AnimNotify* pNotify)
-{
+{ 
 	// 여기서 파트오브젝트로 만들고 파트오브젝트업데이트에서 소켓에 붙여서
 	// 랜더링하다가 특정 Shoot 함수가 들어오면 발사하자
 
@@ -1056,6 +1076,9 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	//	"szNotifyArg01" : "Prototype_GameObject_RockBullet"
 	//	"szNotifyArg02" : "RockBullet_Layer",
 	//	"szNotifyArg03" : "Bip001-R-Hand",
+	if (0 == pNotify->iNumData01)
+		return;
+
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
 	
@@ -1065,7 +1088,6 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	pBulletDesc.vScale = pNotify->vNotifyScale;
-	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
 		pBulletDesc.vScale = {1.f, 1.f, 1.f};
 	else
@@ -1076,6 +1098,7 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	else
 		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
 
+	 
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
 	pBulletDesc.iBulletType = pNotify->iNumData04;
@@ -1087,6 +1110,10 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 
 	 _float fRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, XMVector3Normalize(vTargetPos - vOwnerPos))));
 	 _float fLength = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
+
+	 pBulletDesc.bIsApplyTransform = true;
+	 _matrix WeaponMatrix = XMLoadFloat4x4(pBulletDesc.pSocketMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	 XMStoreFloat3(&pBulletDesc.vPosition, WeaponMatrix.r[3]);
 	 if (0 < XMVectorGetX(XMVector3Dot(vOwnerPos, vTargetPos)))
 	 {
 		 if (fRadian <= XMConvertToRadians(pNotify->fNumData01))

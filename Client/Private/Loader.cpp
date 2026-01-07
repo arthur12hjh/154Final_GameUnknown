@@ -429,12 +429,15 @@ HRESULT CLoader::Loading()
 	case LEVEL::BEATSABER_GAME:
 	{
 		m_strMessage = TEXT("Dororong");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
+
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Map(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+		{
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
 			hr = Loading_For_BeatSaber();
+		}
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());
@@ -622,7 +625,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		"../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/CH_EVE_BaseBody_V02_F1_ORSS.dds",
 		"g_ORSSTexture", TRUE);
 
-	PreMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Hairpin"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/CH_W_Sword/CH_ACC_HairPin.binx", PreMatrix))))
 		return E_FAIL;
@@ -2836,7 +2839,7 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_MotionTrail");
-	pProtoDesc.pPrototype = CMontionTrailComponent::Create(m_pDevice, m_pContext);
+	pProtoDesc.pPrototype = CMotionTrailComponent::Create(m_pDevice, m_pContext, 60);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

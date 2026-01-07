@@ -3,21 +3,19 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-Texture2D           g_DiffuseTexture;
-Texture2D           g_ORMTexture;
-Texture2D           g_NormalTexture;
-
 vector               g_vCamPosition;
 float                g_fRimLightPower;
 float                g_fRimLightStrength;
-float4               g_vRimLightColor;
 
+float                g_fFar;
 int                  g_iNumBone;
+int                  g_iNumTrail;
+
 float4               g_vStartColor;
 float4               g_vEndColor;
 matrix               g_OffsetMatrices[512];
 
-StructuredBuffer<BoneTransformMatrix>           g_BoneMatrixBuffer : register(t18);
+StructuredBuffer<BoneTransformMatrix>          g_BoneMatrixBuffer : register(t18);
 
 struct VS_MOTION_TRAIL_IN
 {
@@ -37,7 +35,7 @@ struct VS_MOTION_TRAIL_IN
 struct VS_MOTION_TRAIL_OUT
 {
     float4 vPosition    : SV_POSITION;
-    float3 vNormal      : NORMAL;
+    float4 vNormal      : NORMAL;
     float3 vTangent     : TANGENT;
     float3 vBinormal    : BINORMAL;
     float2 vTexcoord    : TEXCOORD0;
@@ -88,7 +86,7 @@ VS_MOTION_TRAIL_OUT VS_MOTION_TRAIL_MAIN(VS_MOTION_TRAIL_IN In)
     
     Out.vPosition = mul(vPosition, matWVP);
     Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = normalize(mul(vector(vSkinnedNormal, 0.f), In.TransformMatrix)).xyz;
+    Out.vNormal = normalize(mul(vector(vSkinnedNormal, 0.f), In.TransformMatrix));
     Out.vTangent = normalize(mul(vector(vSkinnedTangent, 0.f), In.TransformMatrix)).xyz;
     Out.vBinormal = normalize(mul(vector(vSkinnedBinorm, 0.f), In.TransformMatrix)).xyz;
     Out.vWorldPos = mul(vPosition, In.TransformMatrix);
@@ -102,7 +100,7 @@ VS_MOTION_TRAIL_OUT VS_MOTION_TRAIL_MAIN(VS_MOTION_TRAIL_IN In)
 struct PS_MOTION_TRAIL_IN
 {
     float4 vPosition    : SV_POSITION;
-    float3 vNormal      : NORMAL;
+    float4 vNormal      : NORMAL;
     float3 vTangent     : TANGENT;
     float3 vBinormal    : BINORMAL;
     float2 vTexcoord    : TEXCOORD0;
@@ -124,7 +122,7 @@ struct PS_MOTION_TRAIL_OUT
 };
 
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_MOTION_TRAIL_OUT PS_MOTION_TRAIL_MAIN(PS_MOTION_TRAIL_IN In)
 {
     PS_MOTION_TRAIL_OUT Out;
@@ -132,13 +130,16 @@ PS_MOTION_TRAIL_OUT PS_MOTION_TRAIL_MAIN(PS_MOTION_TRAIL_IN In)
     if (In.vLifeTime.x >= In.vLifeTime.y)
         discard;
     
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    vMtrlDiffuse = float4(1.f, 0.f, 0.f, 1 - In.vLifeTime);
-    Out.vDiffuse = vMtrlDiffuse +
-        Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
-    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    float fRatio = 1.f / g_iNumTrail;
+    float4 vRimLightColor = lerp(g_vStartColor, g_vEndColor, In.vLifeTime.x / In.vLifeTime.y);
+    if (vRimLightColor.a < 0.3f)
+        discard;
+    
+    Out.vDiffuse = Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, vRimLightColor, In.vNormal, In.vWorldPos);
+    
+    Out.vNormal = In.vNormal * 0.5f + 0.5f;
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;

@@ -122,7 +122,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
 
-		CGameManager::GetInstance()->SavePlayerDesc();
+		auto pGameManger = CGameManager::GetInstance();
+
+		pGameManger->SavePlayerDesc();
+		pGameManger->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::SCARLET), 1);
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 
