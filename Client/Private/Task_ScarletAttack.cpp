@@ -71,44 +71,8 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 			m_fAnimationSpeed = 1.2f;
 	}
 
-	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
-	if (bIsFinished)
-	{
-		if (m_pSkillData.empty())
-		{
-			m_fMaxDelayTime = 3.5f;
-		
-			if (10.f > m_pBlackBoard->GetTargetDistance())
-			{
-				if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
-				{
-					_float fRandom = m_pGameInstance->Random(0.f, 100.f);
-					if (30.f > fRandom)
-					{
-						BackStepPattern();
-					}
-					else
-					{
-						m_fMaxDelayTime = 1.7f;
-						bIsTaskFinished = true;
-					}
-				}
-				else
-				{
-					
-					bIsTaskFinished = true;
-				}
-			}
-			else
-				bIsTaskFinished = true;
-
-			Clear_ScarletAttackTask();
-		}
-		else
-			SelectAttackData();
-	}
-
-	if (bIsTaskFinished)
+	bIsTaskFinished = Finished_Animation(fTimeDelta);
+	if (bIsTaskFinished && false == m_bIsAttackDelayCheck)
 	{
 		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetAttackData(nullptr);
@@ -238,13 +202,12 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	/*m_pSkillData.push(m_pGameManager->Find_SkillData(26));
 	SelectAttackData();*/
 
-	//EntranceAttack();
-
-	if (false == m_pBlackBoard->IsPhaseLastAttack())
+	EntranceAttack();
+	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
-			EntranceAttack();
+			EntranceAttack();  
 		}
 		else if (m_pBlackBoard->bIsReflectExcution())
 		{
@@ -270,8 +233,13 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+
+		m_bIsAttackStopDelay = true;
+		m_FinishedDelayDesc.iSkillID = 37;
+		m_FinishedDelayDesc.vKeyFrame = { 153, 153 };
+		m_FinishedDelayDesc.vStopFrame = { 0, 8 };
 		SelectAttackData();
-	}
+	}*/
 
 	return true;
 }
@@ -326,10 +294,15 @@ void CTask_ScarletAttack::EntranceAttack()
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
+
+		m_bIsAttackStopDelay = true;
+		m_FinishedDelayDesc.iSkillID = 57;
+		m_FinishedDelayDesc.vKeyFrame = { 405, 455 };
+		m_FinishedDelayDesc.vStopFrame = { 0, 4 };
 		break;
 	}
 
-	SelectAttackData();
+	SelectAttackData(); 
 }
 
 void CTask_ScarletAttack::BackStepPattern()
@@ -1205,6 +1178,69 @@ _bool CTask_ScarletAttack::Compute_AttackCoolTime(_bool bIsForce)
 	m_pBlackBoard->ClearAttackTimer();
 	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(1.5f, m_fMaxDelayTime));
 	return true;
+}
+
+_bool CTask_ScarletAttack::Finished_Animation(_float fTimeDelta)
+{
+	_bool bIsTaskFinished = false;
+	_bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta * m_fAnimationSpeed);
+	if (bIsFinished)
+	{
+		if (m_pSkillData.empty())
+		{
+			if (m_bIsAttackDelayCheck)
+			{
+				m_bIsAttackDelayCheck = false;
+				bIsTaskFinished = true;
+			}
+			else
+			{
+				if (m_bIsAttackStopDelay)
+				{
+					m_FinishedDelayDesc.vStopFrame.x++;
+
+					if (m_FinishedDelayDesc.vStopFrame.x >= m_FinishedDelayDesc.vStopFrame.y)
+					{
+						m_bIsAttackDelayCheck = true;
+						auto pSkillData = m_pGameManager->Find_SkillData(m_FinishedDelayDesc.iSkillID);
+						m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.12f, false, m_FinishedDelayDesc.vKeyFrame.y, m_FinishedDelayDesc.vKeyFrame.x);
+						m_bIsAttackStopDelay = false;
+					}
+				}
+				else
+				{
+					m_fMaxDelayTime = 3.5f;
+					if (10.f > m_pBlackBoard->GetTargetDistance())
+					{
+						if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
+						{
+							_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+							if (30.f > fRandom)
+							{
+								BackStepPattern();
+							}
+							else
+							{
+								m_fMaxDelayTime = 1.7f;
+								bIsTaskFinished = true;
+							}
+						}
+						else
+							bIsTaskFinished = true;
+					}
+					else
+						bIsTaskFinished = true;
+				}
+			}
+		}
+		else
+			SelectAttackData();
+	}
+
+	if(bIsTaskFinished)
+		Clear_ScarletAttackTask();
+
+	return bIsTaskFinished;
 }
 
 void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)

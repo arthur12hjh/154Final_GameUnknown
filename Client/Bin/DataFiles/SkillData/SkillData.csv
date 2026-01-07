@@ -50,6 +50,7 @@
 54,M_Scarlet_AreaSlash,None,None,20,10,"2, 5, 10",5,0,1,0,136
 55,M_Scarlet_AreaSlash2,None,None,20,10,"2, 5, 10",5,2,1,0,136
 56,M_Scarlet_PhaseChange1S,None,None,0,0,"2, 5, 11",6,3,2,4,136
+57,M_Scarlet_PhaseChange1E_ShieldZeroSucess,None,None,0,0,"2, 5, 11",6,3,2,4,136
 511,M_Beholder_SwingDouble,None,None,0,12,"1,1,7",2,0,4,0,11
 512,M_Beholder_Swing,None,None,12,12,"1,1,7",1,0,4,0,1
 513,M_Beholder_SpinSwing,None,None,13,12,"1,1,7",1,0,4,0,8

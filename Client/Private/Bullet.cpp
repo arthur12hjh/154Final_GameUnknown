@@ -31,6 +31,8 @@ HRESULT CBullet::Initialize(void* pArg)
 
     m_eBulletType = BULLET_TYPE(pDesc->iBulletType);
     m_pSkillData = CGameManager::GetInstance()->Find_SkillData(pDesc->iSkillID);
+    if (nullptr == m_pSkillData)
+        int a = 10;
 
     return S_OK;
 }

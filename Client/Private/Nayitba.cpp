@@ -1046,7 +1046,7 @@ void CNaytiba::CreateHitBox(const AnimNotify* pNotify)
 }
 
 void CNaytiba::SpawnObject(const AnimNotify* pNotify)
-{
+{ 
 	// 여기서 파트오브젝트로 만들고 파트오브젝트업데이트에서 소켓에 붙여서
 	// 랜더링하다가 특정 Shoot 함수가 들어오면 발사하자
 
@@ -1058,6 +1058,9 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	//	"szNotifyArg01" : "Prototype_GameObject_RockBullet"
 	//	"szNotifyArg02" : "RockBullet_Layer",
 	//	"szNotifyArg03" : "Bip001-R-Hand",
+	if (0 == pNotify->iNumData01)
+		return;
+
 	_wstring	szPrototypeName(pNotify->szNotifyArg01.begin(),  pNotify->szNotifyArg01.end());
 	_wstring	szLayerName(pNotify->szNotifyArg02.begin(), pNotify->szNotifyArg02.end());
 	
@@ -1067,7 +1070,6 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	pBulletDesc.pParent = this;
 	pBulletDesc.fRotationPerSec = XMConvertToRadians(90.f);
 	pBulletDesc.vScale = pNotify->vNotifyScale;
-	pBulletDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(pNotify->szNotifyArg03.c_str());
 	if (XMVector3Equal(XMLoadFloat3(&pNotify->vNotifyScale), XMVectorZero()))
 		pBulletDesc.vScale = {1.f, 1.f, 1.f};
 	else
@@ -1078,6 +1080,7 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	else
 		pBulletDesc.pSocketMatrix = m_pGameInstance->GetIdentityMatrixPtr();
 
+	 
 	pBulletDesc.iSkillID = pNotify->iNumData01;
 	pBulletDesc.iHitType = pNotify->iNumData03;
 	pBulletDesc.iBulletType = pNotify->iNumData04;
@@ -1089,12 +1092,16 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 
 	 _float fRadian = acosf(XMVectorGetX(XMVector3Dot(vLook, XMVector3Normalize(vTargetPos - vOwnerPos))));
 	 _float fLength = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
+
+	 pBulletDesc.bIsApplyTransform = true;
+	 _matrix WeaponMatrix = XMLoadFloat4x4(pBulletDesc.pSocketMatrix) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	 XMStoreFloat3(&pBulletDesc.vPosition, WeaponMatrix.r[3]);
 	 if (0 < XMVectorGetX(XMVector3Dot(vOwnerPos, vTargetPos)))
 	 {
 		 if (fRadian <= XMConvertToRadians(pNotify->fNumData01))
 		 {
 			 _vector vBulletTargetPos = m_pTargetCom->GetTarget()->GetTransform()->Get_State(STATE::POSITION);
-			 vBulletTargetPos.m128_f32[1] += 2.5f;
+			 vBulletTargetPos.m128_f32[1] += 2.f;
 
 			XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
 			bTraceBullet = false;
@@ -1104,7 +1111,7 @@ void CNaytiba::SpawnObject(const AnimNotify* pNotify)
 	 if (bTraceBullet)
 	 {
 		 _vector vBulletTargetPos = vOwnerPos + vLook * 50.f;
-		 vBulletTargetPos.m128_f32[1] += 2.5f;
+		 vBulletTargetPos.m128_f32[1] += 2.f;
 		 XMStoreFloat3(&pBulletDesc.vTargetPoint, vBulletTargetPos);
 	 }
 		 
