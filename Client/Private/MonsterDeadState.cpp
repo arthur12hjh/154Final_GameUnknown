@@ -90,7 +90,19 @@ void CMonsterDeadState::Update(_float fTimeDelta)
 			}
 		
 			if (LimitRatio > fAnimRatio)
+			{
 				m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
+				pEntity->SetVelocity(false, 0.f);
+			}
+			
+			if (0.2f > fAnimRatio)
+			{
+				_vector vDiagonal = XMLoadFloat3(&m_vImpactDir);
+				vDiagonal.m128_f32[1] += 1.f;
+
+				pEntity->SetVelocity(true, m_fDiagonalForce);
+			}
+				
 		}
 	}
 	else
@@ -148,7 +160,8 @@ void CMonsterDeadState::SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc)
 			m_vImpactDir = pDesc->vImpactDir;
 		}
 
-		m_fImpactForce = pDesc->fImpactForce;
+		m_fImpactForce = m_pGameInstance->Random(pDesc->fImpactForce * 0.3f, pDesc->fImpactForce);
+		m_fDiagonalForce = m_pGameInstance->Random(pDesc->fImpactForce * 0.3f, pDesc->fImpactForce);
 	}
 	else
 	{

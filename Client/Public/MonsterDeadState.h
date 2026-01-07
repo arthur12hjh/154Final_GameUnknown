@@ -41,6 +41,7 @@ private :
 
 	_float3										m_vImpactDir = {};
 	_float										m_fImpactForce = {};
+	_float										m_fDiagonalForce = {};
 
 	_float2										m_fDeadEndTime = {};
 

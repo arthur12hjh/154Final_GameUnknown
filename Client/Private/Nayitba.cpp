@@ -152,14 +152,16 @@ void CNaytiba::Late_Update(_float fTimeDelta)
 
 	//모든 트랜스폼의 이동이 끝난 후 실행되어야 함.
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
+		m_pGameInstance->ADD_Collider(m_pColliderCom);
+
+	if (false == m_isDead)
 	{
 		m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
-		m_pGameInstance->ADD_Collider(m_pColliderCom);
+		
 	}
 
 	if (m_pGameInstance->isIn_WorldFrustum(m_pColliderCom))
 	{
-
 		__super::Late_Update(fTimeDelta);
 
 #ifdef _DEBUG
@@ -224,7 +226,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	{
 		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-		m_pCCT->Set_Active(false);
+		
 	}
 
 	VisibleStatusUI(0.f);
@@ -350,6 +352,7 @@ void CNaytiba::PlayDeadEffect()
 	if(NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
 		m_pDropCom->ItemDrop(1);
 
+	m_pCCT->Set_Active(false);
 	m_pPartBody->Play_DeadEffect();
 }
 
@@ -378,6 +381,11 @@ void CNaytiba::Excution()
 CGameObject* CNaytiba::GetTarget()
 {
 	return m_pTargetCom->GetTarget();
+}
+
+void CNaytiba::SetVelocity(_bool bIsFlag, _float fVelocity)
+{
+	m_pCCT->Set_Gravity(bIsFlag, fVelocity);
 }
 
 void CNaytiba::Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc)

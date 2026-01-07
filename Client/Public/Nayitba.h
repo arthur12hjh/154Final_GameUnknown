@@ -42,7 +42,7 @@ public:
 
 	virtual HRESULT							Render() override;
 	virtual HRESULT							Render_Shadow() override;
-	 
+
 	virtual HRESULT							Damaged(void* pArg) override;
 	virtual HRESULT							ActionSuccess(void* pArg) override;
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
@@ -53,6 +53,8 @@ public:
 	_uint									GetMonsterID();
 	void									Excution();
 	CGameObject*							GetTarget();
+	
+	void									SetVelocity(_bool bIsFlag, _float fVelocity);
 
 	//몬스터의 현재 데이터를 반환
 	const NAYTIBA_DESC&						GetMonsterData() { return m_MonsterInfo; }
