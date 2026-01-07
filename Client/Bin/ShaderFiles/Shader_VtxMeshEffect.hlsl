@@ -705,9 +705,6 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_NONLIGHT(PS_IN In)
     Out.vColor.rgb = Out.vColor.rgb * Out.vColor.a * weight * g_fDissolveUVSize.x;
     Out.vColor.a = Out.vColor.a * weight * g_fDissolveUVSize.x;
     return Out;
-    //Out.vColor.rgb *= Out.vColor.a;
-    //Out.vColor.a = 1;
-    return Out;
 }
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
@@ -1122,7 +1119,7 @@ PS_NONLIGHT_OUT PS_TORNADO_MOTION_BLUR(PS_IN In)
 }
 
 /* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
-PS_NONLIGHT_OUT PS_RING(PS_TANGENT_IN In)
+PS_NONLIGHT_OUT PS_RING_MOTION_BLUR(PS_TANGENT_IN In)
 {
     PS_NONLIGHT_OUT Out;
     float3 dir = normalize(In.vTangent.xyz);
@@ -1148,6 +1145,61 @@ PS_NONLIGHT_OUT PS_RING(PS_TANGENT_IN In)
     
     
     Out.vColor.xy = normalize(dir.xy) * 0.045f * saturate(mask) * saturate(g_DissolveTexture.Sample(NoneSampler, In.vTexcoord) * 2) * g_DissolveTexture.Sample(NoneSampler, DissolveTexcoord) * g_fDiffuseUVSize.x;
+    Out.vColor.zw = 0;
+    if (0.01f >= length(Out.vColor.xy))
+        discard;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_SLASH_MOTION_BLUR(PS_TANGENT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float3 dir = normalize(In.vTangent.xyz);
+    //dir.y *= -1;
+    dir.x *= -1;
+    
+    
+    float2 MaskTexcoord;
+    float2 DiffuseTexcoord;
+    
+    float fAlpha = 1;
+    if (1 > 1 + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)
+    {
+        float fSize = lerp(3.f, 1.f, abs((1.f + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)));
+        MaskTexcoord.x = (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * fSize;
+        DiffuseTexcoord.x = (In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x * fSize;
+    }
+    else
+    {
+        float fSpeedTime = g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x;
+        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + (g_fTime * g_fMaskUVSpeed.x) * (1.f - saturate(fSpeedTime * 0.25f))) * g_fMaskUVSize.x);
+        DiffuseTexcoord.x = ((In.vTexcoord.x + g_fDiffuseUV.x + 1.f + (g_fTime * g_fDiffuseUVSpeed.x - 1.f)) * g_fDiffuseUVSize.x) % 1.f;
+        fAlpha *= saturate((2 - pow(g_fTime * g_fMaskUVSpeed.x * 0.8f, 1.5f)));
+    }
+    if (0 > MaskTexcoord.x)
+        discard;
+    if (0.5 > In.vTexcoord.y)
+    {
+        //Out.vColor.rgb *= g_DiffuseTexture.Sample(ClampSampler, DiffuseTexcoord);
+        MaskTexcoord.y = (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y;
+        DiffuseTexcoord.y = (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y;
+    }
+    else
+    {
+        MaskTexcoord.y = ((1 - In.vTexcoord.y) + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y;
+        DiffuseTexcoord.y = ((1 - In.vTexcoord.y) + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y;
+    }
+    if (0 > MaskTexcoord.y)
+        discard;
+    MaskTexcoord.x = fmod(MaskTexcoord.x, 1);
+    fAlpha *= max(g_DiffuseTexture.Sample(DefaultSampler, float2(DiffuseTexcoord.x, DiffuseTexcoord.y * 2)).r, 0.8f);
+    fAlpha *= g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x, MaskTexcoord.y * 2.f)).r;
+    fAlpha *= saturate(g_fTime * 2);
+    if (0 >= fAlpha)
+        discard;
+    
+    Out.vColor.xy = normalize(dir.xy) * 0.045f * fAlpha * g_fDissolveUVSize.x;
     Out.vColor.zw = 0;
     if (0.01f >= length(Out.vColor.xy))
         discard;
@@ -1432,14 +1484,25 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_TORNADO_MOTION_BLUR();
     }
     // idx 26
-    pass Ring
+    pass Ring_Motion_Blur
     {
         SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_TANGENT();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_RING();
+        PixelShader = compile ps_5_0 PS_RING_MOTION_BLUR();
     }
+    // idx 27
+    pass Slash_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_TANGENT();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SLASH_MOTION_BLUR();
+    }
+
 
 }
