@@ -37,7 +37,9 @@ public :
 	class CPlayer*				GetGameCharacter();
 
 	void						SavePlayerDesc();
-	_bool						LoadPlayerDesc(PLAYER_DESC& PlayerDesc);
+	void						SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
+
+	_bool						LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc);
 
 	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
@@ -53,19 +55,20 @@ public :
 	const INTERACTION_DATA*				Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*		Find_CameraAnimationData(_uint iCameraAnimationData);
 	const CINEMATIC_DESC*				Find_CinematicData(_uint iCinematicIndex);
-	const vector<TRANSPORT_DESC>*		Find_TransportData();
+
+	void								EnableTransport(_uint iAreaID);
 	const TRANSPORT_DESC*				Find_TransportData(_uint iAreaID);
+	const map<_uint, TRANSPORT_DESC>*	Find_AllTransportDatas();
+
 	const vector<SHOP_DESC>*			Get_ShopDatas();
 
 	const SCRIPT_DESC*					Get_ScriptData(const _wstring& szScriptTag);
 	map<_uint, BETA_SKILL_DESC>*		Get_AllBetaSkillDesc();
-	void								EnableTransport(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
 
 #ifdef _DEBUG
-
 	void Refresh();
 
 	void								Save_CameraAnimationData();

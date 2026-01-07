@@ -10,7 +10,7 @@
             "bEnable": true,
             "eTargetLevel": 3
         },
-        "1": {
+         "1": {
             "szAreaName": "월하곡",
             "vPoint": {
                 "x": 263.675,
@@ -19,6 +19,16 @@
             },
             "bEnable": true,
             "eTargetLevel": 4
+        },
+        "2": {
+            "szAreaName": "",
+            "vPoint": {
+                "x": 800.0,
+                "y": 150.0,
+                "z": 1500.0
+            },
+            "bEnable": true,
+            "eTargetLevel": 3
         }
     }
 }

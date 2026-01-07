@@ -35,8 +35,8 @@ public :
 	void												Save_CinematicData();
 	
 	void												EnableTransport(_uint iAreaID);
-	const vector<TRANSPORT_DESC>*						Find_TransportData();
 	const TRANSPORT_DESC*								Find_TransportData(_uint iAreaID);
+	const map<_uint, TRANSPORT_DESC>*					Find_AllTransportDatas();
 
 	map<_uint, CAMERA_ANIMATION_DATA>*					Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*							Get_CinematicDataMap();
@@ -74,7 +74,7 @@ private:
 	unordered_map<_wstring, SCRIPT_DESC>				m_ScriptDatas = {};
 
 	// 캐릭터 이동 위치 데이터
-	vector<TRANSPORT_DESC>								m_Transports = {};
+	map<_uint, TRANSPORT_DESC>							m_Transports = {};
 
 	// 상점 데이터
 	vector<SHOP_DESC>									m_ShopDatas = {};
@@ -94,6 +94,8 @@ private:
 
 	// 한글 때문에 만듦
 	_wstring											UTF8ToWString(const string& str);
+
+
 
 public:
 	static CDataManager*								Create();

@@ -133,22 +133,25 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_PartObjects()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
-	if (false == m_pGameManager->LoadPlayerDesc(m_PlayerDesc))
+	SAVE_LEVEL_PLAYERDATA SaveData = {  };
+	if (false == m_pGameManager->LoadPlayerDesc(SaveData))
 	{
 		if (FAILED(Ready_PlayerDesc()))
 			return E_FAIL;
 	}
 	else
 	{
-		m_PlayerDesc.pPlayerTransform = m_pTransformCom;
-		m_PlayerDesc.pPlayerController = m_pCCT;
+		m_PlayerDesc = SaveData.PlayerData;
+
+		_vector vOldPos = XMLoadFloat3(&SaveData.vOldPosition);
+		m_pTransformCom->Set_State(STATE::POSITION, vOldPos);
 	}
+
+	if (FAILED(Ready_PartObjects()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
 
 	if (FAILED(Ready_BetaSkillDesc()))
 		return E_FAIL;
@@ -157,6 +160,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
+	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
+	m_PlayerDesc.pPlayerController = m_pCCT;
 
 	SetVisibility(VISIBILITY::VISIBLE);
 	MotionTrailRimLight(0.1f, 0.7f, { 1.f , 0.f, 0.f, 1.f });
@@ -536,8 +541,6 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.pPlayerController  = m_pCCT;
-	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
 	m_PlayerDesc.iOwnGold			= 5000;

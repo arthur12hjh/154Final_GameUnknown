@@ -244,17 +244,25 @@ void CDataManager::Save_CinematicData()
 
 void CDataManager::EnableTransport(_uint iAreaID)
 {
-    m_Transports[iAreaID].bIsEnableMove = true;
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return;
+
+    iter->second.bIsEnableMove = true;
 }
 
-const vector<TRANSPORT_DESC>* CDataManager::Find_TransportData()
+const map<_uint, TRANSPORT_DESC>* CDataManager::Find_AllTransportDatas()
 {
     return &m_Transports;
 }
 
 const TRANSPORT_DESC* CDataManager::Find_TransportData(_uint iAreaID)
 {
-    return &m_Transports[iAreaID];
+    auto iter = m_Transports.find(iAreaID);
+    if (iter == m_Transports.end())
+        return nullptr;
+
+    return &iter->second;
 }
 
 map<_uint, CAMERA_ANIMATION_DATA>* CDataManager::Get_CameraAnimationMap()
@@ -904,7 +912,6 @@ HRESULT CDataManager::LoadTransportData(void* pArg)
         desc.iTeleportID = id;
 
         // 문자열 변환
-        
         desc.szAreaName = UTF8ToWString(jInfo["szAreaName"]);
     
         // Pivot
@@ -915,7 +922,7 @@ HRESULT CDataManager::LoadTransportData(void* pArg)
 		desc.bIsEnableMove = jInfo["bEnable"];
 		desc.eTargetLevel = jInfo["eTargetLevel"];
 
-        m_Transports.push_back(desc);
+        m_Transports.emplace(id, desc);
     }
 
     return S_OK;

@@ -78,7 +78,6 @@ void CGameManager::SavePlayerDesc()
          
     Save_Level_PlayerData Desc = {};
     Desc.PlayerData = *SavePlayerDesc;
-    XMStoreFloat3(&Desc.vOldPosition, SavePlayerDesc->pPlayerTransform->Get_State(STATE::POSITION));
 
     m_pSavePlayerDesc = make_pair(Desc, true);
     m_pSavePlayerDesc.first.PlayerData.pPlayerTransform = nullptr;
@@ -88,7 +87,19 @@ void CGameManager::SavePlayerDesc()
     m_pSavePlayerDesc.first.PlayerData.pGrabAttackter = nullptr;
 }
 
-_bool CGameManager::LoadPlayerDesc(PLAYER_DESC& PlayerDesc)
+void CGameManager::SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex)
+{
+    auto TransportData = m_pDataManager->Find_TransportData(iLevelTransportIndex);
+    if (nullptr == TransportData)
+        return;
+
+    if (iLevelID != TransportData->eTargetLevel)
+        return;
+
+    m_pSavePlayerDesc.first.vOldPosition = TransportData->vTransportpoint;
+}
+
+_bool CGameManager::LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc)
 {
     if (m_pSavePlayerDesc.second)
     {
@@ -164,24 +175,24 @@ const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
     return m_pDataManager->Find_CinematicData(iCinematicIndex);
 }
 
-const vector<SHOP_DESC>* CGameManager::Get_ShopDatas()
-{
-    return m_pDataManager->Get_ShopDatas();
-}
-
 void CGameManager::EnableTransport(_uint iAreaID)
 {
     m_pDataManager->EnableTransport(iAreaID);
-}
- 
-const vector<TRANSPORT_DESC>* CGameManager::Find_TransportData()
-{
-    return  m_pDataManager->Find_TransportData();
 }
 
 const TRANSPORT_DESC* CGameManager::Find_TransportData(_uint iAreaID)
 {
     return  m_pDataManager->Find_TransportData(iAreaID);
+}
+
+const map<_uint, TRANSPORT_DESC>* CGameManager::Find_AllTransportDatas()
+{
+    return  m_pDataManager->Find_AllTransportDatas();
+}
+
+const vector<SHOP_DESC>* CGameManager::Get_ShopDatas()
+{
+    return m_pDataManager->Get_ShopDatas();
 }
 
 map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
