@@ -429,12 +429,15 @@ HRESULT CLoader::Loading()
 	case LEVEL::BEATSABER_GAME:
 	{
 		m_strMessage = TEXT("Dororong");
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
+
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Map(pArg); });
 
 		if (m_pGameInstance->bIsClearLevelResource(ENUM_CLASS(m_eNextLevelID)))
+		{
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_Model(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_BeatSaber_UI(pArg); });
 			hr = Loading_For_BeatSaber();
+		}
 		else
 		{
 			while (m_pGameInstance->IsWorkThread());

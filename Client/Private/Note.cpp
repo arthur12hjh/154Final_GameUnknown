@@ -29,7 +29,8 @@ HRESULT CNote::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    // 여기서 램덤으로 방향을 6방향중에서 선택
+    // 여기서 램덤으로 방향을 6방향중에서 
+    m_fNoteSpeed = 10.f;
     SettingNoteDirection();
     return S_OK;
 }
@@ -46,11 +47,9 @@ void CNote::Update(_float fTimeDelta)
     _vector vPos = m_pTransformCom->Get_State(STATE::POSITION);
     _vector vTargetPos = XMLoadFloat3(&m_vTargetPoint);
 
-    _float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vPos));
-    if (1.f < fDistance)
-        m_pTransformCom->Set_State(STATE::POSITION ,XMVectorLerp(vPos, vTargetPos, fTimeDelta * m_fNoteSpeed));
+    _vector vDir = XMVector3Normalize(vTargetPos - vPos);
+    m_pTransformCom->Move_Direction(fTimeDelta, vDir, m_fNoteSpeed);
 
-    //m_pModelCom->Set_Animation("N_Dororong_Idle");
     m_pModelCom->Play_Animation(fTimeDelta);
     __super::Update(fTimeDelta);
 }
