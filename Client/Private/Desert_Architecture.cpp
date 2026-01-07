@@ -33,7 +33,11 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-	if (wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Bridge")))
+	if (wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Bridge")) ||
+		wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Xion_Wall")) ||
+		wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Xion_Building_")) || 
+		wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Xion_Building5")) ||
+		wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Stair")))
 	{
 		if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
 			return S_OK;

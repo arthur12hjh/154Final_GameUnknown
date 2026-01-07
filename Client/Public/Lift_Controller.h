@@ -67,6 +67,7 @@ private:
 
 private:
     HRESULT                             Ready_Components(const _tchar* pComponentTag);
+	HRESULT                             Ready_Col(const _tchar* pComponentTag);
     HRESULT                             Bind_ShaderResources();
 
     virtual void					    Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;

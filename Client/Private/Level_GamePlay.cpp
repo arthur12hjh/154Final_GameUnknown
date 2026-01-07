@@ -714,7 +714,7 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 			hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 				ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 		}
-		
+
 	}
 
 	return S_OK;

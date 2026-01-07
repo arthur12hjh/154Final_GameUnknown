@@ -70,7 +70,7 @@ void CDororongBox::Late_Update(_float fTimeDelta)
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
     //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
     //}
-    m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, this);
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
@@ -162,5 +162,6 @@ void CDororongBox::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pVIBufferCom);
     Safe_Release(m_pTextureCom);
 }
