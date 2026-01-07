@@ -35,27 +35,28 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
-
+	
 	EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
 	EffectDesc.pWorldMatrix = nullptr;
-
+	
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
-	EffectDesc.fRot = _float3(XMConvertToRadians(45.f), 0, 0);
+	EffectDesc.fRot = _float3(0, 0, 0);
 	EffectDesc.fSize = 0.9f;
 	EffectDesc.iFloor = 0;
 	EffectDesc.pDir = &m_vProjectileDir;
-	switch (m_eBulletType)
-	{
-	case BULLET_TYPE::PROJECTILE:
-		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-		break;
-	case BULLET_TYPE::HITSCAN:
-		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Triple"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-		break;
-	}
+	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
+	EffectDesc.pRootMatrix = nullptr;
+	EffectDesc.pWorldMatrix = nullptr;
+
+	EffectDesc.vPos = m_pTransformCom->Get_State(STATE::POSITION) + XMLoadFloat3(&m_vProjectileDir) * 2;
+	EffectDesc.fRot = _float3(0, XMConvertToRadians(90.f), 0);
+	EffectDesc.fSize = 3.2f;
+	EffectDesc.iFloor = 0;
+	EffectDesc.fSpeed = 0.8f;
+	EffectDesc.pDir = &m_vProjectileDir;
+	m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Shoot"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	return S_OK;
 }
 
@@ -188,8 +189,22 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 		Set_Dead(true);
 
 	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-	if (pCharacter)
+	if (pCharacter) {
 		pCharacter->Damaged(&pDamageDesc);
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		
+		EffectDesc.vPos = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3] + XMLoadFloat3(&m_vProjectileDir) * 2 - XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&m_vProjectileDir), XMVectorSet(1, 0, 0, 0))) * 1;
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 2.5f;
+		EffectDesc.iFloor = 0;
+		EffectDesc.pDir = &m_vProjectileDir;
+		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+	}
 
 	//m_pEffect->Set_Dead(true);
 }

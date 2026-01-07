@@ -1692,11 +1692,21 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sakura.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Sakura */
+	/* For.Prototype_Component_Effect_Scarlet_Disk */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDisk_Test.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk_Boom");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDiskBoom.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Shoot");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletShoot.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	
 	/* For.Prototype_Component_Effect_Scarlet_Spin */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Spin");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletSpin.binx");
