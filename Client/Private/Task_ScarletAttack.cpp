@@ -239,6 +239,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	SelectAttackData();*/
 
 	//EntranceAttack();
+
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())

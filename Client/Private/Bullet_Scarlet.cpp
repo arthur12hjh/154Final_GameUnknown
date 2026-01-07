@@ -30,8 +30,8 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
-	Update_BulletCombinedMatrix();
 	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
+	Update_BulletCombinedMatrix();
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
@@ -40,8 +40,8 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	EffectDesc.pWorldMatrix = nullptr;
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
-	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 1.2f;
+	EffectDesc.fRot = _float3(XMConvertToRadians(45.f), 0, 0);
+	EffectDesc.fSize = 0.9f;
 	EffectDesc.iFloor = 0;
 	EffectDesc.pDir = &m_vProjectileDir;
 	switch (m_eBulletType)
@@ -140,7 +140,7 @@ void CBullet_Scarlet::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 HRESULT CBullet_Scarlet::ADD_Components(BULLET_DESC& pDesc)
 {
 	COBBCollider::OBB_COLLIDER_DESC pOBBDesc = {};
-	pOBBDesc.vSize = { 2.f, 1.f, 2.f };
+	pOBBDesc.vSize = { 1.f, 0.5f, 1.f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &pOBBDesc)))

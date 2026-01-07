@@ -124,10 +124,20 @@ void CSpriteParticle::Update(_float fTimeDelta)
 		m_isDead = true;
 		return;
 	}
+}
+
+void CSpriteParticle::Late_Update(_float fTimeDelta)
+{
+	if (m_tData.fDelayTime > m_fTime || (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime)) {
+		return;
+	}
+	m_pGameInstance->Add_RenderGroup(m_eRender, this);
+	m_iRenderCount = 0;
+
 
 	_float4x4 CombinedWorldMatrix;
 	XMStoreFloat4x4(&CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())* XMLoadFloat4x4(m_pParentMat));
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 
 	if (m_tData.bisSpectrum) {
 		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
@@ -143,16 +153,6 @@ void CSpriteParticle::Update(_float fTimeDelta)
 	}
 	m_CombinedWorldMatrix = CombinedWorldMatrix;
 	Spread(fTimeDelta);
-}
-
-void CSpriteParticle::Late_Update(_float fTimeDelta)
-{
-	if (!m_tData.bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime) {
-		return;
-	}
-	m_pGameInstance->Add_RenderGroup(m_eRender, this);
-	m_iRenderCount = 0;
-
 }
 
 HRESULT CSpriteParticle::Render()
