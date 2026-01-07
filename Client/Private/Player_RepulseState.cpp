@@ -20,14 +20,14 @@ void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
     m_eAnimState = REPULSE_STATE::ATTACK_START;
 
     m_pPlayer->Set_Animation("P_Eve_Sword_Normal_MoveBackAttack1_S", false, 1.4f);
-    m_pGameInstance->Active_RadialBlur(2.f, 6, 0.3f);
+    m_pGameInstance->Active_RadialBlur(2.f, 16, 0.5f);
     m_pGameInstance->Active_DoF(true, 0.3f);
     
     _float fDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) - 
         m_Desc->pPlayerTransform->Get_State(STATE::POSITION)));
 
     m_pGameInstance->Set_DoFInfo(fDist, 2.f, 1.f);
-    m_pGameInstance->SetGameSpeed(0.4f);
+    m_pGameInstance->SetGameSpeed(0.2f);
     m_pPlayer->SetSkillDataID(2001);
 }
 
@@ -47,6 +47,12 @@ PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
 
     if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && true == isAnimFinished)
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
+
+    _float fDist = XMVectorGetX(XMVector3Length(XMLoadFloat4(m_pGameInstance->Get_CamPosition()) -
+        m_Desc->pPlayerTransform->Get_State(STATE::POSITION)));
+
+    m_pGameInstance->Set_DoFInfo(fDist, 2.f, 1.f);
+
 
     //수그렸다가 썸머솔트킥으로 넘어가는 로직
     if (REPULSE_STATE::ATTACK_START == m_eAnimState && true == isAnimFinished)

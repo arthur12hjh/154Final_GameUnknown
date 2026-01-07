@@ -7,6 +7,8 @@
 
 #include "UIHUD.h"
 #include "UIBase.h"
+#include "PlayerState.h"
+#include "PlayerFSM.h"
 
 CLockonManager::CLockonManager()
     : m_pGameInstance { CGameInstance::GetInstance() }
@@ -30,7 +32,7 @@ HRESULT CLockonManager::Initialize()
     return S_OK;
 }
 
-_bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
+_bool CLockonManager::Find_NearestTarget(_float fTimeDelta, _bool isForce)
 {
     m_fLockonTimer += fTimeDelta;
 
@@ -145,7 +147,14 @@ _vector CLockonManager::Get_LockOnPoint()
 
 void CLockonManager::Force_Lockon(_float fTimeDelta)
 {
-    m_pPlayerDesc->ePlayerMode = PLAYER_MODE::LOCKON;
+    PLAYER_TRANSITION_DESC Desc;
+    Desc.isChangeMode = true;
+    Desc.eMode = PLAYER_MODE::LOCKON;
+    Desc.eNextState = PLAYER_STATE::IDLE;
+
+    m_pPlayer->Get_PlayerFSM()->Handle_Transition(Desc);
+    m_pPlayerDesc->isWeaponVisible = true;
+
     m_fLockonTimer = 1.5f;
     Lockon(fTimeDelta);
 }
@@ -155,7 +164,7 @@ void CLockonManager::Force_LockOff()
     m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 }
 
-void CLockonManager::Lockon(_float fTimeDelta)
+void CLockonManager::Lockon(_float fTimeDelta, _bool isForce)
 {
     if (nullptr == m_pPlayer)
         return;

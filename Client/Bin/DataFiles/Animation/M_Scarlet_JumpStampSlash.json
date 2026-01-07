@@ -906,9 +906,9 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    2.57,
-                    0.14,
-                    -4.6
+                    2.569999933242798,
+                    0.14000000059604645,
+                    -4.599999904632568
                 ],
                 "vNotifyRotation": [
                     0.0,
@@ -916,9 +916,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.7,
-                    0.7,
-                    0.7
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
@@ -1202,7 +1202,7 @@
                 ]
             },
             {
-                "fNumData01": 3.7,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1226,7 +1226,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -4.8,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
@@ -1236,13 +1236,13 @@
                     270.0
                 ],
                 "vNotifyScale": [
-                    0.7,
-                    0.7,
-                    0.7
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 0.8,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1266,7 +1266,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -1.7,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],

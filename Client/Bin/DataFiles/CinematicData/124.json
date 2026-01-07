@@ -73,12 +73,6 @@
           "szObjectTag": ""
         },
         {
-          "eState": 14,
-          "fTrackPosition": 12.199999809265137,
-          "iActiveIndex": 0,
-          "szObjectTag": ""
-        },
-        {
           "eState": 7,
           "fTrackPosition": 12.600000381469727,
           "iActiveIndex": 0,
@@ -89,6 +83,12 @@
           "fTrackPosition": 12.600000381469727,
           "iActiveIndex": 0,
           "szObjectTag": "Layer_Monster"
+        },
+        {
+          "eState": 14,
+          "fTrackPosition": 12.600000381469727,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
         }
       ],
         "iCinematicID": 124,

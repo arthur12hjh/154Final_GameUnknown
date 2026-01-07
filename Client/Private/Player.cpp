@@ -180,7 +180,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 void CPlayer::Priority_Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	m_pTransformCom->Update_PreWorldMatrix();
@@ -191,7 +191,7 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	__super::Update(fTimeDelta);
@@ -220,7 +220,7 @@ void CPlayer::Update(_float fTimeDelta)
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
@@ -310,6 +310,10 @@ void CPlayer::Attack_Interaction(void* pArg)
 
 	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame;
 	m_PlayerDesc.eReactionType = eType;
+
+	//test
+	if (ATK_INTERACTION_TYPE::REPULSE == eType)
+		int a = 10;
 }
 
 void CPlayer::SetSkillDataID(_uint iSkillID)
@@ -340,21 +344,12 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentShield += 4;
 		m_fShieldTimer = 0.f;
 	}
-
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
-	}
 }
 
+/* 이 함수 내용물 건드리기 ㄴㄴ 건드릴거면 디코좀 */
 void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
-	// 락온 중이라면
+	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
 		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
@@ -368,6 +363,31 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+	}
+
+	/* 
+	실제 로직이니까 날리지 마세요
+	*/  
+	if (true == m_PlayerDesc.HasTarget)
+	{
+		if (true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) &&
+			true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+			ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+		if (true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) &&
+			true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+			ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::REPULSE;
 
 			m_pFSM->Handle_Transition(Desc);
 		}

@@ -195,6 +195,16 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
+	// 데미지를 입을떄 히트렉에 걸리게 하자
+	// 0. 보스는 히트랙 조금 줄여
+	// 1. 히트랙은 평타만
+	// 2. 잡몹들은 확실하게 히트렉 주자.
+
+	// 1,2타 때 1프레임
+	// 3,4타 때 2프레임
+	// -> 그냥 줘도 될듯?
+	m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
+
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	if (nullptr == pDesc->pSkillData)
 		return E_FAIL;

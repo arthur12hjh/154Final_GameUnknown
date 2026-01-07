@@ -289,7 +289,7 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-	OBBDesc.vSize = _float3(0.25f, 0.5f, 0.25f);
+	OBBDesc.vSize = _float3(0.3f, 0.7f, 0.3f);
 	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
 
