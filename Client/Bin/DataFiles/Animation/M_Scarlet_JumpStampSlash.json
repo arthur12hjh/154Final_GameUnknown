@@ -882,11 +882,11 @@
                 ]
             },
             {
-                "fNumData01": 2.1,
+                "fNumData01": 1.75,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 176,
+                "iNotifyKeyFrame": 171,
                 "iNumData01": 5,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -906,9 +906,9 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    0.0,
-                    0.1,
-                    0.0
+                    2.57,
+                    0.14,
+                    -4.6
                 ],
                 "vNotifyRotation": [
                     0.0,
@@ -916,9 +916,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.7,
+                    0.7,
+                    0.7
                 ]
             },
             {
@@ -1202,7 +1202,7 @@
                 ]
             },
             {
-                "fNumData01": 1.399999976158142,
+                "fNumData01": 3.7,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1226,28 +1226,28 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.5,
+                    -4.8,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    2.5,
-                    2.5,
-                    2.5
+                    0.7,
+                    0.7,
+                    0.7
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 0.8,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 286,
-                "iNumData01": 3,
+                "iNotifyKeyFrame": 282,
+                "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -1266,7 +1266,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -2.0,
+                    -1.7,
                     0.0,
                     0.0
                 ],
@@ -1276,9 +1276,9 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    0.6000000238418579
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             }
         ],

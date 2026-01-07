@@ -143,6 +143,18 @@ _vector CLockonManager::Get_LockOnPoint()
     return XMLoadFloat3(&m_pTarget->GetMonsterData().vLockOnPoint);
 }
 
+void CLockonManager::Force_Lockon(_float fTimeDelta)
+{
+    m_pPlayerDesc->ePlayerMode = PLAYER_MODE::LOCKON;
+    m_fLockonTimer = 1.5f;
+    Lockon(fTimeDelta);
+}
+
+void CLockonManager::Force_LockOff()
+{
+    m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
+}
+
 void CLockonManager::Lockon(_float fTimeDelta)
 {
     if (nullptr == m_pPlayer)

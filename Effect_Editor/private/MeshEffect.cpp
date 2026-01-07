@@ -34,8 +34,6 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
@@ -45,6 +43,8 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 	if(0 <= m_fTime)
 		m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	m_iRenderCount = 0;
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 HRESULT CMeshEffect::Render()

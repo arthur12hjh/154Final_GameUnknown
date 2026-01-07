@@ -30,12 +30,6 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 	if (nullptr == pAIScene)
 		return E_FAIL;
 	
-	// Shape Key 관련 작업들
-	aiAnimMesh;
-	aiMeshMorphAnim;
-	aiMeshMorphKey;
-	aiAnimation;
-	
 	// BINMODEL->iNumMaterials
 	pModel->iNumMaterials = pAIScene->mNumMaterials;
 	// BINMODEL->iNumMeshes
@@ -59,7 +53,7 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		pModel->iRootNodeIndex = 0;
 		pModel->vNodes.push_back(RootNode);
 
-		// BINMODEL->BINNODE->vChildren
+		// BINMODEL->BINNODE->vChildrendg
 		for (size_t i = 0; i < RootNode.iNumChildren; ++i)
 		{
 			pModel->vNodes[pModel->iRootNodeIndex].vChildrenIndex.push_back(Get_BinNodeIndex(pAIScene->mRootNode->mChildren[i], pModel));
@@ -125,6 +119,37 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 				meshTmp.vFaces.push_back(bFace);
 			}
 
+			// 페이셜을 위한 Mesh :: AnimMesh
+			if (eType == MODEL_TYPE::FACIAL)
+			{
+				meshTmp.iNumAnimMeshes = pAIScene->mMeshes[i]->mNumAnimMeshes;
+				for (size_t j = 0; j < pAIScene->mMeshes[i]->mNumAnimMeshes; ++j)
+				{
+					binAnimMesh bAnimMesh;
+					bAnimMesh.iNumVertices = pAIScene->mMeshes[i]->mAnimMeshes[j]->mNumVertices;
+
+					bAnimMesh.vDeltaPositions.reserve(bAnimMesh.iNumVertices);
+					bAnimMesh.vDeltaNormals.reserve(bAnimMesh.iNumVertices);
+
+					for (size_t k = 0; k < pAIScene->mMeshes[i]->mAnimMeshes[j]->mNumVertices; ++k)
+					{
+						aiVector3D vBasePosition = pAIScene->mMeshes[i]->mVertices[k];
+						aiVector3D vBaseNormal = pAIScene->mMeshes[i]->mNormals[k];
+						
+						aiVector3D vShapePosition = pAIScene->mMeshes[i]->mAnimMeshes[j]->mVertices[k];
+						aiVector3D vShapeNormal = pAIScene->mMeshes[i]->mAnimMeshes[j]->mNormals[k];
+
+						bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.y - vBasePosition.y, vShapePosition.z - vBasePosition.z));
+						bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.y - vBaseNormal.y, vShapeNormal.z - vBaseNormal.z));
+					}
+
+					strcpy_s(bAnimMesh.szName, pAIScene->mMeshes[i]->mAnimMeshes[j]->mName.data);
+
+					meshTmp.vAnimMesh.push_back(bAnimMesh);
+				}
+			}
+
+
 			strcpy_s(meshTmp.szName, pAIScene->mMeshes[i]->mName.data);
 
 			pModel->vMeshes.push_back(meshTmp);
@@ -152,65 +177,113 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 			pModel->vMaterials.push_back(matTmp);
 		}
 
-		for (size_t i = 0; i < pModel->iNumAnimations; ++i)
 		{
-			binAnimation AnimTmp;
-			const char* szAnimName = strchr(pAIScene->mAnimations[i]->mName.data, '|');
-			if (nullptr != szAnimName && strcmp(szAnimName, ""))
-				strcpy_s(AnimTmp.szName, MAX_PATH, strchr(pAIScene->mAnimations[i]->mName.data, '|') + 1);
-			else
-				strcpy_s(AnimTmp.szName, pAIScene->mAnimations[i]->mName.data);
-
-			AnimTmp.fDuration = pAIScene->mAnimations[i]->mDuration;
-			AnimTmp.fTicksPerSecond = pAIScene->mAnimations[i]->mTicksPerSecond;
-			AnimTmp.iNumChannels = pAIScene->mAnimations[i]->mNumChannels;
-
-			for (size_t j = 0; j < AnimTmp.iNumChannels; ++j)
+			for (size_t i = 0; i < pModel->iNumAnimations; ++i)
 			{
-				binChannel channelTmp;
-				strcpy_s(channelTmp.szName, pAIScene->mAnimations[i]->mChannels[j]->mNodeName.data);
-				channelTmp.iNumScalingKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumScalingKeys;
-				channelTmp.iNumRotationKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumRotationKeys;
-				channelTmp.iNumPositionKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumPositionKeys;
-				for (size_t k = 0; k < channelTmp.iNumScalingKeys; ++k)
+				binAnimation AnimTmp;
+				const char* szAnimName = strchr(pAIScene->mAnimations[i]->mName.data, '|');
+				if (nullptr != szAnimName && strcmp(szAnimName, ""))
+					strcpy_s(AnimTmp.szName, MAX_PATH, strchr(pAIScene->mAnimations[i]->mName.data, '|') + 1);
+				else
+					strcpy_s(AnimTmp.szName, pAIScene->mAnimations[i]->mName.data);
+
+				AnimTmp.fDuration = pAIScene->mAnimations[i]->mDuration;
+				AnimTmp.fTicksPerSecond = pAIScene->mAnimations[i]->mTicksPerSecond;
+				AnimTmp.iNumChannels = pAIScene->mAnimations[i]->mNumChannels;
+
+				for (size_t j = 0; j < AnimTmp.iNumChannels; ++j)
 				{
-					binVectorKey keyTmp;
-					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
-					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.x;
-					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.y;
-					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.z;
-					keyTmp.vValue.w = 0.f;
+					binChannel channelTmp;
+					strcpy_s(channelTmp.szName, pAIScene->mAnimations[i]->mChannels[j]->mNodeName.data);
+					channelTmp.iNumScalingKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumScalingKeys;
+					channelTmp.iNumRotationKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumRotationKeys;
+					channelTmp.iNumPositionKeys = pAIScene->mAnimations[i]->mChannels[j]->mNumPositionKeys;
+					for (size_t k = 0; k < channelTmp.iNumScalingKeys; ++k)
+					{
+						binVectorKey keyTmp;
+						keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
+						keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.x;
+						keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.y;
+						keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue.z;
+						keyTmp.vValue.w = 0.f;
 
-					channelTmp.cScalingKeys.push_back(keyTmp);
+						channelTmp.cScalingKeys.push_back(keyTmp);
+					}
+					for (size_t k = 0; k < channelTmp.iNumRotationKeys; ++k)
+					{
+						binVectorKey keyTmp;
+						keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
+						keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.x;
+						keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.y;
+						keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.z;
+						keyTmp.vValue.w = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.w;
+
+						channelTmp.cRotationKeys.push_back(keyTmp);
+					}
+					for (size_t k = 0; k < channelTmp.iNumPositionKeys; ++k)
+					{
+						binVectorKey keyTmp;
+						keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
+						keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.x;
+						keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.y;
+						keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.z;
+						keyTmp.vValue.w = 0.f;
+
+						channelTmp.cPositionKeys.push_back(keyTmp);
+					}
+
+					AnimTmp.vChannels.push_back(channelTmp);
 				}
-				for (size_t k = 0; k < channelTmp.iNumRotationKeys; ++k)
-				{
-					binVectorKey keyTmp;
-					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
-					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.x;
-					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.y;
-					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.z;
-					keyTmp.vValue.w = pAIScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue.w;
 
-					channelTmp.cRotationKeys.push_back(keyTmp);
-				}
-				for (size_t k = 0; k < channelTmp.iNumPositionKeys; ++k)
-				{
-					binVectorKey keyTmp;
-					keyTmp.fTime = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
-					keyTmp.vValue.x = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.x;
-					keyTmp.vValue.y = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.y;
-					keyTmp.vValue.z = pAIScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue.z;
-					keyTmp.vValue.w = 0.f;
-
-					channelTmp.cPositionKeys.push_back(keyTmp);
-				}
-
-				AnimTmp.vChannels.push_back(channelTmp);
+				pModel->vAnimations.push_back(AnimTmp);
 			}
-
-			pModel->vAnimations.push_back(AnimTmp);
 		}
+		
+
+		if (eType == MODEL_TYPE::FACIAL)
+		{
+			// 페이셜을 위한 Model :: MorphAnimation
+			for (size_t i = 0; i < pModel->iNumAnimations; ++i)
+			{
+				binMorphAnimation MorphAnimTmp;
+
+				const char* szAnimName = strchr(pAIScene->mAnimations[i]->mName.data, '|');
+				if (nullptr != szAnimName && strcmp(szAnimName, ""))
+					strcpy_s(MorphAnimTmp.szName, MAX_PATH, strchr(pAIScene->mAnimations[i]->mName.data, '|') + 1);
+				else
+					strcpy_s(MorphAnimTmp.szName, pAIScene->mAnimations[i]->mName.data);
+
+				MorphAnimTmp.fDuration = pAIScene->mAnimations[i]->mDuration;
+				MorphAnimTmp.fTicksPerSecond = pAIScene->mAnimations[i]->mTicksPerSecond;
+				MorphAnimTmp.iNumMorphChannels = pAIScene->mAnimations[i]->mNumMorphMeshChannels;
+
+				for (size_t j = 0; j < MorphAnimTmp.iNumMorphChannels; ++j)
+				{
+					binMeshMorphChannel MorphChannelTmp;
+					
+					strcpy_s(MorphChannelTmp.szName, pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mName.data);
+					MorphChannelTmp.iNumKeys = pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mNumKeys;
+					for (size_t k = 0; k < MorphChannelTmp.iNumKeys; ++k)
+					{
+						binMeshMorphKey keyTmp;
+						keyTmp.fTime = pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mKeys[k].mTime;
+						keyTmp.iNumValuesAndWeights = pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mKeys[k].mNumValuesAndWeights;
+						for (size_t l = 0; l < keyTmp.iNumValuesAndWeights; ++l)
+						{
+							keyTmp.vValues.push_back(pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mKeys[k].mValues[l]);
+							keyTmp.vWeights.push_back(pAIScene->mAnimations[i]->mMorphMeshChannels[j]->mKeys[k].mWeights[l]);
+						}
+						
+						MorphChannelTmp.vKeys.push_back(keyTmp);
+					}
+
+					MorphAnimTmp.vMorphChannels.push_back(MorphChannelTmp);
+				}
+
+				pModel->vMorphAnimations.push_back(MorphAnimTmp);
+			}
+		}
+		
 
 	}
 

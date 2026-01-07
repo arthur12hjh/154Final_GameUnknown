@@ -37,12 +37,17 @@ private:
 
 	vector<VTX_INSTANCE_DESC>   m_NeonNumberInstances{};
 
+	_uint m_iAccuracy = 0;
+
 	_uint m_iCombo = 0;
 	_uint m_iPrevCombo = 0;
 
 	_uint m_iHighCombo = 0;
 
 	_float m_fScaleRatio = 1.f;
+
+	_float m_fAlpha = 1.f;
+	_float m_fTimeAcc = 0.f;
 
 private:
 	HRESULT Render_NeonNumber();

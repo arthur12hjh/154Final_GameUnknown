@@ -260,6 +260,9 @@
 #include "UIResult.h"
 #include "UISongSelector.h"
 #include "UITriggerKey.h"
+#include "UIVideoThumbnail.h"
+
+#include "VideoPlayer.h"
 
 #pragma endregion
 
@@ -1172,7 +1175,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	/* For.Prototype_Component_Model_Prob_CanBox */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CanBox");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Box/CanBox/CanBox.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Box/CanBox/CanBox.fbx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -1548,7 +1551,7 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 
 	/* For.Prototype_Component_Effect_SheildBreak_Yellow */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Yellow");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SheildBreakYellow.binx");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Repulse_Signal.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Power_Yellow */
@@ -1701,11 +1704,21 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sakura.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
-	/* For.Prototype_Component_Effect_Sakura */
+	/* For.Prototype_Component_Effect_Scarlet_Disk */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk");
-	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDisk.binx");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDisk_Test.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Disk_Boom");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletDiskBoom.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sakura */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Shoot");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletShoot.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+	
 	/* For.Prototype_Component_Effect_Scarlet_Spin */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Spin");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletSpin.binx");
@@ -1779,13 +1792,23 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 
-	/* For.Prototype_Component_Effect_Missile */
+	/* For.Prototype_Component_Effect_Missile_Boom */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Missile_Boom");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Missile_Boom.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	
 
+
+	/* For.Prototype_Component_Effect_Blink */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Blink");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Blink.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Repulse */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Repulse");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Repulse.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	/* For.Prototype_Component_Effect_Gigas_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Spark");
@@ -2808,6 +2831,12 @@ HRESULT CLoader::Loading_For_GamePlay_Components(void* pArg)
 	/* For.Prototype_Component_InteractionBinder */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_InteractionBinder");
 	pProtoDesc.pPrototype = CInteractionBinder::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_MotionTrail");
+	pProtoDesc.pPrototype = CMontionTrailComponent::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -7275,7 +7304,7 @@ HRESULT CLoader::Loading_For_Desert_Archi_Col(void* pArg)
 	/* For.Prototype_Component_Model_Lift_Controller_COL */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Lift_Controller_COL");
-	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Lift/Lift_Controller_COL.binx", PreTransformMatrix);
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Lift/Lift_Controller_COL.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
@@ -8948,6 +8977,13 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::BEATSABER_GAME);
 
+	/* For.Prototype_Component_VideoPlayer */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_VideoPlayer");
+	pProtoDesc.pPrototype = CVideoPlayer::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_UI_Texture_Overlay */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Overlay");
 	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/BackGround/Loading_BG_0.dds"), 1);
@@ -9046,6 +9082,20 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_UI_Texture_Accuracy */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_Accuracy");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Accuracy/Accuracy_%d.png"), 4);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_Component_UI_Texture_GameClear */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_UI_Texture_GameClear");
+	pProtoDesc.pPrototype = CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/GameClear_%d.png"), 2);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/*===========================================================================================*/
 
 	/* For.Prototype_GameObject_UI_NeonNumber */
@@ -9086,6 +9136,13 @@ HRESULT CLoader::Loading_For_BeatSaber_UI(void* pArg)
 	/* For.Prototype_GameObject_UI_Result */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_Result");
 	pProtoDesc.pPrototype = CUIResult::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_UI_VideoThumbnail */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_VideoThumbnail");
+	pProtoDesc.pPrototype = CUIVideoThumbnail::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

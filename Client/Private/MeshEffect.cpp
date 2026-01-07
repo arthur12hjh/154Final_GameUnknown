@@ -103,19 +103,13 @@ void CMeshEffect::Priority_Update(_float fTimeDelta)
 void CMeshEffect::Update(_float fTimeDelta)
 {
 	m_fTime += fTimeDelta;
-	if (m_tData.fDelayTime > m_fTime)
-	{
-		return;
-	}
-	else if ((0 < m_tData.fEndTime && m_tData.fEndTime + 1.f <= m_fTime)) {
+	if ((0 < m_tData.fEndTime && m_tData.fEndTime + 1.f <= m_fTime)) {
 		m_isDead = true;
 		return;
 	}
 	if (m_bisEnd) {
 		m_tData.fColor.w = Lerp(m_tData.fColor.w , 0.f, m_tData.fEndTime - m_fTime);
 	}
-	XMStoreFloat4x4(&m_CombinedWorldMatrix,
-		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
@@ -125,6 +119,8 @@ void CMeshEffect::Late_Update(_float fTimeDelta)
 	if (0 <= m_fTime)
 		m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	m_iRenderCount = 0;
+	XMStoreFloat4x4(&m_CombinedWorldMatrix,
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 }
 
 HRESULT CMeshEffect::Render()

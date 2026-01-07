@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 class CCollider;
 class CNavigation;
 class CCharacterController;
+class CMontionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -64,7 +65,7 @@ private:
 	CWeapon*					m_pWeapon = { nullptr };
 	class CCameraBone_Player*	m_pCameraBone = { nullptr };
 	class CPlayerFSM*			m_pFSM = { nullptr };
-
+	
 	map<_uint, BETA_SKILL_DESC> m_BetaSkills = {};
 
 	//

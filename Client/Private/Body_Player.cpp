@@ -113,6 +113,14 @@ void CBody_Player::Update(_float fTimeDelta)
 { 
 	// FSM쪽에서 애니 재생.
 	// m_isAnimFinish = m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
+		m_pMotionTrail->EnableMotionTrail(true);
+
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
+		m_pMotionTrail->EnableMotionTrail(false);
+
+
+
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
@@ -147,6 +155,7 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
+	m_pMotionTrail->Update_Trail(fTimeDelta);
 	if (m_bIsActive)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -189,6 +198,8 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 	}
 
+	if(m_pMotionTrail->IsEnableMotionTrail())
+		m_pMotionTrail->Render();
 	return S_OK;
 }
 
@@ -251,6 +262,7 @@ HRESULT CBody_Player::Render_MotionBlur()
 			return E_FAIL;
 	}
 
+
 	return S_OK;
 }
 
@@ -261,6 +273,16 @@ HRESULT CBody_Player::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 	
+	/* Com_MotionTrail */
+	CMontionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
+	MotionTrailCom.fLifeTime = 0.5f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
+		return E_FAIL;
+
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -728,4 +750,6 @@ void CBody_Player::Free()
 		Safe_Release(Pair.second);
 	}
 	m_RootRigidBodies.clear();
+
+	Safe_Release(m_pMotionTrail);
 }

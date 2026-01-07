@@ -400,6 +400,13 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::SET_CINEMATICLIGHT:
             CGameManager::GetInstance()->Set_CinematicLights(CinematicNodeDesc.iActiveIndex);
             break;
+        case CINEMATICNODE_STATE::LOCKON_START:
+            CGameManager::GetInstance()->Force_Lockon(m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
+            break;
+        // 15¹ø
+        case CINEMATICNODE_STATE::LOCKON_END:
+            CGameManager::GetInstance()->Force_LockOff();
+            break;
         case CINEMATICNODE_STATE::END:
             break;
     }

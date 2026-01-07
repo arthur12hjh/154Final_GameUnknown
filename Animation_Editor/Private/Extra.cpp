@@ -2,6 +2,7 @@
 #include "Extra.h"
 
 #include "Body_Extra.h"
+#include "Facial_Extra.h"
 #include "Weapon.h"
 #include "GameInstance.h"
 
@@ -24,7 +25,7 @@ HRESULT CExtra::Initialize(void* pArg)
 {
 	EXTRA_DESC* pDesc = static_cast<EXTRA_DESC*>(pArg);
 	m_szModelTag = pDesc->szModelTag;
-
+	m_bIsFacial = pDesc->isFacial;
 
 	CGameObject::GAMEOBJECT_DESC	Desc{};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
@@ -103,17 +104,36 @@ HRESULT CExtra::Ready_Components()
 
 HRESULT CExtra::Ready_PartObjects()
 {
-	CBody_Extra::BODY_EXTRA_DESC BodyDesc{};
-	BodyDesc.pParentTransform = m_pTransformCom;
-	BodyDesc.szModelTag = m_szModelTag;
+	if (m_bIsFacial == FALSE)
+	{
+		CBody_Extra::BODY_EXTRA_DESC BodyDesc{};
+		BodyDesc.pParentTransform = m_pTransformCom;
+		BodyDesc.szModelTag = m_szModelTag;
 
-	/* Part_Body */
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Extra"),
-		TEXT("Part_Body"), &BodyDesc)))
-		return E_FAIL;
+		/* Part_Body */
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Body_Extra"),
+			TEXT("Part_Body"), &BodyDesc)))
+			return E_FAIL;
+	
 
-	m_pPart_Body = dynamic_cast<CBody_Extra*>(Find_PartObject(TEXT("Part_Body")));
+		m_pPart_Body = dynamic_cast<CBody_Extra*>(Find_PartObject(TEXT("Part_Body")));
+	}
+	else
+	{
+		CFacial_Extra::FACIAL_EXTRA_DESC FacialDesc{};
+		FacialDesc.pParentTransform = m_pTransformCom;
+		FacialDesc.szModelTag = m_szModelTag;
 
+		/* Part_Body */
+		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_Facial_Extra"),
+			TEXT("Part_Body"), &FacialDesc)))
+			return E_FAIL;
+
+
+		m_pPart_Body = nullptr;
+	}
+
+	
 	return S_OK;
 }
 

@@ -33,7 +33,7 @@ public:
 	VTX_INSTANCE_MODEL* Get_InstanceVertices() const { return m_pInstanceVertices; }
 
 private:
-	VTX_INSTANCE_MODEL* m_pInstanceVertices = { nullptr };
+	VTX_INSTANCE_MODEL*					m_pInstanceVertices = { nullptr };
 	CModel* m_pModel = nullptr;
 
 	_float3								m_vPivot = {};
