@@ -65,6 +65,9 @@ private:
 	_float m_fGlowPower{ 15.f };
 	_float m_fScale{ 5.f };
 
+	_float m_fEscKeyPressedTime = 0.f;
+	_bool m_bActiveEsc = false;
+
 private:
 	HRESULT Render_Text();
 

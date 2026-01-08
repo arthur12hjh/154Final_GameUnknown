@@ -140,11 +140,17 @@ PS_OUT PS_RAIL(PS_IN In)
     float4 vBrightLime = float4(0.5f, 1.0f, 0.0f, 1.0f);
 
     float4 vColors[5];
-    vColors[0] = float4(0.30f, 0.70f, 0.00f, 1.0f); // 진한 연두 (Start)
-    vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
-    vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
-    vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
-    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝?연돎?(End)
+    //vColors[0] = float4(0.30f, 0.70f, 0.00f, 1.0f); // 진한 연두 (Start)
+    //vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
+    //vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
+    //vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
+    //vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝은 연두 (End)
+    
+    vColors[0] = float4(0.00f, 0.30f, 0.70f, 1.0f); // 진한 연두 (Start)
+    vColors[1] = float4(0.06f, 0.36f, 0.74f, 1.0f);
+    vColors[2] = float4(0.12f, 0.42f, 0.78f, 1.0f); 
+    vColors[3] = float4(0.18f, 0.48f, 0.82f, 1.0f); 
+    vColors[4] = float4(0.25f, 0.55f, 0.85f, 1.0f); // 중간 단계
     
     float fXPos = (In.vTexcoord.x + 0.5f);
     int iIdx = (int) floor(fXPos * 3.0f);

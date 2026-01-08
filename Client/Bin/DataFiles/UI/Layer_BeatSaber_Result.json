@@ -2,6 +2,126 @@
     {
         "Children": [
             {
+                "Children": [
+                    {
+                        "Shader": {
+                            "bUseGlow": true,
+                            "bUseScale": true,
+                            "fGlowIntensity": 0.5,
+                            "fGlowSpread": 0.0,
+                            "fScale": 0.0
+                        },
+                        "fAlpha": 0.0,
+                        "fOffsetX": 0.0,
+                        "fOffsetY": 0.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 200.0,
+                        "fSizeY": 200.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 52,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szAnimTags": [
+                            {
+                                "szAnimTag": "Key_Active",
+                                "szPrefabTag": "Active_Key"
+                            }
+                        ],
+                        "szEvents": {
+                            "EscKey_Active_FX": [
+                                {
+                                    "szActionTag": "Key_Active",
+                                    "szArg": "Key_Active",
+                                    "szSubscribeEventTags": [
+                                        "EscKey_Active"
+                                    ],
+                                    "szTypeTag": "PlayAnimEvent"
+                                }
+                            ]
+                        },
+                        "szLayerTag": "Layer_BeatSaber_Result",
+                        "szProtoTag": "Prototype_GameObject_UI_InteractionFX",
+                        "szUIID": "UI_Simple_Interaction_FX_2-3",
+                        "szUITag": "Interaction_FX2"
+                    },
+                    {
+                        "TextDesc": {
+                            "fScale": 0.7,
+                            "szFont": "KoPub",
+                            "szText": "돌아가기",
+                            "vColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "fAlpha": 1.0,
+                        "fOffsetX": -750.0,
+                        "fOffsetY": -1200.0,
+                        "fRotation": 0.0,
+                        "fSizeX": 100.0,
+                        "fSizeY": 20.0,
+                        "fX": 0.0,
+                        "fY": 0.0,
+                        "iDepth": 51,
+                        "iDrawType": 1,
+                        "iLevel": 5,
+                        "iRenderGroup": 9,
+                        "iVisibility": 0,
+                        "szLayerTag": "Layer_BeatSaber_Result",
+                        "szProtoTag": "Prototype_GameObject_UI_Text",
+                        "szUIID": "UI_Trigger_Text_2-4",
+                        "szUITag": "Trigger_Text2"
+                    }
+                ],
+                "TextureDesc": {
+                    "iPass": 0,
+                    "iTextureIndex": 5,
+                    "szProtoTag": "Prototype_Component_UI_Texture_Interaction_Key",
+                    "szTextureComTag": "Com_Texture_UI_Interaction_Key"
+                },
+                "fAlpha": 1.0,
+                "fOffsetX": -725.0,
+                "fOffsetY": 375.0,
+                "fRotation": 0.0,
+                "fSizeX": 50.0,
+                "fSizeY": 50.0,
+                "fX": 800.0,
+                "fY": 450.0,
+                "iDepth": 51,
+                "iDrawType": 1,
+                "iLevel": 5,
+                "iRenderGroup": 9,
+                "iVisibility": 0,
+                "szEvents": {
+                    "EscKey_Active": [
+                        {
+                            "szActionTag": "Key_Active",
+                            "szArg": "Key_Active",
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ],
+                    "EscKey_Event_Listner": [
+                        {
+                            "szActionTag": "EscKey_Event_Listner",
+                            "szArg": "EscKey_Event_Listner",
+                            "szSubscribeEventTags": [
+                                "EscKey_Event"
+                            ],
+                            "szTypeTag": "ActionEvent"
+                        }
+                    ]
+                },
+                "szLayerTag": "Layer_BeatSaber_Result",
+                "szProtoTag": "Prototype_GameObject_UI_TriggerKey",
+                "szUIID": "UI_EscKey_1-1",
+                "szUITag": "UI_EscKey"
+            },
+            {
                 "fAlpha": 1.0,
                 "fOffsetX": 1600.0,
                 "fOffsetY": 0.0,
