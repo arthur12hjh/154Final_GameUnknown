@@ -35,7 +35,8 @@ HRESULT CDeco::Initialize(void* pArg)
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Fence")) || 
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")) ||
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Garden")) || 
-        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")))
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")))
     {
         if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
             return S_OK;
@@ -93,6 +94,12 @@ HRESULT CDeco::Render()
 	}
 
 	return S_OK;
+}
+
+HRESULT CDeco::Render_Shadow()
+{
+
+    return S_OK;
 }
 
 HRESULT CDeco::Ready_Components(const _tchar* pComponentTag)

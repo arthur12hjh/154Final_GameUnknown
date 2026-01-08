@@ -51,11 +51,11 @@ public:
 	virtual HRESULT Render_Shadow() override;
 
 private:
-	CModel* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
 
 private:
 	_wstring			m_szModelTag;
+	_float m_fWeightTest;
+	
 	_uint				m_iAnimationIndex;
 
 	_bool				m_isAnimFinish = { false };

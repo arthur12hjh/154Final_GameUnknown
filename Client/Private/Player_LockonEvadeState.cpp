@@ -13,6 +13,12 @@ void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
+	//¸ðÆ® ÄÑ
+	m_pPlayer->MotionTrailEnable(true);
+	m_pPlayer->SetVisibility(VISIBILITY::VISIBLE);
+	m_pPlayer->MotionTrailRimLight(2.f, 3.f, { 0.6f, 0.7f, 1.f, 1.f });
+	m_pPlayer->MotionTrailCoolDown(0.1f);
+
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.2f);
@@ -100,7 +106,9 @@ PLAYER_TRANSITION_DESC CPlayer_LockonEvadeState::Update(_float fTimeDelta)
 
 _float CPlayer_LockonEvadeState::End()
 {
-	return 0.12f;
+	m_pPlayer->MotionTrailEnable(false);
+
+	return m_fNextBlendRatio;
 }
 
 CPlayer_LockonEvadeState* CPlayer_LockonEvadeState::Create(void* pArg)

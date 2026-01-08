@@ -66,6 +66,14 @@ void CPlayer_Parts::SetMotionTrailRimLight(_float fRimLightPower, _float fRimLig
     }
 }
 
+void CPlayer_Parts::SetMotionTrailCoolDown(_float fCoolDown)
+{
+    if (m_pMotionTrail)
+    {
+        m_pMotionTrail->SetTrailCreateCoolDown(fCoolDown);
+    }
+}
+
 void CPlayer_Parts::Free()
 {
     __super::Free();

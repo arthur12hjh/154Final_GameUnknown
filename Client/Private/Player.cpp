@@ -163,8 +163,9 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
 	m_PlayerDesc.pPlayerController = m_pCCT;
 
-	SetVisibility(VISIBILITY::VISIBLE);
-	MotionTrailRimLight(0.1f, 0.7f, { 1.f , 0.f, 0.f, 1.f });
+	/* 시작할땐 꺼두자 */
+	SetVisibility(VISIBILITY::HIDDEN);
+	MotionTrailEnable(false);
 
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	//EffectDesc.fRotationPerSec = 1.f;
@@ -216,12 +217,6 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
 	Update_ReactionSkillInput(fTimeDelta);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
-		MotionTrailEnable(true);
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
-		MotionTrailEnable(false);
 
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
@@ -322,10 +317,6 @@ void CPlayer::Attack_Interaction(void* pArg)
 
 	m_PlayerDesc.iLeftReactionSkillFrameAcc = iFrame;
 	m_PlayerDesc.eReactionType = eType;
-
-	//test
-	if (ATK_INTERACTION_TYPE::REPULSE == eType)
-		int a = 10;
 }
 
 void CPlayer::SetSkillDataID(_uint iSkillID)
@@ -857,6 +848,10 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 
 		else if (false == m_PlayerDesc.isSuperArmor)
 		{
+			//타격당할때 공격자를 바라보게 한다.
+			m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)), 
+				XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
+
 			Desc.isChangeMode = false;
 			Desc.eNextState = PLAYER_STATE::HIT;
 			Desc.pArg = &HitDesc;
@@ -955,6 +950,16 @@ void CPlayer::MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensi
 		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
 		pPlayer_Parts->SetMotionTrailRimLight(fRimLightPower, fRimLightIntensity, vColor);
 	}
+}
+
+void CPlayer::MotionTrailCoolDown(_float fCoolDown)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->SetMotionTrailCoolDown(fCoolDown);
+	}
+
 }
 
 void CPlayer::Execution_Nayitba()

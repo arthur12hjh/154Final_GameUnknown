@@ -1,5 +1,23 @@
 #include "Client_Shader_Utils.hlsli"
 #include "Client_Shader_VtxAnimMesh_Defines.hlsli"
+/*
+                                                                      
+    â–„â–„â–„â–„      â–„â–„     â–„â–„    â–„â–„  â–„â–„â–„â–„â–„â–„â–„â–„   â–„â–„â–„â–„â–„â–„     â–„â–„â–„â–„    â–„â–„â–„   â–„â–„ 
+  â–ˆâ–ˆâ–€â–€â–€â–€â–ˆ    â–ˆâ–ˆâ–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆ  â–€â–€â–€â–ˆâ–ˆâ–€â–€â–€   â–€â–€â–ˆâ–ˆâ–€â–€    â–ˆâ–ˆâ–€â–€â–ˆâ–ˆ   â–ˆâ–ˆâ–ˆ   â–ˆâ–ˆ 
+ â–ˆâ–ˆâ–€         â–ˆâ–ˆâ–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆ     â–ˆâ–ˆ        â–ˆâ–ˆ     â–ˆâ–ˆ    â–ˆâ–ˆ  â–ˆâ–ˆâ–€â–ˆ  â–ˆâ–ˆ 
+ â–ˆâ–ˆ         â–ˆâ–ˆ  â–ˆâ–ˆ   â–ˆâ–ˆ    â–ˆâ–ˆ     â–ˆâ–ˆ        â–ˆâ–ˆ     â–ˆâ–ˆ    â–ˆâ–ˆ  â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ 
+ â–ˆâ–ˆâ–„        â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   â–ˆâ–ˆ    â–ˆâ–ˆ     â–ˆâ–ˆ        â–ˆâ–ˆ     â–ˆâ–ˆ    â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–„â–ˆâ–ˆ 
+  â–ˆâ–ˆâ–„â–„â–„â–„â–ˆ  â–„â–ˆâ–ˆ  â–ˆâ–ˆâ–„  â–€â–ˆâ–ˆâ–„â–„â–ˆâ–ˆâ–€     â–ˆâ–ˆ      â–„â–„â–ˆâ–ˆâ–„â–„    â–ˆâ–ˆâ–„â–„â–ˆâ–ˆ   â–ˆâ–ˆ   â–ˆâ–ˆâ–ˆ 
+    â–€â–€â–€â–€   â–€â–€    â–€â–€    â–€â–€â–€â–€       â–€â–€      â–€â–€â–€â–€â–€â–€     â–€â–€â–€â–€    â–€â–€   â–€â–€â–€ 
+                                                                      
+ This Project File doesn't use anymore
+ Check "../../Client/Bin/ShaderFiles/Shader_Eve_Face.hlsl"
+
+ ì£¼ì˜
+ ì´ í”„ë¡œì íŠ¸ íŒŒì¼ì€ ë” ì´ìƒ ì‚¬ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+ í´ë¼ì´ì–¸íŠ¸ í´ë”ì— ìˆëŠ” ì…°ì´ë”íŒŒì¼ì„ í¸ì§‘í•´ì£¼ì„¸ìš”.
+
+*/
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_PreWorldMatrix, g_PreViewMatrix;
@@ -17,13 +35,13 @@ Texture2D g_SSSAOTexture;
 matrix g_LightViewMatrix[CASCADE_LEVEL];
 matrix g_LightProjMatrix[CASCADE_LEVEL];
 
-//¸²¶óÀÌÆ®¿ë º¯¼ö
+//ë¦¼ë¼ì´íŠ¸ìš© ë³€ìˆ˜
 vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
 float4 g_vRimLightColor;
 
-/* ¸Ş½Ã´Ù ¤·¿µÇâÀ» ÁÖ´Â »ÀµéÀÇ ÁıÇÕ*/
+/* ë©”ì‹œë‹¤ ã…‡ì˜í–¥ì„ ì£¼ëŠ” ë¼ˆë“¤ì˜ ì§‘í•©*/
 matrix g_OffsetMatrices[512];
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
@@ -36,7 +54,7 @@ VS_OUT VS_MAIN(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
           
-// CPU¿Í µ¿ÀÏÇÑ Çà·Ä ¼ø¼­
+// CPUì™€ ë™ì¼í•œ í–‰ë ¬ ìˆœì„œ
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -47,7 +65,7 @@ VS_OUT VS_MAIN(VS_IN In)
         MatrixZ * In.vBlendWeight.z +
         MatrixW * In.vBlendWeight.w;
     
-    /* ½ºÅ°´× */
+    /* ìŠ¤í‚¤ë‹ */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
     
@@ -57,8 +75,8 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vPosition, matWVP);
-    /* Out.vPosition.xy => ½Ã¾ß°¢¿¡ ÀÖ´Â Á¡µéÀ» 90¿¡ ¸ÂÃçÁØ´Ù */ 
-    /* Out.vPosition.z => n~f»çÀÌ¿¡ ÀÖ´Â Á¡µéÀÇ z¸¦ 0 ~ f·Î ¹Ù²ãÁØ´Ù. */   
+    /* Out.vPosition.xy => ì‹œì•¼ê°ì— ìˆëŠ” ì ë“¤ì„ 90ì— ë§ì¶°ì¤€ë‹¤ */ 
+    /* Out.vPosition.z => n~fì‚¬ì´ì— ìˆëŠ” ì ë“¤ì˜ zë¥¼ 0 ~ fë¡œ ë°”ê¿”ì¤€ë‹¤. */   
     Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
@@ -86,7 +104,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 
     float4 vSkinnedLocal = mul(float4(In.vPosition, 1.f), BoneMatrix);
 
-    // ¿ùµå±îÁö¸¸
+    // ì›”ë“œê¹Œì§€ë§Œ
     Out.vPosition = mul(vSkinnedLocal, g_WorldMatrix);
 
     return Out;
@@ -95,7 +113,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 [maxvertexcount(CASCADE_LEVEL * 3)]
 void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT_SHADOW> OutStream)
 {
-    //CASCADE LEVEL ¼øÈ¸ÇÏ¸é¼­ ÇÑ¹ø¿¡ Âï°Ô ÇÏ±â
+    //CASCADE LEVEL ìˆœíšŒí•˜ë©´ì„œ í•œë²ˆì— ì°ê²Œ í•˜ê¸°
     [unroll]
     for (uint iCount = 0; iCount < CASCADE_LEVEL; ++iCount)
     {
@@ -103,8 +121,8 @@ void GS_MAIN_SHADOW(triangle VS_OUT_SHADOW InTri[3], inout TriangleStream<GS_OUT
 
         GS_OUT_SHADOW Out;
 
-        // Á¤Á¡ 3°³´ç »ï°¢Çü ÇÏ³ª·Î 
-        // Ãë±ŞÇØ¼­ ¼¼ÆÃÇØÁÖ±â
+        // ì •ì  3ê°œë‹¹ ì‚¼ê°í˜• í•˜ë‚˜ë¡œ 
+        // ì·¨ê¸‰í•´ì„œ ì„¸íŒ…í•´ì£¼ê¸°
         [unroll]
         for (int iTri = 0; iTri < 3; ++iTri)
         {
@@ -127,7 +145,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     
     float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
     
-    // CPU¿Í µ¿ÀÏÇÑ Çà·Ä ¼ø¼­
+    // CPUì™€ ë™ì¼í•œ í–‰ë ¬ ìˆœì„œ
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
@@ -148,7 +166,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
         PreMatrixZ * In.vBlendWeight.z +
         PreMatrixW * In.vBlendWeight.w;
    
-    /* ½ºÅ°´× */
+    /* ìŠ¤í‚¤ë‹ */
     vector vCurrentPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     vector vPrePosition = mul(vector(In.vPosition, 1.f), PreBoneMatrix);
     
@@ -174,7 +192,7 @@ VS_OUT_MOTIONBLUR VS_MAIN_MOTIONBLUR(VS_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* í”½ì…€ ì‰ì´ë” : í”½ì…€ì˜ ìµœì¢…ì ì¸ ìƒ‰ì„ ê²°ì •í•˜ë‚Ÿ. */
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
@@ -193,7 +211,7 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-/* ¸²¶óÀÌÆ® Àû¿ë ¹öÀü. */
+/* ë¦¼ë¼ì´íŠ¸ ì ìš© ë²„ì „. */
 PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
 {
     PS_OUT Out;
@@ -207,7 +225,7 @@ PS_OUT PS_MAIN_RIMLIGHT(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, 0.0f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    //¸²¶óÀÌÆ®µµ ´õÇØ¼­ ´øÁ®.
+    //ë¦¼ë¼ì´íŠ¸ë„ ë”í•´ì„œ ë˜ì ¸.
     Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
@@ -225,7 +243,7 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHADOW In)
 
 PS_OUT_MOTIONBLUR PS_MAIN_MOTIONBLUR(PS_IN_MOTIONBLUR In)
 {
-    //³ë¸»¸ÊÀº ¾È..¾²Áö.
+    //ë…¸ë§ë§µì€ ì•ˆ..ì“°ì§€.
     PS_OUT_MOTIONBLUR Out;
     Out.vDirection.xy = In.vDirection.xy;
     Out.vDirection.z = 0.f;
@@ -347,7 +365,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Tearline(PS_IN In)
 
 PS_OUT PS_MAIN_MI_CH_M_NA_961_Eyeshadow(PS_IN In)
 {
-    // ÀÌ°Ç ÀÏ´Ü discard. ½Ã°£ ³²À¸¸é ÇÒ°Ô¿ä ¤¾¤¾;
+    // ì´ê±´ ì¼ë‹¨ discard. ì‹œê°„ ë‚¨ìœ¼ë©´ í• ê²Œìš” ã…ã…;
     discard;
     PS_OUT Out;
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -443,7 +461,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
-    // ¸² ¶óÀÌÆ® ÄÒ ¹öÀü
+    // ë¦¼ ë¼ì´íŠ¸ ì¼  ë²„ì „
     // 2
     pass RimLight
     {
@@ -454,7 +472,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_RIMLIGHT();
     }
-    // ¸ğ¼Ç ºí·¯
+    // ëª¨ì…˜ ë¸”ëŸ¬
     // 3
     pass MotionBlur
     {

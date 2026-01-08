@@ -243,7 +243,7 @@ HRESULT CPonyTail_Player::Ready_Components()
 	MotionTrailCom.pPreBoneModel = m_pBodyModelCom;
 	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
 	MotionTrailCom.fUpdateTime = 0.2f;
-	MotionTrailCom.fLifeTime = 3.f;
+	MotionTrailCom.fLifeTime = 0.45f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
