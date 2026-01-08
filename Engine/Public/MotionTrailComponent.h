@@ -36,7 +36,7 @@ public:
 
 	void								SetMotionTrailColor(_float4 vColor);
 	void								SetRimLight(_float fRimLightPower, _float fRimLightIntensity);
-
+	void								SetTrailCreateCoolDown(_float fCoolDown) { m_vUpdateTime.y = fCoolDown; }
 private:
 	_bool								m_bEnableMotionTrail = { false };
 	_uint								m_iNumBones = {};

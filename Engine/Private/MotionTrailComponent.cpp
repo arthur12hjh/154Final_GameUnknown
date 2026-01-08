@@ -165,6 +165,7 @@ HRESULT CMotionTrailComponent::Render()
 void CMotionTrailComponent::SetMotionTrailColor(_float4 vColor)
 {
 	m_vColor[0] = vColor;
+	m_vColor[1] = vColor;
 }
 
 void CMotionTrailComponent::SetRimLight(_float fRimLightPower, _float fRimLightIntensity)
