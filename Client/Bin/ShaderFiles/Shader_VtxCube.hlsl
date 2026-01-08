@@ -144,7 +144,7 @@ PS_OUT PS_RAIL(PS_IN In)
     vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
     vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // ¡ﬂ∞£ ¥‹∞Ë
     vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
-    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // π‡¿∫ ø¨µŒ (End)
+    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // π‡?ø¨µ∫?(End)
     
     float fXPos = (In.vTexcoord.x + 0.5f);
     int iIdx = (int) floor(fXPos * 3.0f);
