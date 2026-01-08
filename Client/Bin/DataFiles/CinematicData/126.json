@@ -142,7 +142,7 @@
       	   	"iActiveIndex": 0,
       	   	"szObjectTag": "Layer_Player",
  	   	"vPosition": [1122.577, 82.374, 1230.379],
- 	   	"vRotation": [1098.517, 87.705, 1273.884, 1.0],
+ 	   	"vRotation": [1098.517, 82.374, 1273.884, 1.0],
   	   	"vScale": [1.0, 1.0, 1.0],
   	   	"iInputInt": 0,
   	   	"fInputFloat": 0.0

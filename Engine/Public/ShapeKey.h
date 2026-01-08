@@ -11,7 +11,15 @@ private:
 	virtual ~CShapeKey() = default;
 
 public:
-	HRESULT Initialize(const class CModel* pModel, binAnimMesh* pAnimMesh);
+	const _char* Get_Name() const {
+		return m_szName;
+	}
+	
+	const vector<_float3>* Get_DeltaPosition() { return &m_vDeltaPositions; }
+	const vector<_float3>* Get_DeltaNormals() { return &m_vDeltaNormals; }
+
+public:
+	HRESULT Initialize(const class CModel* pModel, const binAnimMesh* pAnimMesh);
 
 
 private:
@@ -26,7 +34,7 @@ private:
 	vector<_float3>			m_vDeltaNormals;
 
 public:
-	static CShapeKey* Create(const class CModel* pModel, binAnimMesh* pAnimMesh);
+	static CShapeKey* Create(const class CModel* pModel,const binAnimMesh* pAnimMesh);
 	virtual void Free() override;
 };
 

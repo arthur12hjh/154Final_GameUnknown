@@ -38,7 +38,16 @@ public:
 	_int Get_BoneIndex(const _char* pBoneName) const;
 	// </end>
 
-	_int Get_ShapeIndex(const _char* pShapeName) const;
+	// <ShapeKey, MorphAnimation 전용 함수들>
+	_int Get_ShapeIndex(const _char* pShapeName) const; //안써시발아
+	void Set_ShapeWeightIndex(_uint iShapeKeyIndex, _float fWeight);
+	void Set_ShapeWeight(const _char* szShapeTag, _float fWeight);
+	void Bind_ShapeWeight();
+
+	void Reset_ShapeWeight();
+
+	unordered_map<string, _int>* Get_ShapeKeyNames() { return &m_ShapeKeyIndexMap; }
+	// </end>
 
 	_uint Get_AnimationKeyFrameIndex() const;
 	_float Get_fTrackPosition() const;
@@ -101,9 +110,30 @@ public:
 		_bool isRootMotionUpdated = TRUE);
 	// </end>
 
+	// <모프 애니메이션 설정하는 함수들>
+	void Set_MorphAnimationIndex(_int iAnimIndex,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+
+	void Set_MorphAnimation(const _char* szAnimationTag,
+		_bool isLoop = true,
+		_float fAnimationPlayRate = 1.f,
+		_float fLerpDuration = 0.12f,
+		_bool bIsRestart = FALSE,
+		_float fEndTrackPosition = -1.f,
+		_float fStartTrackPosition = 0.f,
+		_bool isResetTrackPosition = TRUE);
+	// </end>
+
 
 	vector<class CAnimation*>* Get_AnimationList() { return &m_Animations; }
 
+	HRESULT Initialize_ShapeKeyIndexMap();
 	HRESULT Initialize_AnimationIndexMap();
 	HRESULT Initialize_AnimationBufferResource();
 
@@ -125,9 +155,11 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	HRESULT Bind_BoneMatrices(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_BoneSRV(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_ShapeKeys(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_Material(_uint iMeshIndex, class CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 	HRESULT Bind_AllMaterials(_uint iMeshIndex, class CShader* pShader, _uint iTextureIndex);
 	_bool Play_Animation(_float fTimeDelta, CTransform* pTransform = nullptr, _float fRootMotionMagnification = 0.f);
+	_bool Play_MorphAnimation(_float fTimeDelta);
 
 	// 애니메이션이 GPU단에서 처리됨에 따라, 각 Mesh에 별개로 있는 오프셋 매트릭스를 Bone처럼 한 곳에 묶어 인덱스 매핑해주는 초기화 함수
 	HRESULT Mapping_OffsetMatrix();
@@ -187,10 +219,11 @@ private:
 	vector<ID3D11ShaderResourceView*>		m_pKeyFrameSRVList;
 
 #pragma region FACIAL METHOD
-	// 페이셜 모델 관련 처리들. ShapeKey(AnimMesh)와 MorphAnimation은 사실 Mesh단에서 처리해줘야한다.
-	// 굳이 그런 복잡한 로직 별로임 ㅇㅅㅇ.. 걍 모델로 끌고 나오자
-	_uint m_iNumShapeKeys;
-	vector <class CShapeKey*> m_ShapeKeys;
+	// Mesh단으로 내려가서 주석처리한 변수들
+	//_uint							m_iNumShapeKeys;
+	//vector<class CShapeKey*>		m_ShapeKeys;
+	//vector<_float>					m_ShapeKeyWeights;
+	unordered_map<string, _int>		m_ShapeKeyIndexMap;
 
 	_uint							m_iNumMorphAnimations;
 	_int							m_iCurrentMorphAnimIndex = { -1 };
@@ -198,6 +231,9 @@ private:
 	_bool							m_isMorphFinish = { false };
 	_float							m_fMorphAnimationPlayRate = 1.f;
 	vector<class CMorphAnimation*>	m_MorphAnimations;
+
+	//ID3D11Buffer*					m_pShapeKeyBuffer = { nullptr };
+	//ID3D11ShaderResourceView*		m_pShapeKeySRV = { nullptr };
 #pragma endregion
 
 	_float4x4					m_PreRootMatrix{};
@@ -238,7 +274,8 @@ private:
 #pragma region FACIAL METHOD
 	// 페이셜 모델 관련 처리들. ShapeKey(AnimMesh)와 MorphAnimation은 사실 Mesh단에서 처리해줘야한다.
 	// 굳이 그런 복잡한 로직 별로임 ㅇㅅㅇ.. 걍 모델로 끌고 나오자
-	HRESULT Ready_ShapeKeys();
+	HRESULT Bind_MorphAnimations(_float fTimeDelta);
+
 	HRESULT Ready_MorphAnimations();
 #pragma endregion
 

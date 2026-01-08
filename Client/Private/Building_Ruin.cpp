@@ -71,6 +71,11 @@ HRESULT CBuilding_Ruin::Render()
 	return S_OK;
 }
 
+HRESULT CBuilding_Ruin::Render_Shadow()
+{
+	return S_OK;
+}
+
 HRESULT CBuilding_Ruin::Ready_Components(const _tchar* pComponentTag)
 {
 	/* Com_Model */

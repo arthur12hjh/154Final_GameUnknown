@@ -13,8 +13,10 @@ private:
 
 public:
 	HRESULT Initialize(class CModel* pModel, binMorphAnimation* pMorphAnimation);
-	_int Update_TrackPosition(const vector<class CShapeKey*>& ShapeKeys, _bool isLoop, _float fTimeDelta, _float fEndTrackPosition = -1.f);
+	_int Update_TrackPosition(class CModel* pModel, _bool isLoop, _float fTimeDelta);
 	_bool Update_CurrentKeyFrameIndices();
+	
+	void Reset();
 
 	_float Get_Duration() { return m_fDuration; }
 
@@ -39,7 +41,6 @@ private:
 	_float								m_fTickPerSecond = {};
 
 	_uint								m_iNumMorphChannels = {};
-	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<class CMorphChannel*>		m_MorphChannels;
 
 public:

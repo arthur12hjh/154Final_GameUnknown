@@ -111,18 +111,19 @@ HRESULT CCherryBlossom1::Ready_Components()
 
 HRESULT CCherryBlossom1::Bind_ShaderResources()
 {
+	_bool bFlag = { false };
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_MaskTexture")))
-		return E_FAIL;
-
 	return S_OK;
 }
 

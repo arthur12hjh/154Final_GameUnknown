@@ -89,11 +89,17 @@ void CImGui_Manager::Update(_float fTimeDelta)
 	Update_ToolBar();
 	Update_AnimationList();
 	Update_KeyFrameTool();
+	//Update_ShapeKeys();
 
 	if (nullptr != m_pSelectedObject)
 	{
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
 			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
+
+		if (m_iCurrentObjectIndex > 100)
+		{
+			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_MorphAnimation(fTimeDelta * m_fTimeRate * m_fTimeMultiply);
+		}
 	}
 
 }
@@ -307,38 +313,37 @@ void CImGui_Manager::Update_ToolBar()
 */
 void CImGui_Manager::Update_ToolBar_LoadCharacter()
 {
-	static int iCurrentIndex = 0;
 	static int iBeforeIndex = 0;
 
 	if (ImGui::BeginPopup("Load"))
 	{
 		ImGui::Text("Load Character");
-		if (ImGui::Selectable("Eve")) { iCurrentIndex = 1; }
-		if (ImGui::Selectable("Dororong")) { iCurrentIndex = 2; }
-		if (ImGui::Selectable("Gigas")) { iCurrentIndex = 3; }
-		if (ImGui::Selectable("StatueA")) { iCurrentIndex = 4; }
-		if (ImGui::Selectable("StatueB")) { iCurrentIndex = 5; }
-		if (ImGui::Selectable("Banacle")) { iCurrentIndex = 6; }
-		if (ImGui::Selectable("SunFlower")) { iCurrentIndex = 7; }
-		if (ImGui::Selectable("Minion11")) { iCurrentIndex = 8; }
-		if (ImGui::Selectable("Scarlet")) { iCurrentIndex = 9; }
-		if (ImGui::Selectable("Cinematic_Gorilla")) { iCurrentIndex = 10; }
-		if (ImGui::Selectable("Tentacle")) { iCurrentIndex = 11; }
-		if (ImGui::Selectable("DroidTurret")) { iCurrentIndex = 12; }
-		if (ImGui::Selectable("NPC05")) { iCurrentIndex = 13; }
-		if (ImGui::Selectable("Beholder")) { iCurrentIndex = 14; }
+		if (ImGui::Selectable("Eve")) { m_iCurrentObjectIndex = 1; }
+		if (ImGui::Selectable("Dororong")) { m_iCurrentObjectIndex = 2; }
+		if (ImGui::Selectable("Gigas")) { m_iCurrentObjectIndex = 3; }
+		if (ImGui::Selectable("StatueA")) { m_iCurrentObjectIndex = 4; }
+		if (ImGui::Selectable("StatueB")) { m_iCurrentObjectIndex = 5; }
+		if (ImGui::Selectable("Banacle")) { m_iCurrentObjectIndex = 6; }
+		if (ImGui::Selectable("SunFlower")) { m_iCurrentObjectIndex = 7; }
+		if (ImGui::Selectable("Minion11")) { m_iCurrentObjectIndex = 8; }
+		if (ImGui::Selectable("Scarlet")) { m_iCurrentObjectIndex = 9; }
+		if (ImGui::Selectable("Cinematic_Gorilla")) { m_iCurrentObjectIndex = 10; }
+		if (ImGui::Selectable("Tentacle")) { m_iCurrentObjectIndex = 11; }
+		if (ImGui::Selectable("DroidTurret")) { m_iCurrentObjectIndex = 12; }
+		if (ImGui::Selectable("NPC05")) { m_iCurrentObjectIndex = 13; }
+		if (ImGui::Selectable("Beholder")) { m_iCurrentObjectIndex = 14; }
 		ImGui::Separator();
 		ImGui::Text("Load Facial");
-		if (ImGui::Selectable("Scarlet Face")) { iCurrentIndex = 101; }
+		if (ImGui::Selectable("Scarlet Face")) { m_iCurrentObjectIndex = 101; }
 		ImGui::EndPopup();
 	}
 
-	if (iCurrentIndex != iBeforeIndex)
+	if (m_iCurrentObjectIndex != iBeforeIndex)
 	{
 		// 구조
 		// 캐릭터 객체 코드를 따로 만들 것인가?
 		// 캐릭터 객체 코드를 같이 만들면 PartObject 관련 처리는 어떻게 할 것인가?
-		switch (iCurrentIndex)
+		switch (m_iCurrentObjectIndex)
 		{
 		case 0:
 			Kill_Character();
@@ -390,7 +395,7 @@ void CImGui_Manager::Update_ToolBar_LoadCharacter()
 			break;
 		}
 
-		iBeforeIndex = iCurrentIndex;
+		iBeforeIndex = m_iCurrentObjectIndex;
 	}
 
 
@@ -528,12 +533,86 @@ void CImGui_Manager::Update_AnimationList()
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
 		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex, true, 0.f);
 		Update_AnimNotifyList((*m_pAnimationList)[m_iSelectedAnimationIndex]);
+		if (m_iCurrentObjectIndex > 100)
+		{
+			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_MorphAnimationIndex(m_iSelectedAnimationIndex, true, 1.f);
+		}
 	}
 
 	ImGui::EndChild();
 
 	ImGui::End();
 
+}
+
+void CImGui_Manager::Update_ShapeKeys()
+{
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 500, 30)); // 화면 상단 좌표
+	ImGui::SetNextWindowSize(ImVec2(500, ImGui::GetIO().DisplaySize.y)); // 오른쪽에 갖다붙일거임
+
+	ImGui::Begin(u8"Shape Keys", NULL, ImGuiWindowFlags_MenuBar);
+
+	if (nullptr == m_pSelectedObject)
+	{
+		ImGui::TextDisabled("No Model Component");
+		ImGui::End();
+		return;
+	}
+
+	CModel* pModel = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")));
+	
+	if (nullptr == pModel)
+	{
+		ImGui::TextDisabled("No Model Component");
+		ImGui::End();
+		return;
+	}
+
+	unordered_map<string, _int>* pShapeKeyMap = pModel->Get_ShapeKeyNames();
+
+	if (nullptr == pShapeKeyMap || pShapeKeyMap->empty())
+	{
+		ImGui::TextDisabled("No Shape Keys");
+		ImGui::End();
+		return;
+	}
+
+	// ShapeKey별 UI 값 유지용
+	static unordered_map<string, float> s_ShapeKeyWeights;
+
+	ImGui::Separator();
+	ImGui::Text("Shape Key Controls");
+	ImGui::Separator();
+
+	for (auto& Pair : *pShapeKeyMap)
+	{
+		const string& strShapeKeyName = Pair.first;
+		_int iShapeKeyIndex = Pair.second;
+
+		// 초기값 보장 (최초 0.0f)
+		if (s_ShapeKeyWeights.find(strShapeKeyName) == s_ShapeKeyWeights.end())
+			s_ShapeKeyWeights[strShapeKeyName] = 0.f;
+
+		float& fWeight = s_ShapeKeyWeights[strShapeKeyName];
+
+		ImGui::PushID(strShapeKeyName.c_str());
+
+		if (ImGui::DragFloat(
+			strShapeKeyName.c_str(),
+			&fWeight,
+			0.01f,   // step
+			0.0f,    // min
+			1.0f))   // max
+		{
+			// 값 변경 시 즉시 반영
+			pModel->Set_ShapeWeightIndex(iShapeKeyIndex, fWeight);
+		}
+
+		ImGui::PopID();
+	}
+
+
+	ImGui::End();
 }
 
 void CImGui_Manager::Update_AnimNotifyList(CAnimation* pAnimation)

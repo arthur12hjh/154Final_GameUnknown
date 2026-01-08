@@ -721,6 +721,12 @@ namespace Engine
 		XMFLOAT4X4 BoneLocalTransformMatrix;
 		XMFLOAT4X4 BoneCombinedTransformMatrix;
 	}COMPUTE_BONEMATRIX_OUT;
+
+	typedef struct ShapeKeyInfo
+	{
+		XMFLOAT4X4 BoneLocalTransformMatrix;
+		XMFLOAT4X4 BoneCombinedTransformMatrix;
+	}SHAPEKEY_INFO;
 }
 
 #endif // Engine_Struct_h__
