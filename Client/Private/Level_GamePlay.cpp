@@ -376,6 +376,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 	Desc.vPosition = { 222.f, 55.f, 222.f};
+	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 

@@ -36,7 +36,7 @@ void CCherryBlossom3::Update(_float fTimeDelta)
 {
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	m_fTimeAcc += fTimeDelta;
+	//m_fTimeAcc += fTimeDelta;
 }
 
 void CCherryBlossom3::Late_Update(_float fTimeDelta)
@@ -56,6 +56,8 @@ HRESULT CCherryBlossom3::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float))))
+		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -69,7 +71,7 @@ HRESULT CCherryBlossom3::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(9)))
 			return E_FAIL;
 
 
@@ -93,7 +95,7 @@ HRESULT CCherryBlossom3::Ready_Components()
 		return E_FAIL;
 
 	/* Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Texture_BlossomMask2"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_BlossomMask2"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 

@@ -57,7 +57,7 @@ void CDeco::Late_Update(_float fTimeDelta)
 {
     if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        return;
+            return;
     }
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);

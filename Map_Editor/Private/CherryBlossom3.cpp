@@ -63,7 +63,7 @@ HRESULT CCherryBlossom3::Render()
 			return E_FAIL;
 
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(9)))
 			return E_FAIL;
 
 
