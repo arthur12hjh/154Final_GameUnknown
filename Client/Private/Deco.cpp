@@ -96,6 +96,12 @@ HRESULT CDeco::Render()
 	return S_OK;
 }
 
+HRESULT CDeco::Render_Shadow()
+{
+
+    return S_OK;
+}
+
 HRESULT CDeco::Ready_Components(const _tchar* pComponentTag)
 {
     auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);

@@ -2,9 +2,6 @@
 
 #include "Base.h"
 
-/* 이 뼈는 시간대별 취해야할 뼈의 상태들 .*/
-/* Update함수에서 내가 취해야할 시간을 넣어주면 시간에 맞느 ㅅ아태행렬을 보간해서 만들꺼라고. */
-/* 만든행렬을 뼈(CBone)에게 전달해줘야지. */
 NS_BEGIN(Engine)
 
 class CMorphChannel final : public CBase
@@ -15,7 +12,7 @@ private:
 
 public:
 	HRESULT Initialize(const class CModel* pModel, binMeshMorphChannel* pMorphChannel);
-	void Update_ShapeMorphing(const vector<class CShapeKey*>& ShapeKeys, _float fCurrentTrackPosition, _uint* pCurrentKeyFrameIndex);
+	void Update_ShapeMorphing(class CModel* pModel, _float fCurrentTrackPosition);
 
 	_char* Get_Name() { return m_szName; }
 	void Set_ShapeIndex(_uint iIndex) { m_iShapeIndex = iIndex; }
@@ -26,11 +23,14 @@ public:
 
 	const vector<MORPH_KEYFRAME>& Get_KeyFrames() { return m_KeyFrames; }
 
+	void Reset();
+
 private:
 	_char						m_szName[MAX_PATH] = {};
 	_int						m_iShapeIndex = { -1 };
 
 	_uint						m_iNumKeyFrames = {};
+	_uint						m_iCurrentKeyFrameIndex;
 	vector<MORPH_KEYFRAME>		m_KeyFrames;
 
 public:

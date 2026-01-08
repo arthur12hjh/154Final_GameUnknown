@@ -5,7 +5,7 @@ CShapeKey::CShapeKey()
 {
 }
 
-HRESULT CShapeKey::Initialize(const CModel* pModel, binAnimMesh* pAnimMesh)
+HRESULT CShapeKey::Initialize(const CModel* pModel, const binAnimMesh* pAnimMesh)
 {
 	strcpy_s(m_szName, pAnimMesh->szName);
 
@@ -30,7 +30,7 @@ HRESULT CShapeKey::Initialize(const CModel* pModel, binAnimMesh* pAnimMesh)
 	return S_OK;
 }
 
-CShapeKey* CShapeKey::Create(const CModel* pModel, binAnimMesh* pAnimMesh)
+CShapeKey* CShapeKey::Create(const CModel* pModel, const binAnimMesh* pAnimMesh)
 {
 	CShapeKey* pInstance = new CShapeKey();
 

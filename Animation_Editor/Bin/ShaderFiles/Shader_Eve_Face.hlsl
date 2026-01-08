@@ -1,6 +1,25 @@
 #include "Client_Shader_Utils.hlsli"
 #include "Client_Shader_VtxAnimMesh_Defines.hlsli"
 
+/*
+                                                                      
+    ▄▄▄▄      ▄▄     ▄▄    ▄▄  ▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄     ▄▄▄▄    ▄▄▄   ▄▄ 
+  ██▀▀▀▀█    ████    ██    ██  ▀▀▀██▀▀▀   ▀▀██▀▀    ██▀▀██   ███   ██ 
+ ██▀         ████    ██    ██     ██        ██     ██    ██  ██▀█  ██ 
+ ██         ██  ██   ██    ██     ██        ██     ██    ██  ██ ██ ██ 
+ ██▄        ██████   ██    ██     ██        ██     ██    ██  ██  █▄██ 
+  ██▄▄▄▄█  ▄██  ██▄  ▀██▄▄██▀     ██      ▄▄██▄▄    ██▄▄██   ██   ███ 
+    ▀▀▀▀   ▀▀    ▀▀    ▀▀▀▀       ▀▀      ▀▀▀▀▀▀     ▀▀▀▀    ▀▀   ▀▀▀ 
+                                                                      
+ This Project File doesn't use anymore
+ Check "../../Client/Bin/ShaderFiles/Shader_Eve_Face.hlsl"
+
+ 주의
+ 이 프로젝트 파일은 더 이상 사용되지 않습니다.
+ 클라이언트 폴더에 있는 셰이더파일을 편집해주세요.
+
+*/
+
 /* 깊이 렌더타겟 마스킹용 */
 bool g_IsMaskingDepthB;
 bool g_IsMaskingDepthW;

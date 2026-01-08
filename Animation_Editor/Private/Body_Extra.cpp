@@ -115,15 +115,36 @@ HRESULT CBody_Extra::Initialize(void* pArg)
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
 	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
 
+	m_fWeightTest = 0.f;
+
 	m_iAnimationIndex = 0;
 	m_pModelCom->Set_AnimationIndex(m_iAnimationIndex);
+
+	if (m_szModelTag == TEXT("Prototype_Component_Model_Scarlet_Face_Morph"))
+	{
+		//m_pModelCom->Set_ShapeWeight(0, m_fWeightTest);
+		//m_pModelCom->Set_ShapeWeight(1, 1.f);
+		//m_pModelCom->Set_ShapeWeight(2, 1.f);
+	}
 
 	return S_OK;
 }
 
 void CBody_Extra::Priority_Update(_float fTimeDelta)
 {
-	int a = 10;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_M))
+	//	m_fWeightTest += 0.016f;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
+	//	m_fWeightTest -= 0.016f;
+
+	//m_fWeightTest = max(0.f, m_fWeightTest);
+	//m_fWeightTest = min(1.f, m_fWeightTest);
+
+	//m_pModelCom->Set_ShapeWeight(0, m_fWeightTest);
+	//m_pModelCom->Set_ShapeWeight(1, m_fWeightTest);
+	//m_pModelCom->Set_ShapeWeight(2, m_fWeightTest);
+	//m_pModelCom->Set_ShapeWeight(3, m_fWeightTest);
+	//m_pModelCom->Set_ShapeWeight(4, m_fWeightTest);
 }
 
 void CBody_Extra::Update(_float fTimeDelta)
@@ -150,10 +171,12 @@ void CBody_Extra::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 
 #endif
+
 }
 
 HRESULT CBody_Extra::Render()
 {
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -181,6 +204,9 @@ HRESULT CBody_Extra::Render()
 	{
 		for (size_t i = 0; i < iNumMeshes; i++)
 		{
+			if (FAILED(m_pModelCom->Bind_ShapeKeys(i, m_pShaderCom, "g_ShapeKeyWeights")))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 				return E_FAIL;
 
@@ -256,6 +282,15 @@ HRESULT CBody_Extra::Ready_Components()
 
 HRESULT CBody_Extra::Bind_ShaderResources()
 {
+	_bool bFlag = TRUE;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthB", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_IsMaskingDepthW", &bFlag, sizeof(_bool))))
+		return E_FAIL;
+
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
 	/*m_pShaderCom->Bind_Matrix("g_WorldMatrix", );*/
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
@@ -296,7 +331,4 @@ CGameObject* CBody_Extra::Clone(void* pArg)
 void CBody_Extra::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

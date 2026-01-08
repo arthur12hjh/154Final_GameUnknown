@@ -48,6 +48,13 @@ public:
 	DXGI_FORMAT Get_IndexFormat() const { return m_eIndexFormat; }
 	D3D11_PRIMITIVE_TOPOLOGY Get_Topology() const { return m_ePrimitive; }
 
+	// <ShapeKey, MorphAnimation 전용 함수들>
+	const vector<class CShapeKey*>* Get_ShapeKeys() { return &m_ShapeKeys; }
+	void Reset_ShapeWeight();
+	void Set_ShapeWeight(_uint iShapeKeyIndex, _float fWeight);
+	void Bind_ShapeWeight();
+	HRESULT Bind_ShapeKeys(class CShader* pShader, const _char* pConstantName);
+	// </end>
 
 public:
 	virtual HRESULT Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix);
@@ -64,10 +71,25 @@ private:
 	_float4x4*						m_pBoneMatrices = { nullptr };
 	vector<_float4x4>				m_OffsetMatrices;
 
+#pragma region FACIAL METHOD
+	// 페이셜 모델 관련 처리들.
+	_uint							m_iNumShapeKeys;
+	vector<class CShapeKey*>		m_ShapeKeys;
+	vector<_float>					m_ShapeKeyWeights;
+	vector<_float3>					m_CombinedShapeKeyDeltaPositions;
+	vector<_float3>					m_CombinedShapeKeyDeltaNormals;
+
+	ID3D11Buffer* m_pCombinedShapeKeyBuffer = { nullptr };
+	ID3D11ShaderResourceView* m_pCombinedShapeKeySRV = { nullptr };
+	
+#pragma endregion
+
+
 private:
 	HRESULT Ready_VertexBuffer_For_NonAnim(const binMesh* pBinMesh, _fmatrix PreTransformMatrix);
 	HRESULT Ready_VertexBuffer_For_Anim(const class CModel* pModel, const binMesh* pBinMesh);
 
+	HRESULT Ready_ShapeKeys(const class CModel* pModel, const binMesh* pBinMesh);
 
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix);
