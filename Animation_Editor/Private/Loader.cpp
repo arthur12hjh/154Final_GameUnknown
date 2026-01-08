@@ -101,7 +101,7 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Editor()	
 {
-	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
+	m_strMessage = TEXT("누가 내 Loader에 똥쌌어! 내가쌌어");
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Texture_Sky"),

@@ -215,8 +215,6 @@ void CUIResult::Close_Result()
 	m_isOpen = false;
 	m_fTimeAcc = 0.f;
 	m_fScale = 3.f;
-	m_bActiveEsc = false;
-	m_fEscKeyPressedTime = 0.f;
 
 	Safe_Release(pHUD);
 }
