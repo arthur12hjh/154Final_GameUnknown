@@ -173,13 +173,13 @@ void CNaytiba::Late_Update(_float fTimeDelta)
 
 HRESULT CNaytiba::Render()
 {
-	for (auto& pPartObject : m_PartObjects)
-	{
-		if (TEXT("Part_Beam") == pPartObject.first)
-			continue;
+	//for (auto& pPartObject : m_PartObjects)
+	//{
+	//	if (TEXT("Part_Beam") == pPartObject.first)
+	//		continue;
 
-		pPartObject.second->Render();
-	}
+	//	pPartObject.second->Render();
+	//}
 
 	return S_OK;
 }
@@ -752,6 +752,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 	if (strcmp("None", m_pInitMonsterInfo->szFaceName))
 	{
 		CNaytibaFace::NAYTIBA_FACE_DESC FaceDesc = { };
+		FaceDesc.pParent = this;
 		FaceDesc.pParentTransform = m_pTransformCom;
 		FaceDesc.vScale = { 1.f, 1.f, 1.f };
 		FaceDesc.pBodyModelCom = static_cast<CModel*>(m_pPartBody->Find_Component(TEXT("Com_Model")));
@@ -763,6 +764,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 	if (strcmp("None", m_pInitMonsterInfo->szLeftWeaponPrototypeName))
 	{
 		CNaytibaLeftWeaponPart::WEAPON_DESC LWeaponDesc = { };
+		LWeaponDesc.pParent = this;
 		LWeaponDesc.pParentTransform = m_pTransformCom;
 		LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szLeftBoneName);
 		LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
@@ -777,6 +779,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 	if (strcmp("None", m_pInitMonsterInfo->szRightWeaponPrototypeName))
 	{
 		CNaytibaRightWeaponPart::WEAPON_DESC RWeaponDesc = { };
+		RWeaponDesc.pParent = this;
 		RWeaponDesc.pParentTransform = m_pTransformCom;
 		RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_pInitMonsterInfo->szRightBoneName);
 		RWeaponDesc.vScale = { 1.f, 1.f, 1.f };

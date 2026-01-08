@@ -33,12 +33,15 @@ HRESULT CNayitbaPartBody::Initialize(void* pArg)
         return E_FAIL;
 
     NAYITBA_PART_BODY_DESC* pDesc = static_cast<NAYITBA_PART_BODY_DESC*>(pArg);
+    m_pParent = pDesc->pParent;
+    
     if (FAILED(Ready_Components(*pDesc)))
         return E_FAIL;
 
     m_pModelCom->AddCount_PartialBone("Bip001-Spine2");
     m_pSpineMatrix = m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2");
     m_vDissolveRadius = 3.f;
+
     return S_OK;
 }
 
