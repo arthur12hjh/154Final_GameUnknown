@@ -154,10 +154,11 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 	}
 
 	_float fDist = XMVectorGetX(XMVector3Length(m_pParentTransformCom->Get_State(STATE::POSITION) - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
+	
 	m_pMotionTrail->Update_Trail(fTimeDelta);
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
@@ -198,8 +199,6 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 	}
 
-	if(m_pMotionTrail->IsEnableMotionTrail())
-		m_pMotionTrail->Render();
 	return S_OK;
 }
 
@@ -274,10 +273,12 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 	
 	/* Com_MotionTrail */
-	CMontionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
 	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pModelCom;
 	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
-	MotionTrailCom.fLifeTime = 0.5f;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 3.f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
@@ -289,7 +290,7 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-	OBBDesc.vSize = _float3(0.25f, 0.5f, 0.25f);
+	OBBDesc.vSize = _float3(0.3f, 0.7f, 0.3f);
 	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
 
@@ -750,6 +751,4 @@ void CBody_Player::Free()
 		Safe_Release(Pair.second);
 	}
 	m_RootRigidBodies.clear();
-
-	Safe_Release(m_pMotionTrail);
 }

@@ -1171,6 +1171,9 @@
     <Filter Include="02.GameObjects\Map\Dororong_Saber\DororongBox">
       <UniqueIdentifier>{04382a77-8f9f-4fe3-a29a-e91a55d4af75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.ShaderFiles\Trail">
+      <UniqueIdentifier>{9d0b5abe-4a20-4c0f-9bd0-8a6f3b4a5b86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -3350,6 +3353,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionTrail.hlsl">
+      <Filter>97.ShaderFiles\Trail</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

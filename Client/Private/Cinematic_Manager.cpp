@@ -322,7 +322,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 for (auto& pObject : *pObjectList)
                 {
 					pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vPosition), 1.f));
-
+                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(false);
                     static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
 
                     if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 0.f)
@@ -339,6 +339,8 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                     }
                     
                     ++iObjectIndex;
+
+                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
                 }
             }
             break;
@@ -396,9 +398,17 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::CREATE_TARGETLIGHT:
             CGameManager::GetInstance()->Change_ShaderSetting(static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID()), CinematicNodeDesc.iActiveIndex);
             break;
-
+        // 13¹ø
         case CINEMATICNODE_STATE::SET_CINEMATICLIGHT:
             CGameManager::GetInstance()->Set_CinematicLights(CinematicNodeDesc.iActiveIndex);
+            break;
+        // 14¹ø
+        case CINEMATICNODE_STATE::LOCKON_START:
+            CGameManager::GetInstance()->Force_Lockon(m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
+            break;
+        // 15¹ø
+        case CINEMATICNODE_STATE::LOCKON_END:
+            CGameManager::GetInstance()->Force_LockOff();
             break;
         case CINEMATICNODE_STATE::END:
             break;

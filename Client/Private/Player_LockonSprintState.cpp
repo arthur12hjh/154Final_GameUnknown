@@ -42,7 +42,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintState::Update(_float fTimeDelta)
 	{
 		if (false == m_isSprintStart && false == m_isRunning)
 		{
-			m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 0.f);
+			m_pPlayer->Set_Animation("Proto_Battle_Sprint", true, 1.2f, 0.08f);
 			m_isRunning = true;
 		}
 		else if (PLAYER_DIRECTION::STRAIGHT != m_eDirection && false == m_isSprintStart && true == m_isRunning)
@@ -91,7 +91,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonSprintState::Update(_float fTimeDelta)
 	{
 		m_isSprintStart = false;
 	}
-	else if (PLAYER_DIRECTION::STRAIGHT == m_eDirection && true == isAnimFinished && true == m_isSprintStart)
+	else if (PLAYER_DIRECTION::STRAIGHT == m_eDirection && (27.5f/ 32.f) <= fAnimationRatio && true == m_isSprintStart)
 	{
 		m_isSprintStart = false;
 	}

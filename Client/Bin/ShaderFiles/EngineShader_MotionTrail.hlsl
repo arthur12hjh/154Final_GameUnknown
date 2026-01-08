@@ -1,4 +1,4 @@
-#include "Engine_Shader_Defines.hlsli"
+#include "Client_Shader_Utils.hlsli"
 #include "Shader_Compute_CombinedMatrices.hlsl"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
@@ -7,7 +7,12 @@ Texture2D           g_DiffuseTexture;
 Texture2D           g_ORMTexture;
 Texture2D           g_NormalTexture;
 
-int                 g_iNumBone;
+vector               g_vCamPosition;
+float                g_fRimLightPower;
+float                g_fRimLightStrength;
+float4               g_vRimLightColor;
+
+int                  g_iNumBone;
 float4               g_vStartColor;
 float4               g_vEndColor;
 matrix               g_OffsetMatrices[512];
@@ -111,6 +116,11 @@ struct PS_MOTION_TRAIL_IN
 struct PS_MOTION_TRAIL_OUT
 {
     float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+    float4 vORM : SV_Target3;
+    float4 vEmissive : SV_TARGET4;
+    float4 vBloom : SV_TARGET5;
 };
 
 
@@ -122,7 +132,15 @@ PS_MOTION_TRAIL_OUT PS_MOTION_TRAIL_MAIN(PS_MOTION_TRAIL_IN In)
     if (In.vLifeTime.x >= In.vLifeTime.y)
         discard;
     
-    Out.vDiffuse = float4(1.f, 0.f, 0.f, 1.f); //g_vStartColor;
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vMtrlDiffuse = float4(1.f, 0.f, 0.f, 1 - In.vLifeTime);
+    Out.vDiffuse = vMtrlDiffuse +
+        Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -132,7 +150,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MOTION_TRAIL_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MOTION_TRAIL_MAIN();

@@ -398,8 +398,8 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
 void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_OUT> OutStream)
 {
     GS_NONLIGHT_OUT Out[4];
-    float3 vR;
-    float3 vL;
+    float3 vR = 0;
+    float3 vL = 0;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -551,8 +551,8 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
 void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR;
-    float3 vL;
+    float3 vR = 0;
+    float3 vL = 0;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -733,17 +733,17 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
     Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
     Out[0].vTexcoord = float2(0.f, 0.f);
     Out[0].vLifeTime = In[0].vLifeTime;
-    Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
     
     Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
     Out[1].vTexcoord = float2(1.f, 0.f);
     Out[1].vLifeTime = In[0].vLifeTime;
-    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
     
     Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
     Out[2].vTexcoord = float2(1.f, 1.f);
     Out[2].vLifeTime = In[0].vLifeTime;
-    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
     
     Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
     Out[3].vTexcoord = float2(0.f, 1.f);
@@ -771,8 +771,8 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
 void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_OUT> OutStream)
 {
     GS_NONLIGHT_OUT Out[4];
-    float3 vR;
-    float3 vL;
+    float3 vR = 0;
+    float3 vL = 0;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -924,8 +924,8 @@ void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NO
 void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR;
-    float3 vL;
+    float3 vR = 0;
+    float3 vL = 0;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -1084,8 +1084,8 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
 void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR;
-    float3 vL;
+    float3 vR = 0;
+    float3 vL = 0;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -1240,9 +1240,9 @@ void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_
     }
 }
 
-/* Ãâ·ÂµÈ Á¤Á¡ À§Ä¡º¤ÅÍÀÇ w°ªÀ¸·Î ¸ðµç ¼ººÐÀ» ³ª´«´Ù -> Åõ¿µ½ºÆäÀÌ½º·Î º¯È¯ */ 
-/* Á¤Á¡ÀÇ À§Ä¡¿¡ ´ëÇØ¼­ ºäÆ÷Æ® º¯È¯À» ¼öÇàÇÑ´Ù */ 
-/* Á¤Á¡ÀÇ ¸ðµç Á¤º¸¸¦ º¸°£ÇÏ¿© ÇÈ¼¿À» ¸¸µç´Ù. -> ·¡½ºÅÍ¶óÀÌÁî */ 
+/* ï¿½ï¿½Âµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ */ 
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ */ 
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½. -> ï¿½ï¿½ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ */ 
 
 struct PS_NORMAL_IN
 {
@@ -1301,7 +1301,7 @@ float hole[16] =
     15, 7, 13, 5
 };
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_NORMAL_OUT Out;
@@ -1355,7 +1355,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NORMAL_OUT PS_NORMAL_DIFFUSE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_NORMAL_OUT Out;
@@ -1420,7 +1420,7 @@ PS_NORMAL_OUT PS_NORMAL_DIFFUSE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFa
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_BLOOM_OUT Out;
@@ -1453,7 +1453,7 @@ PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_NONLIGHT(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1487,7 +1487,7 @@ PS_NONLIGHT_OUT PS_NONLIGHT(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_BLACK_BLEND(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1523,7 +1523,7 @@ PS_NONLIGHT_OUT PS_BLACK_BLEND(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_BLACK_DEPTH(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1558,7 +1558,7 @@ PS_NONLIGHT_OUT PS_BLACK_DEPTH(PS_NONLIGHT_IN In)
 }
 
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1595,7 +1595,7 @@ PS_NONLIGHT_OUT PS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_GLOW_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1629,7 +1629,7 @@ PS_NONLIGHT_OUT PS_GLOW_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_BLUR(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1666,7 +1666,7 @@ PS_NONLIGHT_OUT PS_BLUR(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_METABALL(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1703,7 +1703,7 @@ PS_NONLIGHT_OUT PS_METABALL(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1750,7 +1750,7 @@ PS_NONLIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1792,7 +1792,7 @@ PS_NONLIGHT_OUT PS_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1838,7 +1838,7 @@ PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1992,7 +1992,7 @@ PS_NONLIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_SIGNAL_POWER(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2128,7 +2128,7 @@ PS_NONLIGHT_OUT PS_GLOW_NULL(PS_NONLIGHT_IN In)
     discard;
     return Out;
 }
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ROTATION_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2165,7 +2165,7 @@ PS_NONLIGHT_OUT PS_ROTATION_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2200,7 +2200,7 @@ PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
 }
 
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_CROSS_BLEND(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2240,7 +2240,7 @@ PS_NONLIGHT_OUT PS_CROSS_BLEND(PS_WEIGHT_IN In)
     //Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
     return Out;
 }
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_CROSS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2273,7 +2273,7 @@ PS_NONLIGHT_OUT PS_CROSS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2424,7 +2424,7 @@ PS_NONLIGHT_OUT PS_SCARLET_BOOM_SPHERE_NONLIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.a = 1;
     return Out;
 }
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_BLINK_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2457,7 +2457,7 @@ PS_NONLIGHT_OUT PS_BLINK_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_BLINK_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2491,7 +2491,7 @@ PS_NONLIGHT_OUT PS_BLINK_GLOW_BLOOM(PS_WEIGHT_IN In)
     Out.vDiffuse.a = 1;
     return Out;
 }
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2512,7 +2512,7 @@ PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2533,7 +2533,7 @@ PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2553,7 +2553,7 @@ PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
 PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2570,6 +2570,91 @@ PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW_BLOOM(PS_WEIGHT_IN In)
     return Out;
 }
 
+
+/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+PS_NONLIGHT_OUT PS_SIGNAL_SCARLET(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + In.vLifeTime.x * g_fDiffuseUVSpeed.x / 180) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + In.vLifeTime.x * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
+    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + In.vLifeTime.x * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 tex = In.vTexcoord;
+    float s = sin(radians(In.vLifeTime.x * -g_fDiffuseUVSpeed.x));
+    float c = cos(radians(In.vLifeTime.x * -g_fDiffuseUVSpeed.x));
+    tex -= float2(0.5, 0.5);
+    float2x2 rot = float2x2(c, -s, s, c);
+    tex = mul(tex, rot) + float2(0.5, 0.5);
+    
+    float2 uv = In.vTexcoord;
+    
+    float dist = distance(uv, float2(0.5, 0.5));
+    
+    float ring = smoothstep(saturate((In.vLifeTime.x + 2) / In.vLifeTime.y), saturate((In.vLifeTime.x + 2) / In.vLifeTime.y) - 0.1, dist);
+    
+    float3 noise = g_DiffuseTexture.Sample(DefaultSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0) * 0.2;
+    
+    float2 uvDistorted = uv + distort * ring;
+    
+    float4 col = g_NormalTexture.Sample(DefaultSampler, uvDistorted);
+    
+    float mask = g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    
+    col.rgb *= ring * mask;
+    //col.a *= g_MaskTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    Out.vDiffuse = g_vColor;
+    
+    float diffuse = (g_DiffuseTexture.Sample(MirrorSampler, tex).r - 0.5) * 2 * saturate((In.vLifeTime.y - In.vLifeTime.x));
+    Out.vDiffuse = lerp(g_vColor, float4(0.05f, 1.0f, 0.1f, 1), pow(saturate(saturate(In.vLifeTime.x - 0.2) / (In.vLifeTime.y - 0.9)), 3));
+    
+    //Out.vDiffuse.a = g_vColor.a * g_MaskTexture.Sample(NoneSampler, float2(MaskTexcoord.x + diffuse * 0.05, MaskTexcoord.y + diffuse * 0.05)).r * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    float2 texcoord = float2(MaskTexcoord.x * 1.2 + diffuse * 0.05 - 0.2 * 0.5, MaskTexcoord.y * 1.2 + diffuse * 0.05 - 0.2 * 0.5);
+    
+    
+    Out.vDiffuse.a *= length(float2(0.5, 0.5) - texcoord) * 2;
+    Out.vDiffuse.a = pow(Out.vDiffuse.a, 10);
+    Out.vDiffuse.a *= saturate((In.vLifeTime.y - In.vLifeTime.x) * 1.5);
+    if (0 >= Out.vDiffuse.a || 0.5 < length(float2(0.5, 0.5) - texcoord))
+        discard;
+    Out.vDiffuse.a *= col.r;
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = saturate(exp(-linearDepth * 20));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    return Out;
+}
+
+PS_NONLIGHT_OUT PS_REPURSE(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+    int iU = (In.vLifeTime.x / fFPS);
+    int iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    
+    
+
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = lerp(g_vColor, float4(0.05f, 1.f, 0.1f, g_vColor.a * 2), pow(saturate(In.vLifeTime.x / (In.vLifeTime.y - 1.8)), 2));
+    Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x * 1.2);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = saturate(exp(-linearDepth * 20));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * 6;
+    Out.vDiffuse.a = Out.vDiffuse.a * weight;
+    return Out;
+}
 
 BlendState BS_Dust
 {
@@ -3008,4 +3093,25 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
         PixelShader = compile ps_5_0 PS_ROTATION_FLARE_GLOW_BLOOM();
     }
+    // idx 41
+    pass Signal_Repurse
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaAdd, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_SIGNAL_SCARLET();
+    }
+    // idx 42
+    pass Repurse_Light
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaAdd, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_REPURSE();
+    }
+
 }

@@ -11,9 +11,6 @@ namespace Client
 	const unsigned int			g_iWinSizeX = 1600;
 	const unsigned int			g_iWinSizeY = 900;
 
-	//const unsigned int			g_iWinSizeX = 1920;
-	//const unsigned int			g_iWinSizeY = 1080;
-
 	enum class LEVEL 
 	{ 
 		STATIC,

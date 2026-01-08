@@ -190,17 +190,26 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vTranslation += float4(0, 1, 0, 0) * fGravity * vfTimeDelta.x * length(Input[DTid.x].WorldMat._11_12_13);
         if (bisStart)
         {
-            if (Input[DTid.x].vfSpeed.x != 0)
+            if (0 < Input[DTid.x].vfSpeed.x)
             {
                 g_Out[DTid.x].vLook = float4(normalize(g_Out[DTid.x].vTranslation.xyz - g_Out[DTid.x].vfStart.xyz) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
             }
             else
             {
-                g_Out[DTid.x].vLook = vDir;
+                    g_Out[DTid.x].vLook = vDir;
             }
         }
         else if (0 >= length(g_Out[DTid.x].vTranslation.xyz - Input[DTid.x].vTranslation.xyz) || Input[DTid.x].vfSpeed.x == 0)
-            g_Out[DTid.x].vLook = Input[DTid.x].vLook;
+        {
+            if (0 >= length(Input[DTid.x].vfRoot.xyz))
+            {
+                g_Out[DTid.x].vLook = Input[DTid.x].WorldMat._31_32_33_34;
+            }
+            else
+            {
+                g_Out[DTid.x].vLook = Input[DTid.x].vLook;
+            }
+        }
         else
             g_Out[DTid.x].vLook = float4(normalize(g_Out[DTid.x].vTranslation.xyz - Input[DTid.x].vTranslation.xyz) * Input[DTid.x].vfSize * length(Input[DTid.x].WorldMat._11_12_13), 0);
     

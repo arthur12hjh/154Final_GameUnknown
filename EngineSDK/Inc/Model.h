@@ -67,6 +67,8 @@ public:
 	// binModel 구조체로 받는 함수. 만들긴 했는데 쓸모는 없을듯
 	binModel* Get_RawModelDesc() { return m_pModel; }
 
+	void Set_PreTransformMatrix(_fmatrix PreTransformMatrix) { XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix); }
+
 public:
 	// <애니메이션 관련 함수들. 인덱스, wstring, string. 자세한 정보는 디코 자료탭 존난애강 참고>
 	void Set_AnimationIndex(_int iAnimIndex,

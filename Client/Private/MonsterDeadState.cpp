@@ -56,6 +56,7 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 void CMonsterDeadState::Update(_float fTimeDelta)
 {
 	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
+	
 	_bool bIsFinished = pEntity->Play_Animation(fTimeDelta);
 	if (0 == m_iSectionIndex)
 	{
@@ -76,7 +77,32 @@ void CMonsterDeadState::Update(_float fTimeDelta)
 		}
 		else
 		{
-			m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
+			_float fAnimRatio = pEntity->Get_AnimationRatio();
+			_float LimitRatio = {};
+			switch (m_eDeadState)
+			{
+			case DEAD_STATE::LINK_FRONT :
+				LimitRatio = 0.25f;
+				break;
+			case DEAD_STATE::LINK_BACK :
+				LimitRatio = 0.6f;
+				break;
+			}
+		
+			if (LimitRatio > fAnimRatio)
+			{
+				m_pOwner->GetTransform()->Move_Direction(fTimeDelta, XMLoadFloat3(&m_vImpactDir), m_fImpactForce);
+				pEntity->SetVelocity(false, 0.f);
+			}
+			
+			if (0.2f > fAnimRatio)
+			{
+				_vector vDiagonal = XMLoadFloat3(&m_vImpactDir);
+				vDiagonal.m128_f32[1] += 1.f;
+
+				pEntity->SetVelocity(true, m_fDiagonalForce);
+			}
+				
 		}
 	}
 	else
@@ -114,9 +140,15 @@ void CMonsterDeadState::SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc)
 		_vector vDir = XMVector3Normalize(vAttackerPos - vOwnerPos);
 		_float fScalar = XMVectorGetX(XMVector3Dot(m_pOwner->GetTransform()->Get_State(STATE::LOOK), vDir));
 		if (0 <= fScalar)
+		{
 			m_szAnimationName += "_Bw";
+			m_eDeadState = DEAD_STATE::LINK_BACK;
+		}
 		else
+		{
 			m_szAnimationName += "_Fw";
+			m_eDeadState = DEAD_STATE::LINK_FRONT;
+		}
 
 		if (XMVector3Equal(XMLoadFloat3(&pDesc->vImpactDir), XMVectorZero()))
 		{
@@ -128,10 +160,14 @@ void CMonsterDeadState::SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc)
 			m_vImpactDir = pDesc->vImpactDir;
 		}
 
-		m_fImpactForce = pDesc->fImpactForce;
+		m_fImpactForce = m_pGameInstance->Random(pDesc->fImpactForce * 0.3f, pDesc->fImpactForce);
+		m_fDiagonalForce = m_pGameInstance->Random(pDesc->fImpactForce * 0.3f, pDesc->fImpactForce);
 	}
 	else
+	{
 		m_szAnimationName = "Result_State_Groggy_S";
+		m_eDeadState = DEAD_STATE::END;
+	}
 }
 
 CMonsterDeadState* CMonsterDeadState::Create(void* pArg)

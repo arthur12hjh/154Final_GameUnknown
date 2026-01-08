@@ -315,7 +315,7 @@ _matrix CPhysx_Manager::Convert_PxTransform_ToMatrix(PxTransform Transform)
     _vector vPosition = XMVectorSet(vPxPosition.x, vPxPosition.y, vPxPosition.z, 1.0f);
 
     // ȸ�� (Quaternion)
-    PxQuat  vPxQuaternion = Transform.q;
+    PxQuat  vPxQuaternion = Transform.q;    
     _matrix vQuaternion = XMMatrixRotationQuaternion(XMVectorSet(vPxQuaternion.x, vPxQuaternion.y, vPxQuaternion.z, vPxQuaternion.w));
 
     // �������� 1��

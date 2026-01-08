@@ -202,12 +202,12 @@
                 ]
             },
             {
-                "fNumData01": 2.0,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 76,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 79,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -226,28 +226,28 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.699999988079071,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    2.5,
-                    2.5,
-                    2.5
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 105,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 109,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -266,28 +266,28 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    0.0,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    2.0,
-                    2.0,
-                    2.0
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 121,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 125,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -306,28 +306,28 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    0.0,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    2.0,
-                    2.0,
-                    2.0
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 140,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 144,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -346,28 +346,28 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    0.0,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    2.0,
-                    2.0,
-                    2.0
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 2.0,
+                "fNumData01": 3.700000047683716,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 173,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 177,
+                "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -386,23 +386,23 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.699999988079071,
+                    -4.800000190734863,
                     0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
                     0.0,
                     0.0,
-                    90.0
+                    270.0
                 ],
                 "vNotifyScale": [
-                    3.5,
-                    3.5,
-                    3.5
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -426,7 +426,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -1.0,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],
@@ -436,17 +436,17 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    0.6000000238418579
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 111,
+                "iNotifyKeyFrame": 109,
                 "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -466,7 +466,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.6000000238418579,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],
@@ -476,17 +476,17 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.4000000059604645,
-                    0.4000000059604645,
-                    0.4000000059604645
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 127,
+                "iNotifyKeyFrame": 125,
                 "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -506,7 +506,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.6000000238418579,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],
@@ -516,17 +516,17 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.4000000059604645,
-                    0.4000000059604645,
-                    0.4000000059604645
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             },
             {
-                "fNumData01": 1.2000000476837158,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 146,
+                "iNotifyKeyFrame": 144,
                 "iNumData01": 3,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -546,7 +546,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.6000000238418579,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],
@@ -556,13 +556,13 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.4000000059604645,
-                    0.4000000059604645,
-                    0.4000000059604645
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 0.800000011920929,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -586,7 +586,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -1.0,
+                    -1.7000000476837158,
                     0.0,
                     0.0
                 ],
@@ -596,9 +596,9 @@
                     90.0
                 ],
                 "vNotifyScale": [
-                    0.6000000238418579,
-                    0.6000000238418579,
-                    0.6000000238418579
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             }
         ],

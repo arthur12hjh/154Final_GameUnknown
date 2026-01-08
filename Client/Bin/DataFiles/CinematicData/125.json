@@ -106,12 +106,18 @@
         	       }
     	   ]
             },
-            {
-                "eState": 7,
-                "fTrackPosition": 26.700000762939453,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            }
+          {
+            "eState": 7,
+            "fTrackPosition": 26.700000762939453,
+            "iActiveIndex": 0,
+            "szObjectTag": ""
+          },
+          {
+            "eState": 15,
+            "fTrackPosition": 26.700000762939453,
+            "iActiveIndex": 0,
+            "szObjectTag": ""
+          }
         ],
         "iCinematicID": 125,
         "szCinematicName": "GorillaFinishTest02"

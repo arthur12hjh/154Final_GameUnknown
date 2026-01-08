@@ -9,7 +9,6 @@ class CShader;
 class CCollider;
 class CRigidBody;
 class CJointChain;
-class CMontionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -44,13 +43,13 @@ public:
 	virtual void Priority_Update(_float fTimeDelta) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
+
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	CMontionTrailComponent*		m_pMotionTrail = { nullptr };
 
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };

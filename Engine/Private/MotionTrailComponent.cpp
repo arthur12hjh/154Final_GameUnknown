@@ -1,19 +1,21 @@
-#include "MontionTrailComponent.h"
+#include "MotionTrailComponent.h"
+
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "Camera.h"
 
-CMontionTrailComponent::CMontionTrailComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
+CMotionTrailComponent::CMotionTrailComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CVIBuffer_Instance(pDevice, pContext)
 {
 }
 
-CMontionTrailComponent::CMontionTrailComponent(const CMontionTrailComponent& rhs) :
+CMotionTrailComponent::CMotionTrailComponent(const CMotionTrailComponent& rhs) :
 	CVIBuffer_Instance(rhs),
 	m_pInstanceVertices(rhs.m_pInstanceVertices)
 {
 }
 
-HRESULT CMontionTrailComponent::Initialize_Prototype(_int iNum)
+HRESULT CMotionTrailComponent::Initialize_Prototype(_int iNum)
 {
 	m_iNumVertexBuffers = 2;
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -36,12 +38,16 @@ HRESULT CMontionTrailComponent::Initialize_Prototype(_int iNum)
 	return S_OK;
 }
 
-HRESULT CMontionTrailComponent::Initialize(void* pArg)
+HRESULT CMotionTrailComponent::Initialize(void* pArg)
 {
 	MOTION_TRAIL_COMPONENT_DESC* pDesc = static_cast<MOTION_TRAIL_COMPONENT_DESC*>(pArg);
 	m_pModel = pDesc->pModel;
+	m_pPreBoneModel = pDesc->pPreBoneModel;
+
+	m_vUpdateTime = { 0.f, pDesc->fUpdateTime };
 	m_pTransformMatrix = pDesc->pTransform;
 	Safe_AddRef(m_pModel);
+	Safe_AddRef(m_pPreBoneModel);
 
 	if (FAILED(Ready_TarilBuffer()))
 		return E_FAIL;
@@ -61,33 +67,42 @@ HRESULT CMontionTrailComponent::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CMontionTrailComponent::EnableMotionTrail(_bool bIsEnable)
+void CMotionTrailComponent::EnableMotionTrail(_bool bIsEnable)
 {
 	m_bEnableMotionTrail = bIsEnable;
 }
 
-_bool CMontionTrailComponent::IsEnableMotionTrail()
+_bool CMotionTrailComponent::IsEnableMotionTrail()
 {
 	return m_bEnableMotionTrail;
 }
 
-void CMontionTrailComponent::Update_Trail(_float fTimeDelta)
+void CMotionTrailComponent::Update_Trail(_float fTimeDelta)
 {
 	D3D11_MAPPED_SUBRESOURCE pSubResource = {};
+	m_iActiveTrailCount = 0;
+
 	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &pSubResource);
 	VTX_MOTION_TRAIL_INSTANCE_MODEL* pDatas = static_cast<VTX_MOTION_TRAIL_INSTANCE_MODEL*>(pSubResource.pData);
-	if (m_bEnableMotionTrail && m_pModel)
+	_bool bIsUpdateAge = false;
+	if (m_bEnableMotionTrail && m_pPreBoneModel)
 	{
-		_matrix worldMat = XMLoadFloat4x4(m_pTransformMatrix);
+		m_vUpdateTime.x += fTimeDelta;
+		if (m_vUpdateTime.x >= m_vUpdateTime.y)
+		{
+			_matrix worldMat = XMLoadFloat4x4(m_pTransformMatrix);
+			m_TrailCount++;
+			if (m_iNumInstance <= m_TrailCount)
+				m_TrailCount = 0;
 
-		XMStoreFloat4(&pDatas[m_TrailCount].vLook, worldMat.r[2]);
-		XMStoreFloat4(&pDatas[m_TrailCount].vRight, worldMat.r[0]);
-		XMStoreFloat4(&pDatas[m_TrailCount].vUp, worldMat.r[1]);
-		XMStoreFloat4(&pDatas[m_TrailCount].vTranslation, worldMat.r[3]);
-		pDatas[m_TrailCount].vLifeTime.x = 0;
-		auto pPreBoneBuffer = m_pModel->Get_PreBoneMatrix();
+			XMStoreFloat4(&pDatas[m_TrailCount].vRight, worldMat.r[0]);
+			XMStoreFloat4(&pDatas[m_TrailCount].vUp, worldMat.r[1]);
+			XMStoreFloat4(&pDatas[m_TrailCount].vLook, worldMat.r[2]);
+			XMStoreFloat4(&pDatas[m_TrailCount].vTranslation, worldMat.r[3]);
+			pDatas[m_TrailCount].vLifeTime.x = 0;
+			auto pPreBoneBuffer = m_pPreBoneModel->Get_PreBoneMatrix();
 
-		m_pContext->CopySubresourceRegion(
+			m_pContext->CopySubresourceRegion(
 				m_pMotionTrailBuffers,			// 복사 받을 대상 버퍼
 				0,								// 서브 리소스
 				m_TrailCount * m_iNumBones * sizeof(COMPUTE_BONEMATRIX_OUT),		// 복사 받을 버퍼의 사이즈 X
@@ -96,58 +111,43 @@ void CMontionTrailComponent::Update_Trail(_float fTimeDelta)
 				0,								// 복사할 데이터의 서브 리소스
 				&m_CopyBoxSize);				// 복사할 데이터의 크기
 
-		m_TrailCount++;
-		if (m_iNumInstance <= m_TrailCount)
-			m_TrailCount = 0;
-
-		Safe_Release(pPreBoneBuffer);
+			bIsUpdateAge = true;
+			m_vUpdateTime.x = 0.f;
+			Safe_Release(pPreBoneBuffer);
+		}
 	}
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		pDatas[i].vLifeTime.x += fTimeDelta;
-		_int iAge = m_TrailCount - i;
-		if (iAge < 0)
-			pDatas[i].iNumber.x = m_iNumInstance + iAge;
-		else
-			pDatas[i].iNumber.x = iAge;
+		if (pDatas[i].vLifeTime.x < pDatas[i].vLifeTime.y)
+			m_iActiveTrailCount++;
+
+		if (bIsUpdateAge)
+		{
+			_int iAge = m_TrailCount - i;
+			if (iAge < 0)
+				pDatas[i].iNumber.x = m_iNumInstance + iAge;
+			else
+				pDatas[i].iNumber.x = iAge;
+		}
 	}
+
+	if (bIsUpdateAge)
+		bIsUpdateAge = false;
 	
 	m_pContext->Unmap(m_pVBInstance, 0);
 }
 
-HRESULT CMontionTrailComponent::Render()
+HRESULT CMotionTrailComponent::Render()
 {
-	
-
-	if (FAILED(m_pShader->Bind_RawValue("g_iNumBone", &m_iNumBones, sizeof(_int))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_RawValue("g_vStartColor", &m_vColor[0], sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_RawValue("g_vEndColor", &m_vColor[1], sizeof(_float4))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+	if (FAILED(Bind_ShaderResource()))
 		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModel->Get_NumMeshes();
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
 		if (FAILED(m_pModel->Bind_GlobalOffsetMatrices(m_pShader)))
-			return E_FAIL;
-
-		if (FAILED(m_pModel->Bind_Material(i, m_pShader, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModel->Bind_Material(i, m_pShader, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModel->Bind_Material(i, m_pShader, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pShader->Begin(0)))
@@ -162,7 +162,55 @@ HRESULT CMontionTrailComponent::Render()
 	return S_OK;
 }
 
-HRESULT CMontionTrailComponent::Bind_Resource(_uint iMeshIndex)
+void CMotionTrailComponent::SetMotionTrailColor(_float4 vColor)
+{
+	m_vColor[0] = vColor;
+}
+
+void CMotionTrailComponent::SetRimLight(_float fRimLightPower, _float fRimLightIntensity)
+{
+	m_fRimLightPower = fRimLightPower;
+	m_fRimLightIntensity = fRimLightIntensity;
+}
+
+HRESULT CMotionTrailComponent::Bind_ShaderResource()
+{
+	auto pMainCam = m_pGameInstance->GetMainCamera();
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumBone", &m_iNumBones, sizeof(_int))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fFar", &pMainCam->GetCameraInfo().fFar, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumTrail", &m_iActiveTrailCount, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fRimLightPower", &m_fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_fRimLightStrength", &m_fRimLightIntensity, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vStartColor", &m_vColor[0], sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vEndColor", &m_vColor[1], sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	Safe_Release(pMainCam);
+	return S_OK;
+}
+
+HRESULT CMotionTrailComponent::Bind_Resource(_uint iMeshIndex)
 {
 	if (nullptr == m_pModel)
 		return E_FAIL;
@@ -196,9 +244,9 @@ HRESULT CMontionTrailComponent::Bind_Resource(_uint iMeshIndex)
 	return S_OK;
 }
 
-HRESULT CMontionTrailComponent::Ready_TarilBuffer()
+HRESULT CMotionTrailComponent::Ready_TarilBuffer()
 {
-	auto pBones = m_pModel->Get_Bones();
+	auto pBones = m_pPreBoneModel->Get_Bones();
 	if (nullptr == pBones)
 		return E_FAIL;
 
@@ -229,9 +277,9 @@ HRESULT CMontionTrailComponent::Ready_TarilBuffer()
 	return S_OK;
 }
 
-HRESULT CMontionTrailComponent::Ready_Shader()
+HRESULT CMotionTrailComponent::Ready_Shader()
 {
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/EngineShader_MotionTrail.hlsl"),
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_MotionTrail.hlsl"),
 		VTX_MOTION_TRAIL_INSTANCE_MODEL_DESC::Elements, VTX_MOTION_TRAIL_INSTANCE_MODEL_DESC::iNumElements);
 
 	if (nullptr == m_pShader)
@@ -240,9 +288,9 @@ HRESULT CMontionTrailComponent::Ready_Shader()
 	return S_OK;
 }
 
-CMontionTrailComponent* CMontionTrailComponent::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum)
+CMotionTrailComponent* CMotionTrailComponent::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum)
 {
-	CMontionTrailComponent* pMotionTrailComponent = new CMontionTrailComponent(pDevice, pContext);
+	CMotionTrailComponent* pMotionTrailComponent = new CMotionTrailComponent(pDevice, pContext);
 	if (FAILED(pMotionTrailComponent->Initialize_Prototype(iNum)))
 	{
 		Safe_Release(pMotionTrailComponent);
@@ -252,9 +300,9 @@ CMontionTrailComponent* CMontionTrailComponent::Create(ID3D11Device* pDevice, ID
 	return pMotionTrailComponent;
 }
 
-CComponent* CMontionTrailComponent::Clone(void* pArg)
+CComponent* CMotionTrailComponent::Clone(void* pArg)
 {
-	CMontionTrailComponent* pMotionTrailComponent = new CMontionTrailComponent(*this);
+	CMotionTrailComponent* pMotionTrailComponent = new CMotionTrailComponent(*this);
 	if (FAILED(pMotionTrailComponent->Initialize(pArg)))
 	{
 		Safe_Release(pMotionTrailComponent);
@@ -264,11 +312,13 @@ CComponent* CMontionTrailComponent::Clone(void* pArg)
 	return pMotionTrailComponent;
 }
 
-void CMontionTrailComponent::Free()
+void CMotionTrailComponent::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pModel);
+	Safe_Release(m_pPreBoneModel);
+
 	Safe_Release(m_pShader);
 	Safe_Release(m_pMotionTrailBuffers);
 	Safe_Release(m_pMotionTrailSRV);

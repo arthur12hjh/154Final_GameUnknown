@@ -7,6 +7,7 @@
 
 #include "Body_Player.h"
 #include "Player.h"
+#include "Model.h"
 
 CHairpin_Player::CHairpin_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer_Parts{ pDevice, pContext }
@@ -32,10 +33,10 @@ HRESULT CHairpin_Player::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	Bind_BoneToPartBody(pDesc->pBodyPtr);
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	Bind_BoneToPartBody(pDesc->pBodyPtr);
 
 	//m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(-0.02f, 0.01f, -0.0f, 1.f));
 	m_pTransformCom->Rotation(XMConvertToRadians(36.9f), XMConvertToRadians(-141.7f), XMConvertToRadians(18.9f));
@@ -78,8 +79,11 @@ void CHairpin_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		MyMatrix * SocketMatrix * ParentMatrix);
 
+	m_pMotionTrail->Update_Trail(fTimeDelta);
+
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
@@ -174,6 +178,18 @@ HRESULT CHairpin_Player::Ready_Components()
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* Com_MotionTrail */
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pBodyModelCom;
+	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 3.f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
 		return E_FAIL;
 
 	return S_OK;

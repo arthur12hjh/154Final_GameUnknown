@@ -11,6 +11,16 @@ struct Character_Skill_Desc;
 
 class CTask_ScarletAttack final : public CTask
 {
+public :
+	typedef struct FinshedDelayDesc
+	{
+		_uint			iSkillID = {};
+
+		_float2			vKeyFrame = {};
+		_uint2			vStopFrame = {};
+	}FINISHED_DELAY_DESC;
+
+
 protected:
 	CTask_ScarletAttack();
 	virtual ~CTask_ScarletAttack() = default;
@@ -39,6 +49,10 @@ private:
 	_float								m_fAnimationSpeed = {1.5f};
 	_bool								m_bIsLookAtPoint = { false };
 	_bool								m_bIsAttackStartLerp = {};
+	
+	_bool								m_bIsAttackStopDelay = {};
+	_bool								m_bIsAttackDelayCheck = {};
+	FINISHED_DELAY_DESC					m_FinishedDelayDesc = { };
 
 private:
 	// 보스 패턴에 대한 정보
@@ -59,8 +73,10 @@ private:
 #pragma endregion
 
 #pragma endregion
+
 	void								SelectAttackMoveData(_uint iID);
 	_bool								Compute_AttackCoolTime(_bool bIsForce = false);
+	_bool								Finished_Animation(_float fTimeDelta);
 
 	void								AttackLerpMove(_float fTimeDelta);
 

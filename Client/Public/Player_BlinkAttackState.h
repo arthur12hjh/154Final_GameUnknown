@@ -17,6 +17,9 @@ public:
 	virtual PLAYER_TRANSITION_DESC	    Update(_float fTimeDelta) override;
 	virtual _float End() override;
 
+private:
+	_float m_fLerp = { 0.1f };
+
 public:
 	static	CPlayer_BlinkAttackState* Create(void* pArg);
 	virtual	void			   Free() override;

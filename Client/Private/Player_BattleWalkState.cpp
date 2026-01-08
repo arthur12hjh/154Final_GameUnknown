@@ -122,7 +122,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
         m_isTurnLocked = false;
 
     // Turn 애니 종료 시 Run 복귀
-    if (true == m_isRunStart && true == isAnimFinished)
+    if (true == m_isRunStart && true == isAnimFinished )
     {
         m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.f);
         m_isRunStart = false;
@@ -157,7 +157,7 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
         m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
         m_isRunStart = false;
     }
-    else if (true == m_isRunStart && true == isAnimFinished && false == m_isTurning)
+    else if (true == m_isLanding && ((8 / 20.f) <= fAnimationRatio) && false == m_isTurning)
     {
         m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
         m_isRunStart = false;

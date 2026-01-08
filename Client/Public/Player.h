@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 class CCollider;
 class CNavigation;
 class CCharacterController;
-class CMontionTrailComponent;
+class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -71,7 +71,6 @@ private:
 	//
 	_float					m_fTime = { 0.f };
 	_int					m_iSkillID = {};
-
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
@@ -93,6 +92,9 @@ private:
 	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
 
 	void CreateHitBox(const AnimNotify* pNotify);
+
+	void MotionTrailEnable(_bool bIsEnable);
+	void MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor);
 
 private:
 	void Execution_Nayitba();
