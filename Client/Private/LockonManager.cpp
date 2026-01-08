@@ -7,6 +7,8 @@
 
 #include "UIHUD.h"
 #include "UIBase.h"
+#include "PlayerState.h"
+#include "PlayerFSM.h"
 
 CLockonManager::CLockonManager()
     : m_pGameInstance { CGameInstance::GetInstance() }
@@ -25,12 +27,20 @@ void CLockonManager::Bind_Player(CPlayer* pPlayer)
 
 }
 
+_bool CLockonManager::Get_LockOn()
+{
+    if (PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+        return true;
+
+    return false;
+}
+
 HRESULT CLockonManager::Initialize()
 {
     return S_OK;
 }
 
-_bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
+_bool CLockonManager::Find_NearestTarget(_float fTimeDelta, _bool isForce)
 {
     m_fLockonTimer += fTimeDelta;
 
@@ -98,7 +108,6 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta)
         m_pPlayerDesc->HasTarget = true;
         m_pPlayerDesc->fCurrentMinDist = fMinDist;
         m_fCurrentMinDist = fMinDist;
-        m_isLock = true;
 
         //보스 락온중인지 체크
         if (m_pTarget->GetStaticMonsterData()->eNaytiba_Type == NAYTIBA_TYPE::ELITE ||
@@ -145,7 +154,14 @@ _vector CLockonManager::Get_LockOnPoint()
 
 void CLockonManager::Force_Lockon(_float fTimeDelta)
 {
-    m_pPlayerDesc->ePlayerMode = PLAYER_MODE::LOCKON;
+    PLAYER_TRANSITION_DESC Desc;
+    Desc.isChangeMode = true;
+    Desc.eMode = PLAYER_MODE::LOCKON;
+    Desc.eNextState = PLAYER_STATE::IDLE;
+
+    m_pPlayer->Get_PlayerFSM()->Handle_Transition(Desc);
+    m_pPlayerDesc->isWeaponVisible = true;
+
     m_fLockonTimer = 1.5f;
     Lockon(fTimeDelta);
 }
@@ -155,7 +171,7 @@ void CLockonManager::Force_LockOff()
     m_pPlayerDesc->ePlayerMode = PLAYER_MODE::BATTLE;
 }
 
-void CLockonManager::Lockon(_float fTimeDelta)
+void CLockonManager::Lockon(_float fTimeDelta, _bool isForce)
 {
     if (nullptr == m_pPlayer)
         return;
@@ -183,7 +199,7 @@ void CLockonManager::Lockon(_float fTimeDelta)
         Safe_Release(pUIHUD);
     }
 
-    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+    if (PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         //락온 포인트 받는 구간. 여기서 네이티브 아이디 받아와서 처리하면 될듯
         Get_LockOnPoint();

@@ -75,6 +75,9 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTim
 
 _float CPlayer_ScarletPhase2tLinkAttackState::End()
 {
+    m_Desc->isSuperArmor = false;
+    m_Desc->pPlayerController->Set_Active(true);
+
 	return m_fNextBlendRatio;
 }
 

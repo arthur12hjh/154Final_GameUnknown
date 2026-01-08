@@ -122,7 +122,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	{
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
 
-		CGameManager::GetInstance()->SavePlayerDesc();
+		auto pGameManger = CGameManager::GetInstance();
+
+		pGameManger->SavePlayerDesc();
+		pGameManger->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::SCARLET), 1);
 		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
 			return;
 
@@ -580,7 +583,7 @@ HRESULT CLevel_GamePlay::Load_Map_Desert_Data(const _char* szFilePath)
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Top_Roof"), TEXT("Layer_Top_Roof")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_RepairConsole"), TEXT("Layer_RepairConsole")))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_SciFi_Door"), TEXT("Layer_SciFi_Door")))) return S_OK;
-	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox")))) return S_OK;
+	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_CanBox"), TEXT("Layer_CanBox"), true))) return S_OK;
 	if (FAILED(Load_Interaction_Objects_By_Layer(ifs, TEXT("Prototype_GameObject_Interaction_NonAnim"), TEXT("Layer_Interaction")))) return S_OK;
 	
 	if (FAILED(Load_Instancing_By_Layer(ifs, TEXT("Layer_Desert_Grass")))) return S_OK;
@@ -714,7 +717,7 @@ HRESULT CLevel_GamePlay::Load_Interaction_Objects_By_Layer(ifstream& ifs, const 
 			hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), protoTag,
 				ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 		}
-		
+
 	}
 
 	return S_OK;

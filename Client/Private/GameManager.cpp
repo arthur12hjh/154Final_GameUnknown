@@ -76,15 +76,30 @@ void CGameManager::SavePlayerDesc()
 {
     const PLAYER_DESC* SavePlayerDesc = m_pPlayer->Get_Desc();
          
-    m_pSavePlayerDesc = make_pair(*SavePlayerDesc, true);
-    m_pSavePlayerDesc.first.pPlayerTransform = nullptr;
-    m_pSavePlayerDesc.first.pPlayerController = nullptr;
-    m_pSavePlayerDesc.first.pLinkAttackTarget = nullptr;
-    m_pSavePlayerDesc.first.pGrabBone = nullptr;
-    m_pSavePlayerDesc.first.pGrabAttackter = nullptr;
+    Save_Level_PlayerData Desc = {};
+    Desc.PlayerData = *SavePlayerDesc;
+
+    m_pSavePlayerDesc = make_pair(Desc, true);
+    m_pSavePlayerDesc.first.PlayerData.pPlayerTransform = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pPlayerController = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pLinkAttackTarget = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pGrabBone = nullptr;
+    m_pSavePlayerDesc.first.PlayerData.pGrabAttackter = nullptr;
 }
 
-_bool CGameManager::LoadPlayerDesc(PLAYER_DESC& PlayerDesc)
+void CGameManager::SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex)
+{
+    auto TransportData = m_pDataManager->Find_TransportData(iLevelTransportIndex);
+    if (nullptr == TransportData)
+        return;
+
+    if (iLevelID != TransportData->eTargetLevel)
+        return;
+
+    m_pSavePlayerDesc.first.vOldPosition = TransportData->vTransportpoint;
+}
+
+_bool CGameManager::LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc)
 {
     if (m_pSavePlayerDesc.second)
     {
@@ -160,24 +175,24 @@ const CINEMATIC_DESC* CGameManager::Find_CinematicData(_uint iCinematicIndex)
     return m_pDataManager->Find_CinematicData(iCinematicIndex);
 }
 
-const vector<SHOP_DESC>* CGameManager::Get_ShopDatas()
-{
-    return m_pDataManager->Get_ShopDatas();
-}
-
 void CGameManager::EnableTransport(_uint iAreaID)
 {
     m_pDataManager->EnableTransport(iAreaID);
-}
- 
-const vector<TRANSPORT_DESC>* CGameManager::Find_TransportData()
-{
-    return  m_pDataManager->Find_TransportData();
 }
 
 const TRANSPORT_DESC* CGameManager::Find_TransportData(_uint iAreaID)
 {
     return  m_pDataManager->Find_TransportData(iAreaID);
+}
+
+const map<_uint, TRANSPORT_DESC>* CGameManager::Find_AllTransportDatas()
+{
+    return  m_pDataManager->Find_AllTransportDatas();
+}
+
+const vector<SHOP_DESC>* CGameManager::Get_ShopDatas()
+{
+    return m_pDataManager->Get_ShopDatas();
 }
 
 map<_uint, CAMERA_ANIMATION_DATA>* CGameManager::Get_CameraAnimationMap()
@@ -273,6 +288,11 @@ void CGameManager::Set_CinematicLights(_uint iFlag)
     m_pShaderManager->Set_CinematicLights(iFlag);
 }
 
+void CGameManager::Set_ScarletPatternFog(_bool bFlag, _float fLerpTime)
+{
+    m_pShaderManager->Set_ScarletPatternFog(bFlag, fLerpTime);
+}
+
 #pragma region LOCKON
 
 CNaytiba* CGameManager::Get_LockonTarget()
@@ -288,6 +308,10 @@ void CGameManager::Lockon(_float fTimeDelta)
 {
     m_pLockonManager->Lockon(fTimeDelta);
 }
+_vector CGameManager::Get_LockOnPoint()
+{
+    return m_pLockonManager->Get_LockOnPoint();
+}
 void CGameManager::Start_Lockon()
 {
     m_pLockonManager->Start_Lockon();
@@ -298,7 +322,7 @@ _float CGameManager::Get_CurMinDist()
 }
 _bool CGameManager::Get_Lockon()
 {
-    return m_pLockonManager->Get_Lockon();
+    return m_pLockonManager->Get_LockOn();
 }
 
 void CGameManager::Force_Lockon(_float fTimeDelta)

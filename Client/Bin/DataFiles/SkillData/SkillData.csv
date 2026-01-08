@@ -50,6 +50,7 @@
 54,M_Scarlet_AreaSlash,None,None,20,10,"2, 5, 10",5,0,1,0,136
 55,M_Scarlet_AreaSlash2,None,None,20,10,"2, 5, 10",5,2,1,0,136
 56,M_Scarlet_PhaseChange1S,None,None,0,0,"2, 5, 11",6,3,2,4,136
+57,M_Scarlet_PhaseChange1E_ShieldZeroSucess,None,None,0,0,"2, 5, 11",6,3,2,4,136
 511,M_Beholder_SwingDouble,None,None,0,12,"1,1,7",2,0,4,0,11
 512,M_Beholder_Swing,None,None,12,12,"1,1,7",1,0,4,0,1
 513,M_Beholder_SpinSwing,None,None,13,12,"1,1,7",1,0,4,0,8
@@ -81,11 +82,11 @@
 752,M_DroidTurret_ShotDebuff,None,None,22,30,"1,1,7",3,0,0,0,11
 753,M_DroidTurret_ShotDozen,None,None,22,30,"1,1,7",3,0,0,0,11
 754,M_DroidTurret_Laser,None,None,22,30,"1,1,7",3,0,0,0,11
-1000,Player_Light_Attack_Root1,None,None,999,3,"2,2,2",0,0,0,0,0
-1001,Player_Light_Attack_Root2,None,None,999,3,"2,2,2",0,0,1,0,0
-1002,Player_Light_Attack_Root3,None,None,999,3,"2,2,2",0,0,1,0,0
+1000,Player_Light_Attack_Root1,None,None,30,3,"2,2,2",0,0,0,0,0
+1001,Player_Light_Attack_Root2,None,None,15,3,"2,2,2",0,0,1,0,0
+1002,Player_Light_Attack_Root3,None,None,15,3,"2,2,2",0,0,1,0,0
 1003,Player_Light_Attack_Root4,None,None,999,3,"2,2,2",0,0,0,0,0
-1004,Player_Beta_Skill,None,None,30,4,"2,2,3",0,0,0,2,0
+1004,Player_Beta_Skill,None,None,15,4,"2,2,3",0,0,0,2,0
 1005,Player_Beta_Skill,None,None,30,3,"1,1,2",0,0,4,2,0
 1006,P_Eve_Sword_SlotNormal_ChainStab,None,None,50,7,"3,3,5",0,0,4,2,0
 1007,P_Eve_Sword_Beta_ChargeSlash1_Ex,None,None,150,7,"8,6,8",0,0,4,2,0

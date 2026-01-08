@@ -34,10 +34,10 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	Bind_BoneToPartBody(pDesc->pBodyPtr);
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	Bind_BoneToPartBody(pDesc->pBodyPtr);
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
@@ -64,10 +64,11 @@ void CHair_Player::Late_Update(_float fTimeDelta)
 {
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
+	m_pMotionTrail->Update_Trail(fTimeDelta);
 
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
@@ -181,6 +182,21 @@ HRESULT CHair_Player::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Hair"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+
+	/* Com_MotionTrail */
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pBodyModelCom;
+	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 0.45f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
+		return E_FAIL;
+
+	m_pMotionTrail->SetMotionTrailColor({ 0.f , 1.f, 0.f, 1.f });
+	m_pMotionTrail->SetRimLight(0.1f, 0.7f);
 
 	return S_OK;
 }

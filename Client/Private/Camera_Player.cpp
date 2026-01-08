@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "GameManager.h"
+
 #include "Player.h"
 #include "CameraBone_Player.h"
 
@@ -78,59 +79,11 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
     */
     if(!m_bIsTransition)
     {
-        _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
-        _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
-
-        // 1) ���� ���� (Yaw / Pitch �и�)
-        m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
-        m_fYaw = XMScalarModAngle(m_fYaw);
-
-        m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
-
-        // ��� �ִ밢��  
-        _float fPitchLimit = XM_PIDIV2 - 0.2f;
-        if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
-        if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
-
-        _float3 vViewPoint = {};
-
-        float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
-        fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
-        vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
-
-        // ī�޶�� ViewPoint �Ÿ�.
-        _float fCamDist = m_fDistance;
-
-        // �÷��̾� ��ġ �޾ƿ���.
-        _float3 vPlayerPos = {};
-        if (nullptr == m_pPlayerTransform)
-            return;
-
-        XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
-        // �ǹ� ��ġ�� �޾ƿ´�.
-        _float3 vPivotPos = {};
-        //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
-        XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
-        vPivotPos.x += fPitchRatio * -1.6f;
-        vPivotPos.y += fPitchRatio * 2.f;
-
-        // ViewPoint�� ���ϱ� ���� ���⺤��
-        _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
-
-        XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
-
-        if (fPitchRatio > 0.5)
-            fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
-
-        _float3 vCamPos = {};
-        XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
-
-        //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
-        m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
-        m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
-
-        //memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
-        
+   /*     if (true == m_pGameManager->Get_Lockon())
+            LockOn_CamAction(fTimeDelta);
+        else*/
+            Default_CamAction(fTimeDelta);
+       
         __super::Bind_Matrices(fTimeDelta);
     }
     else
@@ -255,6 +208,85 @@ void CCamera_Player::Set_CameraDestination()
             XMVectorGetX(vUp), XMVectorGetY(vUp), XMVectorGetZ(vUp), 0.f,
             XMVectorGetX(vLook), XMVectorGetY(vLook), XMVectorGetZ(vLook), 0.f,
             vCamPos.x, vCamPos.y, vCamPos.z, 1.f));
+}
+
+void CCamera_Player::Default_CamAction(_float fTimeDelta)
+{
+    _float fMouseMoveX = (_float)m_pGameInstance->GetMouseAxis(0) / g_iWinSizeX;
+    _float fMouseMoveY = (_float)m_pGameInstance->GetMouseAxis(1) / g_iWinSizeY;
+
+    // 1) ���� ���� (Yaw / Pitch �и�)
+    m_fYaw += XMConvertToRadians(fMouseMoveX * 90.f);
+    m_fYaw = XMScalarModAngle(m_fYaw);
+
+    m_fPitch += XMConvertToRadians(fMouseMoveY * 45.f);
+
+    // ��� �ִ밢��  
+    _float fPitchLimit = XM_PIDIV2 - 0.2f;
+    if (m_fPitch > fPitchLimit) m_fPitch = fPitchLimit;
+    if (m_fPitch < -fPitchLimit) m_fPitch = -fPitchLimit;
+
+    _float3 vViewPoint = {};
+
+    float fPitchRatio = fabs(m_fPitch) / fPitchLimit;
+    fPitchRatio = Clamp(fPitchRatio, 0.f, 1.f);
+    vViewPoint.y += Lerp(0.f, 5.f, fPitchRatio);
+
+    // ī�޶�� ViewPoint �Ÿ�.
+    _float fCamDist = m_fDistance;
+
+    // �÷��̾� ��ġ �޾ƿ���.
+    _float3 vPlayerPos = {};
+    if (nullptr == m_pPlayerTransform)
+        return;
+
+    XMStoreFloat3(&vPlayerPos, m_pPlayerTransform->Get_State(STATE::POSITION));
+    // �ǹ� ��ġ�� �޾ƿ´�.
+    _float3 vPivotPos = {};
+    //XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMVector3TransformNormal(XMLoadFloat3(&m_vPivot), XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr())));
+    XMStoreFloat3(&vPivotPos, XMLoadFloat3(&vPlayerPos) + XMLoadFloat3(&m_vPivot));
+    vPivotPos.x += fPitchRatio * -1.6f;
+    vPivotPos.y += fPitchRatio * 2.f;
+
+    // ViewPoint�� ���ϱ� ���� ���⺤��
+    _vector vDirection = XMMatrixRotationRollPitchYaw(m_fPitch, m_fYaw, 0.f).r[2];
+
+    XMStoreFloat3(&vViewPoint, XMLoadFloat3(&vPivotPos) + vDirection * 0.3f);
+
+    if (fPitchRatio > 0.5)
+        fCamDist -= (Clamp((fPitchRatio - 0.5f) / 0.5f, 0.f, 1.f) * (fCamDist * 0.5f));
+
+    _float3 vCamPos = {};
+    XMStoreFloat3(&vCamPos, XMLoadFloat3(&vViewPoint) - vDirection * (fCamDist));
+
+    //m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&vCamPos), 1.f));
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
+    m_pTransformCom->LookAt_Lerp(XMVectorSetW(XMLoadFloat3(&vPivotPos), 1.f), 0.5f, 1.f);
+
+    //memcpy(&m_BeforeMatrix, m_pTransformCom->Get_WorldMatrixPtr(), sizeof(_float4x4));
+
+}
+
+void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
+{
+    _float3 vCamPos = {};
+    _vector vTargetPoint = m_pGameManager->Get_LockOnPoint();
+    _vector vPlayerPos = m_pPlayerTransform->Get_State(STATE::POSITION);
+
+    // X와 Z 기준으로 카메라를 투영한다.
+    _vector vDir = XMVector3Normalize(vTargetPoint - vPlayerPos);
+    _float fLength = XMVectorGetX(XMVector3Length(vTargetPoint - vPlayerPos));
+   
+    // fLength를 통해서 Fov 조절하거나 안함
+
+
+
+    //vTargetPoint.m128_f32[1] = vTempPlayerPos.m128_f32[1] = 0.f;
+    XMStoreFloat3(&vCamPos, m_pPlayerTransform->Get_State(STATE::POSITION) + (vDir * -m_fDistance) + m_pPlayerTransform->Get_State(STATE::UP) * (m_vPivot.y));
+
+
+    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
+    m_pTransformCom->LookAt_Lerp(m_pGameManager->Get_LockOnPoint(), fTimeDelta, 10.f);
 }
 
 CCamera_Player* CCamera_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -68,6 +68,12 @@ public:
 	/* 시간없어서 일단 Switch문으로 변환 */
 	void Change_ShaderSetting(LEVEL eLevelID, _uint iIdx = 0);
 	void Set_CinematicLights(_uint iFlag);
+	//이녀석이 활성화 되어있다면 안개가 어두워지고 좁아진다 
+	void Set_ScarletPatternFog(_bool bFlag, _float fLerpTime = 4.f) { 
+		m_isScarletPatternFogActivated = bFlag; 
+		m_fScarletPatternFogTimeAcc = 0.f;
+		m_fScarletPatternFogLerpTime = fLerpTime;
+	}
 
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
@@ -97,10 +103,16 @@ private:
 
 	//홍련 2페이즈 넘어갈때 Lerp용
 	_bool m_isScarletPhase2LerpTriggerOn = { false };
-	_float m_fScarletPhase2LerpTime = { 1.f };
+	_float m_fScarletPhase2LerpTime = { 1.5f };
 	_float m_fScarletPhase2LerpTimeAcc = { 0.f };
 
 	SCARLET_PHASE2_LERP_CACHE m_ScarletPhase2LerpCache;
+
+	_bool m_isScarletPhase2 = { false };
+	_bool m_isScarletPatternFogActivated = { false };
+	_float m_fScarletPatternFogTimeAcc = { 0.f };
+	_float m_fScarletPatternFogLerpTime = { 0.f };
+	_float m_fScarletLerpTimeSum = { 0.f };
 
 private:
 	void Load_Desert_ShaderSettings();
@@ -108,7 +120,8 @@ private:
 	void Load_TargetLights();
 	void Load_Scarlet_Phase2_ShaderSettings(_float fTimeDelta);
 	void Load_Scarlet_BattleEnd_ShaderSettings();
-
+	void Load_Scarlet_Pattern_Fog(_float fTimeDelta);
+	void Load_Scarlet_Normal_Fog(_float fTimeDelta);
 	/* 홍련맵 셰이더 */
 	/*
 	1. 컷씬 끝나면 약한 점광원 2개 이브랑 홍련한테 붙이기

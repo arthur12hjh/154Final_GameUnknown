@@ -43,6 +43,10 @@ HRESULT CBeatSaberCharacter::Initialize(void* pArg)
 	if (FAILED(ADD_Components()))
 		return E_FAIL;
 
+	auto pOBBCollider = static_cast<COBBCollider*>(m_pColliderCom);
+	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	m_BoxSizeZ = pOBBCollider->GetBounding().Extents.z;
 	return S_OK;
 }
 
@@ -66,6 +70,7 @@ void CBeatSaberCharacter::Update(_float fTimeDelta)
 
 void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
 {
+	m_fTimeDelta = fTimeDelta;
 	if (m_bIsActive == TRUE)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -141,7 +146,8 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 		return E_FAIL;
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::PLAYER);
-	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { BeginOverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlapEnd(vHitPoint, vHitDir, pHitActor); });
 
 	CBeatSaberFsm::STATEMACHINE_DESC FsmDesc = {};
 	FsmDesc.pOwner = this;
@@ -186,7 +192,6 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
 	{
-
 		m_CharacterDesc.eDirection = DIRECTION::LEFT;
 		bIsMove = true;
 	}
@@ -215,38 +220,67 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 		m_pFsm->Change_State(TEXT("Idle"));
 }
 
-void CBeatSaberCharacter::BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
 	auto pNote = dynamic_cast<CNote*>(pHitActor);
 	if (pNote)
 	{
+		pNote->OverlapTime(m_fTimeDelta);
 		auto pNoteData = pNote->GetNoteData();
+
 		_bool bIsSuccess = { false };
 		if (pNoteData.eDirection == m_CharacterDesc.eDirection)
 		{
 			_float fAnimFrame = m_pBodyModelCom->Get_AnimationKeyFrameIndex();
 			if (pNoteData.vBoundAnimFrame.x <= fAnimFrame && fAnimFrame <= pNoteData.vBoundAnimFrame.y)
 			{
-				// 성공
-				m_CharacterDesc.iScore += 100;
-				m_CharacterDesc.iComboCnt++;
-				bIsSuccess = true;
+				_float fOverlapTime = pNote->GetOverlapTime();
+				_vector vPosition = m_pTransformCom->Get_State(STATE::POSITION);
+				_vector vObjectPosition = pHitActor->GetTransform()->Get_State(STATE::POSITION);
+
+				_float fLength = XMVectorGetX(XMVector3Length(vObjectPosition - vPosition));
+				_float fLengthRatio = fLength / m_BoxSizeZ;
+				// 여기서 타임 판별해서 체크
+				if (0.3 > fLength)
+				{
+					// 퍼팩트
+					m_CharacterDesc.iScore += 100;
+					m_CharacterDesc.iComboCnt++;
+					bIsSuccess = true;
+				}
+				else if (0.7 > fLength)
+				{
+					m_CharacterDesc.iScore += 50;
+					m_CharacterDesc.iComboCnt++;
+					bIsSuccess = true;
+				}
+				else
+				{
+					m_CharacterDesc.iComboCnt = 0;
+					bIsSuccess = true;
+				}
 			}
 		}
 
-		if (!bIsSuccess)
-		{
-			m_CharacterDesc.iGameLife--;
-			m_CharacterDesc.iComboCnt = 0;
-		}
-
-		pNote->Set_Dead(true);
+		if (bIsSuccess)
+			pHitActor->Set_Dead(true);
 	}
 
-	if (0 >= m_CharacterDesc.iGameLife)
+}
+
+void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
+{
+	if (false == m_isDead)
 	{
-		// 게임 실패
-		// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+		m_CharacterDesc.iGameLife--;
+		m_CharacterDesc.iComboCnt = 0;
+
+		if (0 >= m_CharacterDesc.iGameLife)
+		{
+			// 게임 실패
+			// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+		}
+		pHitActor->Set_Dead(true);
 	}
 }
 

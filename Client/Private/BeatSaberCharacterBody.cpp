@@ -39,6 +39,8 @@ void CBeatSaberCharacterBody::Update(_float fTimeDelta)
 {
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+    m_pTransformCom->Set_Scale(1.5f, 1.5f, 1.5f);
 }
 
 void CBeatSaberCharacterBody::Late_Update(_float fTimeDelta)

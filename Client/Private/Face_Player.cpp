@@ -106,10 +106,10 @@ HRESULT CFace_Player::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	Bind_BoneToPartBody(pDesc->pBodyPtr);
+
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
-
-	Bind_BoneToPartBody(pDesc->pBodyPtr);
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
@@ -130,6 +130,7 @@ void CFace_Player::Priority_Update(_float fTimeDelta)
 
 void CFace_Player::Update(_float fTimeDelta)
 {
+
 }
 
 void CFace_Player::Late_Update(_float fTimeDelta)
@@ -137,15 +138,16 @@ void CFace_Player::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
+	m_pMotionTrail->Update_Trail(fTimeDelta);
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 	//m_pRigidBody->Update_PxTransform(XMLoadFloat4x4(&m_CombinedWorldMatrix), true);
 
 	//m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
 #ifdef _DEBUG
 
 #endif
@@ -186,6 +188,7 @@ HRESULT CFace_Player::Render()
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
 	}
+
 
 	return S_OK;
 }
@@ -255,6 +258,21 @@ HRESULT CFace_Player::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Eve"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
+
+	/* Com_MotionTrail */
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pBodyModelCom;
+	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 0.45f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
+		return E_FAIL;
+
+	m_pMotionTrail->SetMotionTrailColor({ 0.f , 1.f, 0.f, 1.f });
+	m_pMotionTrail->SetRimLight(0.1f, 0.7f);
 
 	/* Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_Eve_Face"),
@@ -367,6 +385,7 @@ void CFace_Player::Free()
 	__super::Free();
 
 	Safe_Release(m_pSpecDetailTextureCom);
+
 	Safe_Release(m_pSSSAOCom);
 	Safe_Release(m_pRigidBody);
 }

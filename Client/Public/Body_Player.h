@@ -9,7 +9,6 @@ class CShader;
 class CCollider;
 class CRigidBody;
 class CJointChain;
-class CMontionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -44,13 +43,13 @@ public:
 	virtual void Priority_Update(_float fTimeDelta) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
+
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	CMontionTrailComponent*		m_pMotionTrail = { nullptr };
 
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };
@@ -66,6 +65,8 @@ private:
 	HRESULT				Ready_HorizontalJoints();
 	HRESULT				Ready_SkirtBoneOrigin();
 	HRESULT				Ready_ThighRigidBodies();
+	//어깨, 팔 부분 콜라이더
+	HRESULT				Ready_UpperRigidBodies();
 	void				Sync_BonesByJoint();
 
 private:
@@ -84,7 +85,7 @@ private:
 	vector<pair<_wstring, _float3>>      m_SkirtBoneScales = {};
 	// 허벅지 콜라이더 2개 (본 이름을 키로 해주자)
 	vector<pair<const _float4x4*, class CRigidBody*>> m_ThighRigidBodies = {};
-
+	vector<pair<const _float4x4*, class CRigidBody*>> m_UpperRigidBodies = {};
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

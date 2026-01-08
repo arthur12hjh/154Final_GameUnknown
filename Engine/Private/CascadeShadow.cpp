@@ -49,11 +49,11 @@ HRESULT CCascadeShadow::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader
 HRESULT CCascadeShadow::Ready_Shadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
 	m_fCascadeEnds[0] = 0.1f;
-	m_fCascadeEnds[1] = 6.0f,
-	m_fCascadeEnds[2] = 20.0f,
-	m_fCascadeEnds[3] = 40.f;
-	m_fCascadeEnds[4] = 100.f;
-	m_fCascadeEnds[5] = 500.f;
+	m_fCascadeEnds[1] = 4.0f,
+	m_fCascadeEnds[2] = 10.0f,
+	m_fCascadeEnds[3] = 20.f;
+	m_fCascadeEnds[4] = 50.f;
+	m_fCascadeEnds[5] = 350.f;
 	m_tShadowLightDesc = Desc;
 
 	return S_OK;

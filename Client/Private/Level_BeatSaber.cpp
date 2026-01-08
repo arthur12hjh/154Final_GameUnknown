@@ -2,6 +2,7 @@
 #include "Level_BeatSaber.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Camera_Free.h"
 
 #include "UIHUD.h"
@@ -69,7 +70,9 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
     {
         if(m_pHUD)
             dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+        m_pGameInstance->Manager_StopAll();
 
+        CGameManager::GetInstance()->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::GAMEPLAY), 2);
         if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY, false))))
             return;
 
@@ -400,6 +403,6 @@ CLevel_BeatSaber* CLevel_BeatSaber::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 void CLevel_BeatSaber::Free()
 {
-    m_pGameInstance->Manager_StopAll();
+    
     __super::Free();
 }

@@ -127,7 +127,7 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	Load_Light_Data();
 
 	CASCADE_SHADOW_DESC		CascadeShadowDesc{};
-	CascadeShadowDesc.vDir = _float4(1.f, -1.f, 1.f, 0.f);
+	CascadeShadowDesc.vDir = _float4(0.f, -1.f, -1.f, 0.f);
 	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
 		return E_FAIL;
 
