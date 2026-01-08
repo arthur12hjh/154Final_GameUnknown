@@ -425,6 +425,7 @@
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
+    <ClInclude Include="..\Public\TeleportEvent.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Terrain_Desert.h" />
     <ClInclude Include="..\Public\TestEveHead.h" />
@@ -793,6 +794,7 @@
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />
+    <ClCompile Include="..\Private\TeleportEvent.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Terrain_Desert.cpp" />
     <ClCompile Include="..\Private\TestEveHead.cpp" />

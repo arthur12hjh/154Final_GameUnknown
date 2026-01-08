@@ -1174,6 +1174,9 @@
     <Filter Include="01.Levels\BeatSaber\PlaySongEvent">
       <UniqueIdentifier>{d651c346-8a68-418d-b838-0a31097377fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\TeleportEvent">
+      <UniqueIdentifier>{2c8e9ddf-6eee-4c0a-8a2d-b4dade18ee83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2248,6 +2251,9 @@
     <ClInclude Include="..\Public\PlaySongEvent.h">
       <Filter>01.Levels\BeatSaber\PlaySongEvent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TeleportEvent.h">
+      <Filter>01.Levels\TeleportEvent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3285,6 +3291,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlaySongEvent.cpp">
       <Filter>01.Levels\BeatSaber\PlaySongEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TeleportEvent.cpp">
+      <Filter>01.Levels\TeleportEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
