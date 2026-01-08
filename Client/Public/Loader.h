@@ -96,6 +96,7 @@ private:
 	HRESULT Loading_For_Desert_Deco_Garden_Col(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Door_And_Statue(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Furniture(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Furniture_Col(void* pArg);
 
 	HRESULT Loading_For_Desert_Stair(void* pArg);
 	HRESULT Loading_For_Desert_Stair_Col(void* pArg);
