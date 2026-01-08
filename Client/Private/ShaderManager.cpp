@@ -154,15 +154,19 @@ HRESULT CShaderManager::Bind_CamInfo(LEVEL eLevelID)
 
     _bool bFlagInit = { false };
 
-    for (auto& iter : m_Shaders[ENUM_CLASS(eLevelID)])
+
+    for (_uint iLevelIdx = 0; iLevelIdx < ENUM_CLASS(LEVEL::END); ++iLevelIdx)
     {
-		iter.second->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
-		iter.second->Bind_RawValue("g_fFar", &CamDesc.fFar, sizeof(_float));
-        iter.second->Bind_RawValue("g_fNear", &CamDesc.fNear, sizeof(_float));
-        iter.second->Bind_RawValue("g_fFOV", &CamDesc.fFov, sizeof(_float));
-        //뎁스 B, W 채널에 들어갈 마스킹.
-        iter.second->Bind_RawValue("g_IsMaskingDepthB", &bFlagInit, sizeof(_bool));
-        iter.second->Bind_RawValue("g_IsMaskingDepthW", &bFlagInit, sizeof(_bool));
+        for (auto& iter : m_Shaders[iLevelIdx])
+        {
+            iter.second->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4));
+            iter.second->Bind_RawValue("g_fFar", &CamDesc.fFar, sizeof(_float));
+            iter.second->Bind_RawValue("g_fNear", &CamDesc.fNear, sizeof(_float));
+            iter.second->Bind_RawValue("g_fFOV", &CamDesc.fFov, sizeof(_float));
+            //뎁스 B, W 채널에 들어갈 마스킹.
+            iter.second->Bind_RawValue("g_IsMaskingDepthB", &bFlagInit, sizeof(_bool));
+            iter.second->Bind_RawValue("g_IsMaskingDepthW", &bFlagInit, sizeof(_bool));
+        }
     }
 
     return S_OK;
@@ -451,6 +455,17 @@ void CShaderManager::Load_Scarlet_Phase2_ShaderSettings(_float fTimeDelta)
 #pragma endregion
 
 #pragma region VOLUMEFOG
+    //  phase 1 setting
+    //  m_pVolumeFogDesc->pInscatterDesc->AsymmetryParameterG = 0.f;
+    //  m_pVolumeFogDesc->pInscatterDesc->Density = 1.28f;
+    //  m_pVolumeFogDesc->pInscatterDesc->Intensity = 0.08f;
+    //  m_pVolumeFogDesc->pInscatterDesc->NoiseContrast = 0.572f;
+    //  m_pVolumeFogDesc->pInscatterDesc->NoiseScale = 0.006f;
+    //  m_pVolumeFogDesc->pInscatterDesc->NoiseStrength = 2.f;
+    //  m_pVolumeFogDesc->pInscatterDesc->StartDistance = 36.f;
+    //  m_pVolumeFogDesc->pInscatterDesc->FogAmbient = _float4(0.141f, 0.172f, 0.2f, 0.149f);
+    //  m_pVolumeFogDesc->pInscatterDesc->LightColor = _float4(0.f, 0.f, 0.f, 1.f);
+
     auto* pInscatter = m_pVolumeFogDesc->pInscatterDesc;
 
     _float  AsymTar = 0.f;
