@@ -668,10 +668,10 @@ void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObje
     if (nullptr == pHitActor)
         return;
 
-    auto pCharacter = static_cast<CCharacter*>(pHitActor);
-
+    auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+    
     DEFAULT_DAMAGE_DESC DamageDesc = {};
-    if (nullptr == m_pParent)
+    if (nullptr == m_pParent || nullptr == pCharacter)
         return;
     DamageDesc.pAttacker = m_pParent;
     DamageDesc.vHitDir = vHitDir;

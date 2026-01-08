@@ -27,6 +27,14 @@ void CLockonManager::Bind_Player(CPlayer* pPlayer)
 
 }
 
+_bool CLockonManager::Get_LockOn()
+{
+    if (PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+        return true;
+
+    return false;
+}
+
 HRESULT CLockonManager::Initialize()
 {
     return S_OK;
@@ -100,7 +108,6 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta, _bool isForce)
         m_pPlayerDesc->HasTarget = true;
         m_pPlayerDesc->fCurrentMinDist = fMinDist;
         m_fCurrentMinDist = fMinDist;
-        m_isLock = true;
 
         //보스 락온중인지 체크
         if (m_pTarget->GetStaticMonsterData()->eNaytiba_Type == NAYTIBA_TYPE::ELITE ||
@@ -192,7 +199,7 @@ void CLockonManager::Lockon(_float fTimeDelta, _bool isForce)
         Safe_Release(pUIHUD);
     }
 
-    if (true == m_isLock && PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
+    if (PLAYER_MODE::LOCKON == m_pPlayerDesc->ePlayerMode)
     {
         //락온 포인트 받는 구간. 여기서 네이티브 아이디 받아와서 처리하면 될듯
         Get_LockOnPoint();
