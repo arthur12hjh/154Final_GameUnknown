@@ -39,17 +39,72 @@ void CBeatSaberSpawner::Priority_Update(_float fTimeDelta)
 
 void CBeatSaberSpawner::Update(_float fTimeDelta)
 {
-    if (m_bIsPlay)
+    /*if (m_bIsPlay)
     {
-        _float fRatio = m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM);
+        _float fOriginRatio = isnan(m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM)) ? 0.f : m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM);
            
         if (false == m_SpawnList.empty())
         {
-            if (m_SpawnList.front().fSpawnRatio <= fRatio)
+            const _float fPreTrigger = 0.03715f;
+            const _float fTriggerRatio = m_SpawnList.front().fSpawnRatio - fPreTrigger;
+            const _float fRatio = fOriginRatio + fTriggerRatio;
+            
+            if (fRatio > fTriggerRatio)
+            {
                 Trigger_SpawnEvent();
+            }
+        }   
+
+        if (1 <= fOriginRatio)
+            m_bIsPlay = false;
+    }*/
+
+    /*if (m_bIsPlay)
+    {
+        _float fRatio = 0.f;
+
+        if (m_fTimeAcc <= 0.f)
+        {
+            m_fTimeAcc += fTimeDelta;
+            fRatio = m_fTimeAcc;
+        }
+        else        
+            fRatio = m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM) * m_fSongLength;
+
+        if (!m_SpawnList.empty())
+        {
+            _float fNoteRatio = m_SpawnList.front().fSpawnRatio;
+
+            if (fRatio >= fNoteRatio)
+            {
+                Trigger_SpawnEvent();
+            }
         }
 
-        if (1 <= fRatio)
+        if (1 <= m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM) || m_SpawnList.empty())
+            m_bIsPlay = false;
+    }*/
+
+    if (m_bIsPlay)
+    {
+        m_fTimeAcc += fTimeDelta;
+
+        if (m_fTimeAcc >= ((m_fDelay - m_fNoteToValiTime) * 1.5f))
+        {
+            m_fSongTime += fTimeDelta;
+        }
+
+        if (!m_SpawnList.empty())
+        {
+            float songTime = m_fSongTime;
+
+            if (songTime >= m_SpawnList.front().fSpawnRatio)
+            {
+                Trigger_SpawnEvent();
+            }
+        }
+
+        if (m_fSongTime >= m_fSongLength || m_SpawnList.empty())
             m_bIsPlay = false;
     }
 }
@@ -58,7 +113,7 @@ void CBeatSaberSpawner::Late_Update(_float fTimeDelta)
 {
 }
 
-void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData)
+void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fSongTime, _uint iBPM, _float fDelay)
 {
     // 여기서 데이터를 로드해서 가져오기
     NOTE_DATA_DESC Data = {};
@@ -71,7 +126,20 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData)
     {
         Data.NoteType = NOTE_TYPE(atoi(DataList[i++].c_str()));
         Data.eDirection = DIRECTION(atoi(DataList[i++].c_str()));
-        Data.fSpawnRatio = atof(DataList[i++].c_str());
+
+        _uint iIdx = atoi(DataList[i++].c_str());
+        _float fNoteTimePerBPM = 60.f / (iBPM * 2.f);
+
+        //m_fTimeAcc = -5.f + (fNoteTimePerBPM * 4);
+        m_fTimeAcc = 0.f;
+        m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f;
+        m_fSongTime = -m_fNoteToValiTime;
+        m_fSongLength = fSongTime;
+        m_fDelay = fDelay;
+
+        _float fBeatTime = m_fTimeAcc + (fNoteTimePerBPM * (iIdx));
+
+        Data.fSpawnRatio = fBeatTime + m_fSongTime;
 
         switch (Data.eDirection)
         {
@@ -104,11 +172,11 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     CNote::NOTE_DESC NoteDesc = {};
     NoteDesc.bIsApplyTransform = true;
     NoteDesc.vScale = { 1.f, 1.f, 1.f };
-    NoteDesc.vRotation = { 0.f, XMConvertToRadians(180.f), 0.f, 0.f };
+    NoteDesc.vRotation = { 0.f, XMConvertToRadians(220.f), 0.f, 0.f };
     XMStoreFloat3(&NoteDesc.vPosition, m_pTransformCom->Get_State(STATE::POSITION));
     XMStoreFloat3(& NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
     
-    NoteDesc.fNoteSpeed = 5.f;
+    NoteDesc.fNoteSpeed = 30.f;
     NoteDesc.NoteType = NoteData.NoteType;
     NoteDesc.eDirection = NoteData.eDirection;
     NoteDesc.fSpawnRatio = NoteData.fSpawnRatio;

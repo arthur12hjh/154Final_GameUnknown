@@ -1171,6 +1171,9 @@
     <Filter Include="97.ShaderFiles\Trail">
       <UniqueIdentifier>{9d0b5abe-4a20-4c0f-9bd0-8a6f3b4a5b86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\BeatSaber\PlaySongEvent">
+      <UniqueIdentifier>{d651c346-8a68-418d-b838-0a31097377fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2242,6 +2245,9 @@
     <ClInclude Include="..\public\DororongBox.h">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PlaySongEvent.h">
+      <Filter>01.Levels\BeatSaber\PlaySongEvent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3276,6 +3282,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DororongBox.cpp">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlaySongEvent.cpp">
+      <Filter>01.Levels\BeatSaber\PlaySongEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

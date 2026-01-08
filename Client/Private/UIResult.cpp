@@ -82,7 +82,7 @@ void CUIResult::Update(_float fTimeDelta)
 	else
 		return;
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
 		Close_Result();
 }
 
@@ -215,6 +215,8 @@ void CUIResult::Close_Result()
 	m_isOpen = false;
 	m_fTimeAcc = 0.f;
 	m_fScale = 3.f;
+	m_bActiveEsc = false;
+	m_fEscKeyPressedTime = 0.f;
 
 	Safe_Release(pHUD);
 }

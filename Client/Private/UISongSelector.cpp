@@ -42,14 +42,17 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 
 	SONG_DESC Desc{};
 	Desc.szSongName = TEXT("[NIKKE 오리지널 송]\nNIKKE DORODORA ODORO");
+	Desc.szSongKey = TEXT("DoroDoro");
 	_stprintf_s(Desc.szVideoTag, TEXT("DoroDoro"));
 	m_SongDescs.push_back(Desc);
 
 	Desc.szSongName = TEXT("Be My Light(Test)");
+	Desc.szSongKey = TEXT("BML");
 	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
 	m_SongDescs.push_back(Desc);
 
 	Desc.szSongName = TEXT("TEST");
+	Desc.szSongKey = TEXT("Test");
 	_stprintf_s(Desc.szVideoTag, TEXT("Test"));
 	m_SongDescs.push_back(Desc);
 
@@ -194,6 +197,15 @@ void CUISongSelector::Late_Update(_float fTimeDelta)
 
 		m_isOpen = false;
 		m_isClosing = false;
+
+		if (m_bActiveEnter)
+		{
+			UI_EVENT_ARG_DESC Arg{};
+			Arg.szActionTag = TEXT("PlaySong_Event");
+			Arg.Type = UI_EVENT_ARG_DESC::WSTRING;
+			Arg.pData = &m_SongDescs[m_iCurrentIndex].szSongKey;
+			__super::Trigger_Event(TEXT("PlaySong_Event"), &Arg);
+		}
 
 		m_bActiveEnter = false;
 		m_bActiveEsc = false;

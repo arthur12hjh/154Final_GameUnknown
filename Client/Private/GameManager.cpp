@@ -12,6 +12,7 @@
 
 #include "Player.h"
 #include "ReserveDeferred.h"
+#include "BeatSaberCharacter.h"
 
 IMPLEMENT_SINGLETON(CGameManager);
 
@@ -65,10 +66,24 @@ void CGameManager::Bind_GameCharacter(CPlayer* pCharacter)
     m_pLockonManager->Bind_Player(m_pPlayer);
 }
 
+void CGameManager::Bind_BeatSaberCharacter(CBeatSaberCharacter* pCharacter)
+{
+    if (m_pBeatSaberCharacter == pCharacter)
+        return;
+
+    m_pBeatSaberCharacter = pCharacter;
+}
+
 CPlayer* CGameManager::GetGameCharacter()
 {
     Safe_AddRef(m_pPlayer);
     return m_pPlayer;
+}
+
+CBeatSaberCharacter* CGameManager::GetBeatSaberCharacter()
+{
+    Safe_AddRef(m_pBeatSaberCharacter);
+    return m_pBeatSaberCharacter;
 }
 
 // 레벨 전환할때 할거

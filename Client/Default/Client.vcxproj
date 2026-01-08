@@ -292,6 +292,7 @@
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
+    <ClInclude Include="..\Public\PlaySongEvent.h" />
     <ClInclude Include="..\public\PoolingManager.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
@@ -644,6 +645,7 @@
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
+    <ClCompile Include="..\Private\PlaySongEvent.cpp" />
     <ClCompile Include="..\private\PoolingManager.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\private\Rail.cpp" />
