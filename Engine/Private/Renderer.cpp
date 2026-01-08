@@ -447,6 +447,16 @@ HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRenderObje
 	return S_OK;
 }
 
+HRESULT CRenderer::Add_RenderGroup(RENDER eRenderGroup, CComponent* pRenderComponent)
+{
+	if (nullptr == pRenderComponent)
+		return E_FAIL;
+
+	m_RenderComponents[ENUM_CLASS(eRenderGroup)].push_back(pRenderComponent);
+	Safe_AddRef(pRenderComponent);
+	return S_OK;
+}
+
 void CRenderer::Render()
 {
 	Update_Occlusion_Visibility();
@@ -885,8 +895,17 @@ void CRenderer::Render_NonLight()
 
 		Safe_Release(pRenderObject);
 	}
-
 	m_RenderObjects[ENUM_CLASS(RENDER::NONLIGHT)].clear();
+
+	for (auto& pRenderComponent : m_RenderComponents[ENUM_CLASS(RENDER::NONLIGHT)])
+	{
+		if (nullptr != pRenderComponent)
+			pRenderComponent->Render();
+
+		Safe_Release(pRenderComponent);
+	}
+	m_RenderComponents[ENUM_CLASS(RENDER::NONLIGHT)].clear();
+
 #ifdef _DEBUG
 	EndMarker(m_pContext);
 #endif 

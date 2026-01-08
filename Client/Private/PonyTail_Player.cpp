@@ -111,8 +111,11 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 			XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(&m_CombinedWorldMatrix), true); 
 	}
 
+	m_pMotionTrail->Update_Trail(fTimeDelta);
+
 	if (m_bIsActive)
 	{
+		m_pGameInstance->Add_RenderGroup(RENDER::NONLIGHT, m_pMotionTrail);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
@@ -232,6 +235,18 @@ HRESULT CPonyTail_Player::Ready_Components()
 	/* Com_JointChain */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_JointChain"),
 		TEXT("Com_JointChain"), reinterpret_cast<CComponent**>(&m_pJointChain))))
+		return E_FAIL;
+
+	/* Com_MotionTrail */
+	CMotionTrailComponent::MOTION_TRAIL_COMPONENT_DESC MotionTrailCom = {};
+	MotionTrailCom.pModel = m_pModelCom;
+	MotionTrailCom.pPreBoneModel = m_pBodyModelCom;
+	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
+	MotionTrailCom.fUpdateTime = 0.2f;
+	MotionTrailCom.fLifeTime = 0.45f;
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
+		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
 		return E_FAIL;
 
 	return S_OK;

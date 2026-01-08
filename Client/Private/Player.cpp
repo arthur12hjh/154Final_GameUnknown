@@ -22,6 +22,7 @@
 #include "PlayerCCTQueryFilterCallback.h"
 
 #include "PlayerFSM.h"
+#include "Player_Parts.h"
 #include "PlayerState.h"
 #include "Prob_Interaction.h"
  
@@ -132,22 +133,25 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Ready_PartObjects()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Components()))
-		return E_FAIL;
-
-	if (false == m_pGameManager->LoadPlayerDesc(m_PlayerDesc))
+	SAVE_LEVEL_PLAYERDATA SaveData = {  };
+	if (false == m_pGameManager->LoadPlayerDesc(SaveData))
 	{
 		if (FAILED(Ready_PlayerDesc()))
 			return E_FAIL;
 	}
 	else
 	{
-		m_PlayerDesc.pPlayerTransform = m_pTransformCom;
-		m_PlayerDesc.pPlayerController = m_pCCT;
+		m_PlayerDesc = SaveData.PlayerData;
+
+		_vector vOldPos = XMLoadFloat3(&SaveData.vOldPosition);
+		m_pTransformCom->Set_State(STATE::POSITION, vOldPos);
 	}
+
+	if (FAILED(Ready_PartObjects()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
 
 	if (FAILED(Ready_BetaSkillDesc()))
 		return E_FAIL;
@@ -156,10 +160,13 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pColliderCom->SetOwner(this);
+	m_PlayerDesc.pPlayerTransform = m_pTransformCom;
+	m_PlayerDesc.pPlayerController = m_pCCT;
 
-	SetVisibility(VISIBILITY::VISIBLE);
+	/* 시작할땐 꺼두자 */
+	SetVisibility(VISIBILITY::HIDDEN);
+	MotionTrailEnable(false);
 
-	//
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	//EffectDesc.fRotationPerSec = 1.f;
 	//EffectDesc.fSpeedPerSec = 1.f;
@@ -180,7 +187,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 void CPlayer::Priority_Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	m_pTransformCom->Update_PreWorldMatrix();
@@ -191,7 +198,7 @@ void CPlayer::Priority_Update(_float fTimeDelta)
 
 void CPlayer::Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	__super::Update(fTimeDelta);
@@ -220,7 +227,7 @@ void CPlayer::Update(_float fTimeDelta)
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
-	if (VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (false == m_bIsActive)
 		return;
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
@@ -340,21 +347,12 @@ void CPlayer::Update_TestLogic(_float fTimeDelta)
 		m_PlayerDesc.iCurrentShield += 4;
 		m_fShieldTimer = 0.f;
 	}
-
-
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD1))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD2))
-	{
-		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
-	}
 }
 
+/* 이 함수 내용물 건드리기 ㄴㄴ 건드릴거면 디코좀 */
 void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 {
-	// 락온 중이라면
+	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
 		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
@@ -368,6 +366,31 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+	}
+
+	/* 
+	실제 로직이니까 날리지 마세요
+	*/  
+	if (true == m_PlayerDesc.HasTarget)
+	{
+		if (true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) &&
+			true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+			ATK_INTERACTION_TYPE::BLINK == m_PlayerDesc.eReactionType)
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::BLINK_START;
+
+			m_pFSM->Handle_Transition(Desc);
+		}
+		if (true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) &&
+			true == m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT) &&
+			ATK_INTERACTION_TYPE::REPULSE == m_PlayerDesc.eReactionType)
+		{
+			PLAYER_TRANSITION_DESC Desc;
+			Desc.eNextState = PLAYER_STATE::REPULSE;
 
 			m_pFSM->Handle_Transition(Desc);
 		}
@@ -529,8 +552,6 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.eBetaSkillState[2] = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.eBetaSkillState[3] = SKILL_STATE::DEFAULT;
 
-	m_PlayerDesc.pPlayerController  = m_pCCT;
-	m_PlayerDesc.pPlayerTransform   = m_pTransformCom;
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
 	m_PlayerDesc.iOwnGold			= 5000;
@@ -827,6 +848,10 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 
 		else if (false == m_PlayerDesc.isSuperArmor)
 		{
+			//타격당할때 공격자를 바라보게 한다.
+			m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)), 
+				XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
+
 			Desc.isChangeMode = false;
 			Desc.eNextState = PLAYER_STATE::HIT;
 			Desc.pArg = &HitDesc;
@@ -907,6 +932,34 @@ void CPlayer::CreateHitBox(const AnimNotify* pNotify)
 	auto pHitBox = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::STATIC), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("GamePlay_Layer_HitBox"), TEXT("Hit_Box"));
 	if(pHitBox)
 		static_cast<CAttackHitBox*>(pHitBox)->Initialize(pHitBoxDesc);
+}
+
+void CPlayer::MotionTrailEnable(_bool bIsEnable)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->EnableMotionTrail(bIsEnable);
+	}
+}
+
+void CPlayer::MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->SetMotionTrailRimLight(fRimLightPower, fRimLightIntensity, vColor);
+	}
+}
+
+void CPlayer::MotionTrailCoolDown(_float fCoolDown)
+{
+	for (auto& iter : m_PartObjects)
+	{
+		auto pPlayer_Parts = static_cast<CPlayer_Parts*>(iter.second);
+		pPlayer_Parts->SetMotionTrailCoolDown(fCoolDown);
+	}
+
 }
 
 void CPlayer::Execution_Nayitba()

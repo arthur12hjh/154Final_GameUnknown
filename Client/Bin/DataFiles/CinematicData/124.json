@@ -1,90 +1,96 @@
 [
     {
-        "CinematicNodeTrackList": [
+      "CinematicNodeTrackList": [
+        {
+          "eState": 7,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+        },
+        {
+          "eState": 4,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 4,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1112,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 3.5999999046325684,
+          "iActiveIndex": 1113,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 4.451000213623047,
+          "iActiveIndex": 0,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
+        },
+        {
+          "eState": 2,
+          "fTrackPosition": 12.199999809265137,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 9,
+          "fTrackPosition": 12.2,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player",
+          "CinematicIndexDataList": [
             {
-                "eState": 7,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
-            },
-            {
-                "eState": 4,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-            {
-                "eState": 4,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 1112,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 3.5999999046325684,
-                "iActiveIndex": 1113,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 4.451000213623047,
-                "iActiveIndex": 0,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 12.199999809265137,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-            {
-                "eState": 9,
-                "fTrackPosition": 12.2,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player",
-	   "CinematicIndexDataList": [
-        	       {
-      	   	"iActiveIndex": 0,
-      	   	"szObjectTag": "Layer_Player",
- 	   	"vPosition": [738.66, 2.022, 608.569],
- 	   	"vRotation": [760.197, 2.022, 700.319, 1.0],
-  	   	"vScale": [1.0, 1.0, 1.0],
-  	   	"iInputInt": 0,
-  	   	"fInputFloat": 0.0
-        	       }
-    	   ]
-            },
-            {
-                "eState": 6,
-                "fTrackPosition": 12.199999809265137,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 7,
-                "fTrackPosition": 12.600000381469727,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 12.600000381469727,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Monster"
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Player",
+              "vPosition": [ 738.66, 2.022, 608.569 ],
+              "vRotation": [ 760.197, 2.022, 700.319, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
             }
-        ],
+          ]
+        },
+        {
+          "eState": 6,
+          "fTrackPosition": 12.199999809265137,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 7,
+          "fTrackPosition": 12.600000381469727,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 2,
+          "fTrackPosition": 12.600000381469727,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster"
+        },
+        {
+          "eState": 14,
+          "fTrackPosition": 12.600000381469727,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        }
+      ],
         "iCinematicID": 124,
         "szCinematicName": "GorillaEnterTest02"
     }

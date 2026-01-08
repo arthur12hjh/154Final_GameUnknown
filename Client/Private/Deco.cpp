@@ -31,7 +31,12 @@ HRESULT CDeco::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
-    if (wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Container")) || wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Fence")) || wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")))
+    if (wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Container")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Fence")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Garden")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")))
     {
         if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
             return S_OK;

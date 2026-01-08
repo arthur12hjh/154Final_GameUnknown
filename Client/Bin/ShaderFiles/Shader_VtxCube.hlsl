@@ -13,6 +13,15 @@ float g_fTime;
 float g_fBeatRandom;  // 비트인디케이터 올라가는 막대 사이즈 랜덤값
 float g_fColorWeight;
 float g_fOutlineWidth = 0.02f;
+
+ // 1. 가장 정석적인 쨍한 네온 스카이블루
+float4 vNeonSkyBlue = float4(0.0f, 0.7f, 1.0f, 1.0f);
+    // 2. 약간 더 민트/에메랄드 빛이 섞인 시원한 사이버펑크 블루
+float4 vNeonCyan = float4(0.0f, 1.0f, 1.0f, 1.0f);
+    // 3. 발광했을 때 중심이 아주 밝아 보이는 연한 네온 블루
+float4 vSoftNeonBlue = float4(0.4f, 0.8f, 1.0f, 1.0f);
+float4 vNeonPink = float4(1.0f, 0.05f, 0.6f, 1.0f);
+
 bool g_bIsIdx0, g_bIsIdx1, g_bIsIdx2;
 
 /* 정점 쉐이더 : */
@@ -135,7 +144,7 @@ PS_OUT PS_RAIL(PS_IN In)
     vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
     vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
     vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
-    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝은 연두 (End)
+    vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝?연돎?(End)
     
     float fXPos = (In.vTexcoord.x + 0.5f);
     int iIdx = (int) floor(fXPos * 3.0f);
@@ -209,10 +218,12 @@ PS_OUT PS_RAIL(PS_IN In)
         }
     
         Out.vColor = vGradColor;
+        Out.vBloom = vNeonSkyBlue * 2.f;
     }
     else
     {
         Out.vColor = vBaseColor;
+        Out.vBloom = vBaseColor * 1.5f;
     }
     Out.vColor.a = 1.0f;
 
@@ -220,7 +231,7 @@ PS_OUT PS_RAIL(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    //Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -263,17 +274,18 @@ PS_OUT PS_MAIN_PAD(PS_IN In)
     if (iEdgeCount >= 2)
     {
         Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+        Out.vBloom = vNeonSkyBlue * 2.f;
     }
     else
     {
         Out.vColor = vBaseColor;
+        Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -339,17 +351,19 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
         float fFinalMask = 1.0f - smoothstep(0.0f, 0.015f, fMinDist);
         Out.vColor = lerp(vSkyBlue, vWhite, fFinalMask);
         Out.vColor.a = 1.0f;
+        Out.vBloom = vNeonPink * 2.f;
+        
     }
     else
     {
         Out.vColor = vBaseColor;
+        Out.vBloom = vBaseColor * 1.5f;
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     return Out;
 }
 
@@ -360,22 +374,24 @@ PS_OUT PS_MAIN_BOX(PS_IN In)
     float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
     float4 vPink = float4(1.f, 0.75f, 0.8f, 1.f);
     float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
-    float4 vBaseColor = lerp(vBlack, vPink, g_fColorWeight);
+    float4 vNeonPurple = float4(0.5f, 0.0f, 1.0f, 1.0f);
+    float4 vNeonWhite = float4(1.0f, 0.9f, 1.0f, 1.0f);
+    float4 vBaseColor = vBlack;
 
     float3 vLocalNormal = normalize(In.vNormal);
     bool bIsFrontFace = vLocalNormal.z < -0.8f;
 
+    
     float4 vFinalColor = vBaseColor;
+    float2 vUV = In.vTexcoord.xy + 0.5f;
+    float4 vMask = g_MaskTexture.Sample(DefaultSampler, vUV);
 
-    if (bIsFrontFace)
+    float fGradientIdx = In.vTexcoord.y + 0.5f;
+    float4 vGradientColor = lerp(vNeonPurple, vNeonPink, fGradientIdx);
+    
+    if (vMask.r > 0.1f)
     {
-        float2 vUV = In.vTexcoord.xy + 0.5f;
-        float4 vMask = g_MaskTexture.Sample(DefaultSampler, vUV);
-
-        if (vMask.r > 0.5f)
-        {
-            vFinalColor = vWhite * (1.f + g_fColorWeight * 2.f);
-        }
+        vFinalColor = vGradientColor * 15.f;
     }
 
     float3 vAbsPos = abs(In.vTexcoord);
@@ -392,18 +408,24 @@ PS_OUT PS_MAIN_BOX(PS_IN In)
     
     if (iEdgeCount >= 2)
     {
-        Out.vColor = float4(1.f, 1.f, 1.f, 1.f);
+        Out.vColor = vNeonWhite;
+        Out.vBloom = vNeonPink * 5.f;
     }
     else
     {
         Out.vColor = vFinalColor;
+        if (vMask.r > 0.1f)
+            Out.vBloom = vFinalColor * 0.2f;
+        else
+            Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     }
     
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
-    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    
     return Out;
 }
 

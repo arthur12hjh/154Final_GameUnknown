@@ -35,13 +35,17 @@ private :
 	CBeatSaberFsm*					m_pFsm = { nullptr };
 	CPartObject*					m_pPartBody = { nullptr };
 
+	_float							m_fTimeDelta;
+	_float							m_BoxSizeZ = {};
+
 private :
 	HRESULT							Ready_CharacterData();
 	HRESULT							ADD_PartObjects();
 	HRESULT							ADD_Components();
 
 	void							Key_Input(_float fTimeDelta);
-	void							BeginOverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void							OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
+	void							OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 public:
 	static	CBeatSaberCharacter*	Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

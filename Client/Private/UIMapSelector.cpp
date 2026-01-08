@@ -162,7 +162,7 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 {
 	m_ButtonDescs.clear();
 
-	for (size_t i = 0; i < m_pGameManager->Find_TransportData()->size(); ++i)
+	for (size_t i = 0; i < m_pGameManager->Find_AllTransportDatas()->size(); ++i)
 	{
 		MAP_SELECTOR_DESC Desc{};
 		Desc.bIsEnableMove = m_pGameManager->Find_TransportData(i)->bIsEnableMove;

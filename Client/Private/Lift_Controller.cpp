@@ -40,6 +40,9 @@ HRESULT CLift_Controller::Initialize(void* pArg)
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
+		return E_FAIL;
+
 	ResetAction(true);
 
 	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(pDesc->iInteractionID));
@@ -66,7 +69,7 @@ void CLift_Controller::Update(_float fTimeDelta)
 		{
 			_vector vControllerPos = m_pTransformCom->Get_State(STATE::LOOK);
 			_vector vPlatformPosition = m_pLiftPlatform->GetTransform()->Get_State(STATE::POSITION);
-			WorldMat.r[3] += vPlatformPosition + vControllerPos * -4.8f;
+			WorldMat.r[3] = vPlatformPosition + vControllerPos * -4.8f;
 			WorldMat.r[3].m128_f32[3] = 1.f;
 
 			m_vLiftPlatformPos = vPlatformPosition;
@@ -75,6 +78,8 @@ void CLift_Controller::Update(_float fTimeDelta)
 	}
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pInteractionCom->Update_Com(WorldMat);
+	m_pRigidBody->Update_PxTransform(WorldMat);
+
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
 	if (m_pLiftPlatform && m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
@@ -82,8 +87,6 @@ void CLift_Controller::Update(_float fTimeDelta)
 		if (!m_pLiftPlatform->GetPlatformMove())
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	}
-
-	//m_pRigidBody->Update_PxTransform(WorldMat);
 }
 
 void CLift_Controller::Late_Update(_float fTimeDelta)
@@ -190,23 +193,23 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 		}
 	}
 
+	return S_OK;
+}
 
+HRESULT CLift_Controller::Ready_Col(const _tchar* pComponentTag)
+{
 	/* Com_Model_COL */
 	_wstring strComponentTag = pComponentTag;
 	strComponentTag += TEXT("_COL");
+
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::LEVEL_PROB), strComponentTag,
 		TEXT("Com_Model_COL"), reinterpret_cast<CComponent**>(&m_pColModelCom))))
 		return E_FAIL;
 
-	// 충돌용 메시 피직스 세팅 조건
-	// 1. 충돌용 메시 생성 이후에 RigidBody를 세팅해주셔야합니다.
-	// 2. 해당 객체의 위치가 설정된 뒤에 RigidBody를 세팅해주셔야 합니다.
-
-	// 세팅 방법 보고도 잘 이해 안되면 물어봐주세요 키네마틱, 다이나믹, 스태틱 세팅 중요해요
 	PxUserData tUserData;
 	// 엘레베이터 식별용 문자열. 이건 나중에 엘베말고 다른데에 넣을떄 저랑 얘기하고 정해서 넣어주세요
-	tUserData.szActorTag = TEXT("Elevator_Controller");
+	tUserData.szActorTag = TEXT("LiftController_Actor");
 
 	// 리지드 바디 Desc 세팅. 
 	// F12 타고 들어가서 머테리얼이랑 Mass, userdata, shape, type 부분 위주로 살펴보세요.
@@ -222,7 +225,7 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	// STATIC : 충돌 O, 대신 고정되어 있음.
 	// ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 
-	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
@@ -241,7 +244,6 @@ HRESULT CLift_Controller::Ready_Components(const _tchar* pComponentTag)
 	// 리지드 바디 세팅 끝났으면 Physx 매니저에 집어넣는 과정도 있어야돼요.
 	// 없으면 충돌 안됨
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-
 	return S_OK;
 }
 

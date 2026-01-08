@@ -42,6 +42,9 @@ public:
 	virtual HRESULT					Render() override;
 	const NOTE_DATA_DESC&			GetNoteData() { return m_NoteData; }
 
+	void							OverlapTime(_float fDeltaTime);
+	_float							GetOverlapTime() { return m_OverlapTime; }
+
 private :
 	CModel*							m_pModelCom = {nullptr};
 	CCollider*						m_pColliderCom = { nullptr };
@@ -51,7 +54,9 @@ private :
 	RIMLIGHT_DESC					m_RimLightDesc = {};
 
 	NOTE_DATA_DESC					m_NoteData = {};
-	_float3							m_vTargetPoint = {};
+	_float							m_OverlapTime = { };
+
+	_float3							m_vTargetDir = {};
 	_float							m_fNoteSpeed = { 2.f };
 
 private :

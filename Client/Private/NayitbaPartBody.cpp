@@ -33,12 +33,15 @@ HRESULT CNayitbaPartBody::Initialize(void* pArg)
         return E_FAIL;
 
     NAYITBA_PART_BODY_DESC* pDesc = static_cast<NAYITBA_PART_BODY_DESC*>(pArg);
+    m_pParent = pDesc->pParent;
+    
     if (FAILED(Ready_Components(*pDesc)))
         return E_FAIL;
 
     m_pModelCom->AddCount_PartialBone("Bip001-Spine2");
     m_pSpineMatrix = m_pModelCom->Get_BoneMatrixPtr("Bip001-Spine2");
     m_vDissolveRadius = 3.f;
+
     return S_OK;
 }
 
@@ -668,10 +671,10 @@ void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObje
     if (nullptr == pHitActor)
         return;
 
-    auto pCharacter = static_cast<CCharacter*>(pHitActor);
-
+    auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+    
     DEFAULT_DAMAGE_DESC DamageDesc = {};
-    if (nullptr == m_pParent)
+    if (nullptr == m_pParent || nullptr == pCharacter)
         return;
     DamageDesc.pAttacker = m_pParent;
     DamageDesc.vHitDir = vHitDir;

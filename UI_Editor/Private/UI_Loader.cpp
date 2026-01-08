@@ -57,6 +57,9 @@
 #include "UIResult.h"
 #include "UISongSelector.h"
 #include "UITriggerKey.h"
+#include "UIVideoThumbnail.h"
+
+#include "VideoPlayer.h"
 
 #pragma endregion
 
@@ -64,6 +67,7 @@
 #include "UIResourceStore.h"
 
 #include "Sky.h"
+#include "Sky_Dororong.h"
 #include "CanBox.h"
 #include "Interaction_Component.h"
 
@@ -1028,6 +1032,11 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 		CUIScript::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_VideoPlayer */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_VideoPlayer"),
+		CVideoPlayer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* ==================================================================================================================== */
 
 	/* For.Prototype_Component_UI_Texture_Overlay */
@@ -1143,6 +1152,22 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Song_Selected"),
 		TEXT("Com_Texture_UI_Song_Selected"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Song_Selector/Song_Selected.dds"), 1);
 
+	/* For.Prototype_Component_UI_Texture_Accuracy */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Accuracy"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Accuracy/Accuracy_%d.png"), 4))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_Accuracy"),
+		TEXT("Com_Texture_UI_Accuracy"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Accuracy/Accuracy_%d.png"), 4);
+
+	/* For.Prototype_Component_UI_Texture_GameClear */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_GameClear"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/GameClear_%d.png"), 2))))
+		return E_FAIL;
+
+	m_pUIResourceStore->Add_UI_Texture(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_Component_UI_Texture_GameClear"),
+		TEXT("Com_Texture_UI_GameClear"), TEXT("../../Client/Bin/Resources/Textures/UI/DororongSaber/Result/GameClear_%d.png"), 2);
+
 	/* For.Prototype_GameObject_UI_NeonNumber */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_NeonNumber"),
 		CUINeonNumber::Create(m_pDevice, m_pContext))))
@@ -1163,7 +1188,7 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 		CUISongSelector::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_UI_SimpleKey */
+	/* For.Prototype_GameObject_UI_TriggerKey */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_TriggerKey"),
 		CUITriggerKey::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -1172,45 +1197,33 @@ HRESULT CUI_Loader::Loading_UI_For_Beatsaber_Gameplay_Level()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_InteractionFX"),
 		CUIInteractionFX::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_UI_VideoThumbnail */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_UI_VideoThumbnail"),
+		CUIVideoThumbnail::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 	/* ------------------------------------------------------------------------------------------- */
 
 	_matrix PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Prob_CanBox"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../../Client/Bin/Resources/Models/Box/CanBox/CanBox.binx", PreTransformMatrix))))
-	//	return E_FAIL;
-	///* Can Box */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Prob_CanBox"),
-	//	CCanBox::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
-	//	CInteraction_Component::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
-	//	return E_FAIL;
-	//
-	///* For.Prototype_Component_Model_Sky */
-	//PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Model_Sky"),
-	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky3.binx", PreTransformMatrix))))
-	//	return E_FAIL;
-	//
-	///* For.Prototype_Component_Texture_Sky1 */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Sky1"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/Panorama_Sky_06-512x512.dds"), 1))))
-	//	return E_FAIL;
-	//
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
-	//	CSky::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
+		return E_FAIL;
+	
+	/* For.Prototype_Component_Model_Sky */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Model_Sky_Dororong"),
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Sky/Sky4.binx", PreTransformMatrix))))
+		return E_FAIL;
+	
+	/* For.Prototype_Component_Texture_Sky1 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_Component_Texture_Sky_Dororong"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../../Map_Editor/Bin/Resources/Maps/Sky/galaxy+X.png"), 1))))
+		return E_FAIL;
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky_Dororong"),
+		CSky_Dororong::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	return S_OK;
 }

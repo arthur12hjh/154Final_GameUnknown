@@ -75,6 +75,17 @@ float g_fTimeDelta = 0.f;
 float2 g_Result_BG_Offset = 0.f;
 float2 g_Result_Thumbnail_Offset = 0.f;
 
+Texture2D<float> g_YTex : register(t0);
+Texture2D<float2> g_UVTex : register(t1);
+//SamplerState g_Samp : register(s0);
+
+SamplerState VideoSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
@@ -1664,14 +1675,14 @@ PS_OUT PS_NEON_NUMBER(PS_IN In)
     
     float2 uv = In.vTexcoord;
     
-    float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
-    
-    Icon.rgb += Icon.rgb;
-    
     //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
     //    discard;
     
-    Out.vColor = Icon * g_Alpha;
+    float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
+    
+    float4 result = Icon * Icon.a;
+    
+    Out.vColor = result * g_Alpha;
     
     if(Out.vColor.a <= 0.0f)
         discard;
@@ -1690,15 +1701,16 @@ PS_OUT PS_COMBO(PS_IN In)
     float2 uv = In.vTexcoord;
     
     float2 ScaleUV = uv;
-    ScaleUV -= float2(0.5f, -0.1f);
+    ScaleUV -= float2(0.5f, 0.f);
     ScaleUV /= float2(200.f / 384.f, 60.f / 188.f) * g_fScale;
-    ScaleUV += float2(0.5f, -0.1f);
+    ScaleUV += float2(0.5f, 0.f);
     
     float4 Combo = g_Texture0.Sample(ClampSampler, ScaleUV);
+    Combo.rgb += Combo.rgb * Combo.a;
     
-    Combo.rgb += Combo.rgb;
+    float4 result = Combo;
     
-    Out.vColor = Combo;
+    Out.vColor = result * g_Alpha;
     
     if (Out.vColor.a <= 0.0f)
         discard;
@@ -1708,7 +1720,7 @@ PS_OUT PS_COMBO(PS_IN In)
 
 /*------------------[E_COMBO]----------------*/
 
-/*------------------[S_NEON_NUMBER]----------------*/
+/*------------------[S_SCORE]----------------*/
 
 PS_OUT PS_SCORE(PS_IN In)
 {
@@ -1718,11 +1730,6 @@ PS_OUT PS_SCORE(PS_IN In)
     
     float4 Icon = g_Texture0.Sample(DefaultSampler, uv);
     
-    //Icon.rgb += Icon.rgb * Icon.a;
-    
-    //if (Icon.r >= 0.9f || Icon.g >= 0.9f || Icon.b >= 0.9f)
-    //    discard;
-    
     Out.vColor = Icon * g_Alpha;
     
     if(Out.vColor.a <= 0.0f)
@@ -1731,7 +1738,7 @@ PS_OUT PS_SCORE(PS_IN In)
     return Out;
 }
 
-/*------------------[E_NEON_NUMBER]----------------*/
+/*------------------[E_SCORE]----------------*/
 
 /*------------------[S_RANK]----------------*/
 
@@ -1748,7 +1755,7 @@ PS_OUT PS_RANK(PS_IN In)
     
     float4 Rank = g_Texture0.Sample(ClampSampler, ScaleUV);
     
-    //Rank.rgb += Rank.rgb * Rank.a;
+    Rank.rgb += Rank.rgb * Rank.a * 5.f;
     
     Out.vColor = Rank;
     
@@ -1797,9 +1804,11 @@ PS_OUT PS_DORORONG_SABER_RESULT_GLOW(PS_IN In)
     
     float2 RankUV = uv;
     RankUV -= float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 750.f / 900.f);
-    RankUV /= float2((300.f * g_fScale) / 1600.f, (185.f * g_fScale) / 900.f);
+    RankUV /= float2(300.f / 1600.f, 185.f / 900.f);
     RankUV += float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 750.f / 900.f);
     float4 Rank = g_Texture0.Sample(ClampSampler, RankUV);
+    
+    Rank.rgb += Rank.rgb * Rank.a * g_GlowIntensity;
     
     float2 ComboUV = uv;
     ComboUV -= float2(1575.f / 1600.f + (g_Result_BG_Offset.x / 1600.f), 155.f / 900.f);
@@ -1862,13 +1871,46 @@ PS_OUT PS_DORORONG_SABER_SONG_SELECTOR(PS_IN In)
     SelectedBG.a *= g_Alpha;
     
     float4 result = BG;
-    result = lerp(result, Arrows, Arrows.a);
-    result = lerp(result, SelectedBG, SelectedBG.a);
+    result += Arrows * Arrows.a;
+    result += SelectedBG * SelectedBG.a;
     
     Out.vColor = result;
     
     if (Out.vColor.a <= 0.0f)
         discard;
+    
+    return Out;
+}
+
+/*------------------[E_DORORONG_SABER_SONG_SELECTOR]----------------*/
+
+/*------------------[S_VIDEO]----------------*/
+
+PS_OUT PS_VIDEO(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float y = g_YTex.Sample(VideoSampler, In.vTexcoord).r;
+    float2 uv = g_UVTex.Sample(VideoSampler, In.vTexcoord).rg;
+
+    // Limited range 보정
+    y = saturate((y - 16.0 / 255.0) * (255.0 / 219.0));
+    float u = (uv.x - 128.0 / 255.0) * (255.0 / 224.0);
+    float v = (uv.y - 128.0 / 255.0) * (255.0 / 224.0);
+
+    // BT.601 행렬
+    //float3 rgb;
+    //rgb.r = y + 1.4020 * v;
+    //rgb.g = y - 0.3441 * u - 0.7141 * v;
+    //rgb.b = y + 1.7720 * u;
+    
+    float3 rgb;
+    rgb.r = y + 1.5748 * v;
+    rgb.g = y - 0.1873 * u - 0.4681 * v;
+    rgb.b = y + 1.8556 * u;
+
+    // clamp는 안전장치
+    Out.vColor = float4(saturate(rgb), 1.0);
     
     return Out;
 }
@@ -2277,5 +2319,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DORORONG_SABER_SONG_SELECTOR();
+    }
+
+    pass VIDEO // 38
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_VIDEO();
     }
 }

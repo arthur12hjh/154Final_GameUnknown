@@ -43,8 +43,8 @@ HRESULT CUI_Level_Beatsaber::Initialize()
 	if (FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
 		return E_FAIL;
 	
-	//if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(TEXT("BackGround"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -56,6 +56,16 @@ void CUI_Level_Beatsaber::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
+	{
+		auto pGameClear = static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"));
+
+		if (pGameClear)
+		{
+			//풀콤보인지 아닌지 구분해서 TextureIndex 세팅
+			static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show"));
+		}
+	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Open_Result();
@@ -124,19 +134,22 @@ HRESULT CUI_Level_Beatsaber::Ready_UI(const _wstring& strLayerTag)
 	
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Song_Selector"))))
 		return E_FAIL;
-
+	
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber"))))
 		return E_FAIL;
 	
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Result"))))
 		return E_FAIL;
 
+	//if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Video"))))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CUI_Level_Beatsaber::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky_Dororong"),
 		ENUM_CLASS(LEVEL::BEATSABER_GAME), strLayerTag)))
 		return E_FAIL;
 

@@ -6,6 +6,7 @@
 #include "UIHUD.h"
 
 #include "UIInstanceBuffer.h"
+#include "UIVideoThumbnail.h"
 
 CUIResult::CUIResult(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
@@ -44,7 +45,7 @@ void CUIResult::Update(_float fTimeDelta)
 
 	if (m_isOpen)
 	{
-		if (!(m_fTimeAcc >= 4.f && m_isShowCombo && m_isShowScore && m_isShowRank))
+		if (!(m_fTimeAcc >= 4.5f && m_isShowCombo && m_isShowScore && m_isShowRank))
 			m_fTimeAcc += fTimeDelta;
 
 		if (m_fTimeAcc >= 0.5f)
@@ -70,10 +71,12 @@ void CUIResult::Update(_float fTimeDelta)
 		{
 			m_isShowRank = true;
 
-			float scaleT = (m_fTimeAcc - 3.5f) / 0.25f; // 2ÃÊ
-			scaleT = min(scaleT, 1.f);
+			float scaleT = (m_fTimeAcc - 3.5f) / 1.f; // 2ÃÊ
+			scaleT = min(max(scaleT, 0.f), 1.f);
 
-			m_fScale = 3.f + (1.f - 3.f) * scaleT;
+			float ease = sinf(scaleT * XM_PIDIV2); // 0 ¡æ 1
+
+			m_fGlowPower = 15.f + (1.f - 15.f) * ease;
 		}
 	}
 	else
@@ -104,12 +107,15 @@ void CUIResult::Late_Update(_float fTimeDelta)
 		if (AnimTag != m_tUIDesc.m_AnimTags.end())
 			pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
-		auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+		CUIVideoThumbnail* pThumbnail = dynamic_cast<CUIVideoThumbnail*>(pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail")));
+		if (pThumbnail)
+		{
+			pThumbnail->Set_Source(TEXT("DoroDoro"));
+			pThumbnail->Play();
+		}
 
 		if (pThumbnail)
-			pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Open_Result"), 0.125f);
-
-		pThumbnail->Get_UIBase_Desc().m_tUITextureDesc.iTextureIndex = 1;
+			pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail"), TEXT("Open_Result"), 0.125f);
 
 		m_eVisibility = VISIBILITY::VISIBLE;
 
@@ -188,10 +194,12 @@ void CUIResult::Close_Result()
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
-	auto pThumbnail = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"));
+	CUIVideoThumbnail* pThumbnail = dynamic_cast<CUIVideoThumbnail*>(pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail")));
+	if (pThumbnail)
+		pThumbnail->Stop();
 
 	if (pThumbnail)
-		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_Thumbnail"), TEXT("Close_Result"));
+		pHUD->Anim_Play(m_tUIDesc.szLayerTag, TEXT("UI_VideoThumbnail"), TEXT("Close_Result"));
 
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Close_Result"));
 
@@ -423,7 +431,7 @@ HRESULT CUIResult::Bind_GlowShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &fAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_fScale, sizeof(_float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_GlowIntensity", &m_fGlowPower, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

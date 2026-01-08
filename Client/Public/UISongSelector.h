@@ -12,6 +12,13 @@ NS_BEGIN(Client)
 class CUISongSelector final : public CUIBase
 {
 private:
+	typedef struct tagSongDesc
+	{
+		_wstring szSongName{};
+		_tchar szVideoTag[256]{};
+	}SONG_DESC;
+
+private:
 	CUISongSelector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CUISongSelector(const CUISongSelector& Prototype);
 	virtual ~CUISongSelector() = default;
@@ -38,7 +45,7 @@ private:
 	CTexture* m_pSelectedBGTextureCom{ nullptr };
 	CTexture* m_pScoreTextureCom{ nullptr };
 
-	vector<_wstring> m_Songs{};
+	vector<SONG_DESC> m_SongDescs{};
 
 	ID3D11RasterizerState* m_pScissorRasterizer{ nullptr };
 

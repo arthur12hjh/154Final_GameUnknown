@@ -37,11 +37,12 @@ public :
 	class CPlayer*				GetGameCharacter();
 
 	void						SavePlayerDesc();
-	_bool						LoadPlayerDesc(PLAYER_DESC& PlayerDesc);
+	void						SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
+
+	_bool						LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc);
 
 	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
-
 #pragma endregion
 
 #pragma region DataManager
@@ -53,19 +54,20 @@ public :
 	const INTERACTION_DATA*				Find_InteractionData(_uint iID);
 	const CAMERA_ANIMATION_DATA*		Find_CameraAnimationData(_uint iCameraAnimationData);
 	const CINEMATIC_DESC*				Find_CinematicData(_uint iCinematicIndex);
-	const vector<TRANSPORT_DESC>*		Find_TransportData();
+
+	void								EnableTransport(_uint iAreaID);
 	const TRANSPORT_DESC*				Find_TransportData(_uint iAreaID);
+	const map<_uint, TRANSPORT_DESC>*	Find_AllTransportDatas();
+
 	const vector<SHOP_DESC>*			Get_ShopDatas();
 
 	const SCRIPT_DESC*					Get_ScriptData(const _wstring& szScriptTag);
 	map<_uint, BETA_SKILL_DESC>*		Get_AllBetaSkillDesc();
-	void								EnableTransport(_uint iAreaID);
 
 	map<_uint, CAMERA_ANIMATION_DATA>*	Get_CameraAnimationMap();
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
 
 #ifdef _DEBUG
-
 	void Refresh();
 
 	void								Save_CameraAnimationData();
@@ -90,17 +92,22 @@ public :
 	void	Set_Desc_ReserveDeferred(const _wstring& strReserveDeferredTag, void* pArg);
 	void	Change_ShaderSetting(LEVEL eLevelID, _uint iIndex = 0);
 	void	Set_CinematicLights(_uint iFlag);
+	void	Set_ScarletPatternFog(_bool bFlag, _float fLerpTime = 4.f);
 #pragma endregion
 
 #pragma region LOCKON
 public:
-	class CNaytiba* Get_LockonTarget();
-	CTransform* Get_TargetTransform();
-	void		Lockon(_float fTimeDelta);
+	class CNaytiba*			Get_LockonTarget();
+	CTransform*				Get_TargetTransform();
+	void					Lockon(_float fTimeDelta);
 
-	void		Start_Lockon();
-	_float		Get_CurMinDist();
-	_bool		Get_Lockon();
+	//이거 락온한 위치 받아올수있게 일단 반환함
+	_vector					Get_LockOnPoint();
+	void					Start_Lockon();
+	_float					Get_CurMinDist();
+	_bool					Get_Lockon();
+	void					Force_Lockon(_float fTimeDelta);
+	void					Force_LockOff();
 
 #pragma endregion
 
@@ -120,7 +127,7 @@ public:
 	HRESULT											Load_Level_CinematicObjectData(const _char* szFilePath);
 	_bool											Is_CinematicPlaying();
 	HRESULT											Skip_Cinematic();
-	map<_wstring, class CCinematicObject*>*				Get_CinematicObjectsMap();
+	map<_wstring, class CCinematicObject*>*			Get_CinematicObjectsMap();
 #pragma endregion
 
 	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���
@@ -145,8 +152,8 @@ private :
 	
 	class CPlayer*									m_pPlayer = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
-	pair<PLAYER_DESC, _bool>						m_pSavePlayerDesc = {};
-
+	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
+	
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 

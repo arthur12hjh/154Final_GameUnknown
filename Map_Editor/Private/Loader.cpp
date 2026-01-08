@@ -188,7 +188,7 @@ HRESULT CLoader::Loading()
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Wall(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Desert_Xion_Building(pArg); });
 
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Monster(pArg); });
 		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Sky_Texture(pArg); });
 
 		hr = Loading_For_Desert();

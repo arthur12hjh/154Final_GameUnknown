@@ -274,9 +274,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UISkillWrapper\UIRushSlot">
       <UniqueIdentifier>{c5f771ae-d1e3-4971-8b61-9f6da09c29b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Camera\Camera_Lockon">
-      <UniqueIdentifier>{6f1a2b1f-7aec-47a6-89ec-1c3a7dc44792}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10.GameManager\LockonManager">
       <UniqueIdentifier>{22a47143-a8d1-42b2-8ae2-00a6e2f2cff2}</UniqueIdentifier>
     </Filter>
@@ -1162,8 +1159,17 @@
     <Filter Include="02.GameObjects\TraceLight">
       <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UIObjects\VideoPlayer">
+      <UniqueIdentifier>{e454af81-f1c5-4ab3-b488-9e758a095512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail">
+      <UniqueIdentifier>{93f57e66-efac-41b6-bf7e-a4cd20cf9907}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Dororong_Saber\DororongBox">
       <UniqueIdentifier>{04382a77-8f9f-4fe3-a29a-e91a55d4af75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles\Trail">
+      <UniqueIdentifier>{9d0b5abe-4a20-4c0f-9bd0-8a6f3b4a5b86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1716,9 +1722,6 @@
     <ClInclude Include="..\public\Deco_CheckAlive.h">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Camera_Lockon.h">
-      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\LockonManager.h">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClInclude>
@@ -2229,6 +2232,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\TargetLight.h">
       <Filter>02.GameObjects\TraceLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VideoPlayer.h">
+      <Filter>02.GameObjects\UIObjects\VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIVideoThumbnail.h">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DororongBox.h">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
@@ -2765,9 +2774,6 @@
     <ClCompile Include="..\private\Deco_CheckAlive.cpp">
       <Filter>02.GameObjects\Character\AI\Naytiba\Monster\Behavior\Boss\Decorator\CheckAlive</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Camera_Lockon.cpp">
-      <Filter>02.GameObjects\Camera\Camera_Lockon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\LockonManager.cpp">
       <Filter>10.GameManager\LockonManager</Filter>
     </ClCompile>
@@ -3262,6 +3268,12 @@
     <ClCompile Include="..\Private\TargetLight.cpp">
       <Filter>02.GameObjects\TraceLight</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\VideoPlayer.cpp">
+      <Filter>02.GameObjects\UIObjects\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIVideoThumbnail.cpp">
+      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UIVideoThumbnail</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\DororongBox.cpp">
       <Filter>02.GameObjects\Map\Dororong_Saber\DororongBox</Filter>
     </ClCompile>
@@ -3332,6 +3344,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Scarlet_Face.hlsl">
       <Filter>02.GameObjects\Character\AI\Naytiba\PartBody\Face\ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_MotionTrail.hlsl">
+      <Filter>97.ShaderFiles\Trail</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

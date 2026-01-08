@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 class CCollider;
 class CNavigation;
 class CCharacterController;
-class CMontionTrailComponent;
+class CMotionTrailComponent;
 NS_END
 
 NS_BEGIN(Client)
@@ -34,6 +34,9 @@ public:
 	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
 	class CPlayerFSM* Get_PlayerFSM() { return m_pFSM; }
+	void MotionTrailEnable(_bool bIsEnable);
+	void MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor);
+	void MotionTrailCoolDown(_float fCoolDown);
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -71,7 +74,6 @@ private:
 	//
 	_float					m_fTime = { 0.f };
 	_int					m_iSkillID = {};
-
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();

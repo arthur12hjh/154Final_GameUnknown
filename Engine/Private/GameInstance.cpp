@@ -498,6 +498,11 @@ HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CGameObject* pRender
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);
 }
 
+HRESULT CGameInstance::Add_RenderGroup(RENDER eRenderGroup, CComponent* pRenderComponent)
+{
+	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderComponent);
+}
+
 const _float4x4* CGameInstance::Get_Renderer_Matrix(D3DTS eType)
 {
 	return m_pRenderer->Get_Renderer_Matrix(eType);
@@ -1321,6 +1326,11 @@ HRESULT CGameInstance::UnBind_Observer(const WCHAR* szEventTag, CEventHandle* pE
 }
 #pragma endregion
 
+/* 
+1. 몇프레임 멈출지, 
+2. 어느 정도부터 보간을 시작할지, 
+3. 돌아가는 속도는 어떻게 되는지?
+*/
 
 void CGameInstance::GamePauseDurationTime(_uint fStopCnt, _float fTimeRatio, _float fReturnSpeed)
 {
