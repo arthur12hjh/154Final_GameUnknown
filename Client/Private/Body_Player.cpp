@@ -101,6 +101,9 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if(FAILED(Ready_ThighRigidBodies()))
 		return E_FAIL;
 
+	if (FAILED(Ready_UpperRigidBodies()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -278,7 +281,7 @@ HRESULT CBody_Player::Ready_Components()
 	MotionTrailCom.pPreBoneModel = m_pModelCom;
 	MotionTrailCom.pTransform = &m_CombinedWorldMatrix;
 	MotionTrailCom.fUpdateTime = 0.2f;
-	MotionTrailCom.fLifeTime = 3.f;
+	MotionTrailCom.fLifeTime = 0.45f;
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
@@ -451,7 +454,7 @@ HRESULT CBody_Player::Ready_VerticalJoints()
 				RootDesc.tUserData.szActorTag = TEXT("SkirtBoneRoot") + to_wstring(i);
 				RootDesc.vSize = _float3(0.03f, 0.03f, 0.f);
 				RootDesc.fMass = { 0.f };
-				RootDesc.iCollisionGroup = PHYSX_CUSTOM_2;
+				RootDesc.iCollisionGroup = PHYSX_CUSTOM_4;
 				RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
 				RootDesc.isSimulateSync = false;
 				RootDesc.isQuery = false;
@@ -500,10 +503,10 @@ HRESULT CBody_Player::Ready_VerticalJoints()
 				ChildDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::DYNAMIC;
 				//actor tag로 i번째 인덱스의 iVerticalCount번쨰 자식임을 명시한다.
 				ChildDesc.tUserData.szActorTag = TEXT("SkirtBoneChild") + to_wstring(i) + to_wstring(iVerticalCount);
-				ChildDesc.vMaterial = _float3(0.02f, 0.01f, 0.f);
+				ChildDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
 				ChildDesc.vSize = _float3(0.03f, 0.03f, 0.f);
 				ChildDesc.fMass = { 0.05f };
-				ChildDesc.iCollisionGroup = PHYSX_CUSTOM_2;
+				ChildDesc.iCollisionGroup = PHYSX_CUSTOM_4;
 				ChildDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
 				ChildDesc.isSimulateSync = false;
 				ChildDesc.isQuery = false;
@@ -597,10 +600,10 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 	RigidBodyDesc.vSize = _float3(0.2f, 0.5f, 0.f);
 	RigidBodyDesc.fMass = { 0.f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_2 | PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_4;
 	RigidBodyDesc.isSimulateSync = false;
 	RigidBodyDesc.isQuery = false;
-	RigidBodyDesc.vMaterial = _float3(0.01f, 0.01f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
 
 	//##################### R-Thigh
 	CRigidBody* pRigidBody = { nullptr };
@@ -613,9 +616,8 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 		TEXT("Com_RigidBody_Ab-R-Thigh-Tw1"), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
 		return E_FAIL;
 
-	pRigidBody->Set_AngularDamping(0.1f);
+	pRigidBody->Set_AngularDamping(0.01f);
 	pRigidBody->Set_LinearDamping(0.06f);
-	pRigidBody->Set_CCD(true);
 
 	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
@@ -630,12 +632,93 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 		TEXT("Com_RigidBody_Ab-L-Thigh-Tw1"), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
 		return E_FAIL;
 
-	pRigidBody->Set_AngularDamping(0.1f);
+	pRigidBody->Set_AngularDamping(0.01f);
 	pRigidBody->Set_LinearDamping(0.06f);
-	pRigidBody->Set_CCD(true);
 
 	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+
+
+	//############################## 하반신
+	RigidBodyDesc.vSize = _float3(0.6f, 0.f, 0.f);
+
+	pBone = m_pModelCom->Get_BoneMatrixPtr("SC_PhotoMode_Hide");
+	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+	BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+	XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody_SC_PhotoMode_Hide"), reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+		return E_FAIL;
+
+	pRigidBody->Set_AngularDamping(0.01f);
+	pRigidBody->Set_LinearDamping(0.06f);
+
+	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
+	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	//pRigidBody->Set_CCD(true);
+
+
+	return S_OK;
+}
+
+HRESULT CBody_Player::Ready_UpperRigidBodies()
+{
+	CRigidBody::RIGIDBODY_DESC RigidBodyDesc;
+	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
+	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+	RigidBodyDesc.tUserData.szActorTag = TEXT("BodyCollider");
+	RigidBodyDesc.fMass = { 0.f };
+	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
+	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_2 | PHYSX_CUSTOM_3;
+	RigidBodyDesc.isSimulateSync = false;
+	RigidBodyDesc.isQuery = false;
+	RigidBodyDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		const _float4x4* pBone = {};
+		_wstring strBoneName = TEXT("Com_RigidBody");
+		switch (i)
+		{
+		case 0:
+			RigidBodyDesc.vSize = _float3(0.15f, 0.2f, 0.f);
+			pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-R-UpperArm-Tw1");
+			strBoneName += TEXT("Ab-R-UpperArm-Tw1");
+			break;
+		case 1:
+			RigidBodyDesc.vSize = _float3(0.15f, 0.2f, 0.f);
+			pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-L-UpperArm-Tw1");
+			strBoneName += TEXT("Ab-L-UpperArm-Tw1");
+			break;
+		case 2:
+			RigidBodyDesc.vSize = _float3(0.2f, 0.4f, 0.f);
+			pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-R-Forearm-Tw1");
+			strBoneName += TEXT("Ab-R-Forearm-Tw1");
+			break;
+		case 3:
+			RigidBodyDesc.vSize = _float3(0.2f, 0.4f, 0.f);
+			pBone = m_pModelCom->Get_BoneMatrixPtr("Ab-L-Forearm-Tw1");
+			strBoneName += TEXT("Ab-L-Forearm-Tw1");
+			break;
+		}
+
+		CRigidBody* pRigidBody = { nullptr };
+		_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
+		_matrix BoneWorld = XMLoadFloat4x4(pBone) * OwnerWorld;
+
+		XMStoreFloat4x4(&RigidBodyDesc.StartWorldMatrix, BoneWorld);
+
+		if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
+			strBoneName, reinterpret_cast<CComponent**>(&pRigidBody), &RigidBodyDesc)))
+			return E_FAIL;
+
+		pRigidBody->Set_AngularDamping(0.01f);
+		pRigidBody->Set_LinearDamping(0.06f);
+
+		m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
+		m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+	}
 
 	return S_OK;
 }
@@ -751,4 +834,12 @@ void CBody_Player::Free()
 		Safe_Release(Pair.second);
 	}
 	m_RootRigidBodies.clear();
+
+	for (auto& Pair : m_UpperRigidBodies)
+	{
+		Safe_Release(Pair.second);
+	}
+	m_UpperRigidBodies.clear();
+
+	Safe_Release(m_pMotionTrail);
 }

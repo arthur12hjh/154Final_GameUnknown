@@ -37,10 +37,8 @@ public:
 	
 	virtual	ContainmentType	Contains(_vector Point);
 
-#ifdef _DEBUG
 	virtual HRESULT			Render() override;
 	virtual HRESULT			Render(_float4 vColor);
-#endif // _DEBUG
 
 	void					SetColliderHitType(HIT_TYPE eHitType);
 
@@ -85,10 +83,8 @@ protected:
 	
 	PrimitiveBatch<DirectX::VertexPositionColor>* m_pBatch = { nullptr };
 
-#ifdef _DEBUG
 	BasicEffect*										m_pEffect = { nullptr };
 	ID3D11InputLayout*									m_pInputLayout = { nullptr };
-#endif // _DEBUG
 
 protected :
 	_bool						IntersectAble(HIT_TYPE TagetTypeHashCode);

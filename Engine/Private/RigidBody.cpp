@@ -52,6 +52,18 @@ void CRigidBody::Set_CCD(_bool bFlag)
 	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, bFlag);
 }
 
+//default 0.02f
+void CRigidBody::Set_ContactOffset(_float fValue)
+{
+	Get_PxShape()->setContactOffset(fValue);
+}
+
+//default 0.f
+void CRigidBody::Set_RestOffset(_float fValue)
+{
+	Get_PxShape()->setRestOffset(fValue);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
     return S_OK;
@@ -174,7 +186,6 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 		_uint iMeshNum = pDesc->pColModel->Get_NumMeshes();
 
 		// TriangleMesh는 여러 개일 수 있으므로 Shape 리스트 유지
-		// (CRigidBody::m_pShape 를 첫 번째 shape 로 사용)
 		vector<PxShape*> TriangleShapes;
 		TriangleShapes.reserve(iMeshNum);
 

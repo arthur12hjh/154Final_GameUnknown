@@ -54,11 +54,11 @@ Texture2DArray g_CascadeShadowTexture;
 
 float g_fCascadeEnds[6] = { 
     0.1f,
-	6.0f,
-	20.0f,
-	40.f,
-	100.f,
+	4.0f,
+	10.0f,
+	20.f,
 	500.f,
+	350.f,
 };
 
 

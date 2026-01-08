@@ -27,7 +27,7 @@ public:
 	virtual void						Update(_float fTimeDelta);
 	virtual void						Late_Update(_float fTimeDelta);
 
-	void								Load_BeatData(const char* szSpawnNoteFileData);
+	void								Load_BeatData(const char* szSpawnNoteFileData, _float fSongTime, _uint iBPM, _float fDelay);
 
 private:
 	CCollider*							m_pColliderCom = { nullptr };
@@ -35,6 +35,12 @@ private:
 	
 	const _float4x4*					m_pPlayerTransform = { nullptr };
 	_bool								m_bIsPlay = true;
+
+	_float								m_fTimeAcc = 0.f;
+	_float								m_fDelay = 3.f;
+	_float								m_fSongTime = 0.f;
+	_float								m_fNoteToValiTime = 0.f;
+	_float								m_fSongLength = 0.f;
 
 private:
 	HRESULT								Ready_Components();

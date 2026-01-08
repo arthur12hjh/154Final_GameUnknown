@@ -7,6 +7,8 @@
 
 #include "UIInstanceBuffer.h"
 
+#include "BeatSaberCharacter.h"
+
 CUINeonNumber::CUINeonNumber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -42,21 +44,28 @@ void CUINeonNumber::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
-	{
-		m_iCombo += (_uint)m_pGameInstance->Random(1.f, 4.f);
-		m_iAccuracy = (_uint)m_pGameInstance->Random(0.f, 4.f);
-		m_iHighCombo = max(m_iHighCombo, m_iCombo);
-	}
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
-		m_iCombo = 0;
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	//{
+	//	//m_iCombo += (_uint)m_pGameInstance->Random(1.f, 4.f);
+	//	m_iAccuracy = (_uint)m_pGameInstance->Random(0.f, 4.f);
+	//	m_iHighCombo = max(m_iHighCombo, m_iCombo);
+	//}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
+	//	m_iCombo = 0;
 	
+	auto pDororong = m_pGameManager->GetBeatSaberCharacter();
+	m_iCombo = pDororong->GetBeatSaberCharacterDesc().iComboCnt;
+	m_iAccuracy = pDororong->GetBeatSaberCharacterDesc().iAccuracy;
+	Safe_Release(pDororong);
+
 	if(m_iCombo != m_iPrevCombo)
 	{
 		m_fScaleRatio = 1.2f;
 		m_fAlpha = 1.f;
 		m_fTimeAcc = 0.f;
 		m_iPrevCombo = m_iCombo;
+
+		m_iHighCombo = max(m_iHighCombo, m_iCombo);
 	}
 
 	if (m_fAlpha > 0.f)
@@ -92,8 +101,8 @@ void CUINeonNumber::Late_Update(_float fTimeDelta)
 
 HRESULT CUINeonNumber::Render()
 {
-	if (m_iCombo < 5)
-		return S_OK;
+	//if (m_iCombo < 5)
+	//	return S_OK;
 
 	__super::Render();
 

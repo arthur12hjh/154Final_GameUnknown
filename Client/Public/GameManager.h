@@ -34,7 +34,9 @@ public :
 	void						Update(_float fTimeDelta);
 #pragma region Default 
 	void						Bind_GameCharacter(class CPlayer* pCharacter);
+	void						Bind_BeatSaberCharacter(class CBeatSaberCharacter* pCharacter);
 	class CPlayer*				GetGameCharacter();
+	class CBeatSaberCharacter*	GetBeatSaberCharacter();
 
 	void						SavePlayerDesc();
 	void						SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
@@ -151,6 +153,7 @@ private :
 	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
 	class CPlayer*									m_pPlayer = { nullptr };
+	class CBeatSaberCharacter*						m_pBeatSaberCharacter = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
 	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
 	

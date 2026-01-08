@@ -133,7 +133,7 @@ HRESULT CLightTool::Render()
 	if (ImGui::Checkbox("Light Tool Mode", &m_bIsLightMode))
 	{
 		if (m_bIsLightMode)
-		{
+		{`
 			m_eToolMode = TOOL_MODE::LIGHT;
 			m_bIsMapMode = false;
 		}

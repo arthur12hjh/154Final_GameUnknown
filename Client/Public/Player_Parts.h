@@ -28,6 +28,7 @@ public:
 	
 	void					EnableMotionTrail(_bool bIsEnable);
 	void					SetMotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor);
+	void					SetMotionTrailCoolDown(_float fCoolDown);
 
 protected:
 	class CGameManager*		m_pGameManager = { nullptr };

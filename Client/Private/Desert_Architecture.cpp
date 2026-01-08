@@ -44,6 +44,8 @@ HRESULT CDesert_Architecture::Initialize(void* pArg)
 	}
 		
 
+	m_pGameInstance->Add_StaticShadowObject(this);
+
 	return S_OK;
 }
 
@@ -97,6 +99,11 @@ HRESULT CDesert_Architecture::Render()
 			return E_FAIL;
 	}
 
+	return S_OK;
+}
+
+HRESULT CDesert_Architecture::Render_Shadow()
+{
 	return S_OK;
 }
 

@@ -434,6 +434,15 @@ HRESULT CLoader::Loading_For_Village()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom4.binx", PreTransformMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_BlossomMask */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_BlossomMask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Tree/009_B_TD_Mask.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_BlossomMask2 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_BlossomMask2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Tree/009_Bc_TD_Mask.png"), 1))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Giwajip */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));

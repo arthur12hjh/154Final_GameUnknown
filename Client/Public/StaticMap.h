@@ -7,6 +7,7 @@ NS_BEGIN(Engine)
 class CModel;
 class CShader;
 class CCollider;
+class CTexture;
 NS_END
 
 NS_BEGIN(Client)
@@ -30,10 +31,14 @@ protected:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
+	CTexture* m_pTextureCom = { nullptr };
 
 protected:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
+
+protected:
+	_float m_fTimeAcc = { 0.f };
 
 public:
 	static CStaticMap* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -5,11 +5,16 @@
 #include "GameManager.h"
 #include "Camera_Free.h"
 
+#include "UIStruct.h"
+
 #include "UIHUD.h"
 #include "Level_Loading.h"
 #include "StringHelper.h"
 #include "BeatSaberSpawner.h"
+#include "BeatSaberCharacter.h"
 #include "Note.h"
+
+#include "PlaySongEvent.h"
 
 CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID) :
     CLevel(pDevice, pContext, ENUM_CLASS(eLevelID))
@@ -50,6 +55,12 @@ HRESULT CLevel_BeatSaber::Initialize()
 
     Load_Dororong_Saber_Objects("../../Map_Editor/Bin/DataFiles/Dororong_Saber.bin");
 
+    m_pPlaySongEvent = CPlaySongEvent::Create([&](void* pArg) {
+        UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+        Play_GameBGM(*static_cast<_wstring*>(Desc.pData), 1.f);
+        });
+    m_pGameInstance->Bind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
+
     return S_OK;
 }
 
@@ -63,8 +74,8 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
         m_isOverlay = false;
     }*/
 
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
-        Play_GameBGM(TEXT("Test"), 1.f);
+    //if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
+    //    Play_GameBGM(TEXT("Test"), 1.f);
 
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
     {
@@ -107,6 +118,25 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
     {
         static_cast<CUIHUD*>(m_pHUD)->Open_Song_Selector();
+    }
+
+    if (m_bSongStart)
+        m_fTimeAcc += fTimeDelta;
+
+    if (m_fTimeAcc >= m_fSongDelay)
+    {
+        m_pGameInstance->Manager_PlayBGM(m_szSongFile.c_str(), m_fVolume, 0,
+            [&](FMOD_CHANNELCONTROL* channelcontrol,
+                FMOD_CHANNELCONTROL_TYPE controltype,
+                FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
+                void* commanddata1,
+                void* commanddata2)
+            {
+                Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+            });
+
+        m_fTimeAcc = 0.f;
+        m_bSongStart = false;
     }
 }
 
@@ -210,7 +240,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Player(const _wstring& strLayerTag)
     CGameObject::GAMEOBJECT_DESC Desc = {};
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
-    Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
+    Desc.vRotation = { 0.f , XMConvertToRadians(220.f), 0.f, 0.f };
     Desc.vPosition = { 0.f, 4.f, -0.6f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
@@ -256,8 +286,8 @@ HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
     CBeatSaberSpawner::BEATSABER_SPAWNER_DESC Desc = {};
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
-    Desc.vRotation = { 0.f , XMConvertToRadians(210.f), 0.f, 0.f };
-    Desc.vPosition = { 30.f, 4.f, 30.f };
+    Desc.vRotation = { 0.f , XMConvertToRadians(180.f), 0.f, 0.f };
+    Desc.vPosition = { 50.f, 4.f, 50.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
     Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();
@@ -278,11 +308,13 @@ HRESULT CLevel_BeatSaber::Load_SongList(const char* szDataFile)
     CStringHelper::CSVRead(szDataFile, DataList);
 
     _uint iLastIndex = (_uint)DataList.size();
-    for (_uint i = 3; i < iLastIndex;)
+    for (_uint i = 5; i < iLastIndex;)
     {
         CStringHelper::ConvertUTFToWide(DataList[i++].c_str(), szKeyName);
         CStringHelper::ConvertUTFToWide(DataList[i++].c_str(), Data.SongFileName);
         strcpy_s(Data.NoteFileName, DataList[i++].c_str());
+        Data.fSongTime = atof(DataList[i++].c_str());
+        Data.iBPM = atoi(DataList[i++].c_str());
 
         m_SongList.emplace(szKeyName, Data);
     }
@@ -301,17 +333,28 @@ void CLevel_BeatSaber::Play_GameBGM(const wstring& szFileTag, _float fVolume)
     if (nullptr == pList)
         return;
 
-    m_pGameInstance->Manager_PlayBGM(pData->SongFileName, fVolume, 0,
-        [&](FMOD_CHANNELCONTROL* channelcontrol,
-            FMOD_CHANNELCONTROL_TYPE controltype,
-            FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
-            void* commanddata1,
-            void* commanddata2)
-        {
-            Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
-        });
+    m_bSongStart = true;
+    m_szSongFile = pData->SongFileName;
+    m_fVolume = fVolume;
+    m_fSongDelay = 3.f;
 
-    static_cast<CBeatSaberSpawner*>(pList->front())->Load_BeatData(pData->NoteFileName);
+    auto pGameManager = CGameManager::GetInstance();
+    auto pDororong = (pGameManager->GetBeatSaberCharacter());
+    pDororong->ResetPoints();
+
+    Safe_Release(pDororong);
+
+    //m_pGameInstance->Manager_PlayBGM(pData->SongFileName, fVolume, 0,
+    //    [&](FMOD_CHANNELCONTROL* channelcontrol,
+    //        FMOD_CHANNELCONTROL_TYPE controltype,
+    //        FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
+    //        void* commanddata1,
+    //        void* commanddata2)
+    //    {
+    //        Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+    //    });
+
+    static_cast<CBeatSaberSpawner*>(pList->front())->Load_BeatData(pData->NoteFileName, pData->fSongTime, pData->iBPM, m_fSongDelay);
 }
 
 CLevel_BeatSaber::NOTE_DATA_NAME* CLevel_BeatSaber::Get_FindSongFile(const wstring& szFileTag)
@@ -329,6 +372,7 @@ FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontr
     {
         m_pGameInstance->Manager_StopAll();
         m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
+        static_cast<CUIHUD*>(m_pHUD)->Open_Result();
     }
 
     return FMOD_RESULT::FMOD_OK;
@@ -403,6 +447,26 @@ CLevel_BeatSaber* CLevel_BeatSaber::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 
 void CLevel_BeatSaber::Free()
 {
-    
     __super::Free();
+
+    m_pGameInstance->Manager_StopAll();
+
+    m_pGameInstance->UnBind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
+
+    Safe_Release(m_pPlaySongEvent);
 }
+
+/*
+* 174bpm
+4/4 59개
+1분20.7초
+앞 딜레이 0.8초 (1/4박)
+총 233박
+4/4박에 1.4초
+1박에 0.25초
+1박에 0.3448초 (0.3448276)
+
+노래 총 길이
+bpm
+
+*/

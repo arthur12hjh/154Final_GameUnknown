@@ -18,6 +18,7 @@
 #include "UIHUD.h"
 #include "UIScript.h"
 #include "ChangeLevelEvent.h"
+#include "TeleportEvent.h"
 
 #include "SpriteParticle.h"
 
@@ -83,6 +84,13 @@ HRESULT CLevel_GamePlay::Initialize()
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
 
+	m_pTeleportEvent = CTeleportEvent::Create([&](void* pArg) {
+		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+		m_bTeleport = *static_cast<_bool*>(Desc.pData);
+		});
+	m_pGameInstance->Bind_Observer(TEXT("TelePort"), m_pTeleportEvent);
+
 #ifdef _DEBUG
 	CImGuiManager::GetInstance()->SetLevelFreeCamera();
 #endif // _DEBUG
@@ -101,21 +109,16 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 		CGameManager::GetInstance()->Play_Cinematic(126);
 	}
 
-	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
-	{
-		static_cast<CUIHUD*>(m_pHUD)->Open_Shop();
-	}
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
-	{
-		static_cast<CUIHUD*>(m_pHUD)->Close_Shop();
-	}*/
-
-
-
 	if (m_isOverlay && m_pHUD)
 	{
 		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
 		m_isOverlay = false;
+	}
+
+	if (m_bTeleport && m_pHUD)
+	{
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 0.5f);
+		m_bTeleport = false;
 	}
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
@@ -376,6 +379,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 	Desc.vPosition = { 222.f, 55.f, 222.f};
+	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
 
@@ -955,6 +959,7 @@ void CLevel_GamePlay::Free()
 	m_pGameInstance->SetInteractionBaseObject(nullptr);
 
 	m_pGameInstance->UnBind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+	m_pGameInstance->UnBind_Observer(TEXT("TelePort"), m_pTeleportEvent);
 
 	Safe_Release(m_pLevelChangeEvent);
 

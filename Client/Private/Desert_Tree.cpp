@@ -89,6 +89,31 @@ HRESULT CDesert_Tree::Render()
 	return S_OK;
 }
 
+HRESULT CDesert_Tree::Render_Shadow()
+{
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightViewMatrix", D3DTS::VIEW)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Cascade(m_pShaderCom, "g_LightProjMatrix", D3DTS::PROJ)))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMeshes; i++)
+	{
+		if (FAILED(m_pShaderCom->Begin(6)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CDesert_Tree::Ready_Components(const _tchar* pComponentTag)
 {
 	auto pCullingCollider = static_cast<COBBCollider*>(m_pCullingCollider);

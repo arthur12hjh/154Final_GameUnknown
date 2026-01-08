@@ -51,6 +51,7 @@ private:
 	void Update_TextureMap();
 	void Update_EventMaker();
 
+	void Update_ShapeKeys();
 
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
@@ -65,6 +66,8 @@ private:
 	unordered_map<_wstring, vector<ANIM_NOTIFY>>*	m_pAnimationEventMap = { nullptr };
 
 	ImGuiTextFilter						m_AnimSearchFilter;
+
+	_uint								m_iCurrentObjectIndex = 0;
 
 	_int								m_iSelectedAnimationIndex = 0;
 	_int								m_iBeforeAnimationIndex = -1;
