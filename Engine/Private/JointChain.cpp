@@ -223,29 +223,31 @@ void CJointChain::Update(_float fTimeDelta)
 
 void CJointChain::Set_RootJoint()
 {
-    //   - 과도하게 높일 필요는 없고, 흔히 16~24 / 4~8 범위에서 타협
+    //   과도하게 높일 필요는 없고, 흔히 16~24 / 4~8 범위에서 타협
     static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setSolverIterationCounts(24, 8); // posIters/velIters (일단 강하게)
-    //   - "너무 금방 멈춘다/찰랑이 없다" -> AngularDamping 내리기 (예: 2.0 -> 1.0 ~ 1.5)
-    //   - "상모돌리기/과회전"           -> AngularDamping 올리기 (예: 2.0 -> 3.0 ~ 4.0)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setAngularDamping(1.9f);
-    // - 머리카락처럼 "가볍게" 보이려면 보통 낮게 둠(0.05~0.3 선에서 많이 시작)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setLinearDamping(0.025f);
-    //   - "돌아오는게 느리다/답답" -> MaxAngularVelocity 올리기 (예: 8 -> 15~30)
-    //   - "너무 과하게 휙휙 돈다" -> MaxAngularVelocity 내리기 (예: 30 -> 15)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxAngularVelocity(10.f);
-    //   - "몸에 닿으면 질질 끌리고 느리다" -> MaxDepenetrationVelocity 올리기 (예: 2 -> 6~12)
-    //   - "충돌 때 튕겨나가며 과장"        -> MaxDepenetrationVelocity 내리기 (예: 12 -> 6)
-    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxDepenetrationVelocity(10.f); // 충돌 보정 폭주 억제
+    //   "너무 금방 멈춘다/찰랑이 없다" -> AngularDamping 내리기 (예: 2.0 -> 1.0 ~ 1.5)
+    //   "상모돌리기/과회전"           -> AngularDamping 올리기 (예: 2.0 -> 3.0 ~ 4.0)
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setAngularDamping(1.8f);
+    //   머리카락처럼 "가볍게" 보이려면 보통 낮게 둠(0.05~0.3 선에서 많이 시작)
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setLinearDamping(0.15f);
+    //   "돌아오는게 느리다/답답" -> MaxAngularVelocity 올리기 (예: 8 -> 15~30)
+    //   "너무 과하게 휙휙 돈다" -> MaxAngularVelocity 내리기 (예: 30 -> 15)
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxAngularVelocity(13.f);
+    //   "몸에 닿으면 질질 끌리고 느리다" -> MaxDepenetrationVelocity 올리기 (예: 2 -> 6~12)
+    //   "충돌 때 튕겨나가며 과장"        -> MaxDepenetrationVelocity 내리기 (예: 12 -> 6)
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxDepenetrationVelocity(FLT_MAX); // 충돌 보정 폭주 억제
+    static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setMaxLinearVelocity(25.f); // 충돌 보정 이후 가속 방지
     static_cast<PxRigidDynamic*>(m_pRoot->Get_PxRigidBody())->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 }
 
 void CJointChain::Set_ChildJoint(CRigidBody* pRigidBody)
 {
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setSolverIterationCounts(24, 8); // posIters/velIters (일단 강하게)
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setAngularDamping(1.9f);
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setLinearDamping(0.025f);
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxAngularVelocity(10.f);
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxDepenetrationVelocity(10.f); // 충돌 보정 폭주 억제
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setAngularDamping(1.8f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setLinearDamping(0.15f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxAngularVelocity(13.f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxDepenetrationVelocity(FLT_MAX); // 충돌 보정 폭주 억제
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxLinearVelocity(25.f); // 충돌 보정 이후 가속 방지
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 }
 

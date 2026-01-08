@@ -79,6 +79,9 @@
 		void Set_AngularDamping(_float fValue);
 		void Set_LinearDamping(_float fValue);
 		void Set_CCD(_bool bFlag);
+		void Set_ContactOffset(_float fValue);
+		void Set_RestOffset(_float fValue);
+
 	public:
 		virtual HRESULT Initialize_Prototype() override;
 		virtual HRESULT Initialize(void* pArg) override;
