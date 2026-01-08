@@ -165,8 +165,10 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 	for (size_t i = 0; i < m_pGameManager->Find_AllTransportDatas()->size(); ++i)
 	{
 		MAP_SELECTOR_DESC Desc{};
-		Desc.bIsEnableMove = m_pGameManager->Find_TransportData(i)->bIsEnableMove;
+		if (m_pGameManager->Find_TransportData(i)->szAreaName == TEXT(""))
+			continue;
 		Desc.szAreaName = m_pGameManager->Find_TransportData(i)->szAreaName;
+		Desc.bIsEnableMove = m_pGameManager->Find_TransportData(i)->bIsEnableMove;
 		Desc.eTargetLevel = m_pGameManager->Find_TransportData(i)->eTargetLevel;
 		Desc.vTransportpoint = m_pGameManager->Find_TransportData(i)->vTransportpoint;
 		m_ButtonDescs.push_back(Desc);

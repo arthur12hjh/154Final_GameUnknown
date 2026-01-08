@@ -194,6 +194,8 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 
 	SetHUD(pUIHUD);
 
+	pUIHUD->Set_Show_Debug_Rect(false);
+
 	if (m_eNextLevelID == LEVEL::BEATSABER_GAME)
 	{
 		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading_BeatSaber"))))
@@ -205,8 +207,6 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 	{
 		if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Loading"))))
 			return E_FAIL;
-
-		pUIHUD->Set_Show_Debug_Rect(false);
 
 		CUIScript* pScript = dynamic_cast<CUIScript*>(pUIHUD->Get_UIObject(TEXT("Layer_Loading"), TEXT("UI_Scripts")));
 	

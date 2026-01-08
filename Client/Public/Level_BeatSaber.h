@@ -4,6 +4,8 @@
 #include "Level.h"
 
 NS_BEGIN(Client)
+class CPlaySongEvent;
+
 class CLevel_BeatSaber : public CLevel
 {
 public:
@@ -16,6 +18,8 @@ public:
 	{
 		WCHAR			SongFileName[MAX_PATH];
 		char			NoteFileName[MAX_PATH];
+		_float			fSongTime;
+		_uint			iBPM;
 	}NOTE_DATA_NAME;
 
 private:
@@ -35,6 +39,12 @@ private :
 	_bool										m_bChangeLevel{ false };
 	_bool										m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 	_bool										m_isOverlay{ true };
+
+	_wstring									m_szSongFile{};
+	_float										m_fVolume{};
+	_bool										m_bSongStart{ false };
+	_float										m_fSongDelay{ 1.f };
+	_float										m_fTimeAcc{ 0.f };
 
 private:
 	HRESULT						Ready_Lights();
@@ -58,6 +68,9 @@ private:
 	HRESULT						Load_Dororong_Saber_Objects(const _char* szFilePath);
 	HRESULT						Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	NOTE_DATA_NAME*				Get_FindSongFile(const wstring& szFileTag);
+
+private:
+	CPlaySongEvent*				m_pPlaySongEvent{ nullptr };
 
 public:
 	static CLevel_BeatSaber*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
