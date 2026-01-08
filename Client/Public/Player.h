@@ -34,6 +34,9 @@ public:
 	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
 	class CPlayerFSM* Get_PlayerFSM() { return m_pFSM; }
+	void MotionTrailEnable(_bool bIsEnable);
+	void MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor);
+	void MotionTrailCoolDown(_float fCoolDown);
 
 public:
 	virtual HRESULT		Initialize_Prototype() override;
@@ -92,9 +95,6 @@ private:
 	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
 
 	void CreateHitBox(const AnimNotify* pNotify);
-
-	void MotionTrailEnable(_bool bIsEnable);
-	void MotionTrailRimLight(_float fRimLightPower, _float fRimLightIntensity, _float4 vColor);
 
 private:
 	void Execution_Nayitba();

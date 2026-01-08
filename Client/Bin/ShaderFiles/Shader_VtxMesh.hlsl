@@ -50,6 +50,40 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
+VS_OUT VS_BLOSSOM(VS_IN In)
+{
+    VS_OUT Out;
+    
+    matrix matWV, matWVP;
+    
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    float4 vMask = g_MaskTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
+
+    float4 vLocalPos = vector(In.vPosition, 1.f);
+
+    float fWeight = vMask.r;
+    float fWave = 0.f;
+    // 마스크가 흰색인 부분만 흔들림
+    if(fWeight > 0.1f)
+    {
+        fWave = sin(g_fTime * 2.5f + vLocalPos.y) * 0.15f * fWeight;
+    }
+    
+    vLocalPos.x += fWave;
+    vLocalPos.z += fWave;
+    
+    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+    return Out;
+}
+
 VS_OUT_STATIC_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_STATIC_SHADOW Out;
