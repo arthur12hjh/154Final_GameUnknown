@@ -29,6 +29,7 @@ HRESULT CCinematicManager::Initialize()
     m_iCurrentCinematicID = -1;
     m_bIsCinematicPlaying = false;
     m_bIsCinematicSkip = FALSE;
+
     return S_OK;
 }
 
@@ -301,13 +302,17 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
             static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Intro"));
             Safe_Release(pHUD);
+
             break;
         }
         case CINEMATICNODE_STATE::FADE_OUT:
         {
 			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Outro"));
+
+            _float fDelay = (_float)CinematicNodeDesc.iActiveIndex;
+            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Outro"), fDelay);
             Safe_Release(pHUD);
+
             break;
         }
         case CINEMATICNODE_STATE::PLAY_SOUND:
