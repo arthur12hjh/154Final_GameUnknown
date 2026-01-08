@@ -82,43 +82,8 @@ void CUIResult::Update(_float fTimeDelta)
 	else
 		return;
 
-	//// ESC ют╥б
-	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && !m_bActiveEsc)
-	//{
-	//	m_fEscKeyPressedTime += fTimeDelta;
-
-	//	UI_EVENT_ARG_DESC Arg{};
-	//	Arg.szActionTag = TEXT("EscKey_Event");
-	//	Arg.Type = UI_EVENT_ARG_DESC::FLOAT;
-	//	Arg.pData = &m_fEscKeyPressedTime;
-	//	__super::Trigger_Event(TEXT("EscKey_Event"), &Arg);
-	//}
-	//if (m_pGameInstance->KeyUp(KEY_INPUT::KEYBOARD, DIK_ESCAPE))
-	//{
-	//	m_fEscKeyPressedTime = 0.f;
-
-	//	UI_EVENT_ARG_DESC Arg{};
-	//	Arg.szActionTag = TEXT("EscKey_Event");
-	//	Arg.Type = UI_EVENT_ARG_DESC::FLOAT;
-	//	Arg.pData = &m_fEscKeyPressedTime;
-	//	__super::Trigger_Event(TEXT("EscKey_Event"), &Arg);
-	//}
-	//if (m_fEscKeyPressedTime >= 2.f)
-	//{
-	//	m_bActiveEsc = true;
-	//	UI_EVENT_ARG_DESC Arg2{};
-	//	Arg2.szActionTag = TEXT("EscKey_Event");
-	//	Arg2.Type = UI_EVENT_ARG_DESC::BOOL;
-	//	Arg2.pData = &m_bActiveEsc;
-	//	__super::Trigger_Event(TEXT("EscKey_Event"), &Arg2);
-	//	m_fEscKeyPressedTime = 0.f;
-
-	//	Close_Result();
-	//}
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
 		Close_Result();
-		
 }
 
 void CUIResult::Late_Update(_float fTimeDelta)
