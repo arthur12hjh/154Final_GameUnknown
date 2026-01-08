@@ -54,16 +54,11 @@ VS_OUT VS_BLOSSOM(VS_IN In)
 {
     VS_OUT Out;
     
-    matrix matWV, matWVP;
-    
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-    
     float4 vMask = g_MaskTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
 
     float4 vLocalPos = vector(In.vPosition, 1.f);
 
-    float fWeight = vMask.r;
+    float fWeight = vMask.a;
     float fWave = 0.f;
     // 마스크가 흰색인 부분만 흔들림
     if(fWeight > 0.1f)
@@ -74,7 +69,10 @@ VS_OUT VS_BLOSSOM(VS_IN In)
     vLocalPos.x += fWave;
     vLocalPos.z += fWave;
     
-    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    matrix matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matrix matWVP = mul(matWV, g_ProjMatrix);
+    
+    Out.vPosition = mul(vLocalPos, matWVP);
     Out.vTexcoord = In.vTexcoord;
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
@@ -390,7 +388,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MOON_GAMEOBJECT();
     }
 
-    // 기가스 맵에 깔린 나무
     // idx 8
     pass Tree
     {
@@ -398,6 +395,17 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_TREE();
+    }
+
+    // idx 9
+    pass BLOSSOM
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BLOSSOM();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_TREE();
     }

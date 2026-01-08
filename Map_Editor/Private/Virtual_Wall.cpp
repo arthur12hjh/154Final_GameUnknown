@@ -44,7 +44,9 @@ void CVirtual_Wall::Late_Update(_float fTimeDelta)
 {
     /*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {*/
+#ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCollider);
+#endif
     //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 //}
 }

@@ -7,6 +7,7 @@ NS_BEGIN(Engine)
 class CModel;
 class CShader;
 class CCollider;
+class CTexture;
 NS_END
 
 NS_BEGIN(Tool_Map)
@@ -30,6 +31,9 @@ protected:
 	CModel* m_pModelCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
+	CTexture* m_pTextureCom = { nullptr };
+
+	_float m_fTimeAcc = { 0.f };
 
 protected:
 	HRESULT Ready_Components();
