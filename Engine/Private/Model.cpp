@@ -26,8 +26,10 @@ CModel::CModel(const CModel& Prototype)
     , m_Materials{ Prototype.m_Materials }
     , m_PreTransformMatrix{ Prototype.m_PreTransformMatrix }
     , m_iNumAnimations{ Prototype.m_iNumAnimations }
+    , m_iNumMorphAnimations{ Prototype.m_iNumMorphAnimations }
     , m_GlobalOffsetMatrices{ Prototype.m_GlobalOffsetMatrices }
     , m_AnimationIndexMap{ Prototype.m_AnimationIndexMap }
+    , m_ShapeKeyIndexMap{ Prototype.m_ShapeKeyIndexMap }
     , m_pOutSource{ nullptr }
     , m_pPreBoneMatrices{ nullptr }
     , m_pOutReadBack{ nullptr }
@@ -46,6 +48,7 @@ CModel::CModel(const CModel& Prototype)
     for (auto& pMaterial : m_Materials)
         Safe_AddRef(pMaterial);
 
+
     for (auto* pChannelSRV : Prototype.m_pChannelSRVList)
     {
         Safe_AddRef(pChannelSRV);
@@ -60,6 +63,9 @@ CModel::CModel(const CModel& Prototype)
 
     for (auto& pPrototypeAnim : Prototype.m_Animations)
         m_Animations.push_back(pPrototypeAnim->Clone());
+
+    for (auto& pPrototypeMorphAnim : Prototype.m_MorphAnimations)
+        m_MorphAnimations.push_back(pPrototypeMorphAnim->Clone());
 
     memcpy(m_szBindTags, Prototype.m_szBindTags, sizeof(m_szBindTags));
 }
@@ -117,6 +123,35 @@ vector<class CMaterial*>* CModel::Get_Materials()
 _int CModel::Get_ShapeIndex(const _char* pShapeName) const
 {
     return _int();
+}
+
+void CModel::Set_ShapeWeightIndex(_uint iShapeKeyIndex, _float fWeight)
+{
+    for (auto& pMesh : m_Meshes)
+        pMesh->Set_ShapeWeight(iShapeKeyIndex, fWeight);
+}
+
+void CModel::Set_ShapeWeight(const _char* szShapeTag, _float fWeight)
+{
+    auto iter = m_ShapeKeyIndexMap.find(szShapeTag);
+
+    if (iter == m_ShapeKeyIndexMap.end())
+        return;
+
+    for (auto& pMesh : m_Meshes)
+        pMesh->Set_ShapeWeight(iter->second, fWeight);
+}
+
+void CModel::Bind_ShapeWeight()
+{
+    for (auto& pMesh : m_Meshes)
+        pMesh->Bind_ShapeWeight();
+}
+
+void CModel::Reset_ShapeWeight()
+{
+    for (auto& pMesh : m_Meshes)
+        pMesh->Reset_ShapeWeight();
 }
 
 _uint CModel::Get_AnimationKeyFrameIndex() const
@@ -431,6 +466,76 @@ void CModel::Set_Animation(const _char* szAnimationTag, _bool isLoop, _float fAn
 
 
     return;
+}
+
+void CModel::Set_MorphAnimationIndex(_int iAnimIndex, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+{
+    _uint iMorphAnimIndex = iAnimIndex;
+    if (iMorphAnimIndex >= m_MorphAnimations.size())
+        return;
+
+    m_fMorphAnimationPlayRate = fAnimationPlayRate;
+
+    if (-1 == iMorphAnimIndex)
+        return;
+
+    if (m_iCurrentMorphAnimIndex == iMorphAnimIndex && bIsRestart == FALSE)
+        return;
+
+    m_iCurrentMorphAnimIndex = iMorphAnimIndex;
+    m_isMorphLoop = isLoop;
+
+    m_MorphAnimations[m_iCurrentMorphAnimIndex]->Reset();
+
+    return;
+}
+
+
+/// <기존 CPU ShapeKey 작동방식>
+//  1. fCurrentTrackPosition == 0이면 모든 pCurrentKeyFrameIndices 초기화
+//  2. LastKeyFrame에 마지막 키프레임 구조체 받기
+//  3. fCurrentTrackPosition이 LaskKeyFrame의 fTrackPosition보다 클 경우, 마지막 프레임으로 고정하고 신호를 쏴준다.
+//  4. 아닐 경우, 다음 인덱스의 fTrackPosition과 fTrackPosition을 비교해서 더하기를 해준다.
+//    4-2. 지금 Weight랑 다음 Weight 사이를 보간해준다.
+//	  4-3. Set_ShapeWeight()를 실행해준다.
+//    4-4. 이를 반복한다.
+/// <앞으로의 GPU ShapeKey 작동방식>
+//  1. Set_MorphAnimation
+//  2. 
+//  3. 
+//  
+
+void CModel::Set_MorphAnimation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
+{
+    _uint iMorphAnimIndex = Find_Animation(szAnimationTag);
+    m_fMorphAnimationPlayRate = fAnimationPlayRate;
+
+    if (-1 == iMorphAnimIndex)
+        return;
+
+    if (m_iCurrentMorphAnimIndex == iMorphAnimIndex && bIsRestart == FALSE)
+        return;
+
+    m_iCurrentMorphAnimIndex = iMorphAnimIndex;
+    m_isMorphLoop = isLoop;
+
+    m_MorphAnimations[m_iCurrentMorphAnimIndex]->Reset();
+
+    return;
+}
+
+HRESULT CModel::Initialize_ShapeKeyIndexMap()
+{
+    m_ShapeKeyIndexMap.clear();
+
+    _uint iShapeKeyIndex = 0;
+    for (auto& pShapeKey : *m_Meshes[0]->Get_ShapeKeys())
+    {
+        m_ShapeKeyIndexMap.emplace(pShapeKey->Get_Name(), iShapeKeyIndex);;
+        ++iShapeKeyIndex;
+    }
+
+    return S_OK;
 }
 
 HRESULT CModel::Initialize_AnimationIndexMap()
@@ -977,8 +1082,7 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
     if (eType == MODEL_TYPE::FACIAL)
     {
-        if (FAILED(Ready_ShapeKeys()))
-            return E_FAIL;
+        Initialize_ShapeKeyIndexMap();
 
         if (FAILED(Ready_MorphAnimations()))
             return E_FAIL;
@@ -1047,6 +1151,14 @@ HRESULT CModel::Bind_BoneSRV(_uint iMeshIndex, CShader* pShader, const _char* pC
         return E_FAIL;
 
     return S_OK;
+}
+
+HRESULT CModel::Bind_ShapeKeys(_uint iMeshIndex, CShader* pShader, const _char* pConstantName)
+{
+    if (iMeshIndex >= m_iNumMeshes)
+        return E_FAIL;
+
+    return m_Meshes[iMeshIndex]->Bind_ShapeKeys(pShader, pConstantName);
 }
 
 HRESULT CModel::Bind_Material(_uint iMeshIndex, CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex)
@@ -1170,6 +1282,40 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
         m_pContext->CopyResource(m_pOutRootReadBack, m_pRootSource);
         Apply_RootMotion(pTransform, fRootMotionMagnification);
     }
+
+    return m_isFinish;
+}
+
+
+//
+_bool CModel::Play_MorphAnimation(_float fTimeDelta)
+{
+    _float fScaledDeltaTime = fTimeDelta * m_fMorphAnimationPlayRate;
+
+    if (-1 == m_iCurrentMorphAnimIndex ||
+        m_iCurrentMorphAnimIndex >= m_iNumMorphAnimations)
+        return false;
+
+
+    Reset_ShapeWeight();
+
+
+    // 애니메이션 트랙 업데이트
+    _int iAnimationState =
+        m_MorphAnimations[m_iCurrentMorphAnimIndex]->Update_TrackPosition(this, m_isMorphLoop, fScaledDeltaTime);
+
+    if (iAnimationState == iFLAG_ANIMATION_FINISH)
+        m_isFinish = TRUE;
+    else if (iAnimationState == iFLAG_ANIMATION_PLAY)
+        m_isFinish = FALSE;
+    else if (iAnimationState == iFLAG_ANIMATION_RESET)
+    {
+        m_isFinish = FALSE;
+    }
+
+    //m_MorphAnimations[m_iCurrentMorphAnimIndex]->Update_CurrentKeyFrameIndices();
+
+    //Bind_MorphAnimations(fScaledDeltaTime);
 
     return m_isFinish;
 }
@@ -1320,26 +1466,32 @@ HRESULT CModel::Ready_Animations()
     return S_OK;
 }
 
-HRESULT CModel::Ready_ShapeKeys()
+//HRESULT CModel::Ready_ShapeKeys()
+//{
+//    m_iNumShapeKeys = m_pModel->vMeshes[0].iNumAnimMeshes;
+//
+//    for (size_t i = 0; i < m_iNumShapeKeys; i++)
+//    {
+//        CShapeKey* pShapeKey = CShapeKey::Create(this, &m_pModel->vMeshes[0].vAnimMesh[i]);
+//        if (nullptr == pShapeKey)
+//            return E_FAIL;
+//
+//        m_ShapeKeys.push_back(pShapeKey);
+//    }
+//
+//    m_ShapeKeyWeights.resize(m_ShapeKeys.size(), 0.f);
+//
+//    return S_OK;
+//}
+
+HRESULT CModel::Bind_MorphAnimations(_float fTimeDelta)
 {
-    m_iNumShapeKeys = m_pModel->vMeshes[0].iNumAnimMeshes;
-
-    for (size_t i = 0; i < m_iNumShapeKeys; i++)
-    {
-        CShapeKey* pShapeKey = CShapeKey::Create(this, &m_pModel->vMeshes[0].vAnimMesh[i]);
-        if (nullptr == pShapeKey)
-            return E_FAIL;
-
-        m_ShapeKeys.push_back(pShapeKey);
-    }
-
     return S_OK;
 }
 
 HRESULT CModel::Ready_MorphAnimations()
 {
     m_iNumMorphAnimations = m_pModel->iNumAnimations;
-    m_iNumAnimations = 0;
 
     for (size_t i = 0; i < m_iNumMorphAnimations; i++)
     {
@@ -2086,6 +2238,7 @@ HRESULT CModel::Bind_GlobalOffsetMatrices(CShader* pShader)
     if (!m_GlobalOffsetMatrices.empty())
     {
         _uint iNumOffsets = (_uint)m_GlobalOffsetMatrices.size();
+
         //512
         if (iNumOffsets > 512)
             iNumOffsets = 512;
@@ -2144,7 +2297,11 @@ void CModel::Free()
     for (auto& pAnimation : m_Animations)
         Safe_Release(pAnimation);
     m_Animations.clear();
-
+     
+    for (auto& pMorphAnimation : m_MorphAnimations)
+        Safe_Release(pMorphAnimation);
+    m_MorphAnimations.clear();
+     
     for (auto& pBone : m_Bones)
         Safe_Release(pBone);
     m_Bones.clear();

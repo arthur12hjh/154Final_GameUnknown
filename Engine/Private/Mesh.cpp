@@ -2,6 +2,7 @@
 
 #include "Bone.h"
 #include "Model.h"
+#include "ShapeKey.h"
 #include "Shader.h"
 
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -11,7 +12,73 @@ CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CMesh::CMesh(const CMesh& Prototype)
 	: CVIBuffer{ Prototype }
+	, m_iNumShapeKeys{ Prototype.m_iNumShapeKeys }
+	, m_pCombinedShapeKeyBuffer {Prototype.m_pCombinedShapeKeyBuffer }
+	, m_pCombinedShapeKeySRV {Prototype.m_pCombinedShapeKeySRV }
 {
+	Safe_AddRef(m_pCombinedShapeKeyBuffer);
+	Safe_AddRef(m_pCombinedShapeKeySRV);
+
+	m_ShapeKeys.reserve(Prototype.m_ShapeKeys.size());
+	for (auto& pShapeKey : Prototype.m_ShapeKeys)
+	{
+		m_ShapeKeys.push_back(pShapeKey);
+		Safe_AddRef(pShapeKey);
+		m_ShapeKeyWeights.push_back(0.f);
+	}
+}
+
+void CMesh::Reset_ShapeWeight()
+{
+	fill(m_ShapeKeyWeights.begin(), m_ShapeKeyWeights.end(), 0.f);
+}
+
+void CMesh::Set_ShapeWeight(_uint iShapeKeyIndex, _float fWeight)
+{
+	if (iShapeKeyIndex >= m_ShapeKeyWeights.size())
+		return;
+
+	m_ShapeKeyWeights[iShapeKeyIndex] = fWeight;
+}
+
+void CMesh::Bind_ShapeWeight()
+{
+	_uint iNumVertices = (_uint)m_CombinedShapeKeyDeltaPositions.size();
+
+	m_CombinedShapeKeyDeltaPositions.resize(iNumVertices);
+	memset(m_CombinedShapeKeyDeltaPositions.data(), 0,
+		sizeof(_float3) * iNumVertices);
+
+	for (_uint i = 0; i < (_uint)m_ShapeKeys.size(); ++i)
+	{
+		float fWeight = m_ShapeKeyWeights[i];
+		// threshold. ³»°¡ ¾ê¶§¹®¿¡ ±×³É ¾îÈÞ
+		if (fabs(fWeight) < 1e-6f)
+			continue;
+
+		const vector<_float3>& vDeltaPositions = *m_ShapeKeys[i]->Get_DeltaPosition();
+		for (_uint j = 0; j < iNumVertices; ++j)
+			XMStoreFloat3(&m_CombinedShapeKeyDeltaPositions[j],
+				XMLoadFloat3(&m_CombinedShapeKeyDeltaPositions[j])
+				+ XMVectorSet(vDeltaPositions[j].x * fWeight,
+					vDeltaPositions[j].y * fWeight,
+					vDeltaPositions[j].z * fWeight, 0.f));
+	}
+
+	m_pContext->UpdateSubresource(m_pCombinedShapeKeyBuffer, 0, nullptr, m_CombinedShapeKeyDeltaPositions.data(), 0, 0);
+
+}
+
+HRESULT CMesh::Bind_ShapeKeys(CShader* pShader, const _char* pConstantName)
+{
+	/*if (m_ShapeKeyWeights.empty())
+	return S_OK;
+
+	pShader->Bind_RawValue(pConstantName, m_ShapeKeyWeights.data(), sizeof(float) * (_uint)m_ShapeKeyWeights.size());*/
+
+	pShader->Bind_SRV("g_ShapeKeyDeltaPositionBuffer", m_pCombinedShapeKeySRV);
+
+	return S_OK;
 }
 
 HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
@@ -72,6 +139,40 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 
 #pragma endregion
 	
+	if (eType == MODEL_TYPE::FACIAL)
+	{
+		Ready_ShapeKeys(pModel, pBinMesh);
+
+		_uint iNumVertices = (_uint)m_ShapeKeys[0]->Get_DeltaPosition()->size();
+		m_CombinedShapeKeyDeltaPositions.resize(iNumVertices);
+		memset(m_CombinedShapeKeyDeltaPositions.data(), 0, sizeof(_float3) * iNumVertices);
+
+		D3D11_BUFFER_DESC TrialInitBufferDesc = {};
+
+		D3D11_SUBRESOURCE_DATA SubResource = {};
+
+		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		TrialInitBufferDesc.ByteWidth = sizeof(_float3) * iNumVertices;
+		TrialInitBufferDesc.StructureByteStride = sizeof(_float3);
+		TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		SubResource.pSysMem = m_CombinedShapeKeyDeltaPositions.data();
+
+		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &m_pCombinedShapeKeyBuffer)))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc{};
+		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		SRVDesc.Buffer.FirstElement = 0;
+		SRVDesc.Buffer.NumElements = iNumVertices;
+		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+
+		if (FAILED(m_pDevice->CreateShaderResourceView(m_pCombinedShapeKeyBuffer, &SRVDesc, &m_pCombinedShapeKeySRV)))
+			return E_FAIL;
+
+		//Set_ShapeWeight(0, 0.f);
+	}
 	
 
 	return S_OK;
@@ -292,6 +393,24 @@ HRESULT CMesh::Ready_VertexBuffer_For_Anim(const CModel* pModel, const binMesh* 
 	return S_OK;
 }
 
+HRESULT CMesh::Ready_ShapeKeys(const class CModel* pModel, const binMesh* pBinMesh)
+{
+	m_iNumShapeKeys = pBinMesh->iNumAnimMeshes;
+
+	for (size_t i = 0; i < m_iNumShapeKeys; i++)
+	{
+		CShapeKey* pShapeKey = CShapeKey::Create(pModel, &pBinMesh->vAnimMesh[i]);
+		if (nullptr == pShapeKey)
+			return E_FAIL;
+
+		m_ShapeKeys.push_back(pShapeKey);
+	}
+
+	m_ShapeKeyWeights.resize(m_ShapeKeys.size(), 0.f);
+
+	return S_OK;
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
@@ -321,9 +440,18 @@ void CMesh::Free()
 {
 	__super::Free();
 
+
+	for (auto& pShapeKey : m_ShapeKeys)
+		Safe_Release(pShapeKey);
+	m_ShapeKeys.clear();
+
+
 	Safe_Delete_Array(m_pBoneMatrices);
 
 	if(false == m_isCloned)
 		Safe_Delete_Array(m_pIndices);
+
+	Safe_Release(m_pCombinedShapeKeyBuffer);
+	Safe_Release(m_pCombinedShapeKeySRV);
 
 }
