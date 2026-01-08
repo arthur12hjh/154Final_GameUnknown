@@ -43,7 +43,6 @@ public :
 
 	PLAYER_DESC*				Get_PlayerDesc();
 	_bool						Is_NearCharacter(_vector vPos, _float vRange);
-
 #pragma endregion
 
 #pragma region DataManager
@@ -98,16 +97,17 @@ public :
 
 #pragma region LOCKON
 public:
-	class CNaytiba* Get_LockonTarget();
-	CTransform* Get_TargetTransform();
-	void		Lockon(_float fTimeDelta);
+	class CNaytiba*			Get_LockonTarget();
+	CTransform*				Get_TargetTransform();
+	void					Lockon(_float fTimeDelta);
 
-	void		Start_Lockon();
-	_float		Get_CurMinDist();
-	_bool		Get_Lockon();
-	void		Force_Lockon(_float fTimeDelta);
-	void		Force_LockOff();
-
+	//이거 락온한 위치 받아올수있게 일단 반환함
+	_vector					Get_LockOnPoint();
+	void					Start_Lockon();
+	_float					Get_CurMinDist();
+	_bool					Get_Lockon();
+	void					Force_Lockon(_float fTimeDelta);
+	void					Force_LockOff();
 
 #pragma endregion
 

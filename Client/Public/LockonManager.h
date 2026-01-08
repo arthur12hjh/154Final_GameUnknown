@@ -20,9 +20,9 @@ private:
 	virtual ~CLockonManager() = default;
 
 public:
-	void   Bind_Player(class CPlayer* pPlayer);
-	_float Get_CurMinDist() { return m_fCurrentMinDist; }
-	_bool  Get_Lockon() { return m_isLock; }
+	void			Bind_Player(class CPlayer* pPlayer);
+	_float			Get_CurMinDist() { return m_fCurrentMinDist; }
+	_bool			Get_LockOn();
 
 public:
 	HRESULT		   Initialize();
@@ -41,6 +41,7 @@ public:
 	void						Lockon(_float fTimeDelta, _bool isForce = false);
 	void						Start_Lockon();
 	void						Check_LinkAttack();
+
 private:
 	CGameInstance*				m_pGameInstance		= { nullptr };
 	class CPlayer*				m_pPlayer			= { nullptr };
@@ -52,7 +53,6 @@ private:
 
 	_float						m_fBattleToIdleTimeAcc  = { 0.f };
 	_float						m_fCurrentMinDist		= { FLT_MAX };
-	_bool						m_isLock				= { false };
 	_bool						m_isBossLock			= { false };
 	class CUIBase*				m_pLockonUI				= { nullptr };
 	class CUIBase*				m_pMonsterVitalUI				= { nullptr }; // 테스트 용

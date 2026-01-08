@@ -179,7 +179,6 @@
     <ClInclude Include="..\Public\CameraActionInserter.h" />
     <ClInclude Include="..\Public\CameraBone_Player.h" />
     <ClInclude Include="..\Public\Camera_Action.h" />
-    <ClInclude Include="..\Public\Camera_Lockon.h" />
     <ClInclude Include="..\public\Canyon.h" />
     <ClInclude Include="..\Public\CinematicMaker.h" />
     <ClInclude Include="..\Public\CinematicModel_Eve.h" />
@@ -532,7 +531,6 @@
     <ClCompile Include="..\Private\CameraActionInserter.cpp" />
     <ClCompile Include="..\Private\CameraBone_Player.cpp" />
     <ClCompile Include="..\Private\Camera_Action.cpp" />
-    <ClCompile Include="..\Private\Camera_Lockon.cpp" />
     <ClCompile Include="..\private\Canyon.cpp" />
     <ClCompile Include="..\Private\CinematicMaker.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Eve.cpp" />

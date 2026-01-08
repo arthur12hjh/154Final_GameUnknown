@@ -308,6 +308,10 @@ void CGameManager::Lockon(_float fTimeDelta)
 {
     m_pLockonManager->Lockon(fTimeDelta);
 }
+_vector CGameManager::Get_LockOnPoint()
+{
+    return m_pLockonManager->Get_LockOnPoint();
+}
 void CGameManager::Start_Lockon()
 {
     m_pLockonManager->Start_Lockon();
@@ -318,7 +322,7 @@ _float CGameManager::Get_CurMinDist()
 }
 _bool CGameManager::Get_Lockon()
 {
-    return m_pLockonManager->Get_Lockon();
+    return m_pLockonManager->Get_LockOn();
 }
 
 void CGameManager::Force_Lockon(_float fTimeDelta)
