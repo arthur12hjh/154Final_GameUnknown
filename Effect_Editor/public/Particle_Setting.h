@@ -103,6 +103,7 @@ public:
     HRESULT Load_Binary(const _char* szFile);
     HRESULT Save_TrailBinary(const _char* szFile);
     HRESULT Load_TrailBinary(const _char* szFile);
+    void ReSave();
 };
 
 NS_END
