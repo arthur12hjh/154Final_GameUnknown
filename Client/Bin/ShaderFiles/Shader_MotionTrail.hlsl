@@ -135,7 +135,9 @@ PS_MOTION_TRAIL_OUT PS_MOTION_TRAIL_MAIN(PS_MOTION_TRAIL_IN In)
     if (vRimLightColor.a < 0.3f)
         discard;
     
-    Out.vDiffuse = Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, vRimLightColor, In.vNormal, In.vWorldPos);
+    vector vRim = Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, vRimLightColor, In.vNormal, In.vWorldPos);
+    Out.vDiffuse = vRim;
+    Out.vDiffuse.a = Calc_RimLightPower(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, vRimLightColor, In.vNormal, In.vWorldPos);
     
     Out.vNormal = In.vNormal * 0.5f + 0.5f;
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.f, 0.0f);
@@ -151,7 +153,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MOTION_TRAIL_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MOTION_TRAIL_MAIN();

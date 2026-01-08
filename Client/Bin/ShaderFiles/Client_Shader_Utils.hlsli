@@ -100,4 +100,11 @@ vector Calc_RimLight(float fStrength, float fPower, vector vCamPos, vector vRimC
     return vRimLight;
 }
 
+float Calc_RimLightPower(float fStrength, float fPower, vector vCamPos, vector vRimColor, vector vNormal, vector vWorldPos)
+{
+    vector vPosToCam = normalize(vCamPos - vWorldPos);
+
+    return pow((1 - dot(normalize(vNormal), vPosToCam)), fPower) * fStrength;
+}
+
 #endif
