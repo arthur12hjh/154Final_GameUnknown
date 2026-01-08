@@ -294,7 +294,30 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
     _vector vTargetLookDir = XMVector3Normalize(vTargetPoint - vPlayerPos);
 
     // 쿼터니언을 사용하기위해 Yaw 부분 계산
+
+    // atan2는 수평면(x, z)에서 Y축이 이루는 각도를 반환한다.
+    // 때문에 이를 이용해서 Yaw를 구할수 있다.
     _float fTargetYaw = atan2f(XMVectorGetX(vTargetLookDir), XMVectorGetZ(vTargetLookDir));
+
+    // Pitch는 방향 벡터가 XZ 평면(수평면)과 이루는 기울기 각도이다.
+    // 방향 벡터는 정규화되어 있으며(|v| = 1), 단위 구 위의 한 점으로 볼 수 있다.
+    //
+    // 수직 단면에서 보면 삼각형이 형성되며:
+    //  - 빗변: 1 (단위 벡터 길이)
+    //  - 세로 성분: y
+    //  - 바닥 성분: sqrt(x*x + z*z)
+    //
+    // 삼각함수 정의에 의해:
+    //  sin(Pitch) = y / 1
+    //  => y = sin(Pitch)
+    //
+    // 따라서 Pitch는 Yaw와 독립적으로 다음과 같이 구할 수 있다:
+    //  Pitch = asin(y)
+    //  또는
+    //  Pitch = atan2(y, sqrt(x*x + z*z))
+    //
+    // 이 방식은 Yaw 값에 영향을 받지 않으며,
+    // z 성분이 0인 경우에도 안정적으로 동작한다.
     _float fTargetPitch = -asinf(XMVectorGetY(vTargetLookDir));
     fTargetPitch = Clamp<_float>(fTargetPitch, -0.4f, XM_PIDIV2);
 
