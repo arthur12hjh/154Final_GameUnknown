@@ -55,16 +55,27 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
     XMStoreFloat4x4(&m_CombinedWorldMatrix,
         XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 
-    if (m_bIsRimLight && m_fRimLightTime.y < INFINITY)
+    if (m_bIsRimLight)
     {
         m_fRimLightTime.x += fTimeDelta;
-        _vector vLerpColor = XMVectorLerp(XMLoadFloat4(&m_MonsterLimLightDesc.vRimLightColor), XMLoadFloat4(&m_vLerpEndRimLight), m_fRimLightTime.x / m_fRimLightTime.y);
-        XMStoreFloat4(&m_MonsterLimLightDesc.vRimLightColor, vLerpColor);
-
-
-        if (m_fRimLightTime.x >= m_fRimLightTime.y)
+        if (m_fRimLightTime.y < INFINITY)
+            m_fRimLightRatio = m_fRimLightTime.x / m_fRimLightTime.y;
+        else
         {
-            m_bIsRimLight = false;
+            m_fRimLightRatio = m_fRimLightTime.x / 0.2f;
+            if (1 <= m_fRimLightRatio && m_bIsChangeColorDissolve)
+                static_cast<CNaytiba*>(m_pParent)->SetActivePartObject(false);
+        }
+
+        m_fRimLightRatio = Clamp<_float>(m_fRimLightRatio, 0.f, 1.f);
+        _vector vLerpColor = XMVectorLerp(XMLoadFloat4(&m_MonsterLimLightDesc.vRimLightColor), XMLoadFloat4(&m_vLerpEndRimLight), m_fRimLightRatio);
+        XMStoreFloat4(&m_MonsterLimLightDesc.vRimLightColor, vLerpColor);
+        if (m_fRimLightTime.y < INFINITY)
+        {
+            if (m_fRimLightTime.x >= m_fRimLightTime.y)
+            {
+                m_bIsRimLight = false;
+            }
         }
     }
 
@@ -167,24 +178,27 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
     if (m_bIsEnableCollider)
         m_pGameInstance->ADD_Collider(m_pColliderCom);
 
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-    _vector vPosition = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3];
-    _float fCamDist = XMVectorGetX(
-        XMVector3Length( vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
-    if (fCamDist < 200.f)
+    if (m_bIsActive || VISIBILITY::VISIBLE == m_eVisibility)
     {
-        CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
-        if (Naytiba)
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+        _vector vPosition = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3];
+        _float fCamDist = XMVectorGetX(
+            XMVector3Length(vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+
+        if (fCamDist < 200.f)
         {
-            if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
-                m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+            CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
+            if (Naytiba)
+            {
+                if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
+                    m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+            }
+
+            m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
         }
-
-        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     }
-
+  
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -539,9 +553,10 @@ void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _fl
     m_bIsChangeBodyColor = bIsEnable;
     m_vPatternColor = vColor;
 
-    /*m_bIsChangeColorDissolve = bIsDissolve;
-
-    if (bIsDissolve)
+    m_bIsChangeColorDissolve = bIsDissolve;
+    if (false == m_bIsChangeColorDissolve)
+        static_cast<CNaytiba*>(m_pParent)->SetActivePartObject(true);
+    /*if (bIsDissolve)
     {
         _matrix WorldSpineMatrix = XMLoadFloat4x4(m_pSpineMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix);
        XMStoreFloat4(&m_vColCenterPos, WorldSpineMatrix.r[3]);
@@ -647,6 +662,9 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPatternNoise", &m_bIsChangeColorDissolve, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightColorRatio", &m_fRimLightRatio, sizeof(_float))))
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_IsFade", &m_bIsDissolveFade, sizeof(_bool))))

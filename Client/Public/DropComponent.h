@@ -15,7 +15,7 @@ public :
 	typedef struct Drop_Result_Desc
 	{
 		_uint			iDropItemID;
-		_float			fAmountVal;
+		_int			iAmountVal;
 	}DROP_RESULT_DESC;
 
 private:
@@ -30,6 +30,8 @@ public:
 	// 1개는 디폴트로 나옵니다.
 	// 떨어지는 아이템의 개수만큼 아이템이 연산되어서 나온다.
 	void							ItemDrop(_uint iDropItemCount = 1);
+	void							DropRewardItem();
+
 	HRESULT							ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount);
 
 private:

@@ -11,6 +11,7 @@
 #include "PlayerCCTQueryFilterCallback.h"
 
 #include "AIController.h"
+#include "DropComponent.h"
 
 #pragma region Part Model
 #include "NpcBody.h"
@@ -21,6 +22,7 @@
 
 #include "UIHUD.h"
 #include "UIScript.h"
+#include "Item.h"
 
 CNpc::CNpc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CCharacter(pDevice, pContext)
@@ -50,6 +52,9 @@ HRESULT CNpc::Initialize(void* pArg)
 
     if (FAILED(Ready_Components()))
         return E_FAIL;
+
+    if (5 == m_NpcDesc->iNpcID)
+        m_pDropCom->DropRewardItem();
 
     return S_OK;
 }
@@ -264,6 +269,17 @@ HRESULT CNpc::Ready_Components()
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
 
+    if (5 == m_NpcDesc->iNpcID)
+    {
+        /* Drop Component */
+        CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
+        DropComDesc.fDropRange = 7.f;
+        DropComDesc.fForce = 20.f;
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
+            TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
+            return E_FAIL;
+    }
+
     /* Com_CCT */
     CCharacterController::CCT_DESC Desc;
     PxUserData tUserData;
@@ -368,6 +384,7 @@ void CNpc::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pDropCom);
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);
     Safe_Release(m_pInteractionCom);

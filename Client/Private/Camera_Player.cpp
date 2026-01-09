@@ -324,7 +324,7 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
 
     _float fYawRatio = {};
     if (-0.5f > abs(fQuaternionScalar))
-        fYawRatio = 40.f;
+        fYawRatio = 60.f;
     else
         fYawRatio = 15.f;
 

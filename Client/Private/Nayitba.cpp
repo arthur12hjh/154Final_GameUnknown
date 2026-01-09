@@ -288,22 +288,6 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	case CNotify::CHANGE_COLOR:
 		Change_Color(pNotify);
 		break;
-	case CNotify::SET_VISIBLITY:
-	{
-		if("" == pNotify->szNotifyArg01)
-			m_bIsActive = pNotify->iNumData01;
-		else
-		{
-			_wstring szPartName = _wstring(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
-			auto partObject = m_PartObjects.find(szPartName.c_str());
-
-			if (partObject != m_PartObjects.end())
-			{
-				partObject->second->SetVisibility(VISIBILITY(!pNotify->iNumData01));
-			}
-		}
-	}
-		break;
 	}
 
 	return S_OK;
@@ -480,6 +464,11 @@ void CNaytiba::SetActiveMonster(_bool bIsFlag)
 		m_pCCT->Set_Active(false);
 		m_eVisibility = VISIBILITY::HIDDEN;
 	}
+}
+
+void CNaytiba::SetActivePartObject(_bool bIsActive)
+{
+	__super::SetActive(bIsActive);
 }
 
 void CNaytiba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)

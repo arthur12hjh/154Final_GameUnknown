@@ -69,6 +69,7 @@ public:
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 
+	void									SetActivePartObject(_bool bIsActive);
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);

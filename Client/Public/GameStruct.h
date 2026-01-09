@@ -684,4 +684,12 @@ namespace Client
 		// 아이템은 몇개 떨굴지
 		vector<pair<_uint, _uint>>		iItemList;
 	}MINIGAME_REWARD;
+
+	enum class SOUND_TRIGGER_TYPE
+	{
+		GRASS,
+		SAND,
+		IRON,
+		END
+	};
 }

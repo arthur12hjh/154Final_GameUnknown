@@ -88,7 +88,7 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 {
 	// 여기서 특정 스킬 행동 초기화해야하면 하자
 	CancelSkillData();
-	m_fAnimationSpeed = 2.5f;
+	m_fAnimationSpeed = 2.2f;
 	if (m_TimeLineDatas.empty())
 		return;
 
@@ -729,7 +729,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.63f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -745,7 +745,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.46f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -761,7 +761,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.34f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -777,7 +777,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.13f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -1086,7 +1086,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.26f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -1096,7 +1096,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.41f;
 		Desc.fRange = 10.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::RIGHT_BACK;
 		Desc.bIsTarget = false;
@@ -1106,7 +1106,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.5f;
 		Desc.fRange = 5.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.f;
 
 		Desc.eDirection = DIRECTION::RIGHT;
 		Desc.bIsTarget = false;
