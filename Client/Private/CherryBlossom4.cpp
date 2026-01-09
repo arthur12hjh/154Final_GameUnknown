@@ -36,7 +36,7 @@ void CCherryBlossom4::Update(_float fTimeDelta)
 {
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-	//m_fTimeAcc += fTimeDelta;
+	m_fTimeAcc += fTimeDelta;
 
 }
 
@@ -68,6 +68,8 @@ HRESULT CCherryBlossom4::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
 			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(9)))
