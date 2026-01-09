@@ -36,16 +36,34 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
 	
-	EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
-	EffectDesc.pWorldMatrix = nullptr;
-	
-	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.9f;
 	EffectDesc.iFloor = 0;
-	EffectDesc.pDir = &m_vProjectileDir;
-	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
-		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+
+	switch (m_eBulletType)
+	{
+	case BULLET_TYPE::PROJECTILE:
+	{
+		EffectDesc.fSize = 0.9f;
+		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
+		EffectDesc.pDir = &m_vProjectileDir;
+		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	}
+	break;
+	case BULLET_TYPE::HITSCAN:
+	{
+		EffectDesc.fSize = 2.6f;
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		EffectDesc.vPos = XMLoadFloat3(&pDesc->vTargetPoint);
+		m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Triple"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+	}
+	break;
+	}
 
 	EffectDesc.pRootMatrix = nullptr;
 	EffectDesc.pWorldMatrix = nullptr;
@@ -237,6 +255,6 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
-	if (nullptr != m_pEffect)
+	if (nullptr != m_pEffect && BULLET_TYPE::PROJECTILE == m_eBulletType)
 		m_pEffect->End();
 }
