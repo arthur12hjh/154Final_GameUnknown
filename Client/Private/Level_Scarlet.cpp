@@ -131,6 +131,7 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
 		return E_FAIL;
 
+
 	STATIC_SHADOW_DESC		StaticShadowDesc{};
 	StaticShadowDesc.fFar = 2000.f;
 	StaticShadowDesc.fNear = 0.1f;
@@ -138,6 +139,8 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 
 	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
+
+	m_pGameInstance->Clear_StaticShadowObjects();
 
 	return S_OK;
 }

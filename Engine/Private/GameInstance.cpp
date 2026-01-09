@@ -915,6 +915,11 @@ HRESULT CGameInstance::Bake_StaticShadow()
 	return m_pRenderer->Bake_StaticShadow();
 }
 
+void CGameInstance::Clear_StaticShadowObjects()
+{
+	m_pRenderer->Clear_StaticShadowObjects();
+}
+
 #pragma endregion
 
 #pragma region FRUSTUM

@@ -605,6 +605,11 @@ HRESULT CRenderer::Bake_StaticShadow()
 	return m_pStaticShadow->Render(m_pVIBuffer);
 }
 
+void CRenderer::Clear_StaticShadowObjects()
+{
+	m_pStaticShadow->Clear_StaticShadowObjects();
+}
+
 void CRenderer::Render_Priority()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Combined"))))

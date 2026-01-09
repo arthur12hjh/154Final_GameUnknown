@@ -42,6 +42,7 @@ public:
 	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
 	// 딴데서 실행하면 레고삼킴
 	HRESULT Bake_StaticShadow();
+	void	Clear_StaticShadowObjects();
 public:
 	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 	void Active_DoF(_bool bFlag, _float fLerpTime);
