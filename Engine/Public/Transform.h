@@ -64,6 +64,8 @@ public:
 	void					LookAt(_fvector vAt);
 
 	void					LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed = 1.f);
+	void					LookAt_SLerp(_fvector vAt, _float fRatio, _float fSpeed = 1.f);;
+
 	void					Chase_Lerp(_fvector vTargetPos, _float fTimeDelta, _float fLimitDistance = 0.f);
 	void					Change_Look(_fvector vLook); 
 
