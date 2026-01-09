@@ -397,6 +397,10 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         {
             TrailEffect.first->bisPlay = false;
         }
+        for (auto LineTrailEffect : m_pLineTrailEffects)
+        {
+            LineTrailEffect.first->bisPlay = false;
+        }
     }
     else if (strObjectTag == TEXT("Play_Trail"))
     {
@@ -514,6 +518,22 @@ void CNayitbaPartBody::Play_DeadEffect()
         
 }
 
+void CNayitbaPartBody::Stop_All_Effect()
+{
+    for (auto Effect : m_pEffects)
+    {
+        Effect.first->Stop();
+    }
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        TrailEffect.first->bisPlay = false;
+    }
+    for (auto LineTrailEffect : m_pLineTrailEffects)
+    {
+        LineTrailEffect.first->bisPlay = false;
+    }
+}
+
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
@@ -583,7 +603,7 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
             {
                 /* Com_Collider_Sphere */
                 COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
-                OBBDesc.vSize = { 0.3f, 4.f, 0.3f };
+                OBBDesc.vSize = { 0.1f, 8.f, 0.1f };
                 OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
                 if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),

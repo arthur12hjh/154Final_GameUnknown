@@ -30,7 +30,6 @@ HRESULT CBullet_Droid::Initialize(void* pArg)
 	BULLET_DESC* pDesc = static_cast<BULLET_DESC*>(pArg);
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
-
 	m_PointLists.resize(5, {});
 	Shoot_Projectile(XMLoadFloat3(&pDesc->vTargetPoint), 30.f);
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
@@ -42,12 +41,36 @@ HRESULT CBullet_Droid::Initialize(void* pArg)
 
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.1f;
+	EffectDesc.fSize = 0.075f;
 	EffectDesc.iFloor = 0;
 	EffectDesc.pDir = &m_vProjectileDir;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
+	EffectDesc.pRootMatrix = nullptr;
+	EffectDesc.pWorldMatrix = nullptr;
+	_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+	EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.fSize = 1.0f;
+	EffectDesc.iFloor = 0;
+
+	switch (m_eBulletType)
+	{
+		case BULLET_TYPE::PROJECTILE: {
+			EffectDesc.vPos = CombinedMatrix.r[3] + XMLoadFloat3(&m_vProjectileDir) * 3.f;
+			EffectDesc.pDir = &m_vProjectileDir;
+		}
+		break;
+		case BULLET_TYPE::ARCING: {
+			_vector vLook = XMVector3Normalize(BezierCurve(5, m_PointLists.data(), 0.01f / m_fArcingTime.y) - m_pTransformCom->Get_State(STATE::POSITION));
+			EffectDesc.vPos = CombinedMatrix.r[3] + vLook * 3.f;
+			_float3 fDir;
+			XMStoreFloat3(&fDir, vLook);
+			EffectDesc.pDir = &fDir;
+		}
+		break;
+	}
+	m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	return S_OK;
 }
 
@@ -67,7 +90,7 @@ void CBullet_Droid::Update(_float fTimeDelta)
 	{
 		m_fArcingTime.x += fTimeDelta * 2.f;
 		_vector vTargetPoint = BezierCurve(5, m_PointLists.data(), m_fArcingTime.x / m_fArcingTime.y);
-		m_pTransformCom->LookAt_Lerp(vTargetPoint, fTimeDelta, 20.f);
+		m_pTransformCom->LookAt(vTargetPoint);
 		
 		m_pTransformCom->Set_State(STATE::POSITION, vTargetPoint);
 		if (m_fArcingTime.x >= m_fArcingTime.y)
@@ -142,7 +165,7 @@ void CBullet_Droid::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 HRESULT CBullet_Droid::ADD_Components(BULLET_DESC& pDesc)
 {
 	COBBCollider::OBB_COLLIDER_DESC pOBBDesc = {};
-	pOBBDesc.vSize = { 1.f, 1.f, 1.f };
+	pOBBDesc.vSize = { 0.5f, 0.5f, 0.5f };
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &pOBBDesc)))
@@ -182,8 +205,36 @@ void CBullet_Droid::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 	pDamageDesc.pSkillData = m_pSkillData;
 
 	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-	if (pCharacter)
+	if (pCharacter) {
 		pCharacter->Damaged(&pDamageDesc);
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+		_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 2.0f;
+		EffectDesc.iFloor = 0;;
+
+		switch (m_eBulletType)
+		{
+		case BULLET_TYPE::PROJECTILE: {
+			EffectDesc.vPos = CombinedMatrix.r[3] + XMLoadFloat3(&m_vProjectileDir) * 2;
+			EffectDesc.pDir = &m_vProjectileDir;
+		}
+			break;
+		case BULLET_TYPE::ARCING: {
+			EffectDesc.vPos = CombinedMatrix.r[3] + m_pTransformCom->Get_State(STATE::LOOK) * 2;
+			_float3 fDir;
+			XMStoreFloat3(&fDir, m_pTransformCom->Get_State(STATE::LOOK));
+			EffectDesc.pDir = &fDir;
+		}
+			break;
+		}
+		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+	}
 
 	if (false == ReflectBullet(pHitActor))
 	{
@@ -220,20 +271,6 @@ void CBullet_Droid::Free()
 {
 	if (nullptr != m_pEffect) {
 		m_pEffect->End();
-
-		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-		EffectDesc.fRotationPerSec = 1.f;
-		EffectDesc.fSpeedPerSec = 1.f;
-
-		EffectDesc.pRootMatrix = nullptr;
-		EffectDesc.pWorldMatrix = nullptr;
-		_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
-		EffectDesc.vPos = CombinedMatrix.r[3];
-		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 2.0f;
-		EffectDesc.iFloor = 0;
-		EffectDesc.pDir = &m_vProjectileDir;
-		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	}
 	__super::Free();
 }

@@ -138,9 +138,8 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 	_float4x4 CombinedWorldMatrix;
 	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
-
-	if (m_tData.bisSpectrum) {
-		m_fLength += XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize;
+	if (m_tData.szCS.compare("Spectrum") == 0) {
+		m_fLength += min(XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[3])) - XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[3])))) / XMVectorGetX(XMVector3Length(XMLoadFloat4(reinterpret_cast<_float4*>(&m_CombinedWorldMatrix.m[0])))) / m_tData.fSphereSize, 100.f);
 		m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
 		if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
 			m_CBData.fTimeDelta.w = fmodf(m_CBData.fTimeDelta.w + 1, m_tData.iNumInstance);
@@ -170,7 +169,7 @@ HRESULT CSpriteParticle::Render()
 }
 
 void CSpriteParticle::Stop() {
-	if (!m_bisStop && !m_tData.bisSpectrum) {
+	if (!m_bisStop && m_tData.szCS.compare("Spectrum") != 0) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 	}
 	m_bisStop = true;
@@ -178,7 +177,7 @@ void CSpriteParticle::Stop() {
 
 void CSpriteParticle::Play()
 {
-	if (m_bisStop && m_tData.bisSpectrum) {
+	if (m_bisStop && m_tData.szCS.compare("Spectrum") == 0) {
 		m_CBData.iLoopAndCount.x = 2;
 	}
 	m_bisStop = false;
@@ -304,7 +303,7 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 
 
 
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
 	}
 

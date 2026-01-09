@@ -53,6 +53,7 @@ public:
 	virtual void										Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) override;
 	virtual void										Activate_PartObject_Collider(const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 	void												Play_DeadEffect();
+	void												Stop_All_Effect();
 
 	void												SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve = false, _float4 vColor = {});
 	void												SetRimLightData(_bool bIsEnable, _float fRimLightIntensity, _float fRimLightPower, _float4 vRimLightColor, _float DurTime);

@@ -48,7 +48,10 @@ private:
 
 	class CTrailEffect*			m_pTrail[4] = {nullptr};
 	class CEffect*				m_pBlood = { nullptr };
+	class CEffect*				m_pSwordBlood[2] = {nullptr};
+	class CEffect*				m_pSwordSpark[3] = {nullptr};
 	class CEffect*				m_pGigasSpark = { nullptr };
+	class CEffect*				m_pGigasSand = { nullptr };
 	class CEffect*				m_pCharge = { nullptr };
 	_uint						m_iTrail = {};
 	_float3						m_vRotationQuaternion;

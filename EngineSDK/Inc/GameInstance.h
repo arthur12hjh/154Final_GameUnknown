@@ -125,6 +125,7 @@ public:
 	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
 	// 딴데서 실행하면 레고삼킴
 	HRESULT				Bake_StaticShadow();
+	void				Clear_StaticShadowObjects();
 	void*				Get_Cascade_Desc();
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 

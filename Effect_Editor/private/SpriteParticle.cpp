@@ -4,12 +4,12 @@
 #include "GameInstance.h"
 
 CSpriteParticle::CSpriteParticle(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CBlendObject{ pDevice, pContext }
+	: CGameObject{ pDevice, pContext }
 {
 }
 
 CSpriteParticle::CSpriteParticle(const CSpriteParticle& Prototype)
-	: CBlendObject{ Prototype }
+	: CGameObject{ Prototype }
 {
 }
 
@@ -76,8 +76,6 @@ void CSpriteParticle::Late_Update(_float fTimeDelta)
 	}
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	m_iRenderCount = 0;
-	if (RENDER::BLACKBLEND == m_eRender)
-		Compute_Depth();
 }
 
 HRESULT CSpriteParticle::Render()
@@ -448,7 +446,7 @@ HRESULT CSpriteParticle::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_iSizeCount", &iSizeCount, sizeof(_int))))
 		return E_FAIL;
 
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		ID3D11Texture2D* pDepthTexture = nullptr;
 		D3D11_TEXTURE2D_DESC texDesc = {};
 		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));

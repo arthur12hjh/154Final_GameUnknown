@@ -45,6 +45,11 @@ HRESULT CInstanceModel::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pInstancingData = pLoadDesc->pInstancingData;
+	
+	if (pLoadDesc && pLoadDesc->pPrototypeTag)
+	{
+		wcsncpy_s(m_ComponentTag, 256, pLoadDesc->pPrototypeTag, _TRUNCATE);
+	}
 
 	return S_OK;
 }
@@ -55,6 +60,7 @@ void CInstanceModel::Priority_Update(_float fTimeDelta)
 
 void CInstanceModel::Update(_float fTimeDelta)
 {
+	m_fTimeAcc += fTimeDelta;
 }
 
 void CInstanceModel::Late_Update(_float fTimeDelta)
@@ -67,6 +73,9 @@ HRESULT CInstanceModel::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float))))
+		return E_FAIL;
+
 	_uint		iNumMeshes = m_pModelCom->GetModelNumMeshes();
 	for (_uint i = 0; i < iNumMeshes; i++)
 	{
@@ -76,8 +85,19 @@ HRESULT CInstanceModel::Render()
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
 			return E_FAIL;
+
+		if (wcsstr(m_ComponentTag, TEXT("Bamboo")))
+		{
+			if (FAILED(m_pShaderCom->Begin(3)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Begin(0)))
+				return E_FAIL;
+		}
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;

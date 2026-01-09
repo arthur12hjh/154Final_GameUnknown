@@ -73,16 +73,15 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.00007f;
+    float fBias = 0.4f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
         return 1.f;
             
-
     vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord, iSlice));
 
-    return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.5f : 1.f;
+    return (vLightClip.z / vLightClip.w * 500.f - fBias > vShadowDepth.x * 500.f) ? 0.5f : 1.f;
 }
 
 inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
@@ -92,7 +91,7 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
     float fSum = 0.0f;
-    float fBias = 0.00007f;
+    float fBias = 0.00021f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;

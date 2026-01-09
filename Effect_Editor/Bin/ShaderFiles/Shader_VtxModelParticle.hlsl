@@ -141,6 +141,83 @@ VS_OUT VS_MAIN(VS_IN In, uint id : SV_InstanceID)
     return Out;
 }
 
+VS_OUT VS_TANGENT(VS_IN In, uint id : SV_InstanceID)
+{
+    VS_OUT Out;
+    
+    
+    
+    float time = In.vLifeTime.x / In.vLifeTime.y;
+    float3 fInTime = float3(0, 0, 0);
+    float3 fOutTime = float3(-1, 0, 0);
+    float fSize = 0.f;
+    for (int i = 0; i < g_iSizeCount; ++i)
+    {
+        if (g_fSizeDiagram[i].x <= time)
+        {
+            fInTime.x = g_fSizeDiagram[i].x;
+            fInTime.y = g_fSizeDiagram[i].y;
+            fInTime.z = g_fSizeDiagram[i].z;
+        }
+        if (g_fSizeDiagram[i].x > time)
+        {
+            fOutTime.x = g_fSizeDiagram[i].x;
+            fOutTime.y = g_fSizeDiagram[i].y;
+            fOutTime.z = g_fSizeDiagram[i].z;
+            break;
+        }
+    }
+    if (-1 == fOutTime.x)
+        fSize = length(In.TransformMatrix._11_12_13) * fInTime.y;
+    else
+    {
+        float t = (time - fInTime.x) / (fOutTime.x - fInTime.x);
+        fSize = (2 * pow(t, 3) - 3 * pow(t, 2) + 1) * fInTime.y
+     + (pow(t, 3) - 2 * pow(t, 2) + t) * tan(radians(fInTime.z)) * (fOutTime.x - fInTime.x) * 100
+     + (-2 * pow(t, 3) + 3 * pow(t, 2)) * fOutTime.y
+     + (pow(t, 3) - pow(t, 2)) * tan(radians(fOutTime.z)) * (fOutTime.x - fInTime.x) * 100;
+        fSize *= length(In.TransformMatrix._11_12_13);
+    }
+    
+    vector vPosition = mul(vector(In.vPosition * 0.001 * fSize, 1.f), In.TransformMatrix);
+    vector vNormal = mul(vector(In.vNormal * 0.001 * fSize, 0.f), In.TransformMatrix);
+    vector vTangent = mul(vector(In.vTangent * 0.001 * fSize, 0.f), In.TransformMatrix);
+    vector vBINormal = mul(vector(In.vBInormal * 0.001 * fSize, 0.f), In.TransformMatrix);
+    
+    Out.vOriginalWorldPos = float4(0.f, 0.f, 0.f, 0.f);
+    
+    /* In.vPosition * 월드 * 뷰 * 투영 */    
+    //float4x4 == matrix
+    matrix matWV, matWVP;
+    
+   // vector vPosition = mul(vector(0.f, 0.f, 0.f, 1.f), In.TransformMatrix);
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+    
+    
+    if (g_bisSpectrum)
+    {
+        float4 matPos = mul(vPosition, g_ViewMatrix);
+        Out.vPosition = mul(matPos, g_ProjMatrix);
+        float4 matTan = mul(vTangent, g_ViewMatrix);
+        Out.vTangent = mul(matTan, g_ProjMatrix);
+    }
+    else
+    {
+        Out.vPosition = mul(vPosition, matWVP);
+        Out.vTangent = mul(vTangent, matWVP);
+    }
+    //Out.vPosition = mul(vPosition, matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix)).xyz;
+    Out.vBINormal = normalize(mul(vBINormal, g_WorldMatrix)).xyz;
+    Out.vWorldPos = mul(vPosition, g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+    Out.vLifeTime = In.vLifeTime;
+    Out.vSeed = id;
+    return Out;
+}
+
 float Random(float2 v)
 {
     return frac(sin(dot(v, float2(12.9898, 78.233))) * 43758.5453123);
@@ -360,6 +437,20 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
     return Out;
 }
 
+/* 픽셀 쉐이더 : 픽셀의 최종적인 색을 결정하낟. */
+PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float3 dir = normalize(In.vTangent.xyz);
+    dir.y *= -1;
+    
+    Out.vDiffuse.xy = normalize(dir.xy) * 0.045f;
+    Out.vDiffuse.zw = 0;
+    if (0.01f >= length(Out.vDiffuse.xy))
+        discard;
+    return Out;
+}
+
 technique11 Tech
 {
     // idx 0
@@ -394,5 +485,16 @@ technique11 Tech
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_WHITE();
+    }
+    // idx 3
+    pass MeshMotionBlur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_TANGENT();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTION_BLUR();
     }
 }

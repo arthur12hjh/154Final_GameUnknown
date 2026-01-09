@@ -415,6 +415,22 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         case CINEMATICNODE_STATE::LOCKON_END:
             CGameManager::GetInstance()->Force_LockOff();
             break;
+        // 16번
+        case CINEMATICNODE_STATE::BAKE_VILLAGE_SHADOW:
+            m_pGameInstance->ADD_DelayFunction(TEXT("Bake_Shadow"), 1.f, [&](){
+                /*그림자 세팅도 여기서 해주자. */
+                STATIC_SHADOW_DESC		StaticShadowDesc{};
+                StaticShadowDesc.fFar = 2000.f;
+                StaticShadowDesc.fNear = 0.1f;
+                StaticShadowDesc.vAt = _float4(913.586f, 105.541f, 1456.260f, 1.f);
+
+                if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
+                    return E_FAIL;
+
+                m_pGameInstance->Bake_StaticShadow();
+                m_pGameInstance->Clear_StaticShadowObjects();
+            });
+            break;
         case CINEMATICNODE_STATE::END:
             break;
     }

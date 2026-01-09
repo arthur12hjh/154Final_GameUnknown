@@ -48,6 +48,21 @@ void CNpc::Priority_Update(_float fTimeDelta)
 
 void CNpc::Update(_float fTimeDelta)
 {
+    if (m_iNpcID == 1)
+    {
+        const _float4x4* pWorldMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+
+        XMMATRIX WorldMatrix = XMLoadFloat4x4(pWorldMatrix);
+
+        XMVECTOR Position = WorldMatrix.r[3];
+
+        _float3 vPos;
+        XMStoreFloat3(&vPos, Position);
+
+        char szDebugString[256];
+        sprintf_s(szDebugString, "Scarlet Position: X=%.2f, Y=%.2f, Z=%.2f\n", vPos.x, vPos.y, vPos.z);
+        OutputDebugStringA(szDebugString);
+    }
     /*SetCullingCollider(m_iObjectID);
     _matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     m_pCullingCollider->UpdateColiision(worldMatrix);*/

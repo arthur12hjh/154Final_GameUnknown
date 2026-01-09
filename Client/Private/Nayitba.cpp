@@ -251,7 +251,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 
 HRESULT CNaytiba::ActionSuccess(void* pArg)
 {
-	ResetBodyColor();
+	ResetToBaseState();
 	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
@@ -516,7 +516,7 @@ _bool CNaytiba::bIsRepulseHitReaction()
 	
 	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
 	{
-		ResetBodyColor();
+		ResetToBaseState();
 		return true;
 	}
 
@@ -745,7 +745,6 @@ HRESULT CNaytiba::ADD_PartObjects()
 		return E_FAIL;
 
 	m_pPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-
 	Import_ModelPtr();
 
 	 // 무기랑 빔?
@@ -774,6 +773,12 @@ HRESULT CNaytiba::ADD_PartObjects()
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
 			return E_FAIL;
+
+		auto pPartWeapon = Find_PartObject(TEXT("Part_WeaponL"));
+		if (nullptr == pPartWeapon)
+			return E_FAIL;
+
+		m_pLeftWeapon = static_cast<CNaytibaLeftWeaponPart*>(pPartWeapon);
 	}
 
 	if (strcmp("None", m_pInitMonsterInfo->szRightWeaponPrototypeName))
@@ -791,7 +796,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 			return E_FAIL;
 	}
 
-	if (10 == m_pInitMonsterInfo->iMonsetID)
+	/*if (10 == m_pInitMonsterInfo->iMonsetID)
 	{
 		CNaytibaBeam_Part::BEAM_DESC BeamDesc = { };
 		BeamDesc.bIsApplyTransform = true;
@@ -803,7 +808,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_BeamPart"), TEXT("Part_Beam"), &BeamDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
@@ -833,12 +838,17 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 	}
 }
 
-void CNaytiba::ResetBodyColor()
+void CNaytiba::ResetToBaseState()
 {
 	if (false == m_bIsActive)
 		m_bIsActive = true;
 
+	if(false == m_pCCT->Get_Active())
+		m_pCCT->Set_Active(true);
+	
 	m_pPartBody->SetPart_BodyColor(false);
+	m_pPartBody->Stop_All_Effect();
+	m_pLeftWeapon->Stop_All_Effect();
 }
 
 void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)
@@ -935,7 +945,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 					m_MonsterInfo.iCurrentStamina--;
 
 				if (0 == m_MonsterInfo.iCurrentStamina)
-					ResetBodyColor();
+					ResetToBaseState();
 			}
 		}
 	}
