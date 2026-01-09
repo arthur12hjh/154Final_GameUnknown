@@ -656,6 +656,8 @@ namespace Client
 		_int		iGameLife;
 		_int		iMaxGameLife;
 
+		_bool		isFullCombo{ false };
+
 		_uint		iComboCnt;
 		_float		fCharacterSpeed;
 		_uint		iAccuracy; // 정확도

@@ -25,7 +25,7 @@ public:
 	virtual HRESULT Render() override;
 
 	void Open_Popup();
-	void Close_Popup(_bool isLevelChange = false);
+	void Close_Popup(_bool isLevelChange = false, _bool isTeleport = false);
 
 	_bool Get_IsOpen() const { return m_isOpen; }
 

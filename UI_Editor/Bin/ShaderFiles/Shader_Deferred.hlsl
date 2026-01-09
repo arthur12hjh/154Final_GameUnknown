@@ -52,15 +52,14 @@ texture2D g_ShadowBlurXTexture;
 texture2D g_ShadowAreaTexture; 
 Texture2DArray g_CascadeShadowTexture;
 
-float g_fCascadeEnds[6] = { 
+float g_fCascadeEnds[6] = {
     0.1f,
-	4.0f,
+	1.0f,
 	10.0f,
 	20.f,
-	500.f,
-	350.f,
+	150.f,
+	250.f
 };
-
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -592,6 +591,7 @@ PS_OUT_BACKBUFFER PS_MAIN_FINAL(PS_IN In)
 
 PS_OUT_SHADOW_BLUR_X PS_MAIN_SHADOW_BLUR_X(PS_IN In)
 {
+    /*
     PS_OUT_SHADOW_BLUR_X Out;
     
     float2 vTexcoord;
@@ -610,10 +610,18 @@ PS_OUT_SHADOW_BLUR_X PS_MAIN_SHADOW_BLUR_X(PS_IN In)
     Out.vBackBuffer = fFactor / fWeightSum;
     
     return Out;
+    */
+    
+    PS_OUT_SHADOW_BLUR_X Out;
+    
+    Out.vBackBuffer = g_ShadowAreaTexture.Sample(ClampSampler, In.vTexcoord);
+    
+    return Out;
 }
 
 PS_OUT_COMBINED_SHADOW PS_MAIN_COMBINE_SHADOW(PS_IN In)
 {
+    /*
     PS_OUT_COMBINED_SHADOW Out;
     
     float2 vTexcoord;
@@ -630,6 +638,11 @@ PS_OUT_COMBINED_SHADOW PS_MAIN_COMBINE_SHADOW(PS_IN In)
     }
     
     fShadowFactor = fShadowFactor / fWeightSum;
+    */
+    
+    PS_OUT_COMBINED_SHADOW Out;
+    
+    float fShadowFactor = g_ShadowBlurXTexture.Sample(ClampSampler, In.vTexcoord).x;
     
     Out.vBackBuffer = g_SceneTexture.Sample(DefaultSampler, In.vTexcoord) * fShadowFactor;
     Out.vBloomScene = g_BloomSceneTexture.Sample(DefaultSampler, In.vTexcoord) * fShadowFactor;

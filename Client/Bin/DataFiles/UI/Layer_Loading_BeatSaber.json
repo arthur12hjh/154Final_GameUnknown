@@ -134,11 +134,11 @@
                 "szAnimTags": [
                     {
                         "szAnimTag": "Intro",
-                        "szPrefabTag": "FadeOut_3"
+                        "szPrefabTag": "FadeOut_0_5"
                     },
                     {
                         "szAnimTag": "Outro",
-                        "szPrefabTag": "FadeIn_3"
+                        "szPrefabTag": "FadeIn_0_5"
                     }
                 ],
                 "szLayerTag": "Layer_Loading_BeatSaber",
