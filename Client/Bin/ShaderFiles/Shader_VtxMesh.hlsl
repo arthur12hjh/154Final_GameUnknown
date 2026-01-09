@@ -296,9 +296,9 @@ PS_OUT PS_MAIN_TREE(PS_IN In)
         discard;
     
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
-    Out.vORM = float4(1.f, 1.f, 0.f, 0.f);
+    Out.vORM = float4(1.f, 0.5f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
