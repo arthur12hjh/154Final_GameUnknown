@@ -235,23 +235,21 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	}
 
 	VisibleStatusUI(0.f);
-	if (S_OK == m_pAIController->Damage(pArg))
+	m_pAIController->Damage(pArg);
+
+	_uint RimLightIndex = 0;
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
-		_uint RimLightIndex = 0;
-		if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+		CBossController* pBossController = static_cast<CBossController*>(m_pAIController);
+		if (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty)
 		{
-			CBossController* pBossController = static_cast<CBossController*>(m_pAIController);
-			if (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty)
-			{
-				RimLightIndex = 1;
-			}
+			RimLightIndex = 1;
 		}
-		
-		// 몬스터 림라이트 처리
-		if (0 == RimLightIndex)
-			m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	}
 
+	// 몬스터 림라이트 처리
+	if (0 == RimLightIndex)
+		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	return S_OK;
 }
 
@@ -852,11 +850,15 @@ void CNaytiba::ResetToBaseState()
 	if(false == m_pCCT->Get_Active())
 		m_pCCT->Set_Active(true);
 	
-	m_pPartBody->SetPart_BodyColor(false);
-	m_pPartBody->SetRimLightData(false, 0.f, 0.f, {}, 0.f);
+	if (m_pPartBody)
+	{
+		m_pPartBody->SetPart_BodyColor(false);
+		m_pPartBody->SetRimLightData(false, 0.f, 0.f, {}, 0.f);
+		m_pPartBody->Stop_All_Effect();
+	}
 
-	m_pPartBody->Stop_All_Effect();
-	m_pLeftWeapon->Stop_All_Effect();
+	if(m_pLeftWeapon)
+		m_pLeftWeapon->Stop_All_Effect();
 }
 
 void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)
