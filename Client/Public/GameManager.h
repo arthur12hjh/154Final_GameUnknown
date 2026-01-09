@@ -43,7 +43,7 @@ public :
 
 #pragma region MiniGame
 	void								SetMiniGameReward(_uint iItemID, _uint iCount);
-	MINIGAME_REWARD*					ApplyMiniGameReward();
+	MINIGAME_REWARD*					GetMiniGameReward();
 #pragma endregion
 	
 	_bool								LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc);

@@ -21,7 +21,8 @@ vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
 
-float4 g_vRimLightColor;
+float4      g_vRimLightColor;
+float       g_fRimLightColorRatio;
 
 bool        g_IsPattern;
 bool        g_IsPatternNoise;
@@ -430,7 +431,9 @@ PS_OUT PS_SCARLET_ATK_COLOR(PS_IN In)
     
     vColor = true == g_IsPattern ? g_vMeshColor : g_vMtrlDiffuse;
     vColor += Calc_RimLight(g_fRimLightStrength, g_fRimLightPower, g_vCamPosition, g_vRimLightColor, In.vNormal, In.vWorldPos);
-    //if (g_IsPatternNoise)
+    if (g_IsPatternNoise && 1 <= g_fRimLightColorRatio)
+        discard;
+    
     //{
     //    float3 vPoint = In.vWorldPos.xyz;
     //    float3 vTargetPoint = g_vCenterPos.xyz;
