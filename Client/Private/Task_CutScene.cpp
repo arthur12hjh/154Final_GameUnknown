@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Task_CutScene.h"
 
+#include "GameInstance.h"
 #include "BehaviorTree.h"
 #include "ScarletBlackBoard.h"
 #include "Nayitba.h"
@@ -37,14 +38,28 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
 	{
+		auto pGameManger = CGameManager::GetInstance();
 		m_pBlackBoard->Set_PlayCutScene();
 		switch (iCurrentPhaseIndex)
 		{
 		case 0:
-			CGameManager::GetInstance()->Play_Cinematic(142, [&]() { FinishedCutScene(); });
+			if (8 == m_pNaytiba->GetMonsterID())
+			{
+				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_PHASECHANGE.wav"), 3.f);
+				pGameManger->Play_Cinematic(142, [&]() { FinishedCutScene(); });
+
+			}
+			else if (1 == m_pNaytiba->GetMonsterID())
+			{
+				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_FINISH.wav"), 3.f);
+				pGameManger->Play_Cinematic(125, [&]() { FinishedCutScene(); });
+			}
 			break;
 		case 1:
-			CGameManager::GetInstance()->Play_Cinematic(143, [&]() { FinishedCutScene(); });
+			m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_FINISH.wav"), 3.f);
+			if (8 == m_pNaytiba->GetMonsterID())
+				pGameManger->Play_Cinematic(143, [&]() { FinishedCutScene(); });
+			
 			break;
 		}
 	}
@@ -78,6 +93,7 @@ void CTask_CutScene::FinishedCutScene()
 		m_pBlackBoard->SetCurState(CScarletBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetEntarnceAttack(true);
 
+		CGameManager::GetInstance()->Play_BossBGM(m_pNaytiba->GetMonsterID(), iCurrentPhaseIndex + 1);
 		if (CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 			m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 		m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);

@@ -90,11 +90,6 @@ HRESULT CBossController::Damage(void* pArg)
             if (0 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
             {
                 auto pGameManger = CGameManager::GetInstance();
-                pGameManger->Play_Cinematic(125, [&]() {
-                    auto pNayitba = static_cast<CNaytiba*>(m_pParent);
-                    pNayitba->Excution();
-                });
-
                 m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
             }
         }

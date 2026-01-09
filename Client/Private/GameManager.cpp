@@ -429,10 +429,72 @@ map<_wstring, CCinematicObject*>* CGameManager::Get_CinematicObjectsMap()
 }
 #pragma endregion
 
+void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
+{
+    m_FieldBgmInfo.iBossID = iBossID;
+    m_FieldBgmInfo.iBossPhase = iBossPhase;
+    m_FieldBgmInfo.eBGMState = BGM_SOUND_STATE::INTRO;
+
+    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    if (8 == iBossID)
+    {
+        if (1 == iBossPhase)
+        {
+            m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P1_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+                {
+                    BGM_FinishedSoundCallBack(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+                }
+            );
+          
+        }
+        else if (2 == iBossPhase)
+        {
+            m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P2_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+                {
+                    BGM_FinishedSoundCallBack(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+                }
+            );
+        }
+    }
+    else if (1 == iBossID)
+    {
+        if (1 == iBossPhase)
+        {
+            m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_P1_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+                {
+                    BGM_FinishedSoundCallBack(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
+                }
+            );
+
+        }
+    }
+}
+
 void CGameManager::Release_GameMgr()
 {
     Safe_Release(m_pPoolingManager);
     Safe_Release(m_pCinematicManager);
+}
+
+void CGameManager::BGM_FinishedSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
+{
+    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+    if (BGM_SOUND_STATE::INTRO == m_FieldBgmInfo.eBGMState)
+    {
+        if (8 == m_FieldBgmInfo.iBossID)
+        {
+            if (1 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P1_LOOP.wav"), 1.f, 1.f);
+            else if (2 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P2_LOOP.wav"), 1.f, 1.f);
+        }
+
+        if (1 == m_FieldBgmInfo.iBossID)
+        {
+            if (1 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_P1_LOOP.wav"), 1.f, 1.f);
+        }
+    }
 }
 
 HRESULT CGameManager::Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

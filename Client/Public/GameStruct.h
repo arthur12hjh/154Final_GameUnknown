@@ -685,11 +685,25 @@ namespace Client
 		vector<pair<_uint, _uint>>		iItemList;
 	}MINIGAME_REWARD;
 
-	enum class SOUND_TRIGGER_TYPE
+	enum class GROUND_SOUND_TYPE
 	{
 		GRASS,
 		SAND,
 		IRON,
 		END
 	};
+
+	enum class BGM_SOUND_STATE
+	{
+		INTRO,
+		LOOP,
+		END,
+	};
+
+	typedef struct	Field_Bgm_Desc
+	{
+		BGM_SOUND_STATE		eBGMState;
+		_uint				iBossID;
+		_uint				iBossPhase;
+	}FIELD_BGM_DESC;
 }
