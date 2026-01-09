@@ -1,161 +1,167 @@
 [
     {
-        "CinematicNodeTrackList": [
+      "CinematicNodeTrackList": [
+        {
+          "eState": 7,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 4,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 10,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1,
+          "szObjectTag": "Layer_Npc",
+          "CinematicIndexDataList": [
             {
-                "eState": 7,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 4,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-	{
-                "eState": 10,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 1,
-                "szObjectTag": "Layer_Npc",
-	   "CinematicIndexDataList": [
-        	       {
-      	   	"iActiveIndex": 1,
-      	   	"szObjectTag": "Layer_Npc",
- 	   	"vPosition": [812.065, 98.135, 1517.918],
- 	   	"vRotation": [845.480, 103.091, 1481.055, 1.0],
-  	   	"vScale": [1.0, 1.0, 1.0],
-  	   	"iInputInt": 0,
-  	   	"fInputFloat": 0.0
-        	       }
-    	   ]
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 3,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
-            },
-            {
-                "eState": 1,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 3,
-                "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 0.0,
-                "iActiveIndex": 1201,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 1.0,
-                "iActiveIndex": 1202,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 5.0,
-                "iActiveIndex": 1203,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 8.0,
-                "iActiveIndex": 1204,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 13.0,
-                "iActiveIndex": 1205,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 16.0,
-                "iActiveIndex": 1206,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 18.2,
-                "iActiveIndex": 1207,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 21.0,
-                "iActiveIndex": 1208,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 23.0,
-                "iActiveIndex": 1209,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 26.0,
-                "iActiveIndex": 1210,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 30.0,
-                "iActiveIndex": 1211,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 33.0,
-                "iActiveIndex": 1212,
-                "szObjectTag": "ActionCamera_GigasMeetGigas02"
-            },
-            {
-                "eState": 3,
-                "fTrackPosition": 37.0,
-                "iActiveIndex": 1213,
-                "szObjectTag": "ActionCamera_GigasMeetPlayer01"
-            },
-	{
-                "eState": 6,
-                "fTrackPosition": 41.8,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
-            },
-            {
-                "eState": 2,
-                "fTrackPosition": 42.1,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player"
-            },
-	{
-                "eState": 9,
-                "fTrackPosition": 42.1,
-                "iActiveIndex": 0,
-                "szObjectTag": "Layer_Player",
-	   "CinematicIndexDataList": [
-        	       {
-      	   	"iActiveIndex": 0,
-      	   	"szObjectTag": "Layer_Player",
- 	   	"vPosition": [1122.577, 82.374, 1230.379],
- 	   	"vRotation": [1098.517, 82.374, 1273.884, 1.0],
-  	   	"vScale": [1.0, 1.0, 1.0],
-  	   	"iInputInt": 0,
-  	   	"fInputFloat": 0.0
-        	       }
-    	   ]
-            },
-	{
-                "eState": 7,
-                "fTrackPosition": 42.2,
-                "iActiveIndex": 0,
-                "szObjectTag": ""
+              "iActiveIndex": 1,
+              "szObjectTag": "Layer_Npc",
+              "vPosition": [ 812.065, 98.135, 1517.918 ],
+              "vRotation": [ 845.480, 103.091, 1481.055, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
             }
-        ],
+          ]
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 3,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
+        },
+        {
+          "eState": 1,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 3,
+          "szObjectTag": "Prototype_GameObject_CinematicModel_Eve"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1201,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 1.0,
+          "iActiveIndex": 1202,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 5.0,
+          "iActiveIndex": 1203,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 8.0,
+          "iActiveIndex": 1204,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 13.0,
+          "iActiveIndex": 1205,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 16.0,
+          "iActiveIndex": 1206,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 18.2,
+          "iActiveIndex": 1207,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 21.0,
+          "iActiveIndex": 1208,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 23.0,
+          "iActiveIndex": 1209,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 26.0,
+          "iActiveIndex": 1210,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 30.0,
+          "iActiveIndex": 1211,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 33.0,
+          "iActiveIndex": 1212,
+          "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 37.0,
+          "iActiveIndex": 1213,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 6,
+          "fTrackPosition": 41.8,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 2,
+          "fTrackPosition": 42.1,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 16,
+          "fTrackPosition": 42.1,
+          "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 9,
+          "fTrackPosition": 42.1,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player",
+          "CinematicIndexDataList": [
+            {
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Player",
+              "vPosition": [ 1122.577, 82.374, 1230.379 ],
+              "vRotation": [ 1098.517, 82.374, 1273.884, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
+            }
+          ]
+        },
+        {
+          "eState": 7,
+          "fTrackPosition": 43.2,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        }
+      ],
         "iCinematicID": 126,
         "szCinematicName": "ScarletFirstMeet"
     }

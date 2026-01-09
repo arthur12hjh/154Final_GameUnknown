@@ -164,7 +164,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_PlayerDesc.pPlayerController = m_pCCT;
 
 	/* 시작할땐 꺼두자 */
-	SetVisibility(VISIBILITY::HIDDEN);
+	//SetVisibility(VISIBILITY::HIDDEN);
 	MotionTrailEnable(false);
 
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
@@ -258,7 +258,7 @@ HRESULT CPlayer::Render_MotionBlur()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
-	if (true == m_PlayerDesc.isInvincible || VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (true == m_PlayerDesc.isInvincible || false == m_bIsActive)
 		return S_OK;
 
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);

@@ -23,7 +23,7 @@ for /f "delims=" %%F in ('
     echo [NORMaL KEEP MAX / DDS+MIP1] %%F
     "%TEXCONV%" ^
         -m 1 ^
-        -f BC7_UNORM_SRGB ^
+        -f BC5_UNORM ^
         -ft dds ^
         -y ^
         "%TARGET_DIR%\%%F"
@@ -39,7 +39,7 @@ for /f "delims=" %%F in ('
     echo [NORMaL KEEP MAX / DDS+MIP1] %%F
     "%TEXCONV%" ^
         -m 1 ^
-        -f BC7_UNORM_SRGB ^
+        -f BC5_UNORM ^
         -ft dds ^
         -y ^
         "%TARGET_DIR%\%%F"
@@ -53,7 +53,7 @@ for /f "delims=" %%F in ('
     echo [ORM KEEP MAX / DDS+MIP1] %%F
     "%TEXCONV%" ^
         -m 1 ^
-        -f BC7_UNORM_SRGB ^
+        -f BC5_UNORM ^
         -ft dds ^
         -y ^
         "%TARGET_DIR%\%%F"

@@ -1240,6 +1240,167 @@ void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_
     }
 }
 
+
+[maxvertexcount(6)]
+void GS_SWORD_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
+{
+    GS_WEIGHT_OUT Out[4];
+    float3 vR;
+    float3 vL;
+        
+    float angle = radians(g_fAngle);
+    float s = sin(angle);
+    float c = cos(angle);
+    switch (g_iBillboard % 4)
+    {
+        case 0:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(In[0].TransformMatrix._21_22_23);
+        
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 1:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+    
+    
+                float3 vRightRot = normalize(vRight * c + vUp * s);
+                float3 vLookRot = normalize(vUp * c - vRight * s);
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 2:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(float4(cross(normalize(g_CamMatrix._31_32_33), vLook), 0));
+    
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 3:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+                float3 localUp = normalize(float3(
+    In[0].TransformMatrix._31,
+    In[0].TransformMatrix._32,
+    In[0].TransformMatrix._33));
+        
+                float projRight = dot(localUp, vRight);
+                float projUp = dot(localUp, vUp);
+        
+        
+        
+                float3 up = normalize(mul(float3(In[0].TransformMatrix._31, In[0].TransformMatrix._32, In[0].TransformMatrix._33), g_CamMatrix._31_32_33));
+                float angle = atan2(projUp, projRight) + radians(g_fAngle);
+    
+                float s = sin(angle);
+                float c = cos(angle);
+    
+                float3 vRightRot = vRight * c + vUp * s;
+                float3 vLookRot = vUp * c - vRight * s;
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+    }
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    if (4 <= g_iBillboard)
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL * 2, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL * 2, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0), matVP);
+                                                              
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+    else
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+}
+
 /* 출력된 정점 위치벡터의 w값으로 모든 성분을 나눈다 -> 투영스페이스로 변환 */ 
 /* 정점의 위치에 대해서 뷰포트 변환을 수행한다 */ 
 /* 정점의 모든 정보를 보간하여 픽셀을 만든다. -> 래스터라이즈 */ 
@@ -3112,6 +3273,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_REPURSE();
+    }
+    // idx 43
+    pass Sword_Metaball
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_SWORD_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_METABALL();
     }
 
 }

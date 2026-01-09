@@ -231,6 +231,10 @@ void CNaytibaLeftWeaponPart::Active_SFX(const _wstring& strObjectTag, const ANIM
         {
             TrailEffect.first->bisPlay = false;
         }
+        for (auto LineTrailEffect : m_pLineTrailEffects)
+        {
+            LineTrailEffect.first->bisPlay = false;
+        }
     }
     else if (strObjectTag == TEXT("Play_Trail"))
     {
@@ -332,6 +336,22 @@ void CNaytibaLeftWeaponPart::Activate_PartObject_Collider(const _wstring& strCol
 
 void CNaytibaLeftWeaponPart::EnableCollider(_bool bIsEnable)
 {
+}
+
+void CNaytibaLeftWeaponPart::Stop_All_Effect()
+{
+    for (auto Effect : m_pEffects)
+    {
+        Effect.first->Stop();
+    }
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        TrailEffect.first->bisPlay = false;
+    }
+    for (auto LineTrailEffect : m_pLineTrailEffects)
+    {
+        LineTrailEffect.first->bisPlay = false;
+    }
 }
 
 HRESULT CNaytibaLeftWeaponPart::Ready_Components(const WEAPON_DESC& Desc)

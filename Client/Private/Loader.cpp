@@ -1814,9 +1814,25 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Repulse.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Sword_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordSpark.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Hit_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sword_Hit_Spark.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
 	/* For.Prototype_Component_Effect_Gigas_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/GigasSparkParticle.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_Blood */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Blood");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sword_Blood.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	

@@ -13,7 +13,7 @@ NS_END
 
 NS_BEGIN(Tool_Effect)
 
-class CSpriteParticle final : public CBlendObject
+class CSpriteParticle final : public CGameObject
 {
 public:
 	struct PointConstBufferData

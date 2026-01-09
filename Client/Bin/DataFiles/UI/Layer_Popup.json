@@ -347,6 +347,13 @@
                     "szArg": "Change_Map",
                     "szTypeTag": "ActionEvent"
                 }
+            ],
+            "TelePort": [
+                {
+                    "szActionTag": "TelePort",
+                    "szArg": "TelePort",
+                    "szTypeTag": "ActionEvent"
+                }
             ]
         },
         "szLayerTag": "Layer_Popup",

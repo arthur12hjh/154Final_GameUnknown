@@ -153,11 +153,6 @@ void CUIMapSelector::CallbackEvent(void* pArg)
 	
 }
 
-void CUIMapSelector::Set_Button_Info(vector<_int> iTransportDatas)
-{
-
-}
-
 HRESULT CUIMapSelector::SetUp_Buttons()
 {
 	m_ButtonDescs.clear();
@@ -219,14 +214,6 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 			{
 				eBtnState = BTN_STATE::CLICK;
 
-				/*UI_EVENT_ARG_DESC Arg{};
-				Arg.szActionTag = TEXT("Set_Texture_Index");
-				Arg.Type = UI_EVENT_ARG_DESC::INT;
-				Arg.pData = &i;
-				__super::Trigger_Event(TEXT("Get_Texture_Index"), &Arg);*/
-
-				//auto pTransportData = m_pGameManager->Find_TransportData(1);
-
 				if (m_ButtonDescs[i].eTargetLevel != m_pGameInstance->GetCurrentLevelID())
 				{
 					static_cast<CUIPopup*>(m_pParent)->Close_Popup(true);
@@ -252,9 +239,6 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 
 					static_cast<CUIPopup*>(m_pParent)->Close_Popup();
 				}
-
-				//m_pTransformCom->Set_State(STATE::POSITION, vPos);
-				//m_pCCT->Set_Position(vPos);
 			}
 		}
 

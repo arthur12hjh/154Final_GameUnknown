@@ -15,7 +15,7 @@ public:
 	//정적 오브젝트용
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override;
 	virtual HRESULT Render(class CVIBuffer_Rect* pVIBuffer) override;
-
+	void Clear_StaticShadowObjects();
 public:
 	//정적 그림자용 리소스 바인딩
 	HRESULT Bind_Shader_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);
@@ -29,6 +29,8 @@ public:
 	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) override;
 	virtual HRESULT Render_Debug(class CVIBuffer_Rect* pVIBuffer, class CShader* pShader) override;
 #endif
+
+
 
 private:
 	//정적 그림자 정보

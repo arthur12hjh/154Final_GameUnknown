@@ -40,7 +40,7 @@ public:
 private:
 	//캐스케이드 관련 정보들
 	ID3D11DepthStencilView* m_pCascadeShadowDSV = { nullptr };
-	_uint2					m_vCascadeShadowMapSize = { 2048, 2048 };
+	_uint2					m_vCascadeShadowMapSize = { 4096, 4096 };
 
 	_float					m_fCascadeEnds[CASCADE_LEVEL + 1];
 	_float4					m_vCascadeNearCorner[CASCADE_LEVEL][4];

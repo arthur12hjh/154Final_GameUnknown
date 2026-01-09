@@ -47,8 +47,6 @@ private:
 	vector<MAP_SELECTOR_DESC>   m_ButtonDescs{};
 
 private:
-	void Set_Button_Info(vector<_int> iTransportDatas);
-
 	HRESULT SetUp_Buttons();
 
 	HRESULT Render_Text();

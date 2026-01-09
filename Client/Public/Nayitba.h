@@ -10,6 +10,7 @@ NS_BEGIN(Client)
 class CUIBase;
 class CBullet;
 class CNayitbaPartBody;
+class CNaytibaLeftWeaponPart;
 class CTargetComponent;
 class CDropComponent;
 
@@ -92,6 +93,7 @@ private:
 	CDropComponent*							m_pDropCom = { nullptr };
 	CAIController*							m_pAIController = { nullptr };
 	CNayitbaPartBody*						m_pPartBody = { nullptr };
+	CNaytibaLeftWeaponPart*					m_pLeftWeapon = { nullptr };
 
 	_uint									m_iMonsterID = {};
 	const NAYTIBA_NETWORK_DESC*				m_pInitMonsterInfo = { nullptr };
@@ -127,7 +129,7 @@ private :
 	HRESULT									ADD_PartObjects();
 	
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
-	void									ResetBodyColor();
+	void									ResetToBaseState();
 
 	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	

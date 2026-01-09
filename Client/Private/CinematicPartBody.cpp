@@ -138,6 +138,7 @@ HRESULT CCinematicPartBody::Render_Shadow()
     if (m_bIsActive == FALSE)
         return S_OK;
 
+    //Anim 객체든 아니든, 어차피 가까이서 보일거니까 다 캐스케이드로 처리함 수고
     if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
         return E_FAIL;
 
@@ -149,32 +150,25 @@ HRESULT CCinematicPartBody::Render_Shadow()
 
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-    if (m_bIsAnim)
+    for (size_t i = 0; i < iNumMeshes; i++)
     {
-        for (size_t i = 0; i < iNumMeshes; i++)
+        if (m_bIsAnim)
         {
             if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
                 return E_FAIL;
 
             if (FAILED(m_pShaderCom->Begin(1)))
                 return E_FAIL;
-
-            if (FAILED(m_pModelCom->Render(i)))
-                return E_FAIL;
         }
-    }
-    else
-    {
-        for (size_t i = 0; i < iNumMeshes; i++)
+        else
         {
             if (FAILED(m_pShaderCom->Begin(6)))
                 return E_FAIL;
-
-            if (FAILED(m_pModelCom->Render(i)))
-                return E_FAIL;
         }
-    }
 
+        if (FAILED(m_pModelCom->Render(i)))
+            return E_FAIL;
+    }
 
     return S_OK;
 }
