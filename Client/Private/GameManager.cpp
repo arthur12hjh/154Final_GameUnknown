@@ -120,7 +120,7 @@ void CGameManager::SetMiniGameReward(_uint iItemID, _uint iCount)
     m_MiniGameReward.iItemList.push_back(make_pair(iItemID, iCount));
 }
 
-MINIGAME_REWARD* CGameManager::ApplyMiniGameReward()
+MINIGAME_REWARD* CGameManager::GetMiniGameReward()
 {
     return &m_MiniGameReward;
 }

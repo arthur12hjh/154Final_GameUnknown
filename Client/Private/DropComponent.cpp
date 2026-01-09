@@ -2,6 +2,7 @@
 #include "DropComponent.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Item.h"
 
 const WCHAR* CDropComponent::m_szProtoTypeName = TEXT("Prototype_GamePlay_ItemObject");
@@ -34,6 +35,28 @@ void CDropComponent::ItemDrop(_uint iDropItemCount)
         CalculationItemDrop();
 
     CreateObjectToLayer();
+}
+
+void CDropComponent::DropRewardItem()
+{
+    MINIGAME_REWARD* pReward = CGameManager::GetInstance()->GetMiniGameReward();
+    if (nullptr == pReward)
+        return;
+
+    if (!pReward->iItemList.empty())
+    {
+        for (auto& iter : pReward->iItemList)
+        {
+            DROP_RESULT_DESC ResultDesc = {};
+            ResultDesc.iDropItemID = iter.first;
+            ResultDesc.iAmountVal = iter.second;
+
+            m_DropResultList.push_back(move(ResultDesc));
+        }
+
+        pReward->iItemList.clear();
+        CreateObjectToLayer();
+    }
 }
 
 HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount)
@@ -72,7 +95,7 @@ void CDropComponent::CalculationItemDrop()
         {
             DROP_RESULT_DESC ResultDesc = {};
             ResultDesc.iDropItemID = m_DoprItemList[i].first;
-            ResultDesc.fAmountVal = m_pGameInstance->Random(1, m_AmountItemList[i]);
+            ResultDesc.iAmountVal = (_int)m_pGameInstance->Random(1, m_AmountItemList[i]);
 
             m_DropResultList.push_back(move(ResultDesc));
             return;
@@ -109,7 +132,7 @@ void CDropComponent::CreateObjectToLayer()
 
         XMStoreFloat3(&ItemDesc.fDropPoint, vDorpPoint);
         memcpy(&ItemDesc.iItemID, &iter.iDropItemID, sizeof(_uint));
-        memcpy(&ItemDesc.fAmount, &iter.fAmountVal, sizeof(_float));
+        memcpy(&ItemDesc.fAmount, &iter.iAmountVal, sizeof(_float));
         if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iLevelID, m_szProtoTypeName, iLevelID, m_szLayerName, &ItemDesc)))
             return;
     }

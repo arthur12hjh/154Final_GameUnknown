@@ -308,6 +308,7 @@
     <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\Sky_Dororong.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
+    <ClInclude Include="..\public\SoundTriggerBox.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -663,6 +664,7 @@
     <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\Sky_Dororong.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
+    <ClCompile Include="..\private\SoundTriggerBox.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />

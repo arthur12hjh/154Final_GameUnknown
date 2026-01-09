@@ -78,8 +78,8 @@ HRESULT CLoader::Loading()
 	{
 	case LEVEL::EDITOR:
 	{
-		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
+		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}

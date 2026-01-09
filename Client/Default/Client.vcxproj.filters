@@ -1186,6 +1186,9 @@
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\Grass">
       <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TriggerBox\SoundTriggerBox">
+      <UniqueIdentifier>{b805a78d-b82e-44b9-84aa-464f0d525ddd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2269,6 +2272,9 @@
     <ClInclude Include="..\public\Npc_RightWeaponPart.h">
       <Filter>02.GameObjects\Character\AI\Npc\Weapon\Right</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SoundTriggerBox.h">
+      <Filter>02.GameObjects\TriggerBox\SoundTriggerBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3315,6 +3321,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Npc_RightWeaponPart.cpp">
       <Filter>02.GameObjects\Character\AI\Npc\Weapon\Right</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SoundTriggerBox.cpp">
+      <Filter>02.GameObjects\TriggerBox\SoundTriggerBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

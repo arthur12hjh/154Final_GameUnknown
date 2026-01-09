@@ -75,7 +75,7 @@ void CNaytibaLeftWeaponPart::Late_Update(_float fTimeDelta)
 		MyMatrix * SocketMatrix * ParentMatrix);
 	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-    if (m_eVisibility == VISIBILITY::VISIBLE)
+    if (m_bIsActive && VISIBILITY::VISIBLE == m_eVisibility)
     {
         m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
         m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
