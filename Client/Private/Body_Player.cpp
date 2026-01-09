@@ -823,7 +823,7 @@ void CBody_Player::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-
+	Safe_Release(m_pBlood);
 	for (auto& iter : m_HorizontalJointChains)
 	{
 		Safe_Release(iter);
