@@ -36,7 +36,10 @@ HRESULT CDeco::Initialize(void* pArg)
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")) ||
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Garden")) || 
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")) ||
-        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")))
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base_1A")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Statue")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Trash")))
     {
         if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
             return S_OK;
