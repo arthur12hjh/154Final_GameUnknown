@@ -557,7 +557,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	BambooDesc.iNumInstance = 1;
 	BambooDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	BambooDesc.vRange = _float3(0.f, 0.f, 0.f);
-	BambooDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
+	BambooDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/Tree1.fbx";
 	BambooDesc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bamboo");
@@ -1820,9 +1820,25 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Repulse.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Sword_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/SwordSpark.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_Spark */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Hit_Spark");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sword_Hit_Spark.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+
 	/* For.Prototype_Component_Effect_Gigas_Spark */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Gigas_Spark");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/GigasSparkParticle.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Sword_Blood */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Blood");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sword_Blood.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	

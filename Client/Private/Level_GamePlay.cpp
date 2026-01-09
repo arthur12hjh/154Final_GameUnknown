@@ -381,7 +381,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 222.f, 55.f, 222.f};
+	Desc.vPosition = { 186.f, 55.f, 229.f};
 	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
@@ -406,11 +406,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
 
-	Desc.iMonsterID = 6;
+	/*Desc.iMonsterID = 6;
 	Desc.vPosition = { 62.f, 1.f, 62.f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
-		return E_FAIL;
+		return E_FAIL;*/
 	
 	/*Desc.iMonsterID = 3;
 	{

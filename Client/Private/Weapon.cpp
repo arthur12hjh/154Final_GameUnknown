@@ -64,8 +64,6 @@ void CWeapon::Priority_Update(_float fTimeDelta)
 
 void CWeapon::Update(_float fTimeDelta)
 {
-	m_pBlood->Update(fTimeDelta);
-	m_pGigasSpark->Update(fTimeDelta);
 	//if (!m_bisBlood)
 	//	m_pBlood->Stop();
 	//m_bisBlood = false;
@@ -75,7 +73,14 @@ void CWeapon::Update(_float fTimeDelta)
 			Safe_Release(m_pCharge);
 	}
 
-
+	m_pBlood->Update(fTimeDelta);
+	m_pSwordBlood[0]->Update(fTimeDelta);
+	m_pSwordBlood[1]->Update(fTimeDelta);
+	m_pGigasSpark->Update(fTimeDelta);
+	m_pGigasSand->Update(fTimeDelta);
+	m_pSwordSpark[0]->Update(fTimeDelta);
+	m_pSwordSpark[1]->Update(fTimeDelta);
+	m_pSwordSpark[2]->Update(fTimeDelta);
 	//ANIM_NOTIFY GaraNotify;
 	//GaraNotify.fNumData01 = 1.f;
 	//
@@ -124,7 +129,7 @@ void CWeapon::Update(_float fTimeDelta)
 	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_N))
 	//	m_vRotationQuaternion.z -= fTimeDelta * 30.f;
 	//
-	//
+
 	//m_pTransformCom->Rotation(XMConvertToRadians(m_vRotationQuaternion.x), XMConvertToRadians(m_vRotationQuaternion.y), XMConvertToRadians(m_vRotationQuaternion.z));
 	//
 	//swprintf_s(m_szRotationAngle, L"%.1f, %.1f, %.1f", m_vRotationQuaternion.x, m_vRotationQuaternion.y, m_vRotationQuaternion.z);
@@ -197,10 +202,15 @@ void CWeapon::Late_Update(_float fTimeDelta)
 	//mat = XMLoadFloat4x4(&m_CombinedWorldMatrix);
 	//mat.r[3] += mat.r[2] * sinf(m_fTime * 20.f) * 0.4f;
 	//m_pTrail[6]->Update_Trail(mat, fTimeDelta, true);
-
-
 	m_pBlood->Late_Update(fTimeDelta);
+	m_pSwordBlood[0]->Late_Update(fTimeDelta);
+	m_pSwordBlood[1]->Late_Update(fTimeDelta);
 	m_pGigasSpark->Late_Update(fTimeDelta);
+	m_pGigasSand->Late_Update(fTimeDelta);
+	m_pSwordSpark[0]->Late_Update(fTimeDelta);
+	m_pSwordSpark[1]->Late_Update(fTimeDelta);
+	m_pSwordSpark[2]->Late_Update(fTimeDelta);
+
 	if(nullptr != m_pCharge)
 		m_pCharge->Late_Update(fTimeDelta);
 
@@ -321,12 +331,38 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		m_pBlood->Stop();
 	}
+	else if (strObjectTag == TEXT("Sword_Blood"))
+	{
+		m_pSwordBlood[NotifyReference.iNumData01]->Play();
+	}
+	else if (strObjectTag == TEXT("Sword_Blood_End"))
+	{
+		m_pSwordBlood[NotifyReference.iNumData01]->Stop();
+	}
 	else if (strObjectTag == TEXT("Gigas_Spark"))
 	{
 		m_pGigasSpark->Play();
 	}
 	else if (strObjectTag == TEXT("Gigas_Spark_End"))
 	{
+		m_pGigasSpark->Stop();
+	}
+	else if (strObjectTag == TEXT("Sword_Spark"))
+	{
+		m_pSwordSpark[NotifyReference.iNumData01]->Play();
+	}
+	else if (strObjectTag == TEXT("Sword_Spark_End"))
+	{
+		m_pSwordSpark[NotifyReference.iNumData01]->Stop();
+	}
+	else if (strObjectTag == TEXT("Sword_Sand"))
+	{
+		m_pGigasSand->Play();
+		m_pGigasSpark->Play();
+	}
+	else if (strObjectTag == TEXT("Sword_Sand_End"))
+	{
+		m_pGigasSand->Play();
 		m_pGigasSpark->Stop();
 	}
 	else if (strObjectTag == TEXT("Charge"))
@@ -433,20 +469,51 @@ HRESULT CWeapon::Ready_Components()
 	CEffect::EFFECT_TRANSFORM_DESC desc;
 
 	desc.pRootMatrix = &m_CombinedWorldMatrix;
-	desc.vPos = XMVectorSet(0, 3, 0, 1);
+	desc.vPos = XMVectorSet(0, 2.5f, 0, 1);
 	desc.fRot = _float3(0, 0, 0);
 	desc.fSize = 0.4f;
 
+
 	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
-	m_pBlood->Play();
 	m_pBlood->Stop();
+	m_pSwordBlood[0] = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sword_Blood"), &desc));
+	m_pSwordBlood[0]->Stop();
+	desc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+	m_pSwordBlood[1] = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sword_Blood"), &desc));
+	m_pSwordBlood[1]->Stop();
+	desc.vPos = XMVectorSet(0, 2.5f, 0, 1);
+	desc.fSize = 1.f;
+	desc.fRot = _float3(XMConvertToRadians(180.f), 0, 0);
+	m_pGigasSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Spark"), &desc));
+	m_pGigasSpark->Stop();
+
 
 	desc.vPos = XMVectorSet(0, 2.5f, 0, 1);
 	desc.fSize = 1.f;
-	m_pGigasSpark = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Gigas_Spark"), &desc));
-	m_pGigasSpark->Play();
-	m_pGigasSpark->Stop();
+	desc.fRot = _float3(0, 0, 0);
+	m_pSwordSpark[0] = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sword_Spark"), &desc));
+	m_pSwordSpark[0]->Stop();
 
+	desc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+	m_pSwordSpark[1] = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sword_Spark"), &desc));
+	m_pSwordSpark[1]->Stop();
+
+	desc.fSize = 1.f;
+	desc.vPos = XMVectorSet(0, 1.f, 0, 1);
+	m_pSwordSpark[2] = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Sword_Spark"), &desc));
+	m_pSwordSpark[2]->Stop();
+
+
+	desc.vPos = XMVectorSet(0, 0, 0, 1);
+	desc.fSize = 0.2f;
+	desc.fRot = _float3(0, 0, 0);
+	desc.iFloor = 1;
+
+
+	desc.pRootMatrix = m_pSocketMatrix;
+	desc.pWorldMatrix = m_pParentTransformCom->Get_WorldMatrixPtr();
+	m_pGigasSand = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Stone_Shrowing"), &desc));
+	m_pGigasSand->Stop();
 	return S_OK;
 }
 
@@ -491,19 +558,19 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
 
-		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-		EffectDesc.fRotationPerSec = 1.f;
-		EffectDesc.fSpeedPerSec = 1.f;
-
-		EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
-		EffectDesc.vPos = XMVectorSet(0, 3.f, 0, 1);
-		EffectDesc.fRot = _float3(0, 0, 0);
-		EffectDesc.fSize = 0.15f;
-		_float3 dir = { m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_31, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_32, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_33};
-		XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
-		EffectDesc.pDir = &dir;
-		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
-			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+		//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		//EffectDesc.fRotationPerSec = 1.f;
+		//EffectDesc.fSpeedPerSec = 1.f;
+		//
+		//EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
+		//EffectDesc.vPos = XMVectorSet(0, 3.f, 0, 1);
+		//EffectDesc.fRot = _float3(0, 0, 0);
+		//EffectDesc.fSize = 0.15f;
+		//_float3 dir = { m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_31, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_32, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_33};
+		//XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
+		//EffectDesc.pDir = &dir;
+		//CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
+		//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 	}
 }
 
@@ -559,5 +626,11 @@ void CWeapon::Free()
 	Safe_Release(m_pTrail[3]);
 	Safe_Release(m_pCharge);
 	Safe_Release(m_pBlood);
+	Safe_Release(m_pSwordBlood[0]);
+	Safe_Release(m_pSwordBlood[1]);
 	Safe_Release(m_pGigasSpark);
+	Safe_Release(m_pSwordSpark[0]);
+	Safe_Release(m_pSwordSpark[1]);
+	Safe_Release(m_pSwordSpark[2]);
+	Safe_Release(m_pGigasSand);
 }

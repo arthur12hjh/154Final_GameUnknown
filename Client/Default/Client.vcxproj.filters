@@ -421,9 +421,6 @@
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree">
       <UniqueIdentifier>{48bc51ae-ebc7-407d-be82-6701678b8e9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Map\Desert\Environment\Grass">
-      <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Actor\Interaction\CanBox">
       <UniqueIdentifier>{a69f176e-6c84-4eec-8558-48d99f7c8550}</UniqueIdentifier>
     </Filter>
@@ -1186,6 +1183,9 @@
     <Filter Include="02.GameObjects\Character\AI\Npc\Weapon\Right">
       <UniqueIdentifier>{96804322-16c9-4b70-b1dc-96f5f8b8597c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\Grass">
+      <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1937,7 +1937,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\WorldUI\UILockOn</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Desert_Grass.h">
-      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree\Grass</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Desert_Tree.h">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>
@@ -2993,7 +2993,7 @@
       <Filter>02.GameObjects\Actor\Interaction\Lift\Lift_Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Desert_Grass.cpp">
-      <Filter>02.GameObjects\Map\Desert\Environment\Grass</Filter>
+      <Filter>02.GameObjects\Map\Desert\Environment\Tree\Grass</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Desert_Tree.cpp">
       <Filter>02.GameObjects\Map\Desert\Environment\Tree</Filter>

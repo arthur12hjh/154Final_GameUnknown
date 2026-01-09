@@ -19,15 +19,6 @@
     <Filter Include="30.ImgUI">
       <UniqueIdentifier>{bf8664cc-d39a-4497-9dd3-f077dfec6547}</UniqueIdentifier>
     </Filter>
-    <Filter Include="30.ImgUI\source">
-      <UniqueIdentifier>{8e8d6899-209f-4658-b7f1-da0fee3e532b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImgUI\source\public">
-      <UniqueIdentifier>{c325e180-aa8f-4725-94cc-bb6ecb535d51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="30.ImgUI\source\private">
-      <UniqueIdentifier>{2fe074cb-feea-444f-963e-15c5ecff1a3c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="30.ImgUI\ui">
       <UniqueIdentifier>{cb1eac07-6644-4105-8c7e-f0efb630a66f}</UniqueIdentifier>
     </Filter>
@@ -84,6 +75,15 @@
     </Filter>
     <Filter Include="02.Object\Effect\TrailEffect\TrailData">
       <UniqueIdentifier>{5b6371cb-e11d-44c9-8f73-eeab6fa72086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source">
+      <UniqueIdentifier>{8e8d6899-209f-4658-b7f1-da0fee3e532b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source\public">
+      <UniqueIdentifier>{c325e180-aa8f-4725-94cc-bb6ecb535d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="30.ImgUI\source\private">
+      <UniqueIdentifier>{2fe074cb-feea-444f-963e-15c5ecff1a3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

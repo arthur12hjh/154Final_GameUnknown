@@ -50,6 +50,7 @@ public:
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
+	class CEffect* m_pBlood = { nullptr };
 
 	_bool				m_isAnimFinish = { false };	
 	_bool				m_bIsEnableCollider = { false };

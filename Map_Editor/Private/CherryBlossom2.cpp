@@ -68,6 +68,8 @@ HRESULT CCherryBlossom2::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
 
 
 		if (FAILED(m_pShaderCom->Begin(9)))
@@ -106,6 +108,7 @@ HRESULT CCherryBlossom2::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
 		return E_FAIL;
+	
 
 	return S_OK;
 }

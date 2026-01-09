@@ -53,9 +53,9 @@ PS_OUT_BLUR PS_MAIN_METABALL_X(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float vSize = 0.f;
-    for (int i = -6; i < 7; ++i)
+    for (int i = -3; i < 4; ++i)
     {
-        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX;
+        vTexcoord.x = In.vTexcoord.x + (float) i / g_iWinSizeX * 0.8f;
         vTexcoord.y = In.vTexcoord.y;
         
         vColor += g_fWeights[i + 6] * g_MetaballTexture.Sample(ClampSampler, vTexcoord);
@@ -73,10 +73,10 @@ PS_OUT_BLUR PS_MAIN_METABALL_FINAL(PS_IN In)
     float2 vTexcoord;
     float4 vColor = 0.f;
     float vSize = 0.f;
-    for (int i = -6; i < 7; ++i)
+    for (int i = -3; i < 4; ++i)
     {
         vTexcoord.x = In.vTexcoord.x;
-        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY;
+        vTexcoord.y = In.vTexcoord.y + (float) i / g_iWinSizeY * 0.8f;
         
         vColor += g_fWeights[i + 6] * g_MetaballTexture.Sample(ClampSampler, vTexcoord);
         vSize += g_fWeights[i + 6];
