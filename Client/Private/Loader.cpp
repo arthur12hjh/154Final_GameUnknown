@@ -550,7 +550,7 @@ HRESULT CLoader::Loading_For_Scarlet_SKY(void* pArg)
 	BambooDesc.iNumInstance = 1;
 	BambooDesc.vCenter = _float3(0.0f, 0.f, 0.0f);
 	BambooDesc.vRange = _float3(0.f, 0.f, 0.f);
-	BambooDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/Tree1.binx";
+	BambooDesc.pModelFilePath = "../../Map_Editor/Bin/Resources/Maps/Scarlet/Tree/Tree1.fbx";
 	BambooDesc.PreModelMatrix = PreTransformMatrix;
 
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bamboo");

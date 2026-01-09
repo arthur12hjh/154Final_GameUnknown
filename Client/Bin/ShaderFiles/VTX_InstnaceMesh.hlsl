@@ -10,6 +10,7 @@ Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_ORMTexture;
 Texture2D g_MaskTexture;
+Texture2D g_EmissiveTexture;
 
 float g_fFar;
 float g_CamFar;
@@ -61,6 +62,46 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
 
     Out.vPosition = mul(vPosition, matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+    Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+
+    return Out;
+}
+
+VS_OUT VS_BAMBOO(VS_IN In)
+{
+    VS_OUT Out;
+    
+    Out.vOriginalWorldPos = float4(0.f, 0.f, 0.f, 0.f);
+    
+    /* In.vPosition * 월드 * 뷰 * 투영 */    
+    //float4x4 == matrix
+    matrix matWV, matWVP;
+    
+    vector vPosition = mul(vector(In.vPosition, 1.f), In.TransformMatrix);
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    float4 vMask = g_EmissiveTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
+
+    float4 vLocalPos = vPosition;
+
+    float fWeight = vMask.r;
+    float fWave = 0.f;
+    // 마스크가 흰색인 부분만 흔들림
+    if (fWeight > 0.01f)
+    {
+        fWave = sin(g_fTime * 2.5f + vLocalPos.y) * 0.35f * fWeight;
+    }
+    
+    vLocalPos.x += fWave;
+    vLocalPos.z += fWave;
+    
+    Out.vPosition = mul(vLocalPos, matWVP);
     Out.vTexcoord = In.vTexcoord;
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
@@ -276,5 +317,16 @@ technique11 Tech
         VertexShader = compile vs_5_0 VS_MAIN_REED();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_REED();
+    }
+    
+    // idx 3
+    pass Bamboo
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BAMBOO();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

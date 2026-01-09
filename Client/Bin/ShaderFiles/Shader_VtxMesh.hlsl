@@ -54,16 +54,16 @@ VS_OUT VS_BLOSSOM(VS_IN In)
 {
     VS_OUT Out;
     
-    float4 vMask = g_MaskTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
+    float4 vMask = g_EmissiveTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
 
     float4 vLocalPos = vector(In.vPosition, 1.f);
 
-    float fWeight = vMask.a;
+    float fWeight = vMask.r;
     float fWave = 0.f;
     // 마스크가 흰색인 부분만 흔들림
-    if(fWeight > 0.1f)
+    if(fWeight > 0.01f)
     {
-        fWave = sin(g_fTime * 2.5f + vLocalPos.y) * 0.15f * fWeight;
+        fWave = sin(g_fTime * 2.5f + vLocalPos.y) * 0.35f * fWeight;
     }
     
     vLocalPos.x += fWave;
@@ -407,6 +407,6 @@ technique11 DefaultTechnique
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_BLOSSOM();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_TREE();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

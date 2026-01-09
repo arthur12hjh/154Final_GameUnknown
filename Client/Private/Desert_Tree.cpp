@@ -29,6 +29,11 @@ HRESULT CDesert_Tree::Initialize(void* pArg)
 	_matrix worldMatrix = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	m_pCullingCollider->UpdateColiision(worldMatrix);
 
+	if (pDesc->iObjectID == 16)
+	{
+		m_bIsGigasTree = true;
+	}
+
 	if (FAILED(Ready_Components(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
@@ -78,10 +83,16 @@ HRESULT CDesert_Tree::Render()
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
-
-		if (FAILED(m_pShaderCom->Begin(8)))
-			return E_FAIL;
-
+		if (m_bIsGigasTree)
+		{
+			if (FAILED(m_pShaderCom->Begin(0)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Begin(8)))
+				return E_FAIL;
+		}
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;

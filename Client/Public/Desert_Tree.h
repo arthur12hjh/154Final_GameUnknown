@@ -30,6 +30,7 @@ public:
 private:
 	CModel* m_pModelCom = { nullptr };
 
+	_bool m_bIsGigasTree = { false };
 private:
 	HRESULT Ready_Components(const _tchar* pComponentTag);
 	HRESULT Bind_ShaderResources();
