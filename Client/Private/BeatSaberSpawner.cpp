@@ -2,8 +2,10 @@
 #include "BeatSaberSpawner.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "StringHelper.h"
 #include "Note.h"
+#include "BeatSaberCharacter.h"
 
 CBeatSaberSpawner::CBeatSaberSpawner(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CCharacter(pDevice, pContext)
@@ -39,52 +41,6 @@ void CBeatSaberSpawner::Priority_Update(_float fTimeDelta)
 
 void CBeatSaberSpawner::Update(_float fTimeDelta)
 {
-    /*if (m_bIsPlay)
-    {
-        _float fOriginRatio = isnan(m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM)) ? 0.f : m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM);
-           
-        if (false == m_SpawnList.empty())
-        {
-            const _float fPreTrigger = 0.03715f;
-            const _float fTriggerRatio = m_SpawnList.front().fSpawnRatio - fPreTrigger;
-            const _float fRatio = fOriginRatio + fTriggerRatio;
-            
-            if (fRatio > fTriggerRatio)
-            {
-                Trigger_SpawnEvent();
-            }
-        }   
-
-        if (1 <= fOriginRatio)
-            m_bIsPlay = false;
-    }*/
-
-    /*if (m_bIsPlay)
-    {
-        _float fRatio = 0.f;
-
-        if (m_fTimeAcc <= 0.f)
-        {
-            m_fTimeAcc += fTimeDelta;
-            fRatio = m_fTimeAcc;
-        }
-        else        
-            fRatio = m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM) * m_fSongLength;
-
-        if (!m_SpawnList.empty())
-        {
-            _float fNoteRatio = m_SpawnList.front().fSpawnRatio;
-
-            if (fRatio >= fNoteRatio)
-            {
-                Trigger_SpawnEvent();
-            }
-        }
-
-        if (1 <= m_pGameInstance->Get_ChannelRatio(CHANNELID::BGM) || m_SpawnList.empty())
-            m_bIsPlay = false;
-    }*/
-
     if (m_bIsPlay)
     {
         m_fTimeAcc += fTimeDelta;
@@ -105,7 +61,20 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
         }
 
         if (m_fSongTime >= m_fSongLength || m_SpawnList.empty())
+        {
+            CBeatSaberCharacter* pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
+
+            if (!pDororong)
+            {
+                Safe_Release(pDororong);
+                return;
+            }
+
+            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= m_iNoteCount)
+                pDororong->Set_FullCombo(true);
+
             m_bIsPlay = false;
+        }
     }
 }
 
@@ -130,7 +99,6 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
         _uint iIdx = atoi(DataList[i++].c_str());
         _float fNoteTimePerBPM = 60.f / (iBPM * 2.f);
 
-        //m_fTimeAcc = -5.f + (fNoteTimePerBPM * 4);
         m_fTimeAcc = 0.f;
         m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f;
         m_fSongTime = -m_fNoteToValiTime;
@@ -157,6 +125,7 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
         m_SpawnList.push(Data);
     }
 
+    m_iNoteCount = iLastIndex;
     m_bIsPlay = true;
 }
 

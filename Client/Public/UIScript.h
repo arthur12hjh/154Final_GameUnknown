@@ -28,8 +28,6 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	HRESULT RenderSpeaker();
-	HRESULT RenderScript();
 
 	void Begin_Script(const SCRIPT_DESC* Scripts) {
 		m_pScriptDesc = Scripts;
@@ -48,6 +46,7 @@ public:
 	}
 
 	_bool Get_Has_Script_Desc() const { return m_bHasScript; }
+	void Play_Next_Script();
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -65,6 +64,8 @@ private:
 	SCRIPT_ANIM_DESC m_tScriptAnimDesc{};
 
 private:
+	HRESULT RenderSpeaker();
+	HRESULT RenderScript();
 	void DefaultAnim(_float fTimeDelta);
 	void LoadingAnim(_float fTimeDelta);
 	void ScriptControl();

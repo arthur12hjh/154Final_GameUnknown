@@ -26,7 +26,13 @@
 
 #include "Npc.h"
 #include "NpcFSM.h"
+
+#pragma region NPC Parts
 #include "NpcBody.h"
+#include "NpcFace.h"
+#include "Npc_LeftWeaponPart.h"
+#include "Npc_RightWeaponPart.h"
+#pragma endregion
 
 #include "NpcInteractionController.h"
 
@@ -394,6 +400,7 @@ HRESULT CLoader::Loading()
 			m_strMessage = TEXT("Player Hide and Seek with King JaeHoon");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
+			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Npc(pArg); });
 
 			hr = Loading_For_GamePlay();
 		}
@@ -725,7 +732,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Cinematic_Dororong"),
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Dororong/CH_NPC_Dororong.fbx", PreTransformMatrix))))
 		return E_FAIL;
-
 
 #pragma region Nayitba
 	/* For.Prototype_GameObject_Nayitba */
@@ -8220,6 +8226,36 @@ HRESULT CLoader::Loading_For_Desert_Bridge_Col(void* pArg)
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Bridge_14B_COL");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Bridge/Bridge_14B_COL.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_GamePlay_Npc(void* pArg)
+{
+	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
+	PROTOTYPE_DESC pProtoDesc = {};
+	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::GAMEPLAY);
+
+	/* For.Prototype_GameObject_NpcFace */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc_Face");
+	pProtoDesc.pPrototype = CNpcFace::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Npc_Left_Weapon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc_Left_Weapon");
+	pProtoDesc.pPrototype = CNpc_LeftWeaponPart::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Npc_Right_Weapon */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc_Right_Weapon");
+	pProtoDesc.pPrototype = CNpc_RightWeaponPart::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

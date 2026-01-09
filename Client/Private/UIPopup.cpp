@@ -255,7 +255,7 @@ void CUIPopup::Open_Popup()
 	m_isClosing = false;
 }
 
-void CUIPopup::Close_Popup(_bool isLevelChange)
+void CUIPopup::Close_Popup(_bool isLevelChange, _bool isTeleport)
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Close"));
@@ -270,7 +270,7 @@ void CUIPopup::Close_Popup(_bool isLevelChange)
 	if (isLevelChange)
 		m_isLevelChange = isLevelChange;
 	else
-		m_isTeleport = true;
+		m_isTeleport = isTeleport;
 }
 
 CUIPopup* CUIPopup::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

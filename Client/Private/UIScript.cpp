@@ -91,6 +91,18 @@ HRESULT CUIScript::Render()
 	return S_OK;
 }
 
+void CUIScript::Play_Next_Script()
+{
+	if (m_pScriptDesc->Scripts.size() > 0)
+	{
+		++m_iScriptIdx;
+		m_fTimeAcc = 0.f;
+	}
+
+	if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
+		End_Script();
+}
+
 HRESULT CUIScript::RenderSpeaker()
 {
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(

@@ -41,6 +41,7 @@ public:
 private:
 	class CGameManager*			m_pGameManager = { nullptr };
 	class CTransform*			m_pPlayerTransform = { nullptr };
+	const PLAYER_DESC*			m_pPlayerDesc = { nullptr };
 
 	_float4x4					m_CombinedWorldMatrix = {};
 

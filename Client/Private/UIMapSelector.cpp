@@ -216,7 +216,7 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 
 				if (m_ButtonDescs[i].eTargetLevel != m_pGameInstance->GetCurrentLevelID())
 				{
-					static_cast<CUIPopup*>(m_pParent)->Close_Popup(true);
+					static_cast<CUIPopup*>(m_pParent)->Close_Popup(true, false);
 				}
 				else
 				{
@@ -237,7 +237,7 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 					PlayerDesc->pPlayerController->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
 					Safe_Release(pPlayer);
 
-					static_cast<CUIPopup*>(m_pParent)->Close_Popup();
+					static_cast<CUIPopup*>(m_pParent)->Close_Popup(false, true);
 				}
 			}
 		}
@@ -262,58 +262,6 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 	}
 
 	m_pUIButtonsBufferCom->Update_Instance(m_ButtonInstances);
-
-	//const float btnW = 270.f;
-	//const float btnH = 60.f;
-	//const float gap = 10.f;
-
-	//const float screenW = (_float)g_iWinSizeX;
-	//const float screenH = (_float)g_iWinSizeY;
-
-	//// scale (NDC 기준)
-	//_float2 scale;
-	//scale.x = btnW / screenW;
-	//scale.y = btnH / screenH;
-
-	//// 전체 높이
-	//float totalH = btnH * 3.f + gap * 2.f;
-
-	//// 첫 버튼 Y 시작점 (center 기준)
-	//float startY = totalH * 0.5f - btnH * 0.5f;
-
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	VTX_INSTANCE_DESC inst{};
-
-	//	// -------------------------
-	//	// Position
-	//	// -------------------------
-	//	float yPixel = startY - i * (btnH + gap);
-
-	//	inst.vUVAtlasSize.z = scale.x;
-	//	inst.vUVAtlasSize.w = scale.y;
-
-	//	inst.vUVAtlasOffset.z = 0.f;                 // X 중앙
-	//	inst.vUVAtlasOffset.w = yPixel / screenH;    // Y 정렬
-
-	//	// -------------------------
-	//	// UV (전체 사용)
-	//	// -------------------------
-	//	inst.vUVAtlasSize.x = 1.f;
-	//	inst.vUVAtlasSize.y = 1.f;
-
-	//	inst.vUVAtlasOffset.x = 0.f;
-	//	inst.vUVAtlasOffset.y = 0.f;
-
-	//	// -------------------------
-	//	// Atlas (단일 텍스처면 0,0)
-	//	// -------------------------
-	//	inst.vAtlasIndex = _float4(0.f, 0.f, 0.f, 0.f);
-
-	//	m_ButtonInstances.push_back(inst);
-	//}
-
-	//m_pUIButtonsBufferCom->Update_Instance(m_ButtonInstances);
 
 	return S_OK;
 }

@@ -9,24 +9,19 @@ class CCollider;
 NS_END
 
 NS_BEGIN(Client)
-
-class CNaytibaFace final : public CPartObject
+class CNpc_RightWeaponPart final : public CPartObject
 {
-public :
-	typedef struct NaytibaFaceDesc : public PARTOBJECT_DESC
+public:
+	typedef struct tagWeapon_Desc : public CPartObject::PARTOBJECT_DESC
 	{
-		class CModel*		pBodyModelCom = nullptr;
-		WCHAR				szFaceJsonDataName[MAX_PATH];
-	}NAYTIBA_FACE_DESC;
+		WCHAR				szWeaponModelPrototype[256];
+		const _float4x4*	pSocketMatrix = { nullptr };
+	}WEAPON_DESC;
 
 private:
-	CNaytibaFace(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CNaytibaFace(const CNaytibaFace& Prototype);
-	virtual ~CNaytibaFace() = default;
-
-public:
-	HRESULT								Mapping_Shader_Material(_uint iIdx);
-
+	CNpc_RightWeaponPart(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CNpc_RightWeaponPart(const CNpc_RightWeaponPart& Prototype);
+	virtual ~CNpc_RightWeaponPart() = default;
 
 public:
 	virtual HRESULT						Initialize_Prototype() override;
@@ -38,20 +33,16 @@ public:
 
 	virtual HRESULT						Render() override;
 	virtual HRESULT						Render_Shadow() override;
-	virtual HRESULT						Render_MotionBlur() override;
 
 private:
-	CModel*								m_pBodyModelCom = { nullptr };
 	const _float4x4*					m_pSocketMatrix = { nullptr };
 
 private:
-	HRESULT								Ready_Components();
+	HRESULT								Ready_Components(const WEAPON_DESC& Desc);
 	HRESULT								Bind_ShaderResources();
 
-	HRESULT								Bind_BoneToPartBody(class CModel* pArg);
-
 public:
-	static CNaytibaFace*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CNpc_RightWeaponPart*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject*				Clone(void* pArg) override;
 	virtual void						Free() override;
 };

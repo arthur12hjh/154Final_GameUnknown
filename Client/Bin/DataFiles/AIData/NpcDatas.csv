@@ -1,5 +1,6 @@
- ID,Name,ProtoTypeModel,Controller ProtoType,Extents,TeamNumber,InteractionID,ScriptCount,ScriptTags
-1,Scarlet,Prototype_Component_Model_Scarlet_Body,Prototype_Component_NpcInteractionController,"2.4, 2.4, 2.4",0,7,2,"NpcTest, NpcTest2"
-2,Adam,M_Beholder,None,"1, 1, 1",0,7,1,NpcTest
-3,Bolt,M_BarnacleA,None,"1, 1, 1",0,7,1,NpcTest
-4,D1G-g2r,Prototype_Component_Model_D1G-g2r_Body,Prototype_Component_NpcInteractionController,"2, 2, 2",0,8,1,NpcD1G-g2r
+ ID,Name,AnimName,ProtoTypeModel,Controller ProtoType,Left Weapon,Left Bone,Right Weapon,Right Bone,Face,Extents,TeamNumber,InteractionID,ScriptCount,ScriptTags
+1,Scarlet,M_Scarlet,Prototype_Component_Model_Scarlet_Body,Prototype_Component_NpcInteractionController,Prototype_Component_Model_Scarlet_Weapon,Weapon,Prototype_Component_Model_Scarlet_Scabbard,SC_AssistWeapon,Prototype_Component_Model_Face_Scarlet,"2.4, 2.4, 2.4",0,7,2,"NpcTest, NpcTest2"
+2,Adam,None,M_Beholder,None,None,None,None,None,None,"1, 1, 1",0,7,1,NpcTest
+3,Bolt,None,M_BarnacleA,None,None,None,None,None,None,"1, 1, 1",0,7,1,NpcTest
+4,D1G-g2r,N_Digger,Prototype_Component_Model_D1G-g2r_Body,Prototype_Component_NpcInteractionController,None,None,None,None,None,"2, 2, 2",0,8,1,NpcD1G-g2r
+5,Drorong,N_Dororong,Prototype_Component_Model_Cinematic_Dororong,Prototype_Component_NpcInteractionController,None,None,None,None,None,"2, 2, 2",0,7,1,NpcTest

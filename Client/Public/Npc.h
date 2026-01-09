@@ -7,6 +7,7 @@ class CGameObject;
 class CCharacterController;
 class CAIController;
 class CRigidBody;
+class CModel;
 NS_END
 
 NS_BEGIN(Client)

@@ -39,7 +39,7 @@ void CPlayer_ScarletLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     // 플레이어의 애니메이션을 변경해준다. 
     // 여기서 애니메이션 재생속도 조절가능해.
-    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", false, 2.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_Scarlet", false, 3.f, 0.f, FALSE, -1.f, 0.f, TRUE);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)

@@ -15,6 +15,7 @@ void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
 {
     m_Desc->isInvincible = true;
     m_Desc->isLockChangable = false;
+    m_Desc->isUsingRepulse = true;
 
     m_eState = PLAYER_STATE::REPULSE;
     m_eAnimState = REPULSE_STATE::ATTACK_START;
@@ -76,6 +77,7 @@ _float CPlayer_RepulseState::End()
 {
     m_pGameInstance->SetGameSpeed(1.f);
     m_Desc->isInvincible = false;
+    m_Desc->isUsingRepulse = false;
     m_Desc->isLockChangable = true;
     m_pPlayer->SetSkillDataID(-1);
 

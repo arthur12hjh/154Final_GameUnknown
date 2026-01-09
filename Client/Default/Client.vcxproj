@@ -247,6 +247,8 @@
     <ClInclude Include="..\public\NpcInteractionController.h" />
     <ClInclude Include="..\public\NpcInteractionState.h" />
     <ClInclude Include="..\public\NpcPatrolState.h" />
+    <ClInclude Include="..\public\Npc_RightWeaponPart.h" />
+    <ClInclude Include="..\public\Npc_LeftWeaponPart.h" />
     <ClInclude Include="..\public\Pad.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
@@ -600,6 +602,8 @@
     <ClCompile Include="..\private\NpcInteractionController.cpp" />
     <ClCompile Include="..\private\NpcInteractionState.cpp" />
     <ClCompile Include="..\private\NpcPatrolState.cpp" />
+    <ClCompile Include="..\private\Npc_RightWeaponPart.cpp" />
+    <ClCompile Include="..\private\Npc_LeftWeaponPart.cpp" />
     <ClCompile Include="..\private\Pad.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />

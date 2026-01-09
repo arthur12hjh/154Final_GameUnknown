@@ -3,22 +3,22 @@
         {
             "szTrackTag": "Alpha",
             "vEndParam": [
-                0.0,
+                1.0,
                 0.0,
                 0.0,
                 0.0
             ],
             "vStartParam": [
-                1.0,
+                0.0,
                 0.0,
                 0.0,
                 0.0
             ]
         }
     ],
-    "fDuration": 3.0,
+    "fDuration": 0.3,
     "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": true,
-    "szAnimTag": "FadeOut_3"
+    "szAnimTag": "BeatSaber_Outro"
 }
