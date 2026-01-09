@@ -248,7 +248,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	}
 
 	// 몬스터 림라이트 처리
-	if (0 == RimLightIndex)
+	if (0 == RimLightIndex && NAYITBA_EXECUTION_TYPE::END == m_eExcution)
 		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	return S_OK;
 }
