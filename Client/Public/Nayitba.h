@@ -127,7 +127,7 @@ private :
 	HRESULT									ADD_PartObjects();
 	
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
-	void									ResetBodyColor();
+	void									ResetToBaseState();
 
 	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	

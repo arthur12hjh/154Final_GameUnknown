@@ -139,8 +139,11 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 						aiVector3D vShapePosition = pAIScene->mMeshes[i]->mAnimMeshes[j]->mVertices[k];
 						aiVector3D vShapeNormal = pAIScene->mMeshes[i]->mAnimMeshes[j]->mNormals[k];
 
-						bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.y - vBasePosition.y, vShapePosition.z - vBasePosition.z));
-						bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.y - vBaseNormal.y, vShapeNormal.z - vBaseNormal.z));
+						//bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.y - vBasePosition.y, vShapePosition.z - vBasePosition.z));
+						//bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.y - vBaseNormal.y, vShapeNormal.z - vBaseNormal.z));
+
+						bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.z - vBasePosition.z, vShapePosition.y - vBasePosition.y));
+						bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.z - vBaseNormal.z, vShapeNormal.y - vBaseNormal.y));
 					}
 
 					strcpy_s(bAnimMesh.szName, pAIScene->mMeshes[i]->mAnimMeshes[j]->mName.data);

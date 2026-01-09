@@ -637,6 +637,7 @@ namespace Client
 
 		_uint		iComboCnt;
 		_float		fCharacterSpeed;
+		_uint		iAccuracy; // 정확도
 		// x : 캐릭터 최소 스피드
 		// y : 캐릭터 기본 스피드
 		// z : 캐릭터 최대 스피드

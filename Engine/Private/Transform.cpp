@@ -294,6 +294,32 @@ void CTransform::LookAt_Lerp(_fvector vAt, _float fRatio, _float fSpeed)
 	Set_State(STATE::LOOK, XMVector3Normalize(vLook) * vScale.z);
 }
 
+void CTransform::LookAt_SLerp(_fvector vAt, _float fRatio, _float fSpeed)
+{
+	_float3		vScale = Get_Scale();
+
+	_vector		vRight, vUp, vLook;
+	_vector		vTarget = XMVector3Normalize(vAt - Get_State(STATE::POSITION));
+	vTarget = XMVectorSetW(vTarget, 0.f);
+
+	fRatio = Clamp<_float>(fRatio * fSpeed, 0.f, 1.f);
+
+	vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	XMMATRIX m1 = XMMatrixLookToLH(XMVectorZero(), Get_State(STATE::LOOK), vUp);
+	XMMATRIX m2 = XMMatrixLookToLH(XMVectorZero(), vAt, vUp);
+
+	_vector q1 = XMQuaternionRotationMatrix(m1);
+	_vector q2 = XMQuaternionRotationMatrix(m2);
+
+	vLook = XMVector3Rotate(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMQuaternionSlerp(q1, q2, fRatio));
+	vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
+	vUp = XMVector3Cross(vLook, vRight);
+
+	Set_State(STATE::RIGHT, XMVector3Normalize(vRight) * vScale.x);
+	Set_State(STATE::UP, XMVector3Normalize(vUp) * vScale.y);
+	Set_State(STATE::LOOK, XMVector3Normalize(vLook) * vScale.z);
+}
+
 void CTransform::Chase_Lerp(_fvector vTargetPos, _float fTimeDelta, _float fLimitDistance)
 {
 	_vector		vPosition = Get_State(STATE::POSITION);

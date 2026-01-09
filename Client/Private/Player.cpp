@@ -164,7 +164,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_PlayerDesc.pPlayerController = m_pCCT;
 
 	/* 시작할땐 꺼두자 */
-	SetVisibility(VISIBILITY::HIDDEN);
+	//SetVisibility(VISIBILITY::HIDDEN);
 	MotionTrailEnable(false);
 
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;

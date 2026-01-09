@@ -1,6 +1,8 @@
 #include "MorphAnimation.h"
 #include "MorphChannel.h"
 
+#include "Model.h"
+
 CMorphAnimation::CMorphAnimation()
 {
 	/*XMMatrixDecompose();*/
@@ -11,7 +13,7 @@ CMorphAnimation::CMorphAnimation(const CMorphAnimation& Prototype)
 	, m_fDuration{ Prototype.m_fDuration }
 	, m_fTickPerSecond{ Prototype.m_fTickPerSecond }
 	, m_iNumMorphChannels{ Prototype.m_iNumMorphChannels }
-	, m_MorphChannels{ Prototype.m_MorphChannels }
+	, m_MorphChannels{ Prototype.m_MorphChannels }  
 {
 	for (auto& pChannel : m_MorphChannels)
 		Safe_AddRef(pChannel);
@@ -25,9 +27,6 @@ HRESULT CMorphAnimation::Initialize(class CModel* pModel, binMorphAnimation* pMo
 	m_fTickPerSecond = pMorphAnimation->fTicksPerSecond;
 
 	m_iNumMorphChannels = pMorphAnimation->iNumMorphChannels;
-
-
-	m_CurrentKeyFrameIndices.resize(m_iNumMorphChannels);
 
 	strcpy_s(m_szName, pMorphAnimation->szName);
 
@@ -43,20 +42,25 @@ HRESULT CMorphAnimation::Initialize(class CModel* pModel, binMorphAnimation* pMo
 	return S_OK;
 }
 
-_int CMorphAnimation::Update_TrackPosition(const vector<class CShapeKey*>& ShapeKeys, _bool isLoop, _float fTimeDelta, _float fEndTrackPosition)
+// 여기서 뭐해야하는데?
+// 일단 fCurrentTrackPosition을 계산하고, 맞으면 Update_ShapeMorphing을 실행해.
+
+// Update_ShapeMorphing은 뭔데?
+// m_MorphChannels(사실 구조 잘못짜서 하나밖에 없음ㅎ)를 순회하면서 웨이트를 받아 Set_ShapeWeight를 해줌
+// m_CurrentKeyFrameIndices를 
+_int CMorphAnimation::Update_TrackPosition(class CModel* pModel, _bool isLoop, _float fTimeDelta)
 {
 	/* 내 애니메이션의 현재 재생위치. */
 	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
 	// m_fCurrentTrackPosition
 	// 
-	if (m_fCurrentTrackPosition >= m_fDuration
-		|| (fEndTrackPosition != -1.f && m_fCurrentTrackPosition >= fEndTrackPosition))
+	if (m_fCurrentTrackPosition >= m_fDuration)
 	{
 		if (true == isLoop)
 		{
 			m_fCurrentTrackPosition = m_fCurrentTrackPosition - m_fDuration;
-			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
-				iKeyFrameIndex = 0;
+			for (auto& pMorphChannel : m_MorphChannels)
+				pMorphChannel->Reset();
 
 			return iFLAG_ANIMATION_RESET;
 		}
@@ -67,64 +71,28 @@ _int CMorphAnimation::Update_TrackPosition(const vector<class CShapeKey*>& Shape
 		}
 	}
 
+	_uint iIndex = {};
+
+	for (auto& pMorphChannel : m_MorphChannels)
+		pMorphChannel->Update_ShapeMorphing(pModel, m_fCurrentTrackPosition);
+
+
+	pModel->Bind_ShapeWeight();
+
+
 	return iFLAG_ANIMATION_PLAY;
 }
 
 _bool CMorphAnimation::Update_CurrentKeyFrameIndices()
 {
-	// 채널을 돌며, 각 채널별 키프레임 인덱스를 갱신해준다.
-	for (size_t i = 0; i < m_MorphChannels.size(); i++)
-	{
-		CMorphChannel* pChannel = m_MorphChannels[i];
-		_uint& iKeyFrameIndex = m_CurrentKeyFrameIndices[i];
-
-		auto& Frames = pChannel->Get_KeyFrames();
-		if (Frames.size() <= 1)
-			continue;
-
-		//// 현재 구간 찾기
-		//while (iKeyFrameIndex + 1 < Frames.size() &&
-		//	Frames[iKeyFrameIndex + 1].fTrackPosition <= m_fCurrentTrackPosition)
-		//{
-		//	iKeyFrameIndex++;
-		//}
-		//
-		//// 애니메이션 끝 처리
-		//if (iKeyFrameIndex >= (int)Frames.size() - 1)
-		//	iKeyFrameIndex = (int)Frames.size() - 1;
-
-		// 이분탐색
-		_int iLow = iKeyFrameIndex;
-		_int iHigh = Frames.size() - 1;
-
-		/// v       v         v      
-		/// □□□□■□□★□□
-		/// 
-		///           v   v   v
-		/// □□□□□□□★□□
-		while (iLow < iHigh)
-		{
-			_int iMid = (iLow + iHigh) / 2;
-			if (Frames[iMid].fTrackPosition <= m_fCurrentTrackPosition)
-			{
-				iLow = iMid + 1;
-			}
-			else
-				iHigh = iMid;
-		}
-
-		if (iLow == 0)
-			iKeyFrameIndex = 0;
-		else
-			iKeyFrameIndex = iLow - 1;
-
-		// 애니메이션 끝 처리
-		if (iKeyFrameIndex >= (int)Frames.size() - 1)
-			iKeyFrameIndex = (int)Frames.size() - 1;
-
-	}
-
+	
 	return false;
+}
+
+void CMorphAnimation::Reset()
+{
+	for (auto& pMorphChannel : m_MorphChannels)
+		pMorphChannel->Reset();
 }
 
 CMorphAnimation* CMorphAnimation::Create(CModel* pModel, binMorphAnimation* pMorphAnimation)

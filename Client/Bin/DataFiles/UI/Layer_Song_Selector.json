@@ -308,6 +308,13 @@
                     "szArg": "EscKey_Event",
                     "szTypeTag": "ActionEvent"
                 }
+            ],
+            "PlaySong_Event": [
+                {
+                    "szActionTag": "PlaySong_Event",
+                    "szArg": "PlaySong_Event",
+                    "szTypeTag": "ActionEvent"
+                }
             ]
         },
         "szLayerTag": "Layer_Song_Selector",

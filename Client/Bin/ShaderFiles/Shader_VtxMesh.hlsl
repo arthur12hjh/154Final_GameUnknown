@@ -11,6 +11,7 @@ texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_EmissiveTexture;
 Texture2D g_ORMTexture;
+texture2D g_MaskTexture;
 
 //림라이트용 변수
 vector g_vCamPosition;
@@ -18,6 +19,7 @@ float g_fRimLightPower;
 float g_fRimLightStrength;
 float4 g_vRimLightColor;
 float g_fFar;
+float g_fTime;
 /* 정점 쉐이더 : */
 /* 정점에 대한 셰이딩 == 정점에 필요한 연산을 수행한다 == 정점의 상태변환(월드, 뷰, 투영) + 추가변환 */
 /* 정점의 구성 정보를 수정, 변경한다 */ 
@@ -39,6 +41,38 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
+    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
+    Out.vProjPos = Out.vPosition;
+    return Out;
+}
+
+VS_OUT VS_BLOSSOM(VS_IN In)
+{
+    VS_OUT Out;
+    
+    float4 vMask = g_MaskTexture.SampleLevel(DefaultSampler, In.vTexcoord, 0);
+
+    float4 vLocalPos = vector(In.vPosition, 1.f);
+
+    float fWeight = vMask.a;
+    float fWave = 0.f;
+    // 마스크가 흰색인 부분만 흔들림
+    if(fWeight > 0.1f)
+    {
+        fWave = sin(g_fTime * 2.5f + vLocalPos.y) * 0.15f * fWeight;
+    }
+    
+    vLocalPos.x += fWave;
+    vLocalPos.z += fWave;
+    
+    matrix matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matrix matWVP = mul(matWV, g_ProjMatrix);
+    
+    Out.vPosition = mul(vLocalPos, matWVP);
     Out.vTexcoord = In.vTexcoord;
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix)).xyz;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
@@ -354,7 +388,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MOON_GAMEOBJECT();
     }
 
-    // 기가스 맵에 깔린 나무
     // idx 8
     pass Tree
     {
@@ -362,6 +395,17 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_TREE();
+    }
+
+    // idx 9
+    pass BLOSSOM
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BLOSSOM();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_TREE();
     }

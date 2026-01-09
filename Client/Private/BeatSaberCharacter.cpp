@@ -30,7 +30,7 @@ HRESULT CBeatSaberCharacter::Initialize_Prototype()
 
 HRESULT CBeatSaberCharacter::Initialize(void* pArg)
 {
-	//m_pGameManager->Bind_GameCharacter(this);
+	m_pGameManager->Bind_BeatSaberCharacter(this);
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -104,12 +104,19 @@ HRESULT CBeatSaberCharacter::Render_MotionBlur()
 	return S_OK;
 }
 
+void CBeatSaberCharacter::ResetPoints()
+{
+	m_CharacterDesc.iScore = 0;
+	m_CharacterDesc.iComboCnt = 0;
+}
+
 HRESULT CBeatSaberCharacter::Ready_CharacterData()
 {
 	m_CharacterDesc.iMaxGameLife = 3;
 	m_CharacterDesc.iGameLife = m_CharacterDesc.iMaxGameLife;
 	m_CharacterDesc.fBoundCharacterSpeed = {3.f, 5.f, 7.f};
-	m_CharacterDesc.fCharacterSpeed = m_CharacterDesc.fBoundCharacterSpeed.y;
+	//m_CharacterDesc.fCharacterSpeed = m_CharacterDesc.fBoundCharacterSpeed.y;
+	m_CharacterDesc.fCharacterSpeed = 50.f;
 	m_CharacterDesc.eDirection = DIRECTION::END;
 	m_CharacterDesc.iScore = 0;
 
@@ -178,37 +185,37 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 	if (DIRECTION::END != m_CharacterDesc.eDirection)
 		m_CharacterDesc.eDirection = DIRECTION::END;
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)) // 3
 	{
 		m_CharacterDesc.eDirection = DIRECTION::RIGHT;
 		bIsMove = true;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S)) // 1
 	{
 		m_CharacterDesc.eDirection = DIRECTION::LEFT_FRONT;
 		bIsMove = true;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)) // 0
 	{
 		m_CharacterDesc.eDirection = DIRECTION::LEFT;
 		bIsMove = true;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J)) // 5
 	{
 		m_CharacterDesc.eDirection = DIRECTION::RIGHT_BACK;
 		bIsMove = true;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_K)) // 4
 	{
 		m_CharacterDesc.eDirection = DIRECTION::RIGHT_FRONT;
 		bIsMove = true;
 	}
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L))
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_L)) // 2
 	{
 		m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
 		bIsMove = true;
@@ -241,22 +248,31 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				_float fLength = XMVectorGetX(XMVector3Length(vObjectPosition - vPosition));
 				_float fLengthRatio = fLength / m_BoxSizeZ;
 				// 여기서 타임 판별해서 체크
-				if (0.3 > fLength)
+				if (1.f > fLength)
 				{
-					// 퍼팩트
 					m_CharacterDesc.iScore += 100;
 					m_CharacterDesc.iComboCnt++;
+					m_CharacterDesc.iAccuracy = 3;
 					bIsSuccess = true;
 				}
-				else if (0.7 > fLength)
+				else if (1.5f > fLength)
 				{
-					m_CharacterDesc.iScore += 50;
+					m_CharacterDesc.iScore += 60;
 					m_CharacterDesc.iComboCnt++;
+					m_CharacterDesc.iAccuracy = 2;
+					bIsSuccess = true;
+				}
+				else if (2.f > fLength)
+				{
+					m_CharacterDesc.iScore += 30;
+					m_CharacterDesc.iComboCnt++;
+					m_CharacterDesc.iAccuracy = 1;
 					bIsSuccess = true;
 				}
 				else
 				{
 					m_CharacterDesc.iComboCnt = 0;
+					m_CharacterDesc.iAccuracy = 0;
 					bIsSuccess = true;
 				}
 			}
@@ -270,10 +286,11 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 
 void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-	if (false == m_isDead)
+	if (false == pHitActor->isDead())
 	{
 		m_CharacterDesc.iGameLife--;
 		m_CharacterDesc.iComboCnt = 0;
+		m_CharacterDesc.iAccuracy = 0;
 
 		if (0 >= m_CharacterDesc.iGameLife)
 		{

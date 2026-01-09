@@ -32,28 +32,46 @@ matrix g_OffsetMatrices[512];
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
+StructuredBuffer<float3> g_ShapeKeyDeltaPositionBuffer : register(t19);
+float g_fShapekeyWeight;
 
 
-VS_OUT VS_MAIN(VS_IN In)
+VS_OUT VS_MAIN(VS_IN In, uint iVertexIndex : SV_VertexID)
 {
     VS_OUT Out;
     
-    float fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+    float fWeightSum = (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z + In.vBlendWeight.w);
+    
+    float fWeightX = 1;
+    float fWeightY = 0;
+    float fWeightZ = 0;
+    float fWeightW = 0;
+    
+    if (fWeightSum > 1e-6f)
+    {
+        fWeightX = In.vBlendWeight.x / fWeightSum;
+        fWeightY = In.vBlendWeight.y / fWeightSum;
+        fWeightZ = In.vBlendWeight.z / fWeightSum;
+        fWeightW = In.vBlendWeight.w / fWeightSum;
+    }
           
-// CPU와 동일한 행렬 순서
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
     
-    matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
-        MatrixY * In.vBlendWeight.y +
-        MatrixZ * In.vBlendWeight.z +
-        MatrixW * In.vBlendWeight.w;
+    matrix BoneMatrix = MatrixX * fWeightX +
+                        MatrixY * fWeightY +
+                        MatrixZ * fWeightZ +
+                        MatrixW * fWeightW;
     
-    /* 스키닝 */
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
-    vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
+    float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
+    float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
+    
+    vPosition.xyz -= g_ShapeKeyDeltaPositionBuffer[iVertexIndex];
+    //vSkinnedNormal.xyz -= g_ShapeKeyDeltaNormalBuffer[iVertexIndex];
     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     
@@ -62,10 +80,10 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.vPosition = mul(vPosition, matWVP);
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
-    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */   
-    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_WorldMatrix)).xyz;
-    Out.vBinormal = normalize(mul(vector(In.vBinormal, 0.f), g_WorldMatrix)).xyz;
+    /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */
+    Out.vNormal = float4(normalize(mul(float4(vSkinnedNormal, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vTangent = float4(normalize(mul(float4(vSkinnedTangent, 0.f), g_WorldMatrix).xyz), 0.f);
+    Out.vBinormal = float4(normalize(mul(float4(vSkinnedBinorm, 0.f), g_WorldMatrix).xyz), 0.f);
     Out.vTexcoord = In.vTexcoord;
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
@@ -249,8 +267,8 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Head(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
-    Out.vORM = float4(1.f, 0.5f, 0.f, 0.f);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -270,7 +288,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Eyebrow(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -288,7 +306,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Eyes(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -309,7 +327,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Lens(PS_IN In)
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     //Out.vORM = Calc_ORSS(g_ORSSTexture, In.vTexcoord);
     Out.vORM = float4(1.f, 0.5f, 0.f, 0.f);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -327,7 +345,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Eyelashes(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -343,7 +361,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Tearline(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -361,7 +379,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Eyeshadow(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -380,7 +398,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_EyeBlend(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -400,7 +418,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_NoseShadow(PS_IN In)
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -418,7 +436,7 @@ PS_OUT PS_MAIN_MI_CH_M_NA_961_Teeth(PS_IN In)
     Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.0f, g_IsMaskingDepthB == true ? 1.f : 0.f, 0.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
-    Out.vEmissive = Calc_Emissive(g_EmissiveTexture, Out.vDiffuse, In.vTexcoord) * float4(1.f, 0.5f, 0.5f, 1.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -429,7 +447,7 @@ technique11 DefaultTechnique
     // 0
     pass Default
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -469,7 +487,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MOTIONBLUR();
     }
-    
+    // 4
     pass MI_CH_M_NA_961_Head
     {
         SetRasterizerState(RS_Default);
@@ -479,7 +497,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Head();
     }
-
+    // 5
     pass MI_CH_M_NA_961_Eyebrow
     {
         SetRasterizerState(RS_Default);
@@ -489,7 +507,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Eyebrow();
     }
-
+    // 6
     pass MI_CH_M_NA_961_Eyes
     {
         SetRasterizerState(RS_Default);
@@ -499,7 +517,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Eyes();
     }
-
+    // 7
     pass MI_CH_M_NA_961_Lens
     {
         SetRasterizerState(RS_Default);
@@ -509,7 +527,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Lens();
     }
-
+    // 8
     pass MI_CH_M_NA_961_Eyelashes
     {
         SetRasterizerState(RS_Default);
@@ -519,7 +537,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Eyelashes();
     }
-
+    // 9
     pass MI_CH_M_NA_961_Tearline
     {
         SetRasterizerState(RS_Default);
@@ -529,7 +547,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Tearline();
     }
-
+    // 10
     pass MI_CH_M_NA_961_Eyeshadow
     {
         SetRasterizerState(RS_Default);
@@ -539,7 +557,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_Eyeshadow();
     }
-
+    // 11
     pass MI_CH_M_NA_961_EyeBlend
     {
         SetRasterizerState(RS_Default);
@@ -549,7 +567,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_EyeBlend();
     }
-
+    // 12
     pass MI_CH_M_NA_961_NoseShadow
     {
         SetRasterizerState(RS_Default);
@@ -559,7 +577,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_MI_CH_M_NA_961_NoseShadow();
     }
-
+    // 13
     pass MI_CH_M_NA_961_Teeth
     {
         SetRasterizerState(RS_Default);

@@ -185,13 +185,15 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     // 충돌처리를 할지말지 
     // DYNAMIC : 충돌 
     // KINEMATIC : 충돌 X
-    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
+    RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
     RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);
-    RigidBodyDesc.vSize = Com_Size;
+    RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
     RigidBodyDesc.fMass = { 0.3f };
+    _float3 vRigidSize = RigidBodyDesc.vSize;
+    RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.f, vRigidSize.y * 2.f, vRigidSize.z * 1.f);
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

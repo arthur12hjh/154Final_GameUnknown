@@ -82,7 +82,7 @@ void CUIResult::Update(_float fTimeDelta)
 	else
 		return;
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
 		Close_Result();
 }
 
