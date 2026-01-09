@@ -788,7 +788,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 			return E_FAIL;
 	}
 
-	if (10 == m_pInitMonsterInfo->iMonsetID)
+	/*if (10 == m_pInitMonsterInfo->iMonsetID)
 	{
 		CNaytibaBeam_Part::BEAM_DESC BeamDesc = { };
 		BeamDesc.bIsApplyTransform = true;
@@ -800,7 +800,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_BeamPart"), TEXT("Part_Beam"), &BeamDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }

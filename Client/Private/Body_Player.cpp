@@ -32,11 +32,11 @@ void CBody_Player::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& N
 	}
 	else if (strObjectTag == TEXT("Hand_Blood"))
 	{
-		//m_pBlood->Play();
+		m_pBlood->Play();
 	}
 	else if (strObjectTag == TEXT("Hand_Blood_End"))
 	{
-		//m_pBlood->Stop();
+		m_pBlood->Stop();
 	}
 }
 
@@ -121,6 +121,12 @@ void CBody_Player::Update(_float fTimeDelta)
 
 
 
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K))
+		m_pBlood->Play();
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+		m_pBlood->Stop();
+
+	m_pBlood->Update(fTimeDelta);
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
@@ -131,6 +137,7 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 	_matrix vResult = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) *
 		XMLoadFloat4x4(m_pModelCom->Get_BoneMatrixPtr("Ab-R-Calf-Tw1")) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
 
+	m_pBlood->Late_Update(fTimeDelta);
 	m_pColliderCom->UpdateColiision(vResult);
 
 	if (m_bIsEnableCollider)
@@ -304,6 +311,18 @@ HRESULT CBody_Player::Ready_Components()
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::PLAYER);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+
+	CEffect::EFFECT_TRANSFORM_DESC desc;
+
+	desc.pWorldMatrix = &m_CombinedWorldMatrix;
+	desc.pRootMatrix = m_pModelCom->Get_BoneMatrixPtr("Bip001-L-Hand");
+	desc.vPos = XMVectorSet(0, 0, -0.1f, 1);
+	desc.fRot = _float3(0, 0, 0);
+	desc.fSize = 0.06f;
+
+	m_pBlood = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Monster_Club"), &desc));
+	m_pBlood->Play();
+	m_pBlood->Stop();
 
 	return S_OK;
 }

@@ -6,7 +6,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 98,
+                "iNotifyKeyFrame": 72,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -15,7 +15,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Sword_Blood",
+                "szNotifyArg01": "Sword_Spark",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -46,7 +46,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 210,
+                "iNotifyKeyFrame": 117,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -55,7 +55,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Sword_Blood_End",
+                "szNotifyArg01": "Sword_Spark_End",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -86,7 +86,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 200,
+                "iNotifyKeyFrame": 143,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -95,7 +95,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Slash_Blood",
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -103,11 +103,11 @@
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    2.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -116,9 +116,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
+                    1.0,
+                    1.0,
+                    1.0
                 ]
             },
             {
@@ -126,7 +126,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 227,
+                "iNotifyKeyFrame": 159,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -135,7 +135,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Slash_Blood_End",
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -143,11 +143,11 @@
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.0,
+                    2.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -156,9 +156,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
+                    1.0,
+                    1.0,
+                    1.0
                 ]
             },
             {
@@ -166,7 +166,87 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 275,
+                "iNotifyKeyFrame": 176,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 193,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 550,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -175,7 +255,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Sword_Blood",
+                "szNotifyArg01": "Sword_Spark",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -206,7 +286,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 590,
+                "iNotifyKeyFrame": 585,
                 "iNumData01": 1,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -215,7 +295,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Sword_Blood_End",
+                "szNotifyArg01": "Sword_Spark_End",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -246,7 +326,7 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 275,
+                "iNotifyKeyFrame": 674,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -255,7 +335,247 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Slash_Blood",
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 698,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 733,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 759,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 774,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 789,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Sword_Hit_Spark",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_Weapon",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 842,
+                "iNumData01": 2,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Sword_Spark",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -286,8 +606,8 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 615,
-                "iNumData01": 0,
+                "iNotifyKeyFrame": 880,
+                "iNumData01": 2,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -295,7 +615,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Slash_Blood_End",
+                "szNotifyArg01": "Sword_Spark_End",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -303,326 +623,6 @@
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 94,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Gigas_Spark",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 227,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Gigas_Spark_End",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 290,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Gigas_Spark",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 375,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Gigas_Spark_End",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 660,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Sword_Sand_End",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 618,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Sword_Sand",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Weapon",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 433,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Hand_Blood",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Body",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 541,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Hand_Blood_End",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "",
                 "vNotifyPosition": [
@@ -642,6 +642,6 @@
                 ]
             }
         ],
-        "szAnimationTag": "Eve_Gorilla_Finish01_v05_w01_export_fixB"
+        "szAnimationTag": "MV_Nikke_Scarlet_QTE_Step1_EVE_01"
     }
 ]

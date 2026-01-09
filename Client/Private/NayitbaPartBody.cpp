@@ -580,7 +580,7 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
             {
                 /* Com_Collider_Sphere */
                 COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
-                OBBDesc.vSize = { 0.3f, 4.f, 0.3f };
+                OBBDesc.vSize = { 0.1f, 8.f, 0.1f };
                 OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
                 if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),

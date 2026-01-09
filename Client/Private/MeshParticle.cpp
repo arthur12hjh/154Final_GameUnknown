@@ -141,7 +141,7 @@ void CMeshParticle::Late_Update(_float fTimeDelta)
 	XMStoreFloat4x4(&CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentMat));
 
-	if (m_tData.bisSpectrum) {
+	if (m_tData.szCS.compare("Spectrum") == 0) {
 		if (0 < XMVectorGetX(XMVector4Length(XMLoadFloat4(reinterpret_cast<_float4*>(&CombinedWorldMatrix.m[0]))))) {
 			m_CBData.fTimeDelta.z = m_CBData.fTimeDelta.w;
 			if (2 <= m_CBData.iLoopAndCount.x && 4 > m_CBData.iLoopAndCount.x) {
@@ -236,7 +236,7 @@ HRESULT CMeshParticle::Render_MotionBlur()
 }
 
 void CMeshParticle::Stop() {
-	if (!m_bisStop && !m_tData.bisSpectrum) {
+	if (!m_bisStop && m_tData.szCS.compare("Spectrum") != 0) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;
 	}
 	m_bisStop = true;
@@ -244,7 +244,7 @@ void CMeshParticle::Stop() {
 
 void CMeshParticle::Play()
 {
-	if (m_bisStop && m_tData.bisSpectrum) {
+	if (m_bisStop && m_tData.szCS.compare("Spectrum") == 0) {
 		m_CBData.iLoopAndCount.x = 2;
 	}
 	m_bisStop = false;
@@ -362,7 +362,7 @@ HRESULT CMeshParticle::Bind_ShaderResources()
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
 
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
 	}
 	return S_OK;

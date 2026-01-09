@@ -398,8 +398,8 @@ void GS_NORMAL_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NORMAL_OUT> 
 void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_OUT> OutStream)
 {
     GS_NONLIGHT_OUT Out[4];
-    float3 vR = 0;
-    float3 vL = 0;
+    float3 vR;
+    float3 vL;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -551,8 +551,8 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
 void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR = 0;
-    float3 vL = 0;
+    float3 vR;
+    float3 vL;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -733,17 +733,17 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
     Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
     Out[0].vTexcoord = float2(0.f, 0.f);
     Out[0].vLifeTime = In[0].vLifeTime;
-    Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
     
     Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
     Out[1].vTexcoord = float2(1.f, 0.f);
     Out[1].vLifeTime = In[0].vLifeTime;
-    Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
     
     Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
     Out[2].vTexcoord = float2(1.f, 1.f);
     Out[2].vLifeTime = In[0].vLifeTime;
-    Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    Out[3].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
     
     Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
     Out[3].vTexcoord = float2(0.f, 1.f);
@@ -771,8 +771,8 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
 void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_OUT> OutStream)
 {
     GS_NONLIGHT_OUT Out[4];
-    float3 vR = 0;
-    float3 vL = 0;
+    float3 vR;
+    float3 vL;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -924,8 +924,8 @@ void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NO
 void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR = 0;
-    float3 vL = 0;
+    float3 vR;
+    float3 vL;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -1084,8 +1084,8 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
 void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
 {
     GS_WEIGHT_OUT Out[4];
-    float3 vR = 0;
-    float3 vL = 0;
+    float3 vR;
+    float3 vL;
         
     float angle = radians(g_fAngle);
     float s = sin(angle);
@@ -1240,9 +1240,170 @@ void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_
     }
 }
 
-/* ï¿½ï¿½Âµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ */ 
-/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ */ 
-/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½. -> ï¿½ï¿½ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ */ 
+
+[maxvertexcount(6)]
+void GS_SWORD_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> OutStream)
+{
+    GS_WEIGHT_OUT Out[4];
+    float3 vR;
+    float3 vL;
+        
+    float angle = radians(g_fAngle);
+    float s = sin(angle);
+    float c = cos(angle);
+    switch (g_iBillboard % 4)
+    {
+        case 0:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(In[0].TransformMatrix._21_22_23);
+        
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 1:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+    
+    
+                float3 vRightRot = normalize(vRight * c + vUp * s);
+                float3 vLookRot = normalize(vUp * c - vRight * s);
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 2:
+            {
+                float3 vLook = normalize(In[0].TransformMatrix._31_32_33);
+                float3 vRight = normalize(float4(cross(normalize(g_CamMatrix._31_32_33), vLook), 0));
+    
+                float3 vRightRot = vRight * c + vLook * s;
+                float3 vLookRot = vLook * c - vRight * s;
+                if (!g_bisSpectrum)
+                {
+                    vRightRot = normalize(mul(float4(vRightRot, 0), g_WorldMatrix)).xyz;
+                    vLookRot = normalize(mul(float4(vLookRot, 0), g_WorldMatrix)).xyz;
+                }
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+        case 3:
+            {
+                float3 vRight = -normalize(g_CamMatrix._11_12_13);
+                float3 vUp = normalize(g_CamMatrix._21_22_23);
+                float3 localUp = normalize(float3(
+    In[0].TransformMatrix._31,
+    In[0].TransformMatrix._32,
+    In[0].TransformMatrix._33));
+        
+                float projRight = dot(localUp, vRight);
+                float projUp = dot(localUp, vUp);
+        
+        
+        
+                float3 up = normalize(mul(float3(In[0].TransformMatrix._31, In[0].TransformMatrix._32, In[0].TransformMatrix._33), g_CamMatrix._31_32_33));
+                float angle = atan2(projUp, projRight) + radians(g_fAngle);
+    
+                float s = sin(angle);
+                float c = cos(angle);
+    
+                float3 vRightRot = vRight * c + vUp * s;
+                float3 vLookRot = vUp * c - vRight * s;
+    
+                vR = vRightRot * (g_fSize.x * In[0].fSize * 0.5f);
+                vL = vLookRot * (g_fSize.y * In[0].fSize * 0.5f);
+            }
+            break;
+    }
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    if (4 <= g_iBillboard)
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL * 2, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL * 2, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0) * 2, matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0), matVP);
+                                                              
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+    else
+    {
+        Out[0].vPosition = mul(float4(In[0].vPosition.xyz + vR + vL, 1.f), matVP);
+        Out[0].vTexcoord = float2(0.f, 0.f);
+        Out[0].vLifeTime = In[0].vLifeTime;
+        Out[0].vProjPos = mul(In[0].vProjPos + float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[1].vPosition = mul(float4(In[0].vPosition.xyz - vR + vL, 1.f), matVP);
+        Out[1].vTexcoord = float2(1.f, 0.f);
+        Out[1].vLifeTime = In[0].vLifeTime;
+        Out[1].vProjPos = mul(In[0].vProjPos - float4(vR, 0) + float4(vL, 0), matVP);
+    
+        Out[2].vPosition = mul(float4(In[0].vPosition.xyz - vR - vL, 1.f), matVP);
+        Out[2].vTexcoord = float2(1.f, 1.f);
+        Out[2].vLifeTime = In[0].vLifeTime;
+        Out[2].vProjPos = mul(In[0].vProjPos - float4(vR, 0) - float4(vL, 0), matVP);
+    
+        Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
+        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vLifeTime = In[0].vLifeTime;
+        Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+        Out[0].vSeed = In[0].vSeed;
+        Out[1].vSeed = In[0].vSeed;
+        Out[2].vSeed = In[0].vSeed;
+        Out[3].vSeed = In[0].vSeed;
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[1]);
+        OutStream.Append(Out[2]);
+        OutStream.RestartStrip();
+    
+        OutStream.Append(Out[0]);
+        OutStream.Append(Out[2]);
+        OutStream.Append(Out[3]);
+        OutStream.RestartStrip();
+    }
+}
+
+/* Ãâ·ÂµÈ Á¤Á¡ À§Ä¡º¤ÅÍÀÇ w°ªÀ¸·Î ¸ðµç ¼ººÐÀ» ³ª´«´Ù -> Åõ¿µ½ºÆäÀÌ½º·Î º¯È¯ */ 
+/* Á¤Á¡ÀÇ À§Ä¡¿¡ ´ëÇØ¼­ ºäÆ÷Æ® º¯È¯À» ¼öÇàÇÑ´Ù */ 
+/* Á¤Á¡ÀÇ ¸ðµç Á¤º¸¸¦ º¸°£ÇÏ¿© ÇÈ¼¿À» ¸¸µç´Ù. -> ·¡½ºÅÍ¶óÀÌÁî */ 
 
 struct PS_NORMAL_IN
 {
@@ -1301,7 +1462,7 @@ float hole[16] =
     15, 7, 13, 5
 };
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_NORMAL_OUT Out;
@@ -1355,7 +1516,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NORMAL_OUT PS_NORMAL_DIFFUSE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
 {
     PS_NORMAL_OUT Out;
@@ -1420,7 +1581,7 @@ PS_NORMAL_OUT PS_NORMAL_DIFFUSE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFa
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_BLOOM_OUT Out;
@@ -1453,7 +1614,7 @@ PS_BLOOM_OUT PS_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_NONLIGHT(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1487,7 +1648,7 @@ PS_NONLIGHT_OUT PS_NONLIGHT(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_BLACK_BLEND(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1523,7 +1684,7 @@ PS_NONLIGHT_OUT PS_BLACK_BLEND(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_BLACK_DEPTH(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1558,7 +1719,7 @@ PS_NONLIGHT_OUT PS_BLACK_DEPTH(PS_NONLIGHT_IN In)
 }
 
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1595,7 +1756,7 @@ PS_NONLIGHT_OUT PS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_GLOW_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1629,7 +1790,7 @@ PS_NONLIGHT_OUT PS_GLOW_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_BLUR(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1666,7 +1827,7 @@ PS_NONLIGHT_OUT PS_BLUR(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_METABALL(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1703,7 +1864,7 @@ PS_NONLIGHT_OUT PS_METABALL(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1750,7 +1911,7 @@ PS_NONLIGHT_OUT PS_ELECTRIC(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1792,7 +1953,7 @@ PS_NONLIGHT_OUT PS_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1838,7 +1999,7 @@ PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_REVERSE_ELECTRIC_BLOOM(PS_NONLIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -1992,7 +2153,7 @@ PS_NONLIGHT_OUT PS_PLASMA(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_SIGNAL_POWER(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2128,7 +2289,7 @@ PS_NONLIGHT_OUT PS_GLOW_NULL(PS_NONLIGHT_IN In)
     discard;
     return Out;
 }
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ROTATION_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2165,7 +2326,7 @@ PS_NONLIGHT_OUT PS_ROTATION_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2200,7 +2361,7 @@ PS_NONLIGHT_OUT PS_ROTATION_GLOW_BLOOM(PS_WEIGHT_IN In)
 }
 
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_CROSS_BLEND(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2240,7 +2401,7 @@ PS_NONLIGHT_OUT PS_CROSS_BLEND(PS_WEIGHT_IN In)
     //Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
     return Out;
 }
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_CROSS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2273,7 +2434,7 @@ PS_NONLIGHT_OUT PS_CROSS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2424,7 +2585,7 @@ PS_NONLIGHT_OUT PS_SCARLET_BOOM_SPHERE_NONLIGHT(PS_WEIGHT_IN In)
     Out.vDiffuse.a = 1;
     return Out;
 }
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_BLINK_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2457,7 +2618,7 @@ PS_NONLIGHT_OUT PS_BLINK_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_BLINK_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2491,7 +2652,7 @@ PS_NONLIGHT_OUT PS_BLINK_GLOW_BLOOM(PS_WEIGHT_IN In)
     Out.vDiffuse.a = 1;
     return Out;
 }
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2512,7 +2673,7 @@ PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2533,7 +2694,7 @@ PS_NONLIGHT_OUT PS_SMALL_CROSS_GLOW_BLOOM(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2553,7 +2714,7 @@ PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW(PS_WEIGHT_IN In)
     return Out;
 }
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW_BLOOM(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -2571,7 +2732,7 @@ PS_NONLIGHT_OUT PS_ROTATION_FLARE_GLOW_BLOOM(PS_WEIGHT_IN In)
 }
 
 
-/* ï¿½È¼ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ : ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï³ï¿½. */
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
 PS_NONLIGHT_OUT PS_SIGNAL_SCARLET(PS_WEIGHT_IN In)
 {
     PS_NONLIGHT_OUT Out;
@@ -3112,6 +3273,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_REPURSE();
+    }
+    // idx 43
+    pass Sword_Metaball
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_METABALL();
     }
 
 }
