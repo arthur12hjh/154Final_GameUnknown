@@ -55,7 +55,8 @@ void CBeatSaber_MoveState::SelectEvadeAnim(CBeatSaberCharacter* pCharacter)
         break;
 
     case DIRECTION::RIGHT_FRONT:
-        pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, bIsReset, 40.f, 38.f);
+        //pCharacter->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, bIsReset, 40.f, 38.f);
+        pCharacter->Set_Animation("MV_Nikke_Dororong_1stMeet_dororong_02", false, 1.f, 0.12f, bIsReset, 26.f, 30.f);
         break;
 
     case DIRECTION::LEFT_BACK:

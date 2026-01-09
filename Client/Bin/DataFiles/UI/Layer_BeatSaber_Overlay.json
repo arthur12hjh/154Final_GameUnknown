@@ -22,11 +22,11 @@
         "szAnimTags": [
             {
                 "szAnimTag": "Intro",
-                "szPrefabTag": "FadeOut_3"
+                "szPrefabTag": "BeatSaber_Intro"
             },
             {
                 "szAnimTag": "Outro",
-                "szPrefabTag": "FadeIn_3"
+                "szPrefabTag": "BeatSaber_Outro"
             }
         ],
         "szLayerTag": "Layer_BeatSaber_Overlay",

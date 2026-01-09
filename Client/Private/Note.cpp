@@ -174,8 +174,8 @@ void CNote::SettingNoteDirection(_uint iIndex)
         break;
     case 4:
         m_NoteData.eDirection = DIRECTION::RIGHT_FRONT;
-        m_pModelCom->Set_Animation("N_Dororong_Exhaust_Evade", false, 1.f, 0.12f, false, 40.f, 40.f);
-        m_NoteData.vBoundAnimFrame = { 38.f, 40.f };
+        m_pModelCom->Set_Animation("MV_Nikke_Dororong_1stMeet_dororong_02", false, 1.f, 0.12f, false, 30.f, 30.f);
+        m_NoteData.vBoundAnimFrame = { 26.f, 30.f };
         break;
     case 5:
         m_NoteData.eDirection = DIRECTION::RIGHT_BACK;
