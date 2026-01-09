@@ -16,9 +16,9 @@
             ]
         }
     ],
-    "fDuration": 3.0,
+    "fDuration": 1.0,
     "isBeapBeap": false,
     "isLoop": false,
     "isInfluenceChildren": true,
-    "szAnimTag": "FadeOut_3"
+    "szAnimTag": "GameClear_Hide"
 }

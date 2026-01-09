@@ -57,6 +57,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
@@ -111,7 +114,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_isOverlay && m_pHUD)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 3.f);
 		m_isOverlay = false;
 	}
 
@@ -486,8 +489,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
-	NpcDesc.iNpcID = 4;
-	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
+	NpcDesc.iNpcID = 5;
+	NpcDesc.vPosition = { 790.26f, 98.15f, 1517.58f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;

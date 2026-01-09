@@ -5,6 +5,13 @@
 NS_BEGIN(Client)
 class CNpcFace final : public CPartObject
 {
+public:
+	typedef struct tagFace_Desc : public CPartObject::PARTOBJECT_DESC
+	{
+		class CModel*		pBodyModelCom = nullptr;
+		WCHAR				szFaceJsonDataName[256];
+	}FACE_DESC;
+
 private:
 	CNpcFace(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CNpcFace(const CNpcFace& Prototype);
@@ -22,8 +29,14 @@ public:
 	virtual HRESULT										Render_Shadow() override;
 
 private:
+	CModel*												m_pBodyModelCom = { nullptr };
+	const _float4x4*									m_pSocketMatrix = { nullptr };
+
+private:
 	HRESULT												Ready_Components();
 	HRESULT												Bind_ShaderResources();
+	HRESULT												Mapping_Shader_Material(_uint iIdx);
+	HRESULT												Bind_BoneToPartBody(class CModel* pArg);
 
 public:
 	static		CNpcFace*								Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

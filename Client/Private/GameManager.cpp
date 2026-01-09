@@ -114,6 +114,17 @@ void CGameManager::SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelT
     m_pSavePlayerDesc.first.vOldPosition = TransportData->vTransportpoint;
 }
 
+void CGameManager::SetMiniGameReward(_uint iItemID, _uint iCount)
+{
+    // 여기서 아이템을 반환한다.
+    m_MiniGameReward.iItemList.push_back(make_pair(iItemID, iCount));
+}
+
+MINIGAME_REWARD* CGameManager::ApplyMiniGameReward()
+{
+    return &m_MiniGameReward;
+}
+
 _bool CGameManager::LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc)
 {
     if (m_pSavePlayerDesc.second)

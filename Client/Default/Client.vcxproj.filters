@@ -1174,6 +1174,15 @@
     <Filter Include="01.Levels\TeleportEvent">
       <UniqueIdentifier>{2c8e9ddf-6eee-4c0a-8a2d-b4dade18ee83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\Weapon">
+      <UniqueIdentifier>{8bc9e4cd-5e87-4408-98c0-2619f61c1f29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\Weapon\Left">
+      <UniqueIdentifier>{bbb38dbc-36e1-4c5f-b7ba-0116ea1680f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\Weapon\Right">
+      <UniqueIdentifier>{96804322-16c9-4b70-b1dc-96f5f8b8597c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\Grass">
       <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
     </Filter>
@@ -2254,6 +2263,12 @@
     <ClInclude Include="..\Public\TeleportEvent.h">
       <Filter>01.Levels\TeleportEvent</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Npc_LeftWeaponPart.h">
+      <Filter>02.GameObjects\Character\AI\Npc\Weapon\Left</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Npc_RightWeaponPart.h">
+      <Filter>02.GameObjects\Character\AI\Npc\Weapon\Right</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3294,6 +3309,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\TeleportEvent.cpp">
       <Filter>01.Levels\TeleportEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc_LeftWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\Weapon\Left</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc_RightWeaponPart.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\Weapon\Right</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

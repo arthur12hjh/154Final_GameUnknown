@@ -189,7 +189,10 @@ _bool CBossBlackBoard::EnterExcution(NAYITBA_EXECUTION_TYPE eExcution)
     m_eExcution = eExcution;
     if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
     {
-        static_cast<CNaytiba*>(m_pOwner)->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
+        auto pNaytiba = static_cast<CNaytiba*>(m_pOwner);
+
+        pNaytiba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
+        pNaytiba->ResetToBaseState();
     }
 
     return true;

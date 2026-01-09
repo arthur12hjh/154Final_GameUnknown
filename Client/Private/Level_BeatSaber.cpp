@@ -8,6 +8,7 @@
 #include "UIStruct.h"
 
 #include "UIHUD.h"
+#include "UIBase.h"
 #include "Level_Loading.h"
 #include "StringHelper.h"
 #include "BeatSaberSpawner.h"
@@ -15,6 +16,7 @@
 #include "Note.h"
 
 #include "PlaySongEvent.h"
+#include "ChangeLevelEvent.h"
 
 CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID) :
     CLevel(pDevice, pContext, ENUM_CLASS(eLevelID))
@@ -24,7 +26,7 @@ CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CLevel_BeatSaber::Initialize()
 {
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
+    //m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
 
     if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
         return E_FAIL;
@@ -61,6 +63,31 @@ HRESULT CLevel_BeatSaber::Initialize()
         });
     m_pGameInstance->Bind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
 
+    m_pPreListenEvent = CPlaySongEvent::Create([&](void* pArg) {
+        UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+        _wstring szSongKey = *static_cast<_wstring*>(Desc.pData);
+
+        NOTE_DATA_NAME* pData = Get_FindSongFile(szSongKey);
+        if (nullptr == pData)
+            return;
+
+        auto pList = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_BeatSaberSpawner"));
+        if (nullptr == pList)
+            return;
+
+        _wstring szSongFileName = pData->SongFileName;
+
+        m_pGameInstance->Manager_PlayBGM(szSongFileName.c_str(), 0.7f);
+        });
+    m_pGameInstance->Bind_Observer(TEXT("PreListen"), m_pPreListenEvent);
+
+    m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) {
+        UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
+
+        m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+        });
+    m_pGameInstance->Bind_Observer(TEXT("Change_Level"), m_pLevelChangeEvent);
+
     return S_OK;
 }
 
@@ -68,18 +95,9 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
 {
     __super::Update(fTimeDelta);
 
-    /*if (m_isOverlay && m_pHUD)
-    {
-        static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
-        m_isOverlay = false;
-    }*/
-
-    //if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_INSERT))
-    //    Play_GameBGM(TEXT("Test"), 1.f);
-
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F12))
     {
-        if(m_pHUD)
+        if (m_pHUD)
             dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
         m_pGameInstance->Manager_StopAll();
 
@@ -90,34 +108,17 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
         return;
     }
 
-    /*if (m_bChangeLevel && !m_bLevelTransitioning)
+    if (m_bChangeLevel)
     {
-        dynamic_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro"));
-        m_bLevelTransitioning = true;
-    }*/
+        if(m_pHUD)
+            dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
+        m_pGameInstance->Manager_StopAll();
 
-    // 결과창 테스트용
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
-    {
-        auto pGameClear = static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"));
+        CGameManager::GetInstance()->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::GAMEPLAY), 2);
+        if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::GAMEPLAY, false))))
+            return;
 
-        if (pGameClear)
-        {
-            //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
-            static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show"));
-        }
-    }
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_5))
-    {
-        static_cast<CUIHUD*>(m_pHUD)->Open_Result();
-    }
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_6))
-    {
-        static_cast<CUIHUD*>(m_pHUD)->Close_Result();
-    }
-    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_7))
-    {
-        static_cast<CUIHUD*>(m_pHUD)->Open_Song_Selector();
+        return;
     }
 
     if (m_bSongStart)
@@ -132,11 +133,41 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
                 void* commanddata1,
                 void* commanddata2)
             {
+                auto pUIGameClear = static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"));
+
+                if (!pUIGameClear)
+                    return E_FAIL;
+
+                CBeatSaberCharacter* pDororong = static_cast<CBeatSaberCharacter*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Player"))->front());
+                if (nullptr == pDororong)
+                    return E_FAIL;
+                    //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
+                if (pDororong->GetBeatSaberCharacterDesc().isFullCombo)
+                    pUIGameClear->Set_Texture_Index(1);
+                else
+                    pUIGameClear->Set_Texture_Index(0);
+                
+                static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show"));
+                m_bShowClear = true;
                 Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);
             });
 
         m_fTimeAcc = 0.f;
         m_bSongStart = false;
+    }
+
+    if (m_bShowClear && static_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show")))
+    {
+        static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Hide"), 3.f);
+        m_bShowClear = false;
+        m_bResultOpen = true;
+    }
+
+    if (m_bResultOpen && static_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Hide")))
+    {
+        m_pGameInstance->ADD_DelayFunction(TEXT("Play_ResultBGM_Timer"), 3.f, [&]() {m_pGameInstance->Manager_PlayBGM(m_szSongFile.c_str(), 0.5f);});
+        m_pGameInstance->ADD_DelayFunction(TEXT("Open_Result_Timer"), 3.f, [&]() {static_cast<CUIHUD*>(m_pHUD)->Open_Result();});
+        m_bResultOpen = false;
     }
 }
 
@@ -147,7 +178,6 @@ HRESULT CLevel_BeatSaber::Render()
 #else
     SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
 #endif // _DEBUG
-
 
     return S_OK;
 }
@@ -223,7 +253,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_Camera(const _wstring& strLayerTag)
     CameraDesc.fNear = 0.1f;
     CameraDesc.fFar = 100.f;
     //CameraDesc.vEye = _float3(-1.1f, 1.9f, -3.8f);
-    CameraDesc.vEye = _float3(-3.871f, 9.062f, -4.583f);
+    CameraDesc.vEye = _float3(-3.871f, 8.762f, -4.583f);
     CameraDesc.vAt = _float3(30.f, -5.5f, 30.f);
     CameraDesc.fSpeedPerSec = 5.f;
     CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
@@ -273,6 +303,8 @@ HRESULT CLevel_BeatSaber::Ready_Layer_UI(const _wstring& strLayerTag)
 
     if (FAILED(pUIHUD->Load_Data(TEXT("Layer_BeatSaber_Result"))))
         return E_FAIL;
+
+    static_cast<CUIHUD*>(m_pHUD)->Open_Song_Selector();
 
     return S_OK;
 }
@@ -371,8 +403,6 @@ FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontr
     if(m_pGameInstance)
     {
         m_pGameInstance->Manager_StopAll();
-        m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.5f);
-        static_cast<CUIHUD*>(m_pHUD)->Open_Result();
     }
 
     return FMOD_RESULT::FMOD_OK;
@@ -451,22 +481,9 @@ void CLevel_BeatSaber::Free()
 
     m_pGameInstance->Manager_StopAll();
 
+    m_pGameInstance->UnBind_Observer(TEXT("Change_Level"), m_pLevelChangeEvent);
+    m_pGameInstance->UnBind_Observer(TEXT("PreListen"), m_pPreListenEvent);
     m_pGameInstance->UnBind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
 
     Safe_Release(m_pPlaySongEvent);
 }
-
-/*
-* 174bpm
-4/4 59개
-1분20.7초
-앞 딜레이 0.8초 (1/4박)
-총 233박
-4/4박에 1.4초
-1박에 0.25초
-1박에 0.3448초 (0.3448276)
-
-노래 총 길이
-bpm
-
-*/

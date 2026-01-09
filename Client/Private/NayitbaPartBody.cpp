@@ -595,29 +595,24 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
 
     if (pNaytiba)
     {
-        auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
-
-        if (pNaytibaInitData)
+        if (10 == pNaytiba->GetMonsterID())
         {
-            if (10 == pNaytibaInitData->iMonsetID)
-            {
-                /* Com_Collider_Sphere */
-                COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
-                OBBDesc.vSize = { 0.1f, 8.f, 0.1f };
-                OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
+            /* Com_Collider_Sphere */
+            COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
+            OBBDesc.vSize = { 0.1f, 8.f, 0.1f };
+            OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
-                if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
-                    TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
-                    return E_FAIL;
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+                TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+                return E_FAIL;
 
-                m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+            m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 
-                m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
-                m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
-            }
+            m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
+            m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
         }
     }
     

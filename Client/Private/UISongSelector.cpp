@@ -46,16 +46,15 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 	_stprintf_s(Desc.szVideoTag, TEXT("DoroDoro"));
 	m_SongDescs.push_back(Desc);
 
-	Desc.szSongName = TEXT("Be My Light(Test)");
-	Desc.szSongKey = TEXT("BML");
+	/*Desc.szSongName = TEXT("Be My Light(Test)");
+	Desc.szSongKey = TEXT("Test");
 	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
-	m_SongDescs.push_back(Desc);
+	m_SongDescs.push_back(Desc);*/
 
 	Desc.szSongName = TEXT("TEST");
 	Desc.szSongKey = TEXT("Test");
-	_stprintf_s(Desc.szVideoTag, TEXT("Test"));
+	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
 	m_SongDescs.push_back(Desc);
-
 
 	/*m_Songs.push_back(TEXT("asdl"));
 	m_Songs.push_back(TEXT("asdlkfjafsdfs"));
@@ -164,6 +163,8 @@ void CUISongSelector::Update(_float fTimeDelta)
 		Arg2.pData = &m_bActiveEsc;
 		__super::Trigger_Event(TEXT("EscKey_Event"), &Arg2);
 		m_fEscKeyPressedTime = 0.f;
+
+		Close_Song_Selector();
 	}
 }
 
@@ -184,6 +185,12 @@ void CUISongSelector::Late_Update(_float fTimeDelta)
 		m_bActiveEsc = false;
 
 		Update_Thumbnail();
+
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("PreListen");
+		Arg.Type = UI_EVENT_ARG_DESC::WSTRING;
+		Arg.pData = &m_SongDescs[m_iCurrentIndex].szSongKey;
+		__super::Trigger_Event(TEXT("PreListen"), &Arg);
 	}
 
 	if (m_isOpen && m_isClosing && IsAnimFinished(TEXT("Close_Song_Selector")))
@@ -205,6 +212,14 @@ void CUISongSelector::Late_Update(_float fTimeDelta)
 			Arg.Type = UI_EVENT_ARG_DESC::WSTRING;
 			Arg.pData = &m_SongDescs[m_iCurrentIndex].szSongKey;
 			__super::Trigger_Event(TEXT("PlaySong_Event"), &Arg);
+		}
+		if (m_bActiveEsc)
+		{
+			UI_EVENT_ARG_DESC Arg{};
+			Arg.szActionTag = TEXT("Change_Level");
+			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+			Arg.pData = &m_bActiveEsc;
+			__super::Trigger_Event(TEXT("Change_Level"), &Arg);
 		}
 
 		m_bActiveEnter = false;
@@ -475,12 +490,26 @@ void CUISongSelector::Update_SongIndex(_float fTimeDelta)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
 	{
 		m_iCurrentIndex = (m_iCurrentIndex + 1) % m_SongDescs.size();
+
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("PreListen");
+		Arg.Type = UI_EVENT_ARG_DESC::WSTRING;
+		Arg.pData = &m_SongDescs[m_iCurrentIndex].szSongKey;
+		__super::Trigger_Event(TEXT("PreListen"), &Arg);
+		
 		m_fTargetScroll += m_fItemGap;
 		Update_Thumbnail();
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
 	{
 		m_iCurrentIndex = (m_iCurrentIndex - 1 + m_SongDescs.size()) % m_SongDescs.size();
+		
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("PreListen");
+		Arg.Type = UI_EVENT_ARG_DESC::WSTRING;
+		Arg.pData = &m_SongDescs[m_iCurrentIndex].szSongKey;
+		__super::Trigger_Event(TEXT("PreListen"), &Arg);
+		
 		m_fTargetScroll -= m_fItemGap;
 		Update_Thumbnail();
 	}
