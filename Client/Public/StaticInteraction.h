@@ -29,7 +29,7 @@ protected:
 
 private:
 	HRESULT								ADD_Components(const PROB_INTERACTION_DESC& Desc);
-	HRESULT								Ready_COL(const PROB_INTERACTION_DESC& Desc);
+	HRESULT								Ready_COL(const _tchar* pComponentTag);
 	HRESULT								Bind_ShaderResources();
 	void								SetCullingCollider(_uint iObjectID);
 
