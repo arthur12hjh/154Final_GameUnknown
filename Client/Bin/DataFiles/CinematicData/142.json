@@ -2,12 +2,6 @@
     {
       "CinematicNodeTrackList": [
         {
-          "eState": 13,
-          "fTrackPosition": 0.0,
-          "iActiveIndex": 1,
-          "szObjectTag": ""
-        },
-        {
           "eState": 7,
           "fTrackPosition": 0.0,
           "iActiveIndex": 0,
@@ -42,6 +36,12 @@
           "fTrackPosition": 0.0,
           "iActiveIndex": 1411,
           "szObjectTag": "ActionCamera_ScarletBattleEnter01"
+        },
+        {
+          "eState": 13,
+          "fTrackPosition": 0.1,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
