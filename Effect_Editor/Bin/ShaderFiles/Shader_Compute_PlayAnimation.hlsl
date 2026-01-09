@@ -222,6 +222,47 @@ float3 ScaleLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     
     return lerp(vSrcScale, vDstScale, fRatio);
 }
+float4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
+{
+    matSrc[0].xyz = normalize(matSrc[0].xyz);
+    matSrc[1].xyz = normalize(matSrc[1].xyz);
+    matSrc[2].xyz = normalize(matSrc[2].xyz);
+    
+    matDst[0].xyz = normalize(matDst[0].xyz);
+    matDst[1].xyz = normalize(matDst[1].xyz);
+    matDst[2].xyz = normalize(matDst[2].xyz);
+    
+    float4 vSrcRotation, vDstRotation;
+    
+    vSrcRotation.w = sqrt(max(0.f, 1.f + matSrc[0][0] + matSrc[1][1] + matSrc[2][2])) * 0.5f;
+    vSrcRotation.x = sqrt(max(0.f, 1.f + matSrc[0][0] - matSrc[1][1] - matSrc[2][2])) * 0.5f;
+    vSrcRotation.y = sqrt(max(0.f, 1.f - matSrc[0][0] + matSrc[1][1] - matSrc[2][2])) * 0.5f;
+    vSrcRotation.z = sqrt(max(0.f, 1.f - matSrc[0][0] - matSrc[1][1] + matSrc[2][2])) * 0.5f;
+    
+    vSrcRotation.x = CopySign(vSrcRotation.x, matSrc[2][1] - matSrc[1][2]);
+    vSrcRotation.y = CopySign(vSrcRotation.y, matSrc[0][2] - matSrc[2][0]);
+    vSrcRotation.z = CopySign(vSrcRotation.z, matSrc[1][0] - matSrc[0][1]);
+    
+    vDstRotation.w = sqrt(max(0.f, 1.f + matDst[0][0] + matDst[1][1] + matDst[2][2])) * 0.5f;
+    vDstRotation.x = sqrt(max(0.f, 1.f + matDst[0][0] - matDst[1][1] - matDst[2][2])) * 0.5f;
+    vDstRotation.y = sqrt(max(0.f, 1.f - matDst[0][0] + matDst[1][1] - matDst[2][2])) * 0.5f;
+    vDstRotation.z = sqrt(max(0.f, 1.f - matDst[0][0] - matDst[1][1] + matDst[2][2])) * 0.5f;
+    
+    vDstRotation.x = CopySign(vDstRotation.x, matDst[2][1] - matDst[1][2]);
+    vDstRotation.y = CopySign(vDstRotation.y, matDst[0][2] - matDst[2][0]);
+    vDstRotation.z = CopySign(vDstRotation.z, matDst[1][0] - matDst[0][1]);
+    
+    vSrcRotation.w *= -1.f;
+    vDstRotation.w *= -1.f;
+    
+    vSrcRotation = normalize(vSrcRotation);
+    vDstRotation = normalize(vDstRotation);
+    
+    if (dot(vSrcRotation, vDstRotation) < 0.0f)
+        vDstRotation = -vDstRotation;
+    
+    return normalize(lerp(vSrcRotation, vDstRotation, fRatio));
+}
 float4 RotationQuaternionLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
 {
     matSrc[0].xyz = normalize(matSrc[0].xyz);
@@ -259,19 +300,6 @@ float4 RotationQuaternionLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
     vDstRotation = normalize(vDstRotation);
     
     return QuaternionSlerp(vSrcRotation, vDstRotation, fRatio);
-}
-
-float4x4 RotationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
-{
-    matSrc[0].xyz = normalize(matSrc[0].xyz);
-    matSrc[1].xyz = normalize(matSrc[1].xyz);
-    matSrc[2].xyz = normalize(matSrc[2].xyz);
-    
-    matDst[0].xyz = normalize(matDst[0].xyz);
-    matDst[1].xyz = normalize(matDst[1].xyz);
-    matDst[2].xyz = normalize(matDst[2].xyz);
-    
-    return lerp(matSrc, matDst, fRatio);
 }
 
 float3 TranslationLerp(float4x4 matSrc, float4x4 matDst, float fRatio)
@@ -323,7 +351,7 @@ void LocalMatrices(uint3 gid : SV_GroupID,
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
 
         float3 vScaleLocal = ScaleLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
-        float4 vRotationLocal = RotationQuaternionLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
+        float4 vRotationLocal = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
         float3 vTranslationLocal = TranslationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
 
         float4x4 S = MakeScaleMatrix(float4(vScaleLocal, 1.f));
