@@ -108,6 +108,7 @@ void CBeatSaberCharacter::ResetPoints()
 {
 	m_CharacterDesc.iScore = 0;
 	m_CharacterDesc.iComboCnt = 0;
+	m_CharacterDesc.isFullCombo = false;
 }
 
 HRESULT CBeatSaberCharacter::Ready_CharacterData()

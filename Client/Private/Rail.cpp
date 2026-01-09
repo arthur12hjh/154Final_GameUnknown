@@ -2,6 +2,9 @@
 #include "Rail.h"
 #include "GameInstance.h"
 
+#include "GameManager.h"
+#include "BeatSaberCharacter.h"
+
 CRail::CRail(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CActor(pDevice, pContext)
 {
@@ -118,6 +121,16 @@ void CRail::Late_Update(_float fTimeDelta)
 {
     m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
+    auto pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
+
+    if (!pDororong)
+    {
+        Safe_Release(pDororong);
+        return;
+    }
+
+    m_iAccuracy = pDororong->GetBeatSaberCharacterDesc().iAccuracy;
+
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif
@@ -141,6 +154,8 @@ HRESULT CRail::Render()
     if (FAILED(m_pShaderCom->Bind_RawValue("g_bIsIdx1", &m_bIsIdx1, sizeof(_bool))))
         return E_FAIL;
     if (FAILED(m_pShaderCom->Bind_RawValue("g_bIsIdx2", &m_bIsIdx2, sizeof(_bool))))
+        return E_FAIL;
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_iAccuracy", &m_iAccuracy, sizeof(_int))))
         return E_FAIL;
 
     m_pShaderCom->Begin(1);

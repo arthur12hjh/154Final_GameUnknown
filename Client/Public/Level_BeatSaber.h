@@ -5,6 +5,7 @@
 
 NS_BEGIN(Client)
 class CPlaySongEvent;
+class CChangeLevelEvent;
 
 class CLevel_BeatSaber : public CLevel
 {
@@ -46,6 +47,9 @@ private :
 	_float										m_fSongDelay{ 1.f };
 	_float										m_fTimeAcc{ 0.f };
 
+	_bool										m_bShowClear{ false };
+	_bool										m_bResultOpen{ false };
+
 private:
 	HRESULT						Ready_Lights();
 	HRESULT						Ready_Layer_BackGround(const _wstring& strLayerTag);
@@ -71,6 +75,8 @@ private:
 
 private:
 	CPlaySongEvent*				m_pPlaySongEvent{ nullptr };
+	CPlaySongEvent*				m_pPreListenEvent{ nullptr };
+	CChangeLevelEvent*			m_pLevelChangeEvent{ nullptr };
 
 public:
 	static CLevel_BeatSaber*		Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eLevelID);
