@@ -19,7 +19,6 @@ HRESULT CDeco::Initialize_Prototype()
 
 HRESULT CDeco::Initialize(void* pArg)
 {
-
 	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
