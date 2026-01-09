@@ -73,12 +73,6 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
         return;
     }
 
-    /*
-    1. �÷��̾� � ���� ������ Pivot Position�� ���صΰ�,
-    2. ī�޶��� ��ġ�� PivotPosition ������ ���� ���͸� ���� �Ķ��� ��(View Point)�� ����ž�.
-    3. ī�޶�� View Point�κ��� ���� �Ÿ���ŭ �Ÿ��� �ΰ� �ٶ󺼰ž�.
-    4. View Point�� Pitch�� XM_PIDIV2�� ������� ���� �־����Ŷ�, ī�޶� ���� �̿� ���߾� �÷��̾ ��������ž�
-    */
     if(!m_bIsTransition)
     {
         _bool bLockOn = false;
@@ -287,11 +281,11 @@ void CCamera_Player::Default_CamAction(_float fTimeDelta)
 void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
 {
     _vector vTargetPoint = m_pGameManager->Get_LockOnPoint();
-    _vector vPlayerPos = m_pPlayerTransform->Get_State(STATE::POSITION);
-    vPlayerPos.m128_f32[1] += 3.f;
+    _vector vPlayerCamPos = m_pTransformCom->Get_State(STATE::POSITION);
 
     // Look 바라보는 방향
-    _vector vTargetLookDir = XMVector3Normalize(vTargetPoint - vPlayerPos);
+    _float fLength = XMVectorGetX(XMVector3Length(vTargetPoint - vPlayerCamPos));
+    _vector vTargetLookDir = XMVector3Normalize(vTargetPoint - vPlayerCamPos);
 
     // 쿼터니언을 사용하기위해 Yaw 부분 계산
 
@@ -319,7 +313,7 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
     // 이 방식은 Yaw 값에 영향을 받지 않으며,
     // z 성분이 0인 경우에도 안정적으로 동작한다.
     _float fTargetPitch = -asinf(XMVectorGetY(vTargetLookDir));
-    fTargetPitch = Clamp<_float>(fTargetPitch, -0.4f, XM_PIDIV2);
+    fTargetPitch = Clamp<_float>(fTargetPitch, -0.3f, XM_PIDIV2);
 
     _vector vScale, vRotation, vTranslation;
     XMMatrixDecompose(&vScale, &vRotation, &vTranslation, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -331,7 +325,7 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
     if (-0.5f > abs(fQuaternionScalar))
         fYawRatio = 40.f;
     else
-        fYawRatio = 5.f;
+        fYawRatio = 15.f;
 
     fYawRatio = Clamp<_float>(fTimeDelta * fYawRatio, 0.f, 1.f);
     _vector vLerpRoation = XMQuaternionSlerp(vRotation, vTargetRot, fYawRatio);

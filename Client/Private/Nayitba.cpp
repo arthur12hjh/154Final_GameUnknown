@@ -251,7 +251,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 
 HRESULT CNaytiba::ActionSuccess(void* pArg)
 {
-	ResetBodyColor();
+	ResetToBaseState();
 	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
@@ -516,7 +516,7 @@ _bool CNaytiba::bIsRepulseHitReaction()
 	
 	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
 	{
-		ResetBodyColor();
+		ResetToBaseState();
 		return true;
 	}
 
@@ -833,11 +833,14 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 	}
 }
 
-void CNaytiba::ResetBodyColor()
+void CNaytiba::ResetToBaseState()
 {
 	if (false == m_bIsActive)
 		m_bIsActive = true;
 
+	if(false == m_pCCT->Get_Active())
+		m_pCCT->Set_Active(true);
+	
 	m_pPartBody->SetPart_BodyColor(false);
 }
 
@@ -935,7 +938,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 					m_MonsterInfo.iCurrentStamina--;
 
 				if (0 == m_MonsterInfo.iCurrentStamina)
-					ResetBodyColor();
+					ResetToBaseState();
 			}
 		}
 	}
