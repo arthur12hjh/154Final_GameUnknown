@@ -745,7 +745,6 @@ HRESULT CNaytiba::ADD_PartObjects()
 		return E_FAIL;
 
 	m_pPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-
 	Import_ModelPtr();
 
 	 // 무기랑 빔?
@@ -774,6 +773,12 @@ HRESULT CNaytiba::ADD_PartObjects()
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
 			return E_FAIL;
+
+		auto pPartWeapon = Find_PartObject(TEXT("Part_WeaponL"));
+		if (nullptr == pPartWeapon)
+			return E_FAIL;
+
+		m_pLeftWeapon = static_cast<CNaytibaLeftWeaponPart*>(pPartWeapon);
 	}
 
 	if (strcmp("None", m_pInitMonsterInfo->szRightWeaponPrototypeName))
@@ -842,6 +847,8 @@ void CNaytiba::ResetToBaseState()
 		m_pCCT->Set_Active(true);
 	
 	m_pPartBody->SetPart_BodyColor(false);
+	m_pPartBody->Stop_All_Effect();
+	m_pLeftWeapon->Stop_All_Effect();
 }
 
 void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)

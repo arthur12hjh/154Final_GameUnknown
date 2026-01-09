@@ -57,6 +57,8 @@ public:
 
 	void								EnableCollider(_bool bIsEnable);
 
+	void								Stop_All_Effect();
+
 private:
 	const _float4x4*					m_pSocketMatrix = { nullptr };
 	_float												m_fLineTime = {};

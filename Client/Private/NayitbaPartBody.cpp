@@ -397,6 +397,10 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         {
             TrailEffect.first->bisPlay = false;
         }
+        for (auto LineTrailEffect : m_pLineTrailEffects)
+        {
+            LineTrailEffect.first->bisPlay = false;
+        }
     }
     else if (strObjectTag == TEXT("Play_Trail"))
     {
@@ -512,6 +516,22 @@ void CNayitbaPartBody::Play_DeadEffect()
         m_fDeadTime = 0.f;
     }
         
+}
+
+void CNayitbaPartBody::Stop_All_Effect()
+{
+    for (auto Effect : m_pEffects)
+    {
+        Effect.first->Stop();
+    }
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        TrailEffect.first->bisPlay = false;
+    }
+    for (auto LineTrailEffect : m_pLineTrailEffects)
+    {
+        LineTrailEffect.first->bisPlay = false;
+    }
 }
 
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)

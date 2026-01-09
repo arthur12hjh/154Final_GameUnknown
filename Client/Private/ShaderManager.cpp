@@ -238,7 +238,7 @@ void CShaderManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIdx)
             EffectDesc.pWorldMatrix = {};
             EffectDesc.pRootMatrix = {};
             EffectDesc.pDir = {};
-            EffectDesc.vPos = XMVectorSet(250.f, 5.f, 250.f, 1.f);
+            EffectDesc.vPos = XMVectorSet(250.f, 25.f, 250.f, 1.f);
             EffectDesc.fRot = {};
             EffectDesc.fSize = 0.8f;
             EffectDesc.fSpeed = 1.05f;
