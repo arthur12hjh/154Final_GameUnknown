@@ -25,7 +25,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 3.5f;
+	m_fMaxDelayTime = 2.5f;
 	return S_OK;
 }
 
@@ -199,8 +199,8 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	/*m_pSkillData.push(m_pGameManager->Find_SkillData(29));
-	SelectAttackData();*/
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(21));
+	//SelectAttackData();
 
 	//EntranceAttack();
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
@@ -222,7 +222,10 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
+				{
 					NormalAttackPattern();
+				}
+					
 			}
 		}
 	}
@@ -358,12 +361,12 @@ void CTask_ScarletAttack::SecondPhaseNormalAttack()
 void CTask_ScarletAttack::SecondPhaseAttack()
 {
 	_float iRandom = m_pGameInstance->Random(0.f, 100.f);
-	if (30 > iRandom)
+	if (20 > iRandom)
 	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(38)); // Blink Shot1
 		m_pSkillData.push(m_pGameManager->Find_SkillData(39)); // Blink Shot2
 	}
-	else if (60 > iRandom)
+	else if (55 > iRandom)
 	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(53)); // AreaCombo
 	}
@@ -1212,7 +1215,7 @@ _bool CTask_ScarletAttack::Finished_Animation(_float fTimeDelta)
 				}
 				else
 				{
-					m_fMaxDelayTime = 3.5f;
+					m_fMaxDelayTime = 2.5f;
 					if (10.f > m_pBlackBoard->GetTargetDistance())
 					{
 						if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())

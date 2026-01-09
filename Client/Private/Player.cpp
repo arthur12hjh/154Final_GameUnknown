@@ -355,14 +355,14 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
 
 			m_pFSM->Handle_Transition(Desc);
 		}
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_G))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::BLINK_START;

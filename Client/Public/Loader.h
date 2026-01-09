@@ -118,6 +118,7 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertF_Col(void* pArg);
 	HRESULT Loading_For_Desert_Bridge(void* pArg);
 	HRESULT Loading_For_Desert_Bridge_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Npc(void* pArg);
 #pragma endregion
 
 #pragma region Beat Saber Map
