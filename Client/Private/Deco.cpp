@@ -42,7 +42,9 @@ HRESULT CDeco::Initialize(void* pArg)
             return S_OK;
     }
 
-	return S_OK;
+    m_pGameInstance->Add_StaticShadowObject(this);
+
+    return S_OK;
 }
 
 void CDeco::Priority_Update(_float fTimeDelta)
@@ -98,6 +100,25 @@ HRESULT CDeco::Render()
 
 HRESULT CDeco::Render_Shadow()
 {
+    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Static(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Static(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+        return E_FAIL;
+
+    _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+    for (size_t i = 0; i < iNumMeshes; i++)
+    {
+        if (FAILED(m_pShaderCom->Begin(1)))
+            return E_FAIL;
+
+        if (FAILED(m_pModelCom->Render(i)))
+            return E_FAIL;
+    }
 
     return S_OK;
 }
