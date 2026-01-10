@@ -163,7 +163,7 @@ void CCinematicModel_Scarlet::Late_Update(_float fTimeDelta)
 		return;
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	//m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
@@ -182,8 +182,8 @@ HRESULT CCinematicModel_Scarlet::Render()
 
 HRESULT CCinematicModel_Scarlet::Render_Shadow()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_Shadow();
+	//for (auto& pPartObject : m_PartObjects)
+	//	pPartObject.second->Render_Shadow();
 
 	return S_OK;
 }

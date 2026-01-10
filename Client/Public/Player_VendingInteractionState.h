@@ -5,13 +5,16 @@
 /*
 모든 Interaction 류 상태들은 Idle에서만 사용 가능하다.
 */
+NS_BEGIN(Engine)
+class CInteraction_Component;
+NS_END
 
 NS_BEGIN(Client)
 
 class CPlayer_VendingInteractionState final : public CPlayerState
 {
 private:
-	CPlayer_VendingInteractionState();
+	CPlayer_VendingInteractionState(void* pArg);
 	virtual ~CPlayer_VendingInteractionState() = default;
 
 public:
@@ -21,6 +24,9 @@ public:
 	virtual PLAYER_TRANSITION_DESC	   Update(_float fTimeDelta) override;
 	virtual _float End() override;
 
+private:
+	CInteraction_Component* m_pInteractionCom = { nullptr };
+	_bool					m_isLerpFinished = { false };
 public:
 	static	CPlayer_VendingInteractionState* Create(void* pArg);
 	virtual	void			   Free() override;

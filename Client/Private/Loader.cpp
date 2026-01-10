@@ -48,6 +48,7 @@
 #include "PonyTail_Player.h"
 #include "Hairpin_Player.h"
 #include "CameraBone_Player.h"
+#include "Coin_Player.h"
 #pragma endregion
 
 #pragma region Bullet
@@ -1161,6 +1162,14 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_Component_Model_Coin */
+	PreTransformMatrix = XMMatrixScaling(0.015f, 0.015f, 0.015f);
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Coin");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Models/Character/PC/Eve/Coin/SM_Coin.fbx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	/* For.Prototype_Component_Model_CameraBone */
 	PreTransformMatrix = XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_CameraBone");
@@ -1308,6 +1317,13 @@ HRESULT CLoader::Loading_For_GamePlay_Shader(void* pArg)
 	/* For.Prototype_GameObject_Weapon */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Weapon");
 	pProtoDesc.pPrototype = CWeapon::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_Coin */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Coin");
+	pProtoDesc.pPrototype = CCoin_Player::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
