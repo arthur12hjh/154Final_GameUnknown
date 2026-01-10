@@ -6,6 +6,7 @@
 #include "ScarletBlackBoard.h"
 #include "ScarletBehaviorTree.h"
 #include "Nayitba.h"
+#include "Player.h"
 
 CTask_ScarletAttack::CTask_ScarletAttack() : CTask()
 {
@@ -1340,6 +1341,13 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 {
+	auto pPlayer = dynamic_cast<CPlayer*>(m_pBlackBoard->GetTarget());
+	if (pPlayer)
+	{
+		if (pPlayer->Get_Desc()->isUsingBlink)
+			return;
+	}
+
 	_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{};
 	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);

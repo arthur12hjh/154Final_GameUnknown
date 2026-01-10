@@ -199,6 +199,7 @@ namespace Client
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
 		bool isUsingScarletLink2 = { false };
+		bool isUsingBlink = { false };
 		bool isUsingRepulse = { false };
 		// 골드
 		int iOwnGold{ 0 };

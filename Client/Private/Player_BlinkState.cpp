@@ -17,6 +17,7 @@ void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.3f);
 	//락 못바꾸게 처리
 	m_Desc->isLockChangable = false;
+	m_Desc->isUsingBlink = true;
 	m_Desc->isInvincible = true;
 
 	m_eState = PLAYER_STATE::BLINK_START;

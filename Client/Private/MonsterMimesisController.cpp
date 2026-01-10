@@ -149,22 +149,35 @@ HRESULT CMonsterMimesisController::Damage(void* pArg)
 			}
 			else
 			{
-				if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
+				if (SKILL_TYPE::BLINK_SKILL > pDamageSKillDesc->eSkillType)
 				{
-					if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+					if (SKILL_PROPERTY::SUPERARMOR & pAttackState->GetSkillData()->eProPerty)
 					{
-						bIsHitAble = false;
+						if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+						{
+							bIsHitAble = false;
+						}
+					}
+
+					if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+					{
+						if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackState->GetSkillData()->eProPerty)
+						{
+							bIsHitAble = false;
+						}
+						else
+							m_vAttackTime = { 0.f, 0.7f };
 					}
 				}
-
-				if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
+				else
 				{
-					if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackState->GetSkillData()->eProPerty)
+					// 여기서 리펄스 공격에서 마지막 리펄스인지를 확인한다.
+					if (SKILL_TYPE::REPULSE_SKILL == pDamageSKillDesc->eSkillType)
 					{
-						bIsHitAble = false;
+						if (false == pNayitba->bIsRepulseHitReaction())
+							bIsHitAble = false;
 					}
-					else
-						m_vAttackTime = { 0.f, 0.7f };
+
 				}
 			}
 		}

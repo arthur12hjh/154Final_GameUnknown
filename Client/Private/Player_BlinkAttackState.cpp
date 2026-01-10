@@ -22,7 +22,7 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
     m_Desc->isLockChangable = false;
 
     m_eState = PLAYER_STATE::BLINK_ATTACK;
-    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_E", false, 1.4f, 0.12f, false, -1.f, 0.f, true, false);
+    m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_E", false, 2.f, 0.12f, false, -1.f, 0.f, true, false);
     m_pPlayer->SetSkillDataID(2000);
 
     CTransform* pTargetTransform = m_pGameManager->Get_TargetTransform();
@@ -75,6 +75,7 @@ _float CPlayer_BlinkAttackState::End()
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->isInvincible = false;
     m_Desc->isLockChangable = true;
+    m_Desc->isUsingBlink = false;
     m_pPlayer->SetSkillDataID(-1);
 
     return m_fNextBlendRatio;
