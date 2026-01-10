@@ -295,7 +295,7 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
 {
 #pragma region DIRECTIONAL
     m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
-    m_pDirectionalLightDesc->vDiffuse = _float4(0.32f, 0.32f, 0.32f, 1.f);
+    m_pDirectionalLightDesc->vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
 #pragma endregion
 
 #pragma region MB
@@ -342,8 +342,8 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
     map<_wstring, CCinematicObject*>* pCinematicObjects = CGameManager::GetInstance()->Get_CinematicObjectsMap();
     CTargetLight::TARGETLIGHT_DESC Desc{};
     Desc.tLightDesc.eType = LIGHT_TYPE::POINT;
-    Desc.tLightDesc.vDiffuse = _float4(0.42f, 0.42f, 0.40f, 1.f);
-    Desc.tLightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
+    Desc.tLightDesc.vDiffuse = _float4(0.08f, 0.08f, 0.06f, 1.f);
+    Desc.tLightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
     Desc.tLightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
     Desc.tLightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
     Desc.tLightDesc.fRange = 12.f;
@@ -392,7 +392,7 @@ void CShaderManager::Load_TargetLights()
 
     CTargetLight::TARGETLIGHT_DESC Desc{};
     Desc.tLightDesc.eType = LIGHT_TYPE::POINT;
-    Desc.tLightDesc.vDiffuse = _float4(0.42f, 0.42f, 0.40f, 1.f);
+    Desc.tLightDesc.vDiffuse = _float4(0.36f, 0.36f, 0.28f, 1.f);
     Desc.tLightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
     Desc.tLightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
     Desc.tLightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
@@ -566,12 +566,38 @@ void CShaderManager::Set_CinematicLights(_uint iFlag)
     switch (iFlag)
     {
     case 1:
+        /* 시네마틱으로 들어가는 케이스 */
         bFlag = VISIBILITY::VISIBLE;
         bObjFlag = VISIBILITY::HIDDEN;
+        
+        if (false == m_isScarletPhase2)
+        {
+            m_pDirectionalLightDesc->vDiffuse = _float4(0.32f, 0.32f, 0.32f, 1.f);
+        }
+        else if (true == m_isScarletPhase2)
+        {
+            m_pDirectionalLightDesc->vDiffuse = _float4(0.504f, 0.f, 0.f, 1.f);
+        }
+
+        m_pGameInstance->Set_Cascade_Active(false);
+
         break;
     case 0:
+        /* 시네마틱이 끝나는 케이스 */
         bFlag = VISIBILITY::HIDDEN;
         bObjFlag = VISIBILITY::VISIBLE;
+
+        if (false == m_isScarletPhase2)
+        {
+            m_pDirectionalLightDesc->vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
+        }
+        else if (true == m_isScarletPhase2)
+        {
+            m_pDirectionalLightDesc->vDiffuse = _float4(0.654f, 0.f, 0.f, 1.f);
+        }
+
+        m_pGameInstance->Set_Cascade_Active(true);
+
         break;
     }
 

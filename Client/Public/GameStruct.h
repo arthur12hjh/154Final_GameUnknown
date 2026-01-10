@@ -174,6 +174,8 @@ namespace Client
 		class CTransform* pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr };
 
+		//벤딩머신 상호작용 중, 코인이 보이게 할지
+		bool   isCoinVisible = { false };
 		bool   isRequestLockonToggle = { false };
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
@@ -196,6 +198,7 @@ namespace Client
 		const _float4x4* pGrabBone = { nullptr };
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
+		bool isUsingScarletLink2 = { false };
 		bool isUsingBlink = { false };
 		bool isUsingRepulse = { false };
 		// 골드
@@ -512,7 +515,7 @@ namespace Client
 		SET_CINEMATICLIGHT,		// 13, 컷씬 끝나면 거기에 맞는 셰이더 세팅으로 전환하는 용도
 		LOCKON_START,			// 14, 컷씬 끝나면 강제로 보스 락온 걸어주려고 만듬
 		LOCKON_END,				// 15, 컷씬 끝나면 강제로 보스 락온 꺼줌
-		BAKE_VILLAGE_SHADOW,		// 15
+		BAKE_VILLAGE_SHADOW,	// 16,
 		END };
 
 	typedef struct Cinematic_Index_Desc
@@ -685,11 +688,25 @@ namespace Client
 		vector<pair<_uint, _uint>>		iItemList;
 	}MINIGAME_REWARD;
 
-	enum class SOUND_TRIGGER_TYPE
+	enum class GROUND_SOUND_TYPE
 	{
 		GRASS,
 		SAND,
 		IRON,
 		END
 	};
+
+	enum class BGM_SOUND_STATE
+	{
+		INTRO,
+		LOOP,
+		END,
+	};
+
+	typedef struct	Field_Bgm_Desc
+	{
+		BGM_SOUND_STATE		eBGMState;
+		_uint				iBossID;
+		_uint				iBossPhase;
+	}FIELD_BGM_DESC;
 }

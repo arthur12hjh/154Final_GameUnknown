@@ -64,22 +64,22 @@ PS_OUT_VOLUME_FOG PS_MAIN_VOLUME_FOG(PS_IN In)
 
     float4 vDepth = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
 
-    // ===== SKY(센티넬) 최소 처리 =====
+    // ===== 스카이박스 최소 처리 =====
     if (vDepth.r == 0 && vDepth.g == 1 && vDepth.b == 0 && vDepth.a == 0)
     {
-        // ---- (임의 전역값 대신 로컬 상수로) 튜닝값 ----
-        const float fSkyFogZBase = 0.985f; // far 근처
-        const float fSkyFogSpread0 = 0.003f; // 상단 하늘(수평선 아님)
-        const float fSkyFogSpread1 = 0.040f; // 수평선 근처
-        const float fHorizonStart = 0.10f;
-        const float fHorizonEnd = 0.85f;
+        // 머뭇거릴틈이없다
+        float fSkyFogZBase = 0.985f; // far 근처
+        float fSkyFogSpread0 = 0.003f; // 상단 하늘
+        float fSkyFogSpread1 = 0.040f; // 수평선 근처
+        float fHorizonStart = 0.10f;
+        float fHorizonEnd = 0.85f;
 
         // horizon 마스크 (수평선 근처일수록 1)
         float3 vRayDirWorld = GetWorldRayDir(In.vTexcoord);
         float fHorizon = saturate(1.0f - abs(vRayDirWorld.y));
         float fMask = smoothstep(fHorizonStart, fHorizonEnd, fHorizon);
 
-        // far z를 3탭 분산 샘플 (수평선일수록 spread 증가) -> "노이즈 시트" 완화
+        // far z를 3탭 분산 샘플 (수평선일수록 spread 증가)
         float fSpread = lerp(fSkyFogSpread0, fSkyFogSpread1, fHorizon);
 
         float z0 = saturate(fSkyFogZBase - fSpread);
@@ -100,7 +100,7 @@ PS_OUT_VOLUME_FOG PS_MAIN_VOLUME_FOG(PS_IN In)
         return Out;
     }
 
-    // ===== 기존 지오메트리 경로 (변경 없음) =====
+    // 기존 경로
     float fViewDepth = vDepth.y * g_fFar;
     vector vViewPosition = GetViewPosition(g_DepthTexture, g_fFar, In.vTexcoord, g_ProjMatrixInv);
 

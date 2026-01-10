@@ -138,6 +138,9 @@ public:
 
 	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
 	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
+	
+	void											Play_BossBGM(_uint iBossID, _uint iBossPhase);
+	void											Play_LevelBGM();
 	void											Release_GameMgr();
 
 private :
@@ -156,6 +159,8 @@ private :
 	class CBeatSaberCharacter*						m_pBeatSaberCharacter = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
 	
+	FIELD_BGM_DESC									m_FieldBgmInfo = {};
+
 #pragma region LEVEL 전환때 살려야할 데이터들
 	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
 	MINIGAME_REWARD									m_MiniGameReward = {};
@@ -163,6 +168,7 @@ private :
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	void											BGM_FinishedSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2);
 
 public:
 	virtual void			Free() override;
