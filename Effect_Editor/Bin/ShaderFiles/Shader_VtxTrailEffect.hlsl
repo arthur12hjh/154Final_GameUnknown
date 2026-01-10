@@ -253,7 +253,7 @@ PS_NONLIGHT_OUT PS_SLASH_METABALL(PS_IN In)
     
     float4 col = g_DissolveTexture.Sample(MirrorSampler, uvDistorted);
     
-    float mask = g_MaskTexture.Sample(MirrorSampler, MaskTexcoord).r;
+    float mask = g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r;
     
     col.r *= mask;
     Out.vDiffuse = g_vColor;
