@@ -13,11 +13,6 @@ void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
-	//¸ðÆ® ÄÑ
-	m_pPlayer->MotionTrailEnable(true);
-	m_pPlayer->SetVisibility(VISIBILITY::VISIBLE);
-	m_pPlayer->MotionTrailRimLight(2.f, 3.f, { 0.6f, 0.7f, 1.f, 1.f });
-	m_pPlayer->MotionTrailCoolDown(0.1f);
 	//if (PLAYER_MODE::BATTLE == m_Desc->ePlayerMode)
 	//	m_fMaxRatio = 0.35f;
 	//else
@@ -123,7 +118,6 @@ PLAYER_TRANSITION_DESC CPlayer_BattleEvadeState::Update(_float fTimeDelta)
 
 _float CPlayer_BattleEvadeState::End()
 {
-	m_pPlayer->MotionTrailEnable(false);
 	//m_pPlayer->SetVisibility(VISIBILITY::VISIBLE);
 
 	return m_fNextBlendRatio;

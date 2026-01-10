@@ -70,6 +70,8 @@ void CParticle::Late_Update(_float fTimeDelta)
 	if (m_tData.fDelayTime > m_fTime || (!m_bisLoop && m_tData.fEndTime + m_tData.fLifeTime.y + 1.f <= m_fTime)) {
 		return;
 	}
+	if(RENDER::MOTIONBLUR == m_eRender)
+		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(m_eRender, this);
 	m_iRenderCount = 0;
 }
@@ -94,6 +96,48 @@ HRESULT CParticle::Render()
 
 
 			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+	else {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Render(i)))
+				return E_FAIL;
+		}
+	}
+
+	m_iRenderCount++;
+	return S_OK;
+}
+
+
+HRESULT CParticle::Render_MotionBlur()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	_uint		iNumMeshes = m_pVIBufferCom->GetModelNumMeshes();
+	if (m_tData.bisMeshTexture) {
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+				return E_FAIL;
+
+			if (FAILED(m_pVIBufferCom->Bind_MatrialTexture(m_pShaderCom, i, "g_NormalTexture", aiTextureType_NORMALS, 0)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
+				return E_FAIL;
+
+
+			if (FAILED(m_pShaderCom->Begin(3)))
 				return E_FAIL;
 
 			if (FAILED(m_pVIBufferCom->Render(i)))

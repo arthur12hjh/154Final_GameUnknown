@@ -289,7 +289,7 @@ HRESULT CRenderer::Ready_RenderTargets()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 	/* Target_Normal */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Normal"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Normal"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(0.0f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 	/* Target_Depth */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), m_vScreenSize.x, m_vScreenSize.y, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
@@ -404,6 +404,11 @@ void CRenderer::Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fInt
 void CRenderer::Set_DoFInfo(_float fFocusDistance)
 {
 	m_pDepthofField->Set_DoFInfo(fFocusDistance);
+}
+
+void CRenderer::Set_Cascade_Active(_bool bFlag)
+{
+	m_pCascadeShadow->Set_Active(bFlag);
 }
 
 HRESULT CRenderer::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
@@ -603,6 +608,11 @@ HRESULT CRenderer::Add_StaticShadowObject(CGameObject* pGameObject)
 HRESULT CRenderer::Bake_StaticShadow()
 {
 	return m_pStaticShadow->Render(m_pVIBuffer);
+}
+
+void CRenderer::Clear_StaticShadowObjects()
+{
+	m_pStaticShadow->Clear_StaticShadowObjects();
 }
 
 void CRenderer::Render_Priority()

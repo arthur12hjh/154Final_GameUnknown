@@ -36,13 +36,18 @@ HRESULT CDeco::Initialize(void* pArg)
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")) ||
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Garden")) || 
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")) ||
-        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")))
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base_1A")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Statue")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Trash")))
     {
         if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
             return S_OK;
     }
 
-	return S_OK;
+    m_pGameInstance->Add_StaticShadowObject(this);
+
+    return S_OK;
 }
 
 void CDeco::Priority_Update(_float fTimeDelta)
@@ -57,7 +62,7 @@ void CDeco::Late_Update(_float fTimeDelta)
 {
     if (!m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {
-        return;
+            return;
     }
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -98,6 +103,25 @@ HRESULT CDeco::Render()
 
 HRESULT CDeco::Render_Shadow()
 {
+    if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Static(m_pShaderCom, "g_ViewMatrix", D3DTS::VIEW)))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Bind_Shadow_Resource_Static(m_pShaderCom, "g_ProjMatrix", D3DTS::PROJ)))
+        return E_FAIL;
+
+    _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+    for (size_t i = 0; i < iNumMeshes; i++)
+    {
+        if (FAILED(m_pShaderCom->Begin(1)))
+            return E_FAIL;
+
+        if (FAILED(m_pModelCom->Render(i)))
+            return E_FAIL;
+    }
 
     return S_OK;
 }
@@ -155,6 +179,9 @@ HRESULT CDeco::Ready_Col(const _tchar* pComponentTag)
     // ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 
     RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
+
+    RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_6;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;

@@ -28,6 +28,8 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->pPlayerController->Set_CCTCollision(false);
 
+    m_pGameInstance->Active_RadialBlur(1.1f, 16, 0.66f);
+
     return S_OK;
 }
 

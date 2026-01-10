@@ -61,9 +61,10 @@ HRESULT CCherryBlossom3::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
 
-
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(9)))
 			return E_FAIL;
 
 

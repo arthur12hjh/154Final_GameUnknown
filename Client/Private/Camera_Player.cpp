@@ -5,6 +5,7 @@
 #include "GameManager.h"
 
 #include "Player.h"
+#include "Nayitba.h"
 #include "CameraBone_Player.h"
 
 CCamera_Player::CCamera_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -42,10 +43,12 @@ HRESULT CCamera_Player::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    m_fDefaultOnFov = m_pCameraInfo.fFov;
     if (nullptr != pPlayer)
         m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
 
     Safe_Release(pPlayer);
+    m_pPlayerDesc = pPlayer->Get_Desc();
 
     return S_OK;
 }
@@ -71,18 +74,27 @@ void CCamera_Player::Priority_Update(_float fTimeDelta)
         return;
     }
 
-    /*
-    1. �÷��̾� � ���� ������ Pivot Position�� ���صΰ�,
-    2. ī�޶��� ��ġ�� PivotPosition ������ ���� ���͸� ���� �Ķ��� ��(View Point)�� ����ž�.
-    3. ī�޶�� View Point�κ��� ���� �Ÿ���ŭ �Ÿ��� �ΰ� �ٶ󺼰ž�.
-    4. View Point�� Pitch�� XM_PIDIV2�� ������� ���� �־����Ŷ�, ī�޶� ���� �̿� ���߾� �÷��̾ ��������ž�
-    */
     if(!m_bIsTransition)
     {
-   /*     if (true == m_pGameManager->Get_Lockon())
+        _bool bLockOn = false;
+        if (m_pGameManager->Get_LockonTarget())
+        {
+            auto eMonsterType = m_pGameManager->Get_LockonTarget()->GetStaticMonsterData()->eNaytiba_Type;
+            if (NAYTIBA_TYPE::ELITE <= eMonsterType && m_pGameManager->Get_Lockon())
+                bLockOn = true;
+        }   
+
+        if (bLockOn)
+        {
             LockOn_CamAction(fTimeDelta);
-        else*/
+        }
+        else
+        {
+            if (m_pCameraInfo.fFov != m_fDefaultOnFov)
+                m_pCameraInfo.fFov = m_fDefaultOnFov;
+
             Default_CamAction(fTimeDelta);
+        }
        
         __super::Bind_Matrices(fTimeDelta);
     }
@@ -147,7 +159,7 @@ void CCamera_Player::Set_CameraDestination()
     // 3. 
     _matrix PlayerWorldMatrix = XMLoadFloat4x4(m_pPlayerTransform->Get_WorldMatrixPtr());
 
-
+    
     // 1) ���� ���� (Yaw / Pitch �и�)
     _vector vPlayerLook = XMVector3Normalize(PlayerWorldMatrix.r[2]);
 
@@ -156,7 +168,7 @@ void CCamera_Player::Set_CameraDestination()
         XMVectorGetZ(vPlayerLook)
     );
 
-    m_fPitch = 0.f; // 컷신 종료 기본값
+    m_fPitch = 0.f; // 컷신 종료 기본값`
 
     // ��� �ִ밢��  
     _float fPitchLimit = XM_PIDIV2 - 0.2f;
@@ -269,24 +281,74 @@ void CCamera_Player::Default_CamAction(_float fTimeDelta)
 
 void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
 {
-    _float3 vCamPos = {};
     _vector vTargetPoint = m_pGameManager->Get_LockOnPoint();
-    _vector vPlayerPos = m_pPlayerTransform->Get_State(STATE::POSITION);
+    _vector vPlayerCamPos = m_pTransformCom->Get_State(STATE::POSITION);
 
-    // X와 Z 기준으로 카메라를 투영한다.
-    _vector vDir = XMVector3Normalize(vTargetPoint - vPlayerPos);
-    _float fLength = XMVectorGetX(XMVector3Length(vTargetPoint - vPlayerPos));
-   
-    // fLength를 통해서 Fov 조절하거나 안함
+    // Look 바라보는 방향
+    _float fLength = XMVectorGetX(XMVector3Length(vTargetPoint - vPlayerCamPos));
+    _vector vTargetLookDir = XMVector3Normalize(vTargetPoint - vPlayerCamPos);
 
+    // 쿼터니언을 사용하기위해 Yaw 부분 계산
 
+    // atan2는 수평면(x, z)에서 Y축이 이루는 각도를 반환한다.
+    // 때문에 이를 이용해서 Yaw를 구할수 있다.
+    _float fTargetYaw = atan2f(XMVectorGetX(vTargetLookDir), XMVectorGetZ(vTargetLookDir));
 
-    //vTargetPoint.m128_f32[1] = vTempPlayerPos.m128_f32[1] = 0.f;
-    XMStoreFloat3(&vCamPos, m_pPlayerTransform->Get_State(STATE::POSITION) + (vDir * -m_fDistance) + m_pPlayerTransform->Get_State(STATE::UP) * (m_vPivot.y));
+    // Pitch는 방향 벡터가 XZ 평면(수평면)과 이루는 기울기 각도이다.
+    // 방향 벡터는 정규화되어 있으며(|v| = 1), 단위 구 위의 한 점으로 볼 수 있다.
+    //
+    // 수직 단면에서 보면 삼각형이 형성되며:
+    //  - 빗변: 1 (단위 벡터 길이)
+    //  - 세로 성분: y
+    //  - 바닥 성분: sqrt(x*x + z*z)
+    //
+    // 삼각함수 정의에 의해:
+    //  sin(Pitch) = y / 1
+    //  => y = sin(Pitch)
+    //
+    // 따라서 Pitch는 Yaw와 독립적으로 다음과 같이 구할 수 있다:
+    //  Pitch = asin(y)
+    //  또는
+    //  Pitch = atan2(y, sqrt(x*x + z*z))
+    //
+    // 이 방식은 Yaw 값에 영향을 받지 않으며,
+    // z 성분이 0인 경우에도 안정적으로 동작한다.
+    _float fTargetPitch = -asinf(XMVectorGetY(vTargetLookDir));
+    fTargetPitch = Clamp<_float>(fTargetPitch, -0.3f, 0.f);
 
+    _vector vScale, vRotation, vTranslation;
+    XMMatrixDecompose(&vScale, &vRotation, &vTranslation, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
-    m_pTransformCom->Chase_Lerp(XMLoadFloat3(&vCamPos), fTimeDelta, 0.f);
-    m_pTransformCom->LookAt_Lerp(m_pGameManager->Get_LockOnPoint(), fTimeDelta, 10.f);
+    _vector vTargetRot = XMQuaternionRotationRollPitchYaw(fTargetPitch, fTargetYaw, 0.f);
+    _float fQuaternionScalar = XMVectorGetY(XMVector3Dot(vRotation, vTargetRot));
+
+    _float fYawRatio = {};
+    if (-0.4f > abs(fQuaternionScalar))
+        fYawRatio = 60.f;
+    else
+        fYawRatio = 15.f;
+
+    _float fCamDistance = {};
+    fCamDistance = m_fDistance + (5.f * fTargetPitch);
+
+    if (m_pPlayerDesc->isUsingScarletLink2 || m_pPlayerDesc->isUsingRepulse)
+        fCamDistance = 7.f;
+
+    fYawRatio = Clamp<_float>(fTimeDelta * fYawRatio, 0.f, 1.f);
+    _vector vLerpRoation = XMQuaternionSlerp(vRotation, vTargetRot, fYawRatio);
+
+    // 이때만 위치 보정
+    _vector vDir = m_pTransformCom->Get_State(STATE::LOOK) * -fCamDistance;
+    vDir += m_pPlayerTransform->Get_State(STATE::UP) * (m_vPivot.y + 1.5f);
+    vDir += m_pPlayerTransform->Get_State(STATE::RIGHT) * (m_vPivot.x + 1.f);
+
+    if (0 > fTargetPitch)
+    {
+        m_pCameraInfo.fFov = XMConvertToRadians(Lerp<_float>(m_fLockOnFov.x, m_fLockOnFov.y, 1 + fTargetPitch));
+    }
+
+    m_pTransformCom->Chase_Lerp(m_pPlayerTransform->Get_State(STATE::POSITION) + vDir, fTimeDelta);
+    m_pTransformCom->Set_Rotation(vLerpRoation, true);
 }
 
 CCamera_Player* CCamera_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

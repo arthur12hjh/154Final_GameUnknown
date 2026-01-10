@@ -7,11 +7,13 @@ class CGameObject;
 class CCharacterController;
 class CAIController;
 class CRigidBody;
+class CModel;
 NS_END
 
 NS_BEGIN(Client)
 struct Npc_Data_Desc;
 class CInteractionBinder;
+class CDropComponent;
 
 class CNpc final : public CCharacter
 {
@@ -42,6 +44,7 @@ private:
 	const Npc_Data_Desc*		m_NpcDesc = {};
 
 	CInteractionBinder*			m_pInteractionCom = { nullptr };
+	CDropComponent*				m_pDropCom = { nullptr };
 	CAIController*				m_pAIController = { nullptr };
 
 private :

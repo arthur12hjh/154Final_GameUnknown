@@ -114,6 +114,11 @@ void CNaytiba::Update(_float fTimeDelta)
 			VisibleStatusUI(fTimeDelta);*/
 	} 
 
+	if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
+	{
+		
+	}
+
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
@@ -123,7 +128,6 @@ void CNaytiba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 	{
 		m_pAIController->Update(fTimeDelta);
-
 	}
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
@@ -230,28 +234,27 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	}
 
 	VisibleStatusUI(0.f);
-	if (S_OK == m_pAIController->Damage(pArg))
+	m_pAIController->Damage(pArg);
+
+	_uint RimLightIndex = 0;
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
 	{
-		_uint RimLightIndex = 0;
-		if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+		CBossController* pBossController = static_cast<CBossController*>(m_pAIController);
+		if (SKILL_PROPERTY::EXCUTION & pSkillDesc->eProPerty)
 		{
-			CBossController* pBossController = static_cast<CBossController*>(m_pAIController);
-			if (pBossController->bIsLinkAttack())
-				RimLightIndex = 1;
-				
+			RimLightIndex = 1;
 		}
-		
-		// 몬스터 림라이트 처리
-		if (0 == RimLightIndex)
-			m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	}
 
+	// 몬스터 림라이트 처리
+	if (0 == RimLightIndex && NAYITBA_EXECUTION_TYPE::END == m_eExcution)
+		m_pPartBody->SetRimLightData(true, 1.f, 0.9f, { 0.8f, 0.8f, 0.8f, 1.f }, 0.4f);
 	return S_OK;
 }
 
 HRESULT CNaytiba::ActionSuccess(void* pArg)
 {
-	ResetBodyColor();
+	ResetToBaseState();
 	m_pAIController->ActionSuccess(pArg);
 
 	return S_OK;
@@ -283,22 +286,6 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 		break;
 	case CNotify::CHANGE_COLOR:
 		Change_Color(pNotify);
-		break;
-	case CNotify::SET_VISIBLITY:
-	{
-		if("" == pNotify->szNotifyArg01)
-			m_bIsActive = pNotify->iNumData01;
-		else
-		{
-			_wstring szPartName = _wstring(pNotify->szNotifyArg01.begin(), pNotify->szNotifyArg01.end());
-			auto partObject = m_PartObjects.find(szPartName.c_str());
-
-			if (partObject != m_PartObjects.end())
-			{
-				partObject->second->SetVisibility(VISIBILITY(!pNotify->iNumData01));
-			}
-		}
-	}
 		break;
 	}
 
@@ -478,6 +465,11 @@ void CNaytiba::SetActiveMonster(_bool bIsFlag)
 	}
 }
 
+void CNaytiba::SetActivePartObject(_bool bIsActive)
+{
+	__super::SetActive(bIsActive);
+}
+
 void CNaytiba::SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc)
 {
 	m_pAttack_Data = pATKDesc;
@@ -516,7 +508,7 @@ _bool CNaytiba::bIsRepulseHitReaction()
 	
 	if (0 >= m_pAttack_Data->iMaxRepulseCount - m_iRepulseCount)
 	{
-		ResetBodyColor();
+		ResetToBaseState();
 		return true;
 	}
 
@@ -556,13 +548,12 @@ void CNaytiba::Activate_PartObject_Collider(const _wstring& strPartTag, const _w
 
 HRESULT CNaytiba::Ready_CharacterData()
 {
-	auto pNayitbaInfo = m_pGameManager->Find_BossData(m_iMonsterID);
-	if (nullptr != pNayitbaInfo)
+	m_pInitMonsterInfo = m_pGameManager->Find_BossData(m_iMonsterID);
+	if (nullptr != m_pInitMonsterInfo)
 	{
-		m_pInitMonsterInfo = pNayitbaInfo;
 		size_t iNumSkill = m_pInitMonsterInfo->iAttackList.size();
-	
-		for(_uint i = 0; i < ENUM_CLASS(SKILL_TYPE::END); ++i)
+
+		for (_uint i = 0; i < ENUM_CLASS(SKILL_TYPE::END); ++i)
 			m_MonsterInfo.iAttackList[i].reserve(iNumSkill);
 
 		for (size_t j = 0; j < iNumSkill; ++j)
@@ -571,8 +562,8 @@ HRESULT CNaytiba::Ready_CharacterData()
 			_uint iIndex = ENUM_CLASS(pSkillData->eSkillType);
 			m_MonsterInfo.iAttackList[iIndex].push_back(pSkillData);
 		}
-	
-		if (AI_TYPE::PASSIVE == pNayitbaInfo->eAI_Type)
+
+		if (AI_TYPE::PASSIVE == m_pInitMonsterInfo->eAI_Type)
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::MIMESSIS;
 		else
 			m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEFAULT;
@@ -600,7 +591,8 @@ HRESULT CNaytiba::Ready_CharacterData()
 		}
 		m_iNumCandidate = m_SkillCandidates.size();
 	}
-
+	else
+		int a = 10;
 	return S_OK;
 }
 
@@ -656,7 +648,7 @@ HRESULT CNaytiba::ADD_Components()
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
 		SenceComDesc.fAiSearchRadius = 360.f;
-		SenceComDesc.fAiTargetSearchDistance = 30.f;
+		SenceComDesc.fAiTargetSearchDistance = 50.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 
 		/* Prototype_Component_TargetComponent */
@@ -745,7 +737,6 @@ HRESULT CNaytiba::ADD_PartObjects()
 		return E_FAIL;
 
 	m_pPartBody = static_cast<CNayitbaPartBody*>(pPartBody);
-
 	Import_ModelPtr();
 
 	 // 무기랑 빔?
@@ -774,6 +765,12 @@ HRESULT CNaytiba::ADD_PartObjects()
 		LWeaponDesc.fSpeedPerSec = 5.f;
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
 			return E_FAIL;
+
+		auto pPartWeapon = Find_PartObject(TEXT("Part_WeaponL"));
+		if (nullptr == pPartWeapon)
+			return E_FAIL;
+
+		m_pLeftWeapon = static_cast<CNaytibaLeftWeaponPart*>(pPartWeapon);
 	}
 
 	if (strcmp("None", m_pInitMonsterInfo->szRightWeaponPrototypeName))
@@ -791,7 +788,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 			return E_FAIL;
 	}
 
-	if (10 == m_pInitMonsterInfo->iMonsetID)
+	/*if (10 == m_pInitMonsterInfo->iMonsetID)
 	{
 		CNaytibaBeam_Part::BEAM_DESC BeamDesc = { };
 		BeamDesc.bIsApplyTransform = true;
@@ -803,7 +800,7 @@ HRESULT CNaytiba::ADD_PartObjects()
 
 		if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_BeamPart"), TEXT("Part_Beam"), &BeamDesc)))
 			return E_FAIL;
-	}
+	}*/
 
 	return S_OK;
 }
@@ -822,6 +819,7 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 			if (pUIHUD)
 				pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
+			m_pGameManager->Play_BossBGM(m_iMonsterID, 0);
 			Safe_Release(pUIHUD);
 		}
 		else
@@ -833,12 +831,23 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 	}
 }
 
-void CNaytiba::ResetBodyColor()
+void CNaytiba::ResetToBaseState()
 {
 	if (false == m_bIsActive)
 		m_bIsActive = true;
 
-	m_pPartBody->SetPart_BodyColor(false);
+	if(false == m_pCCT->Get_Active())
+		m_pCCT->Set_Active(true);
+	
+	if (m_pPartBody)
+	{
+		m_pPartBody->SetPart_BodyColor(false);
+		m_pPartBody->SetRimLightData(false, 0.f, 0.f, {}, 0.f);
+		m_pPartBody->Stop_All_Effect();
+	}
+
+	if(m_pLeftWeapon)
+		m_pLeftWeapon->Stop_All_Effect();
 }
 
 void CNaytiba::VisibleStatusUI(_float fTimeDelta, _bool bIsForce)
@@ -935,7 +944,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 					m_MonsterInfo.iCurrentStamina--;
 
 				if (0 == m_MonsterInfo.iCurrentStamina)
-					ResetBodyColor();
+					ResetToBaseState();
 			}
 		}
 	}

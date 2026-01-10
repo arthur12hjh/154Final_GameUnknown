@@ -41,6 +41,7 @@ public:
 private:
 	class CGameManager*			m_pGameManager = { nullptr };
 	class CTransform*			m_pPlayerTransform = { nullptr };
+	const PLAYER_DESC*			m_pPlayerDesc = { nullptr };
 
 	_float4x4					m_CombinedWorldMatrix = {};
 
@@ -51,6 +52,11 @@ private:
 	_float						m_fYaw = {};
 	_float						m_fPitch = {};
 
+	_float						m_fDefaultOnFov = {};
+	_float2						m_fLockOnFov = {40.f, 45.f};
+	_float2						m_fOffetLength = { 0.f, 10.f };
+
+	_bool						m_bIsLockOnLerp = { false };
 	_float						m_fDistance = { 10.f };
 	_float3						m_vPivot = { 1.5f, 4.f, 0.f };
 	_bool						m_bIsPositionInitialized = { FALSE };

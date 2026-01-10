@@ -82,86 +82,6 @@
                 ]
             },
             {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 134,
-                "iNumData01": 0,
-                "iNumData02": 20,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Attack_Interaction",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 107,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "EFFECT",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
                 "fNumData01": 45.0,
                 "fNumData02": 0.30000001192092896,
                 "fNumData03": 0.0,
@@ -676,9 +596,9 @@
                     270.0
                 ],
                 "vNotifyScale": [
-                    3.0,
-                    3.0,
-                    3.0
+                    0.8999999761581421,
+                    0.8999999761581421,
+                    0.8999999761581421
                 ]
             },
             {
@@ -707,7 +627,7 @@
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
                     0.0,
-                    0.10000000149011612,
+                    0.0,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -716,9 +636,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    1.2999999523162842,
+                    1.2999999523162842,
+                    1.2999999523162842
                 ]
             }
         ],

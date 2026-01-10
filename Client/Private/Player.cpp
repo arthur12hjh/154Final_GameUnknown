@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Nayitba.h"
 
+#include "Coin_Player.h"
 #include "Body_Player.h"
 #include "Face_Player.h"
 #include "Hair_Player.h"
@@ -164,7 +165,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_PlayerDesc.pPlayerController = m_pCCT;
 
 	/* 시작할땐 꺼두자 */
-	SetVisibility(VISIBILITY::HIDDEN);
+	//SetVisibility(VISIBILITY::HIDDEN);
 	MotionTrailEnable(false);
 
 	//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
@@ -258,7 +259,7 @@ HRESULT CPlayer::Render_MotionBlur()
 
 HRESULT CPlayer::Damaged(void* pArg)
 {
-	if (true == m_PlayerDesc.isInvincible || VISIBILITY::HIDDEN == m_eVisibility || false == m_bIsActive)
+	if (true == m_PlayerDesc.isInvincible || false == m_bIsActive)
 		return S_OK;
 
 	DEFAULT_DAMAGE_DESC* pDamageDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
@@ -355,14 +356,14 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD7))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
 
 			m_pFSM->Handle_Transition(Desc);
 		}
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_NUMPAD9))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_G))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::BLINK_START;
@@ -464,6 +465,17 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 
 	m_pWeapon = static_cast<CWeapon *>(Find_PartObject(TEXT("Part_Weapon")));
+
+
+	CCoin_Player::COIN_DESC	CoinDesc{};
+	CoinDesc.pParent = this;
+	CoinDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
+	CoinDesc.pParentTransform = m_pTransformCom;
+
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Coin"),
+		TEXT("Part_Coin"), &CoinDesc)))
+		return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -646,8 +658,13 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 
 		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
 
- 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
 		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
+
+		PLAYER_TRANSITION_DESC Desc;
+		Desc.isChangeMode = true;
+		Desc.eMode = PLAYER_MODE::IDLE;
+		Desc.pArg = pInteractionCom;
 
 		switch (InteractionState)
 		{
@@ -656,13 +673,9 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			break;
 		case INTERACTION_STATE::CONTACT:
 		{
-			PLAYER_TRANSITION_DESC Desc;
-			Desc.isChangeMode = false;
-			Desc.pArg = pInteractionCom;
-
 			switch (pInteractionData->eType)
 			{
-			// 만약 서플라이 박스라면 (발로 차는 모션)
+				// 만약 서플라이 박스라면 (발로 차는 모션)
 			case INTERACTION_TYPE::SUPPLY_BOX:
 			{
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
@@ -676,19 +689,38 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				break;
 
 			}
-			case INTERACTION_TYPE::ITEM:
-			case INTERACTION_TYPE::DOOR:
-			case INTERACTION_TYPE::LIFT_CONTROLLER:
-			case INTERACTION_TYPE::NPC:
 			case INTERACTION_TYPE::VENDING_MACINE:
+			{
+				Desc.eNextState = PLAYER_STATE::VENDING_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+			}
+			case INTERACTION_TYPE::ITEM:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+				// 끝났거나 잠겨있다면, 그냥 Break 처리.
+				// 디폴트여도 상호작용은 안되니까 Break 처리.
+			default:
+				break;
 			}
 		}
-		// 끝났거나 잠겨있다면, 그냥 Break 처리.
-		// 디폴트여도 상호작용은 안되니까 Break 처리.
 		case INTERACTION_STATE::LOCK:
 		case INTERACTION_STATE::END:
 			break;
@@ -769,6 +801,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 {
 	//무적이면 충돌처리 안하게 처리
 
+	_bool bIsHitReaction = { false };
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
 	_float fImpactForce;
@@ -809,65 +842,78 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 		break;
 	default:
-		if (true == m_PlayerDesc.isJustParryable)
+		if (ATK_INTERACTION_TYPE::END == m_PlayerDesc.eReactionType)
 		{
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
-			Desc.pArg = &HitDesc;
-			
-			m_pFSM->Handle_Transition(Desc);
-			DamageDesc.pAttacker = this;
-
-			auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
-			if (0 != pSkillDesc->iSkillID)
+			if (true == m_PlayerDesc.isJustParryable && (SKILL_PROPERTY::PARRYABLE & pSkillDesc->eProPerty))
 			{
-				if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+				Desc.isChangeMode = false;
+				Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
+				Desc.pArg = &HitDesc;
+
+				m_pFSM->Handle_Transition(Desc);
+				DamageDesc.pAttacker = this;
+
+				auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+				if (0 != pSkillDesc->iSkillID)
 				{
-					if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
-						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
-					else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+					if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+					{
+						if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+							DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+						else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+							DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+					}
+					else
 						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+
+					pNayitba->Damaged(&DamageDesc);
 				}
-				else
-					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
-				pNayitba->Damaged(&DamageDesc);
+				//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 			}
-		
-			//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
-		}
-		// 가드만 성공
-		else if (true == m_PlayerDesc.isParryable)
-		{
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
-			Desc.pArg = &HitDesc;
-
-			m_pFSM->Handle_Transition(Desc);
-		}
-
-		else if (false == m_PlayerDesc.isSuperArmor)
-		{
-			//타격당할때 공격자를 바라보게 한다.
-			m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)), 
-				XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
-
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::HIT;
-			Desc.pArg = &HitDesc;
-
-			if (m_pWeapon)
+			// 가드만 성공
+			// 여기서 실드게이지 체크해서 가드도 성공 여부 판단로직들어가면 어떨가함
+			else if (true == m_PlayerDesc.isParryable)
 			{
-				m_iSkillID = -1;
-				m_pWeapon->EnableCollider(false);
+				Desc.isChangeMode = false;
+				Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
+				Desc.pArg = &HitDesc;
+
+				m_pFSM->Handle_Transition(Desc);
 			}
 
-			m_pFSM->Handle_Transition(Desc);
-			m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+			else if (false == m_PlayerDesc.isSuperArmor)
+			{
+				bIsHitReaction = true;
+			}
 		}
+		else
+		{
+			bIsHitReaction = true;
+		}
+
 		break;
 	}
 
+	if (bIsHitReaction)
+	{
+		//타격당할때 공격자를 바라보게 한다.
+		m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)),
+			XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
+
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+		Desc.pArg = &HitDesc;
+
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
+		m_pFSM->Handle_Transition(Desc);
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+	}
 }
 
 /* 실드 연산 로직 */

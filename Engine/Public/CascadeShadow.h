@@ -21,6 +21,7 @@ public:
 	//얘는 캐스케이드만 추가
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override;
 	void* Get_Desc() override { return &m_tShadowLightDesc; }
+	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
 public:
 	//캐스케이드 그림자용 리소스 바인딩
 	HRESULT Bind_Shader_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);
@@ -40,7 +41,7 @@ public:
 private:
 	//캐스케이드 관련 정보들
 	ID3D11DepthStencilView* m_pCascadeShadowDSV = { nullptr };
-	_uint2					m_vCascadeShadowMapSize = { 2048, 2048 };
+	_uint2					m_vCascadeShadowMapSize = { 4096, 4096 };
 
 	_float					m_fCascadeEnds[CASCADE_LEVEL + 1];
 	_float4					m_vCascadeNearCorner[CASCADE_LEVEL][4];
@@ -53,6 +54,7 @@ private:
 	CASCADE_SHADOW_DESC		m_tShadowLightDesc = {};
 	list<class CGameObject*> m_CascadeShadowObjects = {};
 
+	_bool					m_isActive = { true };
 private:
 	void Seperate_CascadeFrustum();
 	void Calc_CascadeMatrices();

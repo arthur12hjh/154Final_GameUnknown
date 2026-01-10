@@ -8,6 +8,7 @@
 NS_BEGIN(Client)
 
 class CChangeLevelEvent;
+class CTeleportEvent;
 
 class CLevel_GamePlay final : public CLevel
 {
@@ -104,7 +105,10 @@ private:
 	_bool m_isOverlay{ true };
 
 	CChangeLevelEvent* m_pLevelChangeEvent{ nullptr };
+	CTeleportEvent* m_pTeleportEvent{ nullptr };
+
 	_bool m_bChangeLevel{ false };
+	_bool m_bTeleport{ false };
 	_bool m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 
 public:

@@ -6,6 +6,7 @@
 #include "ScarletBlackBoard.h"
 #include "ScarletBehaviorTree.h"
 #include "Nayitba.h"
+#include "Player.h"
 
 CTask_ScarletAttack::CTask_ScarletAttack() : CTask()
 {
@@ -25,7 +26,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 3.5f;
+	m_fMaxDelayTime = 1.f;
 	return S_OK;
 }
 
@@ -76,6 +77,7 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	{
 		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetAttackData(nullptr);
+		m_pOwner->ResetToBaseState();
 		Compute_AttackCoolTime();
 
 		return NODE_STATE::COMPLETE;
@@ -88,7 +90,7 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 {
 	// 여기서 특정 스킬 행동 초기화해야하면 하자
 	CancelSkillData();
-
+	m_fAnimationSpeed = 2.2f;
 	if (m_TimeLineDatas.empty())
 		return;
 
@@ -199,8 +201,8 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	/*m_pSkillData.push(m_pGameManager->Find_SkillData(26));
-	SelectAttackData();*/
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(21));
+	//SelectAttackData();
 
 	//EntranceAttack();
 	if (false == m_pBlackBoard->IsPhaseLastAttack())
@@ -222,7 +224,10 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 				if (CBossBlackBoard::BOSS_PAHSE::SECOND == ePhase)
 					SecondPhaseNormalAttack();
 				else
+				{
 					NormalAttackPattern();
+				}
+					
 			}
 		}
 	}
@@ -230,6 +235,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	{
 		m_pGameManager->Set_ScarletPatternFog(true, 0.4f);
 
+		m_pSkillData.push(m_pGameManager->Find_SkillData(56));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
@@ -358,12 +364,12 @@ void CTask_ScarletAttack::SecondPhaseNormalAttack()
 void CTask_ScarletAttack::SecondPhaseAttack()
 {
 	_float iRandom = m_pGameInstance->Random(0.f, 100.f);
-	if (30 > iRandom)
+	if (20 > iRandom)
 	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(38)); // Blink Shot1
 		m_pSkillData.push(m_pGameManager->Find_SkillData(39)); // Blink Shot2
 	}
-	else if (60 > iRandom)
+	else if (55 > iRandom)
 	{
 		m_pSkillData.push(m_pGameManager->Find_SkillData(53)); // AreaCombo
 	}
@@ -409,7 +415,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.183f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -419,7 +425,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.28f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 10.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -429,7 +435,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.4f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 10.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -439,7 +445,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -455,7 +461,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -465,7 +471,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.5f;
 		Desc.fRange = 2.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -481,7 +487,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 1.f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 2.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -497,7 +503,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.26f;
 		Desc.fRange = 3.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -517,7 +523,43 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 25:
+#pragma region SWING FAST
+	{
+		// Length : 195
+		// Move Frame :  80 ~ 176
+		Desc.BeginTime = 0.17f;
+		Desc.EndTime = 0.66f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 26:
+#pragma region SWING TRIPLE
+	{
+		// Length : 220
+		// Move Frame :  80 ~ 176
+		Desc.BeginTime = 0.4f;
+		Desc.EndTime = 0.76f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -542,7 +584,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.39f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -556,7 +598,17 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.35f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.37f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -571,7 +623,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.16f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 3.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -581,7 +633,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 10.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -591,7 +643,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.45f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -601,7 +653,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.74f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -614,7 +666,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.32f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -624,7 +676,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.61f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -638,7 +690,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.2f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::LEFT;
 		Desc.bIsTarget = false;
@@ -648,7 +700,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.4f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -664,7 +716,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.26f;
 		Desc.fRange = -4.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -674,7 +726,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 4.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -684,7 +736,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.5f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -694,7 +746,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 1.5f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -710,7 +762,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.44f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -784,7 +836,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.78f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -800,23 +852,39 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 1.f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 10.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::LEFT_BACK;
 		Desc.bIsTarget = false;
 		m_TimeLineDatas.emplace(Desc);
 	}
 	break;
+
+	case 39:
+#pragma region BLINK SHOT2
+	{
+		Desc.BeginTime = 0.33f;
+		Desc.EndTime = 0.65f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::LEFT_BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+
 #pragma endregion
 
 	case 40:
 #pragma region GroggyCounter
 	{
-		Desc.BeginTime = 0.16f;
-		Desc.EndTime = 0.21f;
-		Desc.fRange = 3.f;
-		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.BeginTime = 0.13f;
+		Desc.EndTime = 0.2f;
+		Desc.fRange = 7.f;
+		Desc.fSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -825,8 +893,8 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.BeginTime = 0.26f;
 		Desc.EndTime = 0.32f;
 		Desc.fRange = 1.f;
-		Desc.fSpeed = 10.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -842,7 +910,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 6.f;
 		Desc.fSpeed = 4.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::LEFT;
 		Desc.bIsTarget = false;
@@ -852,7 +920,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 3.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -868,7 +936,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.35f;
 		Desc.fRange = -5.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -885,7 +953,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.18f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -895,7 +963,18 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+
+		Desc.BeginTime = 0.3f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -905,7 +984,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.6f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -921,7 +1000,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.17f;
 		Desc.fRange = 2.f;
 		Desc.fSpeed = 4.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -931,7 +1010,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.276f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -941,7 +1020,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 7.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -957,7 +1036,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.173f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -967,7 +1046,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.276f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -977,7 +1056,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.55f;
 		Desc.fRange = 5.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = false;
@@ -993,7 +1072,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.83f;
 		Desc.fRange = 30.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
 		Desc.bIsTarget = false;
@@ -1009,7 +1088,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.83f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::LEFT;
 		Desc.bIsTarget = false;
@@ -1025,7 +1104,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.83f;
 		Desc.fRange = 15.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::RIGHT;
 		Desc.bIsTarget = false;
@@ -1041,7 +1120,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.83f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::RIGHT;
 		Desc.bIsTarget = false;
@@ -1057,7 +1136,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.14f;
 		Desc.fRange = 10.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::RIGHT;
 		Desc.bIsTarget = false;
@@ -1067,7 +1146,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.38f;
 		Desc.fRange = 1.f;
 		Desc.fSpeed = 3.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -1113,7 +1192,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.62f;
 		Desc.fRange = 12.f;
 		Desc.fSpeed = 10.f;
-		Desc.fAnimationSpeed = 2.f;
+		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
@@ -1212,7 +1291,7 @@ _bool CTask_ScarletAttack::Finished_Animation(_float fTimeDelta)
 				}
 				else
 				{
-					m_fMaxDelayTime = 3.5f;
+					m_fMaxDelayTime = 2.5f;
 					if (10.f > m_pBlackBoard->GetTargetDistance())
 					{
 						if (!m_pBlackBoard->IsPhaseLastAttack() && !m_pBlackBoard->bIsEnableEntarnceAttack())
@@ -1262,6 +1341,13 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 {
+	auto pPlayer = dynamic_cast<CPlayer*>(m_pBlackBoard->GetTarget());
+	if (pPlayer)
+	{
+		if (pPlayer->Get_Desc()->isUsingBlink)
+			return;
+	}
+
 	_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{};
 	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -1271,7 +1357,7 @@ void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 	if (XMVector3Equal(vDir, XMVectorZero()))
 		return;
 
-	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 20.f);
+	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 40.f);
 }
 
 void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)

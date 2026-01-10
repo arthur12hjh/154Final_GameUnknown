@@ -2,6 +2,7 @@
 #include "DropComponent.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Item.h"
 
 const WCHAR* CDropComponent::m_szProtoTypeName = TEXT("Prototype_GamePlay_ItemObject");
@@ -25,6 +26,10 @@ HRESULT CDropComponent::Initialize(void* pArg)
     DROP_COMPONENT_DESC* pDesc = static_cast<DROP_COMPONENT_DESC*>(pArg);
     m_fDropRange = pDesc->fDropRange;
     m_fDropForce = pDesc->fForce;
+    // 아이템 드롭 방향을 부모 객체의 look 방향으로부터 
+    // 90도이상 차이나지 않게 잡아주는 bool 변수
+    m_isDropRangeHemiSphere = pDesc->isDropRangeHemiSphere;
+
     return S_OK;
 }
 
@@ -34,6 +39,28 @@ void CDropComponent::ItemDrop(_uint iDropItemCount)
         CalculationItemDrop();
 
     CreateObjectToLayer();
+}
+
+void CDropComponent::DropRewardItem()
+{
+    MINIGAME_REWARD* pReward = CGameManager::GetInstance()->GetMiniGameReward();
+    if (nullptr == pReward)
+        return;
+
+    if (!pReward->iItemList.empty())
+    {
+        for (auto& iter : pReward->iItemList)
+        {
+            DROP_RESULT_DESC ResultDesc = {};
+            ResultDesc.iDropItemID = iter.first;
+            ResultDesc.iAmountVal = iter.second;
+
+            m_DropResultList.push_back(move(ResultDesc));
+        }
+
+        pReward->iItemList.clear();
+        CreateObjectToLayer();
+    }
 }
 
 HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount)
@@ -72,7 +99,7 @@ void CDropComponent::CalculationItemDrop()
         {
             DROP_RESULT_DESC ResultDesc = {};
             ResultDesc.iDropItemID = m_DoprItemList[i].first;
-            ResultDesc.fAmountVal = m_pGameInstance->Random(1, m_AmountItemList[i]);
+            ResultDesc.iAmountVal = (_int)m_pGameInstance->Random(1, m_AmountItemList[i]);
 
             m_DropResultList.push_back(move(ResultDesc));
             return;
@@ -94,6 +121,9 @@ void CDropComponent::CreateObjectToLayer()
         ItemDesc.bIsApplyTransform = true;
         ItemDesc.vScale = { 1.f, 1.f, 1.f };
         ItemDesc.fDropForce = m_pGameInstance->Random(m_fDropForce - 5.f, m_fDropForce + 5.f);
+        ItemDesc.isHemiSphere = m_isDropRangeHemiSphere;
+
+        XMStoreFloat3(&ItemDesc.vParentLook, m_pOwner->GetTransform()->Get_State(STATE::POSITION));
         //ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
         //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
         //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)), 0.f };
@@ -101,15 +131,15 @@ void CDropComponent::CreateObjectToLayer()
         _float fRange = m_pGameInstance->Random(m_fDropRange * 0.7f, m_fDropRange * 1.3f);
         _float fRadius = m_pGameInstance->Random(0.f, 360.f);
         
-        _vector vDorpPoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
-        XMStoreFloat3(&ItemDesc.vPosition, vDorpPoint);
-        vDorpPoint.m128_f32[0] += cosf(XMConvertToRadians(fRadius)) * fRange;
-        vDorpPoint.m128_f32[1] += 1.f;
-        vDorpPoint.m128_f32[2] += sinf(XMConvertToRadians(fRadius)) * fRange;
+        _vector vDropPoint = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
+        XMStoreFloat3(&ItemDesc.vPosition, vDropPoint);
+        vDropPoint.m128_f32[0] += cosf(XMConvertToRadians(fRadius)) * fRange;
+        vDropPoint.m128_f32[1] += 1.f;
+        vDropPoint.m128_f32[2] += sinf(XMConvertToRadians(fRadius)) * fRange;
 
-        XMStoreFloat3(&ItemDesc.fDropPoint, vDorpPoint);
+        XMStoreFloat3(&ItemDesc.fDropPoint, vDropPoint);
         memcpy(&ItemDesc.iItemID, &iter.iDropItemID, sizeof(_uint));
-        memcpy(&ItemDesc.fAmount, &iter.fAmountVal, sizeof(_float));
+        memcpy(&ItemDesc.fAmount, &iter.iAmountVal, sizeof(_float));
         if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iLevelID, m_szProtoTypeName, iLevelID, m_szLayerName, &ItemDesc)))
             return;
     }

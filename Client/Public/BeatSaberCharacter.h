@@ -30,6 +30,10 @@ public:
 
 	const BEATSABER_CHARACTER_DESC& GetBeatSaberCharacterDesc() { return m_CharacterDesc; }
 
+	void							Set_FullCombo(_bool isFullCombo) { m_CharacterDesc.isFullCombo = true; }
+
+	void							ResetPoints();
+
 private :
 	BEATSABER_CHARACTER_DESC		m_CharacterDesc = {};
 	CBeatSaberFsm*					m_pFsm = { nullptr };

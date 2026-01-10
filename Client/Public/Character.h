@@ -37,8 +37,12 @@ public:
 	virtual void					RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 	virtual void					Attack_Interaction(void* pArg = nullptr);
 
+	void							SetGroundSoundType(GROUND_SOUND_TYPE eGroundSoundType);
+
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();
+
+
 
 	// 캐릭터 잡기 패턴이나 어디다가 붙여야할떄 사용
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);
@@ -59,7 +63,6 @@ public:
 	const _float4x4*				Get_WorldMatrixPtr();
 
 	virtual void SetActive(_bool bIsActive)override;
-
 	virtual void SetActive()override;
 
 	void							Set_DepthMaskingB(_bool bFlag) { m_isDepthMaskingB = bFlag; }
@@ -80,7 +83,9 @@ protected :
 	class CNotify*					m_pNotifyCom = { nullptr };
 
 	_float							m_fImpactForce = {};
+	
 	CCharacterController*			m_pCCT = { nullptr };
+	GROUND_SOUND_TYPE				m_eGroundSoundType = { GROUND_SOUND_TYPE::SAND };
 	
 public:
 	virtual CGameObject*			Clone(void* pArg) override;

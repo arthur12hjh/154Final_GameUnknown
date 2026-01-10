@@ -78,8 +78,8 @@ HRESULT CLoader::Loading()
 	{
 	case LEVEL::EDITOR:
 	{
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
-		//m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Player(pArg); });
+		m_pGameInstance->Add_ThreadjobList([&](void* pArg) { this->Loading_For_Scarlet(pArg); });
 
 		hr = Loading_For_Editor();
 	}
@@ -101,7 +101,7 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Editor()	
 {
-	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
+	m_strMessage = TEXT("누가 내 Loader에 똥쌌어! 내가쌌어");
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Texture_Sky"),
@@ -198,7 +198,7 @@ HRESULT CLoader::Loading_For_Editor()
 	/* For.Prototype_Component_Model_Scarlet_Face_Morph */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::FACIAL, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face_Morph.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::FACIAL, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Facial.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(0, TEXTURE_TYPE::ORSS,

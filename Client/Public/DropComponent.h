@@ -8,14 +8,17 @@ class CDropComponent final : public CComponent
 public :
 	typedef struct DropComponentDesc
 	{
-		_float				fDropRange;
-		_float				fForce = 25.f;
+		_float				fDropRange = { };
+		_float				fForce = { 25.f	};
+		//아이템 드롭 영역을 부모 객체의 look 방향으로부터 90도이상 차이나지 않게
+		//잡아주는 bool 변수
+		_bool				isDropRangeHemiSphere = { false };
 	}DROP_COMPONENT_DESC;
 
 	typedef struct Drop_Result_Desc
 	{
-		_uint			iDropItemID;
-		_float			fAmountVal;
+		_uint			iDropItemID = {};
+		_int			iAmountVal = {};
 	}DROP_RESULT_DESC;
 
 private:
@@ -30,6 +33,8 @@ public:
 	// 1개는 디폴트로 나옵니다.
 	// 떨어지는 아이템의 개수만큼 아이템이 연산되어서 나온다.
 	void							ItemDrop(_uint iDropItemCount = 1);
+	void							DropRewardItem();
+
 	HRESULT							ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount);
 
 private:
@@ -48,7 +53,7 @@ private:
 
 	// 나중에 UI로 표현할거면 빼서 이거 구조체 받아서 처리하면 됩니다.
 	list<DROP_RESULT_DESC>			m_DropResultList = {};
-
+	_bool							m_isDropRangeHemiSphere = { false };
 private :
 	// 아이템 카운트 및 골드 습득량 등
 	void							CalculationItemDrop();

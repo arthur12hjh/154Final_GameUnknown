@@ -11,11 +11,18 @@
 #include "PlayerCCTQueryFilterCallback.h"
 
 #include "AIController.h"
+#include "DropComponent.h"
+
+#pragma region Part Model
 #include "NpcBody.h"
+#include "Npc_LeftWeaponPart.h"
+#include "Npc_RightWeaponPart.h"
 #include "NpcFace.h"
+#pragma endregion
 
 #include "UIHUD.h"
 #include "UIScript.h"
+#include "Item.h"
 
 CNpc::CNpc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CCharacter(pDevice, pContext)
@@ -45,6 +52,9 @@ HRESULT CNpc::Initialize(void* pArg)
 
     if (FAILED(Ready_Components()))
         return E_FAIL;
+
+    if (5 == m_NpcDesc->iNpcID)
+        m_pDropCom->DropRewardItem();
 
     return S_OK;
 }
@@ -163,6 +173,53 @@ HRESULT CNpc::Ready_PartObjects()
     if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_NpcBody"), TEXT("Part_Body"), &BodyDesc)))
         return E_FAIL;
 
+    Import_ModelPtr();
+    if (strcmp("None", m_NpcDesc->szFaceName))
+    {
+        CNpcFace::FACE_DESC FaceDesc = { };
+        FaceDesc.pParent = this;
+        FaceDesc.pParentTransform = m_pTransformCom;
+        FaceDesc.vScale = { 1.f, 1.f, 1.f };
+        FaceDesc.pBodyModelCom = m_pBodyModelCom;
+        CStringHelper::ConvertUTFToWide(m_NpcDesc->szFaceName, FaceDesc.szFaceJsonDataName);
+        if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc_Face"), TEXT("Part_Face"), &FaceDesc)))
+            return E_FAIL;
+    }
+
+    if (strcmp("None", m_NpcDesc->szLeftWeaponPrototypeName))
+    {
+        CNpc_LeftWeaponPart::WEAPON_DESC LWeaponDesc = { };
+        LWeaponDesc.pParent = this;
+        LWeaponDesc.bIsApplyTransform = true;
+        LWeaponDesc.pParentTransform = m_pTransformCom;
+        LWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_NpcDesc->szLeftBoneName);
+        LWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+        if (1 == m_NpcDesc->iNpcID)
+            LWeaponDesc.vRotation = {XMConvertToRadians(90.f), XMConvertToRadians(-90.f), XMConvertToRadians(0.f), 1.f};
+
+        CStringHelper::ConvertUTFToWide(m_NpcDesc->szLeftWeaponPrototypeName, LWeaponDesc.szWeaponModelPrototype);
+        LWeaponDesc.fSpeedPerSec = 5.f;
+        if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc_Left_Weapon"), TEXT("Part_WeaponL"), &LWeaponDesc)))
+            return E_FAIL;
+    }
+
+    if (strcmp("None", m_NpcDesc->szRightWeaponPrototypeName))
+    {
+        CNpc_RightWeaponPart::WEAPON_DESC RWeaponDesc = { };
+        RWeaponDesc.pParent = this;
+        RWeaponDesc.bIsApplyTransform = true;
+        RWeaponDesc.pParentTransform = m_pTransformCom;
+        RWeaponDesc.pSocketMatrix = m_pBodyModelCom->Get_BoneMatrixPtr(m_NpcDesc->szRightBoneName);
+        RWeaponDesc.vScale = { 1.f, 1.f, 1.f };
+        if(1 == m_NpcDesc->iNpcID)
+            RWeaponDesc.vRotation = { XMConvertToRadians(90.f), XMConvertToRadians(-81.5f), XMConvertToRadians(0.f), 1.f };
+
+        CStringHelper::ConvertUTFToWide(m_NpcDesc->szRightWeaponPrototypeName, RWeaponDesc.szWeaponModelPrototype);
+        RWeaponDesc.fSpeedPerSec = 5.f;
+        if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc_Right_Weapon"), TEXT("Part_WeaponR"), &RWeaponDesc)))
+            return E_FAIL;
+    }
+
     return S_OK;
 }
 
@@ -211,6 +268,17 @@ HRESULT CNpc::Ready_Components()
     m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);
     m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::MONSTER);
+
+    if (5 == m_NpcDesc->iNpcID)
+    {
+        /* Drop Component */
+        CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
+        DropComDesc.fDropRange = 7.f;
+        DropComDesc.fForce = 20.f;
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
+            TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
+            return E_FAIL;
+    }
 
     /* Com_CCT */
     CCharacterController::CCT_DESC Desc;
@@ -316,6 +384,7 @@ void CNpc::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pDropCom);
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);
     Safe_Release(m_pInteractionCom);

@@ -10,6 +10,7 @@ Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_ORMTexture;
 Texture2D g_MaskTexture;
+Texture2D g_EmissiveTexture;
 
 float g_fFar;
 float g_CamFar;
@@ -67,6 +68,25 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), g_WorldMatrix)).xyz;
     Out.vWorldPos = mul(vector(In.vPosition, 1.f), g_WorldMatrix);
     Out.vProjPos = Out.vPosition;
+
+    return Out;
+}
+
+VS_OUT VS_BAMBOO(VS_IN In)
+{
+    VS_OUT Out = (VS_OUT) 0;
+    
+    float4 vWorldPos = mul(float4(In.vPosition, 1.f), In.TransformMatrix);
+    
+    Out.vPosition = vWorldPos;
+    Out.vTexcoord = In.vTexcoord;
+    
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), In.TransformMatrix)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), In.TransformMatrix)).xyz;
+    Out.vBINormal = normalize(mul(vector(In.vBInormal, 0.f), In.TransformMatrix)).xyz;
+    
+    Out.vOriginalWorldPos = vWorldPos;
+    Out.vWorldPos = vWorldPos;
 
     return Out;
 }
@@ -245,6 +265,52 @@ PS_OUT_NONE_NORMAL PS_None_Normal(PS_IN In)
     return Out;
 }
 
+[maxvertexcount(3)]
+void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
+{
+    float2 vCenterUV = (InTri[0].vTexcoord + InTri[1].vTexcoord + InTri[2].vTexcoord) / 3.f;
+    float4 vMask = g_EmissiveTexture.SampleLevel(DefaultSampler, vCenterUV, 0);
+
+    float fWeight = saturate(vMask.r * 2.f);
+    float fCenterY = (InTri[0].vPosition.y + InTri[1].vPosition.y + InTri[2].vPosition.y) / 3.f;
+    
+    float fHeightFactor = saturate(fCenterY * 0.4f);
+    
+    float fWave = 0.f;
+    
+    if (fWeight > 0.001f)
+    {
+        fWave = sin(g_fTime + fCenterY) * 0.3f * fWeight * fHeightFactor;
+    }
+    
+    matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
+    
+    for (int i = 0; i < 3; ++i)
+    {
+        PS_IN Out = (PS_IN) 0;
+        
+        float4 vWorldPos = InTri[i].vPosition;
+        
+        vWorldPos.x += fWave;
+        vWorldPos.z += fWave;
+        vWorldPos.z += fWave * 0.3f;
+        
+        Out.vPosition = mul(vWorldPos, matVP);
+        
+        Out.vTexcoord = InTri[i].vTexcoord;
+        Out.vNormal = InTri[i].vNormal;
+        Out.vTangent = InTri[i].vTangent;
+        Out.vBINormal = InTri[i].vBINormal;
+        Out.vWorldPos = vWorldPos;
+        Out.vProjPos = Out.vPosition;
+        Out.vOriginalWorldPos = InTri[i].vOriginalWorldPos;
+        
+        OutStream.Append(Out);
+    }
+    OutStream.RestartStrip();
+
+}
+
 technique11 Tech
 {
     //잔디
@@ -276,5 +342,16 @@ technique11 Tech
         VertexShader = compile vs_5_0 VS_MAIN_REED();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_REED();
+    }
+    
+    // idx 3
+    pass Bamboo
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BAMBOO();
+        GeometryShader = compile gs_5_0 GS_BAMBOO();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

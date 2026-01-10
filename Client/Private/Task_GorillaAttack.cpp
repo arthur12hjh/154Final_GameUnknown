@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "BossBlackBoard.h"
 #include "GorillaBehaviorTree.h"
+#include "Player.h"
 #include "Nayitba.h"
 
 CTask_GorillaAttack::CTask_GorillaAttack() : CTask()
@@ -509,6 +510,13 @@ void CTask_GorillaAttack::AttackADDMove(_float fTimeDelta)
 
 void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 {
+	auto pPlayer = dynamic_cast<CPlayer*>(m_pBlackBoard->GetTarget());
+	if (pPlayer)
+	{
+		if (pPlayer->Get_Desc()->isUsingBlink)
+			return;
+	}
+
 	_vector vOwnerPos{}, vTempOwnerPos{};
 	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 
@@ -517,7 +525,6 @@ void CTask_GorillaAttack::LookAtPoint(_float fTimeDelta)
 
 	vTempOwnerPos.m128_f32[1] = vTargetPos.m128_f32[1] = 0.f;
 	_vector vDir = XMVector3Normalize(vTargetPos - vTempOwnerPos);
-
 	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 5.f);
 }
 

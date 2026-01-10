@@ -3,12 +3,12 @@
 #include "GameInstance.h"
 
 CCherryBlossom4::CCherryBlossom4(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice, pContext }
+	: CStaticMap{ pDevice, pContext }
 {
 }
 
 CCherryBlossom4::CCherryBlossom4(const CCherryBlossom4& Prototype)
-	: CGameObject{ Prototype }
+	: CStaticMap{ Prototype }
 {
 }
 
@@ -35,6 +35,8 @@ void CCherryBlossom4::Priority_Update(_float fTimeDelta)
 void CCherryBlossom4::Update(_float fTimeDelta)
 {
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+	m_fTimeAcc += fTimeDelta;
 }
 
 void CCherryBlossom4::Late_Update(_float fTimeDelta)
@@ -51,6 +53,8 @@ HRESULT CCherryBlossom4::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fTime", &m_fTimeAcc, sizeof(_float))))
+		return E_FAIL;
 
 	_uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -61,9 +65,10 @@ HRESULT CCherryBlossom4::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
 			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
+			return E_FAIL;
 
-
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(9)))
 			return E_FAIL;
 
 
@@ -86,6 +91,11 @@ HRESULT CCherryBlossom4::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	/* Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_BlossomMask"),
+		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
 	OBBDesc.vSize = _float3(10.f, 12.f, 13.f);
 	OBBDesc.vCenter = _float3(7.5f, 8, 1.f);
@@ -106,6 +116,9 @@ HRESULT CCherryBlossom4::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Bind_ShaderResources(m_pShaderCom, "g_MaskTexture")))
 		return E_FAIL;
 
 	return S_OK;

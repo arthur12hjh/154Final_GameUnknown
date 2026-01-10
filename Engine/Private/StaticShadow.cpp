@@ -104,9 +104,9 @@ HRESULT CStaticShadow::Render(CVIBuffer_Rect* pVIBuffer)
 		if (nullptr != pRenderObject)
 			pRenderObject->Render_Shadow();
 
-		Safe_Release(pRenderObject);
+		//Safe_Release(pRenderObject);
 	}
-	m_StaticShadowObjects.clear();
+	//m_StaticShadowObjects.clear();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
@@ -118,6 +118,19 @@ HRESULT CStaticShadow::Render(CVIBuffer_Rect* pVIBuffer)
 #endif
 
 	return S_OK;
+}
+
+void CStaticShadow::Clear_StaticShadowObjects()
+{
+	for (auto& pRenderObject : m_StaticShadowObjects)
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render_Shadow();
+
+		Safe_Release(pRenderObject);
+	}
+
+	m_StaticShadowObjects.clear();
 }
 
 HRESULT CStaticShadow::Ready_RenderTargets()

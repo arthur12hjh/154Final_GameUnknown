@@ -18,10 +18,12 @@ public:
 	typedef struct Item_Desc : public PROB_INTERACTION_DESC
 	{
 		_uint						iItemID;
-		_float						fAmount;
+		_int						fAmount;
 
 		_float3						fDropPoint;
 		_float						fDropForce;
+		_float3						vParentLook;
+		_bool						isHemiSphere = { false };
 	}ITEM_DESC;
 
 protected:
@@ -50,6 +52,7 @@ protected:
 
 	_bool							m_bIsLerpAnimation = { false };
 	_float2							m_fLerpTime = { 0.f, 1.f };
+	_bool							m_isHemiSphere = { false };
 
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;

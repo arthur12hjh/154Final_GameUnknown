@@ -174,6 +174,8 @@ namespace Client
 		class CTransform* pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr };
 
+		//벤딩머신 상호작용 중, 코인이 보이게 할지
+		bool   isCoinVisible = { false };
 		bool   isRequestLockonToggle = { false };
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };
@@ -196,6 +198,9 @@ namespace Client
 		const _float4x4* pGrabBone = { nullptr };
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
+		bool isUsingScarletLink2 = { false };
+		bool isUsingBlink = { false };
+		bool isUsingRepulse = { false };
 		// 골드
 		int iOwnGold{ 0 };
 	}PLAYER_DESC;
@@ -510,6 +515,7 @@ namespace Client
 		SET_CINEMATICLIGHT,		// 13, 컷씬 끝나면 거기에 맞는 셰이더 세팅으로 전환하는 용도
 		LOCKON_START,			// 14, 컷씬 끝나면 강제로 보스 락온 걸어주려고 만듬
 		LOCKON_END,				// 15, 컷씬 끝나면 강제로 보스 락온 꺼줌
+		BAKE_VILLAGE_SHADOW,	// 16,
 		END };
 
 	typedef struct Cinematic_Index_Desc
@@ -566,8 +572,16 @@ namespace Client
 	{
 		_uint						iNpcID;
 		char						szName[MAX_PATH];
+		char						szAnimationName[MAX_PATH];
 		char						szPrototypeModel[MAX_PATH];
 		char						szAIController[MAX_PATH];
+	
+		char						szLeftWeaponPrototypeName[256];
+		char						szLeftBoneName[256];
+
+		char						szRightWeaponPrototypeName[256];
+		char						szRightBoneName[256];
+		char						szFaceName[256];
 
 		_float3						vExtents;
 		_uint						iTeamIndex;
@@ -579,6 +593,16 @@ namespace Client
 	// LINK_ATTACK -> 그로기 상태에서 들어가는값
 	// EXECUTION_ATTACK -> 처형 상태에서 들어가는값
 	enum class NAYITBA_EXECUTION_TYPE { LINK_ATTACK, PHASE2_LINKATTACK, EXECUTION_ATTACK, END};
+
+	enum class FACE_MATERIAL {
+		//이 4개는 그냥 둬야함
+		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR,
+
+		MI_CH_M_NA_961_Head, MI_CH_M_NA_961_Eyebrow, MI_CH_M_NA_961_Eyes,
+		MI_CH_M_NA_961_Lens, MI_CH_M_NA_961_Eyelashes, MI_CH_M_NA_961_Tearline,
+		MI_CH_M_NA_961_Eyeshadow, MI_CH_M_NA_961_EyeBlend, MI_CH_M_NA_961_NoseShadow,
+		MI_CH_M_NA_961_Teeth
+	};
 
 	typedef struct TransportDesc
 	{
@@ -635,8 +659,11 @@ namespace Client
 		_int		iGameLife;
 		_int		iMaxGameLife;
 
+		_bool		isFullCombo{ false };
+
 		_uint		iComboCnt;
 		_float		fCharacterSpeed;
+		_uint		iAccuracy; // 정확도
 		// x : 캐릭터 최소 스피드
 		// y : 캐릭터 기본 스피드
 		// z : 캐릭터 최대 스피드
@@ -651,4 +678,35 @@ namespace Client
 		PLAYER_DESC			PlayerData;
 		_float3				vOldPosition;
 	}SAVE_LEVEL_PLAYERDATA;
+
+	typedef struct MiniGame_Level_Reward
+	{
+		// 아이템 ID, 드랍 개수
+		// 아이템 ID에 따라서 두번째 int가 수정된다.
+		// 골드는 Gold량
+		// 아이템은 몇개 떨굴지
+		vector<pair<_uint, _uint>>		iItemList;
+	}MINIGAME_REWARD;
+
+	enum class GROUND_SOUND_TYPE
+	{
+		GRASS,
+		SAND,
+		IRON,
+		END
+	};
+
+	enum class BGM_SOUND_STATE
+	{
+		INTRO,
+		LOOP,
+		END,
+	};
+
+	typedef struct	Field_Bgm_Desc
+	{
+		BGM_SOUND_STATE		eBGMState;
+		_uint				iBossID;
+		_uint				iBossPhase;
+	}FIELD_BGM_DESC;
 }

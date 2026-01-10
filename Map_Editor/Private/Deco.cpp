@@ -19,7 +19,6 @@ HRESULT CDeco::Initialize_Prototype()
 
 HRESULT CDeco::Initialize(void* pArg)
 {
-
 	DESERT_OBJECT_DESC* pDesc = static_cast<DESERT_OBJECT_DESC*>(pArg);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -65,7 +64,7 @@ void CDeco::Late_Update(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(RENDER::OCCLUSION, this);
 
 #ifdef _DEBUG
-    m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+    //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 

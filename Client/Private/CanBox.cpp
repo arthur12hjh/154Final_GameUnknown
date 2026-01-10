@@ -10,6 +10,7 @@
 
 #include "UIBase.h"
 #include "UIHUD.h"
+#include "Effect.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CProb_Interaction(pDevice, pContext)
@@ -64,7 +65,8 @@ void CCanBox::Update(_float fTimeDelta)
         else
         {
             auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
-            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode || 
+                PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode)
             {
                 if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
                 {
@@ -144,6 +146,8 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
     DropComDesc.fDropRange = 7.f;
     DropComDesc.fForce = 20.f;
+    //아이템이 자신의 look 방향 근처로만 떨어지게 해줌.
+    DropComDesc.isDropRangeHemiSphere = true;
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
         TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
         return E_FAIL;
@@ -194,6 +198,8 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     RigidBodyDesc.fMass = { 0.3f };
     _float3 vRigidSize = RigidBodyDesc.vSize;
     RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.f, vRigidSize.y * 2.f, vRigidSize.z * 1.f);
+    RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_7;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT;
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -242,6 +248,19 @@ void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
             /* if (m_pEventHandle)
                 m_pEventHandle->Notify(nullptr);*/
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+
+            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            EffectDesc.fRotationPerSec = 1.f;
+            EffectDesc.fSpeedPerSec = 1.f;
+
+            EffectDesc.pRootMatrix = nullptr;
+            EffectDesc.pWorldMatrix = nullptr;
+
+            EffectDesc.vPos = m_pTransformCom->Get_State(STATE::POSITION);
+            EffectDesc.fRot = _float3(0, 0, 0);
+            EffectDesc.fSize = 0.4f;
+            EffectDesc.fSpeed = 1.f;
+            m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Box_Effect"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
         }
     }
     else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())

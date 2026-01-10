@@ -1091,6 +1091,213 @@ HRESULT CParticle_Setting::Load_TrailBinary(const _char* szFile)
     return S_OK;
 }
 
+void CParticle_Setting::ReSave()
+{
+    for (_uint i = 0; i < m_Effects.size(); ++i) {
+        char szBinModelOutFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
+        strcat_s(szBinModelOutFilePath, MAX_PATH, m_Effects[i].c_str());
+        strcat_s(szBinModelOutFilePath, MAX_PATH, ".binx");
+        ofstream fileBinaryOfStream;
+        fileBinaryOfStream.open(szBinModelOutFilePath, ios_base::binary);
+        char szBinModelFilePath[MAX_PATH] = "../Bin/Resources/Effect/";
+        strcat_s(szBinModelFilePath, MAX_PATH, m_Effects[i].c_str());
+        ifstream fileBinaryStream;
+        fileBinaryStream.open(szBinModelFilePath, ios_base::binary);
+
+        _int iMeshCount = ReadInt(fileBinaryStream);
+        WriteInt(fileBinaryOfStream, iMeshCount);
+        for (_uint i = 0; i < iMeshCount; ++i) {
+            char szImageFile[MAX_PATH] = {};
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+
+
+            _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+            WriteInt(fileBinaryOfStream, iSizeDiagramCount);
+            for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+                WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            }
+
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+
+
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+
+
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+
+
+        }
+        _int iSpriteParticleCount = ReadInt(fileBinaryStream);
+        WriteInt(fileBinaryOfStream, iSpriteParticleCount);
+        for (_uint i = 0; i < iSpriteParticleCount; ++i) {
+            char szImageFile[MAX_PATH] = {};
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+
+            _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+            WriteInt(fileBinaryOfStream, iSizeDiagramCount);
+            for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+                WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            }
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteInt2(fileBinaryOfStream, ReadInt2(fileBinaryStream));
+            _float fDelayTime = ReadFloat(fileBinaryStream);
+            WriteFloat(fileBinaryOfStream, fDelayTime * 2);
+
+            _float fEndTime = ReadFloat(fileBinaryStream);
+            if (fEndTime > 0)
+                fEndTime -= fDelayTime;
+            WriteFloat(fileBinaryOfStream, fEndTime);
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+
+        }
+        _int iParticleCount = ReadInt(fileBinaryStream);
+
+        WriteInt(fileBinaryOfStream, iParticleCount);
+        for (_uint i = 0; i < iParticleCount; ++i) {
+            char szImageFile[MAX_PATH] = {};
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+            memset(szImageFile, 0, sizeof(szImageFile));
+
+            strncpy_s(szImageFile, sizeof(szImageFile), ReadString(fileBinaryStream), _TRUNCATE);
+            WriteString(fileBinaryOfStream, szImageFile);
+
+            _int iSizeDiagramCount = ReadInt(fileBinaryStream);
+            WriteInt(fileBinaryOfStream, iSizeDiagramCount);
+            for (_uint j = 0; j < iSizeDiagramCount; ++j) {
+                WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            }
+
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat4(fileBinaryOfStream, ReadFloat4(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat3(fileBinaryOfStream, ReadFloat3(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            WriteFloat2(fileBinaryOfStream, ReadFloat2(fileBinaryStream));
+            _float fDelayTime = ReadFloat(fileBinaryStream);
+            WriteFloat(fileBinaryOfStream, fDelayTime);
+            _float fEndTime = ReadFloat(fileBinaryStream);
+            //if (fEndTime > 0)
+            //    fEndTime -= fDelayTime;
+            WriteFloat(fileBinaryOfStream, fEndTime);
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteFloat(fileBinaryOfStream, ReadFloat(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteInt(fileBinaryOfStream, ReadInt(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+            WriteBool(fileBinaryOfStream, ReadBool(fileBinaryStream));
+        }
+    }
+}
+
 void CParticle_Setting::Update(_float fTimeDelta)
 {
     ImGui::SetNextWindowSizeConstraints(
@@ -1229,10 +1436,7 @@ void CParticle_Setting::Update(_float fTimeDelta)
         }
 
         if (ImGui::Button("ReSave", btn)) {
-            for (_uint i = 0; i < m_Effects.size(); ++i) {
-                Load_Binary(m_Effects[i].c_str());
-                Save_Binary(m_Effects[i].c_str());
-            }
+            ReSave();
         }
     }
     

@@ -97,6 +97,7 @@
 #include "Rail.h"
 #include "Beat_Indicator.h"
 #include "DororongBox.h"
+#include "SoundTriggerBox.h"
 #pragma endregion
 
 
@@ -416,24 +417,33 @@ HRESULT CLoader::Loading_For_Village()
 	/* For.Prototype_Component_Model_CherryBlossom1 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CherryBlossom1"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom1.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom1.fbx", PreTransformMatrix))))
 		return E_FAIL;
 	/* For.Prototype_Component_Model_CherryBlossom2 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CherryBlossom2"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom2.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom2.fbx", PreTransformMatrix))))
 		return E_FAIL;
 	/* For.Prototype_Component_Model_CherryBlossom3 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CherryBlossom3"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom3.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom3.fbx", PreTransformMatrix))))
 		return E_FAIL;
 	/* For.Prototype_Component_Model_CherryBlossom4 */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Model_CherryBlossom4"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom4.binx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Scarlet/Tree/CherryBlossom4.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Texture_BlossomMask */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_BlossomMask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Tree/009_B_TD_Mask.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Texture_BlossomMask2 */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Texture_BlossomMask2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Maps/Scarlet/Tree/009_Bc_TD_Mask.png"), 1))))
+		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Giwajip */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -2718,6 +2728,16 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_Component_Model_Dororong */
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Cinematic_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
 
 	/* For.Prototype_GameObject_Npc */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc");
@@ -3470,6 +3490,13 @@ HRESULT CLoader::Loading_For_Desert_Stair(void* pArg)
 	/* For.Prototype_Component_Model_Stair_3B */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stair_3B");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Stair/Stair_3B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_SoundTriggerBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SoundTriggerBox");
+	pProtoDesc.pPrototype = CSoundTriggerBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

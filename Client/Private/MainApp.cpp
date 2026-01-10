@@ -331,7 +331,7 @@ HRESULT CMainApp::Ready_ClientDeferred()
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Power_Break"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
-	eScreenDesc.fEndTime = 1.57f;
+	eScreenDesc.fEndTime = 1.57f * 2;
 	eScreenDesc.iPass = 2;
 
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Slash_World"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))

@@ -66,7 +66,7 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
-            if (0 == viLoopAndCount.x)
+            if (5 == viLoopAndCount.x || 0 == viLoopAndCount.x)
                 return;
             g_Out[DTid.x].vLifeTime.x += vfTimeDelta.x;
             g_Out[DTid.x].WorldMat = g_WorldMatrix;

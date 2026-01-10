@@ -96,7 +96,9 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 	if (res != FMOD_OK) {
 		printf("playSound error: %s\n", FMOD_ErrorString(res));
 	}
+
 	m_pChannelArr[eID]->setVolume(fVolume);
+	m_pChannelVolume[CHANNELID::BGM] = fVolume;
 	if (INFINITE != iLoopCount)
 	{
 		m_pChannelArr[eID]->setLoopCount(iLoopCount);
@@ -132,6 +134,8 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[CHANNELID::BGM]);
 	m_pChannelArr[CHANNELID::BGM]->setMode(FMOD_LOOP_NORMAL);
 	m_pChannelArr[CHANNELID::BGM]->setVolume(fVolume);
+	m_pChannelVolume[CHANNELID::BGM] = fVolume;
+
 	if (INFINITE != iLoopCount)
 	{
 		m_pChannelArr[CHANNELID::BGM]->setLoopCount(iLoopCount);
@@ -182,13 +186,23 @@ void CSound_Manager::Manager_StopAll()
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 {
 	m_pChannelArr[eID]->setVolume(fVolume);
+	m_pChannelVolume[CHANNELID::BGM] = fVolume;
 	m_pSystem->update();
 }
 
 void CSound_Manager::Tick(_float fTimeDelta)
 {
+	_bool IsPlay = { false };
 	for (_uint i = 0; i < CHANNELID::END; ++i)
+	{
 		m_pChannelArr[i]->getPosition(&m_ChannelEndCallBacks[i].pChannelTrackPosition, FMOD_TIMEUNIT_MS);
+		m_pChannelArr[i]->isPlaying(&IsPlay);
+		if (CHANNELID::BGM != i && IsPlay)
+			m_pChannelArr[CHANNELID::BGM]->setVolume(1.f);
+	}
+	
+	if (!IsPlay)
+		m_pChannelArr[CHANNELID::BGM]->setVolume(m_pChannelVolume[CHANNELID::BGM]);
 
 	m_pSystem->update();
 }

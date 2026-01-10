@@ -15,6 +15,7 @@ private:
 	typedef struct tagSongDesc
 	{
 		_wstring szSongName{};
+		_wstring szSongKey{};
 		_tchar szVideoTag[256]{};
 	}SONG_DESC;
 

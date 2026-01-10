@@ -52,19 +52,28 @@ void CNayitbaPartBody::Priority_Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Update(_float fTimeDelta)
 {
-    XMStoreFloat4x4(&m_CombinedWorldMatrix,
-        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
-    if (m_bIsRimLight && m_fRimLightTime.y < INFINITY)
+  
+    if (m_bIsRimLight)
     {
         m_fRimLightTime.x += fTimeDelta;
-        _vector vLerpColor = XMVectorLerp(XMLoadFloat4(&m_MonsterLimLightDesc.vRimLightColor), XMLoadFloat4(&m_vLerpEndRimLight), m_fRimLightTime.x / m_fRimLightTime.y);
-        XMStoreFloat4(&m_MonsterLimLightDesc.vRimLightColor, vLerpColor);
-
-
-        if (m_fRimLightTime.x >= m_fRimLightTime.y)
+        if (m_fRimLightTime.y < INFINITY)
+            m_fRimLightRatio = m_fRimLightTime.x / m_fRimLightTime.y;
+        else
         {
-            m_bIsRimLight = false;
+            m_fRimLightRatio = m_fRimLightTime.x / 0.2f;
+            if (1 <= m_fRimLightRatio && m_bIsChangeColorDissolve)
+                static_cast<CNaytiba*>(m_pParent)->SetActivePartObject(false);
+        }
+
+        m_fRimLightRatio = Clamp<_float>(m_fRimLightRatio, 0.f, 1.f);
+        _vector vLerpColor = XMVectorLerp(XMLoadFloat4(&m_MonsterLimLightDesc.vRimLightColor), XMLoadFloat4(&m_vLerpEndRimLight), m_fRimLightRatio);
+        XMStoreFloat4(&m_MonsterLimLightDesc.vRimLightColor, vLerpColor);
+        if (m_fRimLightTime.y < INFINITY)
+        {
+            if (m_fRimLightTime.x >= m_fRimLightTime.y)
+            {
+                m_bIsRimLight = false;
+            }
         }
     }
 
@@ -142,6 +151,9 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
+    XMStoreFloat4x4(&m_CombinedWorldMatrix,
+        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
     for (auto TrailEffect : m_pTrailEffects)
     {
         if (nullptr == TrailEffect.first->pRootMatrix) {
@@ -167,24 +179,27 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
     if (m_bIsEnableCollider)
         m_pGameInstance->ADD_Collider(m_pColliderCom);
 
-    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-
-    _vector vPosition = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3];
-    _float fCamDist = XMVectorGetX(
-        XMVector3Length( vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
-
-    if (fCamDist < 200.f)
+    if (m_bIsActive || VISIBILITY::VISIBLE == m_eVisibility)
     {
-        CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
-        if (Naytiba)
+        m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+        _vector vPosition = XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3];
+        _float fCamDist = XMVectorGetX(
+            XMVector3Length(vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
+
+        if (fCamDist < 200.f)
         {
-            if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
-                m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+            CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
+            if (Naytiba)
+            {
+                if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
+                    m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+            }
+
+            m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
         }
-
-        m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
     }
-
+  
    //m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
    //m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
@@ -397,6 +412,10 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         {
             TrailEffect.first->bisPlay = false;
         }
+        for (auto LineTrailEffect : m_pLineTrailEffects)
+        {
+            LineTrailEffect.first->bisPlay = false;
+        }
     }
     else if (strObjectTag == TEXT("Play_Trail"))
     {
@@ -470,6 +489,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         Traildesc.fSpeed = NotifyReference.fNumData01;
         Traildesc.fPow = NotifyReference.fNumData02;
         Traildesc.bisLine = true;
+        Traildesc.bisLong = NotifyReference.iNumData02 == 1;
 
         _TCHAR szEffectTag[MAX_PATH];
         CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);
@@ -514,14 +534,31 @@ void CNayitbaPartBody::Play_DeadEffect()
         
 }
 
+void CNayitbaPartBody::Stop_All_Effect()
+{
+    for (auto Effect : m_pEffects)
+    {
+        Effect.first->Stop();
+    }
+    for (auto TrailEffect : m_pTrailEffects)
+    {
+        TrailEffect.first->bisPlay = false;
+    }
+    for (auto LineTrailEffect : m_pLineTrailEffects)
+    {
+        LineTrailEffect.first->bisPlay = false;
+    }
+}
+
 void CNayitbaPartBody::SetPart_BodyColor(_bool bIsEnable, _bool bIsDissolve, _float4 vColor)
 {
     m_bIsChangeBodyColor = bIsEnable;
     m_vPatternColor = vColor;
 
-    /*m_bIsChangeColorDissolve = bIsDissolve;
-
-    if (bIsDissolve)
+    m_bIsChangeColorDissolve = bIsDissolve;
+    if (false == m_bIsChangeColorDissolve)
+        static_cast<CNaytiba*>(m_pParent)->SetActivePartObject(true);
+    /*if (bIsDissolve)
     {
         _matrix WorldSpineMatrix = XMLoadFloat4x4(m_pSpineMatrix) * XMLoadFloat4x4(&m_CombinedWorldMatrix);
        XMStoreFloat4(&m_vColCenterPos, WorldSpineMatrix.r[3]);
@@ -575,29 +612,24 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
 
     if (pNaytiba)
     {
-        auto pNaytibaInitData = pNaytiba->GetStaticMonsterData();
-
-        if (pNaytibaInitData)
+        if (10 == pNaytiba->GetMonsterID())
         {
-            if (10 == pNaytibaInitData->iMonsetID)
-            {
-                /* Com_Collider_Sphere */
-                COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
-                OBBDesc.vSize = { 0.3f, 4.f, 0.3f };
-                OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
+            /* Com_Collider_Sphere */
+            COBBCollider::OBB_COLLIDER_DESC	OBBDesc{};
+            OBBDesc.vSize = { 0.1f, 8.f, 0.1f };
+            OBBDesc.vCenter = { 0.f, -OBBDesc.vSize.y, 0.f };
 
-                if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
-                    TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
-                    return E_FAIL;
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),
+                TEXT("LazerColliderCom"), reinterpret_cast<CComponent**>(&m_pColliderCom), &OBBDesc)))
+                return E_FAIL;
 
-                m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
-                m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
+            m_pColliderCom->SetColliderHitType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::MONSTER);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+            m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 
-                m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
-                m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
-            }
+            m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
+            m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
         }
     }
     
@@ -632,6 +664,9 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_IsPatternNoise", &m_bIsChangeColorDissolve, sizeof(_bool))))
+        return E_FAIL;
+
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_fRimLightColorRatio", &m_fRimLightRatio, sizeof(_float))))
         return E_FAIL;
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_IsFade", &m_bIsDissolveFade, sizeof(_bool))))

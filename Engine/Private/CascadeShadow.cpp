@@ -48,12 +48,13 @@ HRESULT CCascadeShadow::Render_Debug(CVIBuffer_Rect* pVIBuffer, CShader* pShader
 
 HRESULT CCascadeShadow::Ready_Shadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
+	//가까운 그림자 처리용
 	m_fCascadeEnds[0] = 0.1f;
-	m_fCascadeEnds[1] = 4.0f,
-	m_fCascadeEnds[2] = 10.0f,
-	m_fCascadeEnds[3] = 20.f;
-	m_fCascadeEnds[4] = 50.f;
-	m_fCascadeEnds[5] = 350.f;
+	m_fCascadeEnds[1] = 1.0f,
+	m_fCascadeEnds[2] = 15.0f,
+	m_fCascadeEnds[3] = 25.f;
+	m_fCascadeEnds[4] = 150.f;
+	m_fCascadeEnds[5] = 500.f;
 	m_tShadowLightDesc = Desc;
 
 	return S_OK;
@@ -99,6 +100,20 @@ HRESULT CCascadeShadow::Add_RenderObject(CGameObject* pRenderObject)
 
 HRESULT CCascadeShadow::Render(CVIBuffer_Rect* pVIBuffer)
 {
+	if (false == m_isActive)
+	{
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_CascadeShadow"), m_pCascadeShadowDSV)))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
+
+		for (auto& pRenderObject : m_CascadeShadowObjects)
+			Safe_Release(pRenderObject);
+		m_CascadeShadowObjects.clear();
+
+		return S_OK;
+	}
+
 #ifdef _DEBUG
 	m_pGameInstance->BeginMarker(m_pContext, TEXT("###### CASCADE SHADOW RENDER"));
 #endif

@@ -45,6 +45,7 @@
 			_bool			isSyncByPhysx = { false };
 			_bool			isCreateShape = { true };
 			_bool			isSimulateSync = { true };
+			_bool			isActiveMass = { false };
 		} RIGIDBODY_DESC;
 
 	private:
@@ -79,6 +80,10 @@
 		void Set_AngularDamping(_float fValue);
 		void Set_LinearDamping(_float fValue);
 		void Set_CCD(_bool bFlag);
+		void Set_ContactOffset(_float fValue);
+		void Set_RestOffset(_float fValue);
+		void Set_LocalPos(_float3 vLocalPos);
+
 	public:
 		virtual HRESULT Initialize_Prototype() override;
 		virtual HRESULT Initialize(void* pArg) override;
@@ -86,7 +91,7 @@
 	public:
 		/* 리지드 바디 트랜스폼 업데이트. 소유 객체한테서 매프레임 받아와야함. */
 		void Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarget = false);
-		void Add_Impulse(_vector vDir, _float fPower);
+		void Add_Impulse(_vector vDir, _float fPower, _float fPlayRate);
 
 	private:
 		/* RigidActor -> RigidBody & RigidStatic */
@@ -112,6 +117,9 @@
 		_bool			m_isSimulateSync = { true };
 		PxTransform		m_ShapeLocalPose = { PxTransform(PxIdentity) };
 
+		_bool			m_isFastGravity = { false };
+		_bool			m_isFastArcEnabled = { false };
+		_float			m_fPlayRate = { false };
 	private:
 		HRESULT Ready_PxMaterial(RIGIDBODY_DESC* pDesc);
 		HRESULT Ready_PxShape(RIGIDBODY_DESC* pDesc);

@@ -25,7 +25,7 @@ public:
 	virtual HRESULT Render() override;
 
 	void Open_Popup();
-	void Close_Popup(_bool isLevelChange = false);
+	void Close_Popup(_bool isLevelChange = false, _bool isTeleport = false);
 
 	_bool Get_IsOpen() const { return m_isOpen; }
 
@@ -44,6 +44,7 @@ private:
 	_bool m_isOpen{ false };
 	_bool m_isClosing{ false };
 	_bool m_isLevelChange{ false };
+	_bool m_isTeleport{ false };
 
 public:
 	static CUIPopup* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

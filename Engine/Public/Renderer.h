@@ -42,12 +42,13 @@ public:
 	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
 	// 딴데서 실행하면 레고삼킴
 	HRESULT Bake_StaticShadow();
+	void	Clear_StaticShadowObjects();
 public:
 	void Active_RadialBlur(_float fLifeTime, _uint iSampleCount, _float fSamplePower);
 	void Active_DoF(_bool bFlag, _float fLerpTime);
 	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
 	void Set_DoFInfo(_float fFocusDistance);
-
+	void Set_Cascade_Active(_bool bFlag);
 #ifdef _DEBUG
 	//RenderDoc 전용 로깅 코드
 	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);

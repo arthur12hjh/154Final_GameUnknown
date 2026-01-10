@@ -533,6 +533,11 @@ void CGameInstance::Set_DoFInfo(_float fFocusDistance)
 	m_pRenderer->Set_DoFInfo(fFocusDistance);
 }
 
+void CGameInstance::Set_Cascade_Active(_bool bFlag)
+{
+	m_pRenderer->Set_Cascade_Active(bFlag);
+}
+
 HRESULT CGameInstance::Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc)
 {
 	return m_pRenderer->Ready_CascadeShadow_Light(Desc);
@@ -913,6 +918,11 @@ HRESULT CGameInstance::Add_StaticShadowObject(CGameObject* pGameObject)
 HRESULT CGameInstance::Bake_StaticShadow()
 {
 	return m_pRenderer->Bake_StaticShadow();
+}
+
+void CGameInstance::Clear_StaticShadowObjects()
+{
+	m_pRenderer->Clear_StaticShadowObjects();
 }
 
 #pragma endregion

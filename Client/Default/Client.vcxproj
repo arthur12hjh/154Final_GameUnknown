@@ -165,6 +165,7 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
+    <ClInclude Include="..\Public\Coin_Player.h" />
     <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
@@ -247,6 +248,8 @@
     <ClInclude Include="..\public\NpcInteractionController.h" />
     <ClInclude Include="..\public\NpcInteractionState.h" />
     <ClInclude Include="..\public\NpcPatrolState.h" />
+    <ClInclude Include="..\public\Npc_RightWeaponPart.h" />
+    <ClInclude Include="..\public\Npc_LeftWeaponPart.h" />
     <ClInclude Include="..\public\Pad.h" />
     <ClInclude Include="..\Public\PlayerCCTQueryFilterCallback.h" />
     <ClInclude Include="..\Public\PlayerState.h" />
@@ -292,6 +295,7 @@
     <ClInclude Include="..\Public\Player_VendingInteractionState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkEndState.h" />
     <ClInclude Include="..\Public\Player_BattleWalkState.h" />
+    <ClInclude Include="..\Public\PlaySongEvent.h" />
     <ClInclude Include="..\public\PoolingManager.h" />
     <ClInclude Include="..\Public\Prob_Static.h" />
     <ClInclude Include="..\Public\PlayerFSM.h" />
@@ -305,6 +309,7 @@
     <ClInclude Include="..\public\Shutter.h" />
     <ClInclude Include="..\public\Sky_Dororong.h" />
     <ClInclude Include="..\public\Sky_Scarlet.h" />
+    <ClInclude Include="..\public\SoundTriggerBox.h" />
     <ClInclude Include="..\public\Spawner.h" />
     <ClInclude Include="..\Public\SpriteParticle.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -424,6 +429,7 @@
     <ClInclude Include="..\Public\Task_Idle.h" />
     <ClInclude Include="..\Public\Task_Move.h" />
     <ClInclude Include="..\Public\Task_Wait.h" />
+    <ClInclude Include="..\Public\TeleportEvent.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Terrain_Desert.h" />
     <ClInclude Include="..\Public\TestEveHead.h" />
@@ -517,6 +523,7 @@
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
+    <ClCompile Include="..\Private\Coin_Player.cpp" />
     <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
@@ -598,6 +605,8 @@
     <ClCompile Include="..\private\NpcInteractionController.cpp" />
     <ClCompile Include="..\private\NpcInteractionState.cpp" />
     <ClCompile Include="..\private\NpcPatrolState.cpp" />
+    <ClCompile Include="..\private\Npc_RightWeaponPart.cpp" />
+    <ClCompile Include="..\private\Npc_LeftWeaponPart.cpp" />
     <ClCompile Include="..\private\Pad.cpp" />
     <ClCompile Include="..\Private\PlayerCCTQueryFilterCallback.cpp" />
     <ClCompile Include="..\Private\PlayerFSM.cpp" />
@@ -644,6 +653,7 @@
     <ClCompile Include="..\Private\Player_VendingInteractionState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkEndState.cpp" />
     <ClCompile Include="..\Private\Player_BattleWalkState.cpp" />
+    <ClCompile Include="..\Private\PlaySongEvent.cpp" />
     <ClCompile Include="..\private\PoolingManager.cpp" />
     <ClCompile Include="..\Private\Prob_Static.cpp" />
     <ClCompile Include="..\private\Rail.cpp" />
@@ -656,6 +666,7 @@
     <ClCompile Include="..\private\Shutter.cpp" />
     <ClCompile Include="..\private\Sky_Dororong.cpp" />
     <ClCompile Include="..\private\Sky_Scarlet.cpp" />
+    <ClCompile Include="..\private\SoundTriggerBox.cpp" />
     <ClCompile Include="..\private\Spawner.cpp" />
     <ClCompile Include="..\Private\SpriteParticle.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />
@@ -791,6 +802,7 @@
     <ClCompile Include="..\Private\Task_Idle.cpp" />
     <ClCompile Include="..\Private\Task_Move.cpp" />
     <ClCompile Include="..\Private\Task_Wait.cpp" />
+    <ClCompile Include="..\Private\TeleportEvent.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Terrain_Desert.cpp" />
     <ClCompile Include="..\Private\TestEveHead.cpp" />

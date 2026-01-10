@@ -7,6 +7,8 @@
 
 #include "UIInstanceBuffer.h"
 
+#include "BeatSaberCharacter.h"
+
 CUIScore::CUIScore(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -42,13 +44,17 @@ void CUIScore::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
-	{
-		m_iScore += (_uint)m_pGameInstance->Random(3.f, 9.f);
-		m_iHighScore = max(m_iHighScore, m_iScore);
-	}
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
-		m_iScore = 0;
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_SPACE))
+	//{
+	//	m_iScore += (_uint)m_pGameInstance->Random(3.f, 9.f);
+	//	m_iHighScore = max(m_iHighScore, m_iScore);
+	//}
+	//if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_BACKSPACE))
+	//	m_iScore = 0;
+
+	auto pDororong = m_pGameManager->GetBeatSaberCharacter();
+	m_iScore = pDororong->GetBeatSaberCharacterDesc().iScore;
+	Safe_Release(pDororong);
 
 	if (m_iScore < 100)
 		m_iRank = 0;
@@ -78,7 +84,7 @@ void CUIScore::Update(_float fTimeDelta)
 	UI_EVENT_ARG_DESC Arg{};
 	Arg.szActionTag = TEXT("Score_Result");
 	Arg.Type = UI_EVENT_ARG_DESC::INT;
-	Arg.pData = &m_iHighScore;
+	Arg.pData = &m_iScore;
 	__super::Trigger_Event(TEXT("Score_Result"), &Arg);
 
 	UI_EVENT_ARG_DESC Arg2{};

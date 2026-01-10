@@ -113,6 +113,7 @@ public:
 	void				Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
 	// 초점 거리만 바꿔주는 오버라이딩 함수.
 	void				Set_DoFInfo(_float fFocusDistance);
+	void				Set_Cascade_Active(_bool bFlag);
 
 	HRESULT				Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
 	HRESULT				Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);
@@ -125,6 +126,7 @@ public:
 	// 이 녀석은 레벨 매니저 안에서 자동으로 실행되게 할거에요. 
 	// 딴데서 실행하면 레고삼킴
 	HRESULT				Bake_StaticShadow();
+	void				Clear_StaticShadowObjects();
 	void*				Get_Cascade_Desc();
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
 

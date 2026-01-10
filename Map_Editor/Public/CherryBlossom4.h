@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Maptool_Defines.h"
-#include "GameObject.h"
+#include "StaticMap.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -11,7 +11,7 @@ NS_END
 
 NS_BEGIN(Tool_Map)
 
-class CCherryBlossom4 final : public CGameObject
+class CCherryBlossom4 final : public CStaticMap
 {
 private:
 	CCherryBlossom4(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

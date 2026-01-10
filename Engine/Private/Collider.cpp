@@ -12,20 +12,15 @@ CCollider::CCollider(const CCollider& rhs) :
     CComponent(rhs),
     m_eType(rhs.m_eType)
     , m_pBatch{ rhs.m_pBatch }
-#ifdef _DEBUG
     , m_pEffect{ rhs.m_pEffect }
     , m_pInputLayout{ rhs.m_pInputLayout }
-#endif
 {
-#ifdef _DEBUG
     Safe_AddRef(m_pInputLayout);
-#endif
 }
 
 HRESULT CCollider::Initialize_Prototype()
 {
     m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
-#ifdef _DEBUG
     m_pEffect = new BasicEffect(m_pDevice);
     m_pEffect->SetVertexColorEnabled(true);
 
@@ -33,11 +28,9 @@ HRESULT CCollider::Initialize_Prototype()
     size_t		iShaderByteCodeLength = {};
 
     m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
-
     if (m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
         pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout))
         return E_FAIL;
-#endif
 
     return S_OK;
 }
@@ -68,7 +61,6 @@ ContainmentType CCollider::Contains(_vector Point)
     return ContainmentType();
 }
 
-#ifdef _DEBUG
 HRESULT CCollider::Render()
 {
     // 바꾸지마세요 
@@ -87,7 +79,7 @@ HRESULT CCollider::Render(_float4 vColor)
 {
     return Render();
 }
-#endif // _DEBUG
+
 
 void CCollider::SetColliderHitType(HIT_TYPE eHitType)
 {
@@ -204,12 +196,10 @@ void CCollider::Free()
     if (false == m_isCloned)
         Safe_Delete(m_pBatch);
 
-#ifdef _DEBUG
     if (false == m_isCloned)
         Safe_Delete(m_pEffect);
 
     Safe_Release(m_pInputLayout);
-#endif // _DEBUG
 
     m_OldHitList.clear();
     m_HitList.clear();

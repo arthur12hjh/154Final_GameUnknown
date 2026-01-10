@@ -161,9 +161,9 @@ HRESULT CMeshEffect::Render_MotionBlur()
 	return S_OK;
 }
 
-void CMeshEffect::End()
+void CMeshEffect::End(_int iTime)
 {
-	m_tData.fEndTime = m_fTime;
+	m_tData.fEndTime = m_fTime + iTime;
 	m_bisEnd = true;
 }
 
@@ -262,7 +262,7 @@ HRESULT CMeshEffect::Bind_ShaderResources()
 		return E_FAIL;
 
 	m_pShaderCom->Bind_SRV("g_fSizeDiagram", m_pSizeDiagramSRV);
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		m_pShaderCom->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
 	}
 	return S_OK;

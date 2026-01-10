@@ -36,9 +36,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    10.0,
+                    30.0,
                     3.0,
-                    10.0
+                    30.0
                 ]
             },
             {
@@ -286,126 +286,6 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 22,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "EFFECT",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 160,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "REPULS_EFFECT",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 240,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "REPULS_EFFECT",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
                 "iNotifyKeyFrame": 21,
                 "iNumData01": 0,
                 "iNumData02": 0,
@@ -482,7 +362,7 @@
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -495,7 +375,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Yellow",
+                "szNotifyArg01": "Prototype_Component_Effect_Power_Yellow",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -562,11 +442,11 @@
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 2.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 70,
+                "iNotifyKeyFrame": 120,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -575,7 +455,7 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "Prototype_Component_Effect_SheildBreak_Yellow",
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Yellow",
                 "szNotifyArg02": "",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
@@ -602,487 +482,7 @@
                 ]
             },
             {
-                "fNumData01": 45.0,
-                "fNumData02": 0.30000001192092896,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 150,
-                "iNumData01": 1,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 27.0,
-                "fNumData02": 0.4000000059604645,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 150,
-                "iNumData01": 2,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 60.0,
-                "fNumData02": 0.20000000298023224,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 150,
-                "iNumData01": 3,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 45.0,
-                "fNumData02": 0.30000001192092896,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 182,
-                "iNumData01": 1,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 27.0,
-                "fNumData02": 0.4000000059604645,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 182,
-                "iNumData01": 2,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 60.0,
-                "fNumData02": 0.20000000298023224,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 182,
-                "iNumData01": 3,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 45.0,
-                "fNumData02": 0.30000001192092896,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 255,
-                "iNumData01": 4,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 27.0,
-                "fNumData02": 0.4000000059604645,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 255,
-                "iNumData01": 5,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 60.0,
-                "fNumData02": 0.20000000298023224,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 255,
-                "iNumData01": 6,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Play_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 45.0,
-                "fNumData02": 0.30000001192092896,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 266,
-                "iNumData01": 4,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 27.0,
-                "fNumData02": 0.4000000059604645,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 266,
-                "iNumData01": 5,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 60.0,
-                "fNumData02": 0.20000000298023224,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 266,
-                "iNumData01": 6,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "Stop_LineTrail",
-                "szNotifyArg02": "Prototype_Component_TrailEffect_Line_Trail",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "Part_WeaponL",
-                "szNotifyTag": "Active_SFX",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    -3.700000047683716,
-                    -0.10000000149011612,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    -3.700000047683716,
-                    0.10000000149011612,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
+                "fNumData01": 2.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -1119,6 +519,406 @@
                     1.5,
                     1.5,
                     1.5
+                ]
+            },
+            {
+                "fNumData01": 3.7,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 179,
+                "iNumData01": 3,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Sting",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_WeaponL",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    -4.8,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    270.0
+                ],
+                "vNotifyScale": [
+                    0.7,
+                    0.7,
+                    0.7
+                ]
+            },
+            {
+                "fNumData01": 0.8,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 179,
+                "iNumData01": 3,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Sting_Sonic",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_WeaponL",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    -1.7,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    90.0
+                ],
+                "vNotifyScale": [
+                    1.5,
+                    1.5,
+                    1.5
+                ]
+            },
+            {
+                "fNumData01": 3.7,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 265,
+                "iNumData01": 3,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Sting",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_WeaponL",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    -4.8,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    270.0
+                ],
+                "vNotifyScale": [
+                    0.7,
+                    0.7,
+                    0.7
+                ]
+            },
+            {
+                "fNumData01": 0.8,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 265,
+                "iNumData01": 3,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_Sting_Sonic",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "Part_WeaponL",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    -1.7,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    90.0
+                ],
+                "vNotifyScale": [
+                    1.5,
+                    1.5,
+                    1.5
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 40,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Screen",
+                "szSocketTag": "Break",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 1.1,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 40,
+                "iNumData01": 1,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Scarlet_LineArea",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    1.5,
+                    1.5,
+                    1.5
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 55,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Screen",
+                "szSocketTag": "Power_Break",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.5,
+                "fNumData02": 1.5,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 78,
+                "iNumData01": 5,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Blur",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 19,
+                "iNumData01": 1,
+                "iNumData02": 0,
+                "iNumData03": 1,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Change_Color",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 0.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 50,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Change_Color",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         ],

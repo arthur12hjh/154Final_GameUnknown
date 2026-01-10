@@ -95,6 +95,10 @@
                     {
                         "szAnimTag": "GameClear_Show",
                         "szPrefabTag": "GameClear_Show"
+                    },
+                    {
+                        "szAnimTag": "GameClear_Hide",
+                        "szPrefabTag": "GameClear_Hide"
                     }
                 ],
                 "szLayerTag": "Layer_BeatSaber",

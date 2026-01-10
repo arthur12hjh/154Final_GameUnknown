@@ -33,7 +33,7 @@ HRESULT CItem::Initialize(void* pArg)
 	m_bIsLerpAnimation = true;
 	m_fAmount = pDesc->fAmount;
 	m_fDropForce = pDesc->fDropForce;
-
+	m_isHemiSphere = pDesc->isHemiSphere;
 	//_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	//_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
 
@@ -254,11 +254,11 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
-	RigidBodyDesc.vMaterial = _float3(1.f, 1.f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.vSize = Com_Size;
-	RigidBodyDesc.fMass = { 0.0001f };
+	RigidBodyDesc.fMass = { 0.8f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_CUSTOM_6 | PHYSX_DEFAULT;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -266,9 +266,14 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 		return E_FAIL;
 	
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
-	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
-	_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-	m_pRigidBody->Add_Impulse(vDir, m_fDropForce);
+	
+	if(false == m_isHemiSphere)
+	{
+		// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
+		_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
+		m_pRigidBody->Add_Impulse(vDir, 5.f, 8.f);
+		m_pRigidBody->Set_ContactOffset(0.5f);
+	}
 
 	return S_OK;
 }
@@ -313,7 +318,6 @@ void CItem::Free()
 
 	Safe_Release(m_pModelCom);
 	if (nullptr != m_pEffect) {
-		m_pEffect->End();
-		Safe_Release(m_pEffect);
+		m_pEffect->End(true, 1);
 	}
 }

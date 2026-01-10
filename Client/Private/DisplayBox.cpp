@@ -62,7 +62,8 @@ void CDisplayBox::Update(_float fTimeDelta)
 	//		{
 	//			m_pModelCom->Set_AnimationIndex(0, false);
 	//			m_eCurState = BOX_STATE::IDLE;
-	//			//m_pRigidBody->Set_Simulation(true);
+	//			//m_pRigidBody->
+	// (true);
 	//		}
 	//		break;
 	//		case BOX_STATE::IDLE:

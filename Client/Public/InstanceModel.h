@@ -16,8 +16,8 @@ private:
 	virtual ~CInstanceModel() = default;
 
 public:
-	_uint				Get_NumInstance() const;
-	VTX_INSTANCE_MODEL* Get_InstanceVertices() const;
+	_uint						Get_NumInstance() const;
+	VTX_INSTANCE_MODEL*			Get_InstanceVertices() const;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -30,9 +30,13 @@ public:
 	virtual HRESULT				Render() override;
 
 private:
-	CVIBuffer_Instance_Model* m_pModelCom = { nullptr };
-	CShader* m_pShaderCom = { nullptr };
+	CVIBuffer_Instance_Model*	m_pModelCom = { nullptr };
+	CShader*					m_pShaderCom = { nullptr };
 	vector<VTX_INSTANCE_MODEL>* m_pInstancingData = nullptr;
+							
+	_float						m_fTimeAcc = { 0.f };
+
+	_tchar						m_ComponentTag[256] = {};
 private:
 	HRESULT						Ready_Components(const _tchar* PrototypeTag);
 	HRESULT						Bind_ShaderResources();

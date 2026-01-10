@@ -30,19 +30,25 @@ private:
 	virtual ~CGameManager() = default;
 
 public :
-	HRESULT						Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	void						Update(_float fTimeDelta);
+	HRESULT								Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	void								Update(_float fTimeDelta);
 #pragma region Default 
-	void						Bind_GameCharacter(class CPlayer* pCharacter);
-	class CPlayer*				GetGameCharacter();
+	void								Bind_GameCharacter(class CPlayer* pCharacter);
+	void								Bind_BeatSaberCharacter(class CBeatSaberCharacter* pCharacter);
+	class CPlayer*						GetGameCharacter();
+	class CBeatSaberCharacter*			GetBeatSaberCharacter();
 
-	void						SavePlayerDesc();
-	void						SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
+	void								SavePlayerDesc();
+	void								SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
 
-	_bool						LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc);
-
-	PLAYER_DESC*				Get_PlayerDesc();
-	_bool						Is_NearCharacter(_vector vPos, _float vRange);
+#pragma region MiniGame
+	void								SetMiniGameReward(_uint iItemID, _uint iCount);
+	MINIGAME_REWARD*					GetMiniGameReward();
+#pragma endregion
+	
+	_bool								LoadPlayerDesc(SAVE_LEVEL_PLAYERDATA& PlayerDesc);
+	PLAYER_DESC*						Get_PlayerDesc();
+	_bool								Is_NearCharacter(_vector vPos, _float vRange);
 #pragma endregion
 
 #pragma region DataManager
@@ -68,7 +74,7 @@ public :
 	map<_uint, CINEMATIC_DESC>*			Get_CinematicDataMap();
 
 #ifdef _DEBUG
-	void Refresh();
+	void								Refresh();
 
 	void								Save_CameraAnimationData();
 	void								Save_CinematicData();
@@ -130,12 +136,11 @@ public:
 	map<_wstring, class CCinematicObject*>*			Get_CinematicObjectsMap();
 #pragma endregion
 
-	// <    > ���̴� ���� private�� �ִ� m_pLinkAttackTester���� �� �����ּ���
 	class CLinkAttackTester*						Get_LinkAttackTester() { return m_pLinkAttackTester; }
 	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
-	// </end>
-
-
+	
+	void											Play_BossBGM(_uint iBossID, _uint iBossPhase);
+	void											Play_LevelBGM();
 	void											Release_GameMgr();
 
 private :
@@ -151,11 +156,19 @@ private :
 	CCinematicManager*								m_pCinematicManager = { nullptr };
 	
 	class CPlayer*									m_pPlayer = { nullptr };
+	class CBeatSaberCharacter*						m_pBeatSaberCharacter = { nullptr };
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
-	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
 	
+	FIELD_BGM_DESC									m_FieldBgmInfo = {};
+
+#pragma region LEVEL 전환때 살려야할 데이터들
+	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
+	MINIGAME_REWARD									m_MiniGameReward = {};
+#pragma endregion
+
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	void											BGM_FinishedSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2);
 
 public:
 	virtual void			Free() override;

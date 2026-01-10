@@ -57,13 +57,13 @@ private :
 	_float							m_OverlapTime = { };
 
 	_float3							m_vTargetDir = {};
-	_float							m_fNoteSpeed = { 2.f };
+	_float							m_fNoteSpeed = {};
 
 private :
 	HRESULT							Ready_Components();
 	HRESULT							Bind_ShaderResources();
 
-	void							SettingNoteDirection();
+	void							SettingNoteDirection(_uint iIndex);
 
 public:
 	static		CNote*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

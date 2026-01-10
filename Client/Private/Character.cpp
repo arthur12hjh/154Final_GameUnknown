@@ -73,6 +73,11 @@ void CCharacter::Attack_Interaction(void* pArg)
 {
 }
 
+void CCharacter::SetGroundSoundType(GROUND_SOUND_TYPE eGroundSoundType)
+{
+	m_eGroundSoundType = eGroundSoundType;
+}
+
 HRESULT CCharacter::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 {
 

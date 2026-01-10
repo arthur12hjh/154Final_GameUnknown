@@ -308,6 +308,27 @@
                     "szArg": "EscKey_Event",
                     "szTypeTag": "ActionEvent"
                 }
+            ],
+            "PlaySong_Event": [
+                {
+                    "szActionTag": "PlaySong_Event",
+                    "szArg": "PlaySong_Event",
+                    "szTypeTag": "ActionEvent"
+                }
+            ],
+            "PreListen": [
+                {
+                    "szActionTag": "PreListen",
+                    "szArg": "PreListen",
+                    "szTypeTag": "ActionEvent"
+                }
+            ],
+            "Change_Level": [
+                {
+                    "szActionTag": "Change_Level",
+                    "szArg": "Change_Level",
+                    "szTypeTag": "ActionEvent"
+                }
             ]
         },
         "szLayerTag": "Layer_Song_Selector",

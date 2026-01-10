@@ -89,6 +89,14 @@ void CUIPopup::Late_Update(_float fTimeDelta)
 		Arg.pData = &m_isLevelChange;
 		__super::Trigger_Event(TEXT("Change_Map"), &Arg);
 
+		UI_EVENT_ARG_DESC Arg2{};
+		Arg2.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg2.pData = &m_isTeleport;
+		__super::Trigger_Event(TEXT("TelePort"), &Arg2);
+
+		m_isTeleport = false;
+		m_isLevelChange = false;
+
 		Safe_Release(pPlayer);
 	}
 
@@ -247,7 +255,7 @@ void CUIPopup::Open_Popup()
 	m_isClosing = false;
 }
 
-void CUIPopup::Close_Popup(_bool isLevelChange)
+void CUIPopup::Close_Popup(_bool isLevelChange, _bool isTeleport)
 {
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 	auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Popup_Close"));
@@ -258,15 +266,11 @@ void CUIPopup::Close_Popup(_bool isLevelChange)
 	Safe_Release(pHUD);
 
 	m_isClosing = true;
-	m_isLevelChange = isLevelChange;
 
-	//m_eVisibility = VISIBILITY::HIDDEN;
-	//m_tUIDesc.fAlpha = 0.f;
-
-	/*for (auto& pChild : m_Children)
-		Update_Children(pChild);*/
-
-	//m_isOpen = false;
+	if (isLevelChange)
+		m_isLevelChange = isLevelChange;
+	else
+		m_isTeleport = isTeleport;
 }
 
 CUIPopup* CUIPopup::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
