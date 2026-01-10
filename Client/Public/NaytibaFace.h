@@ -13,15 +13,6 @@ NS_BEGIN(Client)
 class CNaytibaFace final : public CPartObject
 {
 public :
-	enum class FACE_MATERIAL {
-		//이 4개는 그냥 둬야함
-		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR,
-
-		MI_CH_M_NA_961_Head, MI_CH_M_NA_961_Eyebrow, MI_CH_M_NA_961_Eyes,
-		MI_CH_M_NA_961_Lens, MI_CH_M_NA_961_Eyelashes, MI_CH_M_NA_961_Tearline,
-		MI_CH_M_NA_961_Eyeshadow, MI_CH_M_NA_961_EyeBlend, MI_CH_M_NA_961_NoseShadow,
-		MI_CH_M_NA_961_Teeth
-	};
 	typedef struct NaytibaFaceDesc : public PARTOBJECT_DESC
 	{
 		class CModel*		pBodyModelCom = nullptr;

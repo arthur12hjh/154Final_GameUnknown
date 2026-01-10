@@ -295,7 +295,7 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
 {
 #pragma region DIRECTIONAL
     m_pDirectionalLightDesc = static_cast<LIGHT_DESC*>(m_pGameInstance->Get_Directional_Desc());
-    m_pDirectionalLightDesc->vDiffuse = _float4(0.32f, 0.32f, 0.32f, 1.f);
+    m_pDirectionalLightDesc->vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
 #pragma endregion
 
 #pragma region MB

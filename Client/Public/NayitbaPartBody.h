@@ -76,6 +76,7 @@ private:
 	_bool												m_bisSetDeadEffect = { true };
 
 	_float												m_vDissolveRadius = { 30.f };
+	_float												m_fRimLightRatio = {};
 	_bool												m_bIsDissolveFade = {};
 
 	_float4												m_vColCenterPos = {};

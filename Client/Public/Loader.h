@@ -88,6 +88,7 @@ private:
 	HRESULT Loading_For_Desert_Deco_Fence_And_Ruin_Col(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Vehicle_And_Wheel(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Building_And_Trash(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Trash_Col(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Sign_And_Crane(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Boxes(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Boxes_Col(void* pArg);
@@ -95,6 +96,7 @@ private:
 	HRESULT Loading_For_Desert_Deco_Garden_And_Poster(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Garden_Col(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Door_And_Statue(void* pArg);
+	HRESULT Loading_For_Desert_Deco_Statue_Col(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Furniture(void* pArg);
 	HRESULT Loading_For_Desert_Deco_Furniture_Col(void* pArg);
 
@@ -118,6 +120,7 @@ private:
 	HRESULT Loading_For_GamePlay_Map_DesertF_Col(void* pArg);
 	HRESULT Loading_For_Desert_Bridge(void* pArg);
 	HRESULT Loading_For_Desert_Bridge_Col(void* pArg);
+	HRESULT Loading_For_GamePlay_Npc(void* pArg);
 #pragma endregion
 
 #pragma region Beat Saber Map

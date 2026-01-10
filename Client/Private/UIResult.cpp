@@ -83,7 +83,13 @@ void CUIResult::Update(_float fTimeDelta)
 		return;
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
+	{
+		//아이템 저장
+		if(0 < m_iCurScore)
+			m_pGameManager->SetMiniGameReward(1, m_iCurScore);
+
 		Close_Result();
+	}
 }
 
 void CUIResult::Late_Update(_float fTimeDelta)

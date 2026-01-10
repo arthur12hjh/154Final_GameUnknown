@@ -53,6 +53,7 @@ private:
 	CASCADE_SHADOW_DESC		m_tShadowLightDesc = {};
 	list<class CGameObject*> m_CascadeShadowObjects = {};
 
+	_bool					m_isActive = { true };
 private:
 	void Seperate_CascadeFrustum();
 	void Calc_CascadeMatrices();

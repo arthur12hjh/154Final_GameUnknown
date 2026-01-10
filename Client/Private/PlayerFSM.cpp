@@ -54,6 +54,7 @@
 
 #include "Player_ScarletLinkAttackState.h"
 #include "Player_ScarletPhase2tLinkAttackState.h"
+#include "Player_VendingInteractionState.h"
 
 CPlayerFSM::CPlayerFSM() 
 	: m_pGameInstance { CGameInstance::GetInstance() }
@@ -325,25 +326,23 @@ CPlayerState* CPlayerFSM::Create_State(PLAYER_TRANSITION_DESC tDesc)
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
 		case PLAYER_MODE::IDLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
-#ifdef _DEBUG
 		case PLAYER_MODE::BATTLE: return CPlayer_SupplyBoxInteractionState::Create(tDesc.pArg);
-#else
-		case PLAYER_MODE::BATTLE: return nullptr;
-#endif
 		case PLAYER_MODE::LOCKON: return nullptr;
 		}
 		break;
-
+	case PLAYER_STATE::VENDING_INTERACTION:
+		switch (m_pPlayerDesc->ePlayerMode)
+		{
+		case PLAYER_MODE::IDLE: return CPlayer_VendingInteractionState::Create(tDesc.pArg);
+		case PLAYER_MODE::BATTLE: return CPlayer_VendingInteractionState::Create(tDesc.pArg);
+		case PLAYER_MODE::LOCKON: nullptr;
+	
+		}
 	case PLAYER_STATE::CORPSE_INTERACTION:
 		switch (m_pPlayerDesc->ePlayerMode)
 		{
 		case PLAYER_MODE::IDLE: return CPlayer_CorpseInteractionState::Create(tDesc.pArg);
-
-#ifdef _DEBUG
 		case PLAYER_MODE::BATTLE: return CPlayer_CorpseInteractionState::Create(tDesc.pArg);
-#else
-		case PLAYER_MODE::BATTLE: return nullptr;
-#endif
 		case PLAYER_MODE::LOCKON: return nullptr;
 		}
 		break;

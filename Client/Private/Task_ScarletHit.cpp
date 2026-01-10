@@ -117,13 +117,14 @@ void CTask_ScarletHit::Hit_Reaction(_float fTimeDelta)
 	{
 	case 1010 :
 		if(0.62f >= fAnimRatio)
-			m_fAnimSpeed = 2.f;
+			m_fAnimSpeed = 3.f;
 		
 		if (0.62f <= fAnimRatio && fAnimRatio <= 0.82f)
 		{
 			m_pOwner->GetTransform()->Move_Direction(fTimeDelta,
 				m_pOwner->GetTransform()->Get_State(STATE::LOOK) * -1.f, 10.f);
 
+			m_fAnimSpeed = 2.f;
 		}
 		break;
 	}

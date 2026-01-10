@@ -41,7 +41,7 @@ float4 Calc_RGBNormal(texture2D NormalTexture, float2 vTexcoord,
                    float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
 {
     vector vNormalDesc = NormalTexture.Sample(MirrorSampler, vTexcoord);
-    float3x3 WorldMatrix = float3x3(vTangent, vBinormal * -1.f, vNormal);
+    float3x3 WorldMatrix = float3x3(vTangent, vBinormal, vNormal);
     
     float3 vResultNormal = mul(vNormalDesc.xyz * 2.f - 1.f, WorldMatrix);
    
@@ -49,22 +49,21 @@ float4 Calc_RGBNormal(texture2D NormalTexture, float2 vTexcoord,
 }
 
 float4 Calc_Normal(texture2D NormalTexture, float2 vTexcoord,
-                   float3 vNormal, float3 vTangent, float3 vBinormal, float fScale = 1.f)
+                                 float3 vNormal, float3 vTangent, float3 vBinormal,
+                                 float fScale = 1.f)
 {
-    // XY only normal map
-    float2 vXY = NormalTexture.SampleLevel(MirrorSampler, vTexcoord, 2.f).rg * 2.f - 1.f;
+    float2 xy = NormalTexture.Sample(NormalSampler, vTexcoord).rg * 2.f - 1.f;
+    xy *= fScale;
 
-    vXY *= fScale;
-    // Z º¹¿ø
-    float fZ = sqrt(saturate(1.f - dot(vXY, vXY)));
+    float z = sqrt(saturate(1.f - dot(xy, xy)));
+    float3 nTS = float3(xy, z);
 
-    float3 vNormalTS = float3(vXY, fZ); // tangent-space normal
+    float3x3 TBN = float3x3(normalize(vTangent), normalize(vBinormal), normalize(vNormal));
 
-    float3x3 WorldMatrix = float3x3(vTangent,vBinormal * -1.f, vNormal);
+    float3 nWS = mul(nTS, TBN);
+    nWS = normalize(nWS);
 
-    float3 vResultNormal = mul(vNormalTS, WorldMatrix);
-
-    return float4(normalize(vResultNormal) * 0.5f + 0.5f, 0.f);
+    return float4(nWS * 0.5f + 0.5f, 0.f);
 }
 
 vector Calc_ORSS(texture2D ORSSTexture, float2 vTexcoord)

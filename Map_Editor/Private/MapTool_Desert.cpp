@@ -1945,6 +1945,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
 					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_D1G-g2r_Body"); NpcDesc.iNpcID = 4;
 					break;
+
+				case DESESRT_RUIN_OBJECT::NPC_DORORONG:
+					protoTag = TEXT("Prototype_GameObject_Npc"); layerTag = TEXT("Layer_Npc");
+					NpcDesc.pComponentTag = TEXT("Prototype_Component_Model_Cinematic_Dororong"); NpcDesc.iNpcID = 5;
+					break;
 #pragma endregion 
 
 #pragma region Dororong SABER
@@ -1994,7 +1999,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &pLiftPlatformDesc);
 				}
-				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP)
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SCARLET || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_SHOP || m_eCurrentObject == DESESRT_RUIN_OBJECT::NPC_DORORONG)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &NpcDesc);
 				}
@@ -2403,7 +2408,7 @@ HRESULT CMapTool_Desert::Render()
 	_int nSelectedNpc = -1;
 	const _char* characterNames[] = { "Player", "Gorilla", "BEHOLDER", "BARNACLE_A", "STATUE_A", "STATUE_B", 
 									  "SUNFLOWER", "ANTLION", "TENTACLE", "DROIDTURRET" };
-	const _char* npcNames[] = { "NPC_SCARLET", "NPC_SHOP" };
+	const _char* npcNames[] = { "NPC_SCARLET", "NPC_SHOP", "NPC_DORORONG"};
 
 	if (ImGui::CollapsingHeader("Character"))
 	{
@@ -2470,6 +2475,11 @@ HRESULT CMapTool_Desert::Render()
 			else if (nSelectedNpc == 1)
 			{
 				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_SHOP;
+				m_CurrentLayerName = TEXT("Layer_Npc");
+			}
+			else if (nSelectedNpc == 2)
+			{
+				m_eCurrentObject = DESESRT_RUIN_OBJECT::NPC_DORORONG;
 				m_CurrentLayerName = TEXT("Layer_Npc");
 			}
 		}
