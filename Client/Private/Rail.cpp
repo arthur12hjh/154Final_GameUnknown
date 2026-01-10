@@ -124,13 +124,10 @@ void CRail::Late_Update(_float fTimeDelta)
     auto pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
 
     if (!pDororong)
-    {
-        Safe_Release(pDororong);
         return;
-    }
 
     m_iAccuracy = pDororong->GetBeatSaberCharacterDesc().iAccuracy;
-
+    Safe_Release(pDororong);
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif

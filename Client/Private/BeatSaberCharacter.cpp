@@ -61,6 +61,7 @@ void CBeatSaberCharacter::Update(_float fTimeDelta)
 
 	m_pFsm->Update(fTimeDelta);
 
+
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
 
@@ -82,24 +83,18 @@ void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
 
 HRESULT CBeatSaberCharacter::Render()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render();
 
 	return S_OK;
 }
 
 HRESULT CBeatSaberCharacter::Render_Shadow()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_Shadow();
 
 	return S_OK;
 }
 
 HRESULT CBeatSaberCharacter::Render_MotionBlur()
 {
-	for (auto& pPartObject : m_PartObjects)
-		pPartObject.second->Render_MotionBlur();
 
 	return S_OK;
 }
@@ -328,5 +323,6 @@ void CBeatSaberCharacter::Free()
 {
 	__super::Free();
 
+	m_pGameManager->Bind_BeatSaberCharacter(nullptr);
 	Safe_Release(m_pFsm);
 }

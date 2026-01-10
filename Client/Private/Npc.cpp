@@ -53,8 +53,7 @@ HRESULT CNpc::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
-    if (5 == m_NpcDesc->iNpcID)
-        m_pDropCom->DropRewardItem();
+ 
 
     return S_OK;
 }
@@ -62,7 +61,10 @@ HRESULT CNpc::Initialize(void* pArg)
 void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
-    
+
+    if (5 == m_NpcDesc->iNpcID)
+        m_pDropCom->DropRewardItem();
+
     m_pCCT->Update_PrePxPosition(m_pTransformCom);
     m_pAIController->Priority_Update(fTimeDelta);
 }
