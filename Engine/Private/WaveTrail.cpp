@@ -15,10 +15,10 @@ CWaveTrail::CWaveTrail(const CWaveTrail& Prototype)
 	Safe_AddRef(m_pIB);
 }
 
-HRESULT CWaveTrail::Initialize_Prototype()
+HRESULT CWaveTrail::Initialize_Prototype(_int iNum)
 {
-	m_iNumPositions = 150;
-	m_iNumVertices = 750;
+	m_iNumPositions = iNum;
+	m_iNumVertices = iNum * 5;
 	m_iNumIndices = ((m_iNumVertices / 2) - 1) * 6;
 
 #pragma region IDX_BUFFER
@@ -360,11 +360,11 @@ HRESULT CWaveTrail::Initialize(void* pArg)
 	return S_OK;
 }
 
-CWaveTrail* CWaveTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWaveTrail* CWaveTrail::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum)
 {
 	CWaveTrail* pInstance = new CWaveTrail(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize_Prototype(iNum)))
 	{
 		MSG_BOX("Failed to Created : CWaveTrail");
 		Safe_Release(pInstance);

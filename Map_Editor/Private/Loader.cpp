@@ -97,6 +97,7 @@
 #include "Rail.h"
 #include "Beat_Indicator.h"
 #include "DororongBox.h"
+#include "SoundTriggerBox.h"
 #pragma endregion
 
 
@@ -3489,6 +3490,13 @@ HRESULT CLoader::Loading_For_Desert_Stair(void* pArg)
 	/* For.Prototype_Component_Model_Stair_3B */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Stair_3B");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../Bin/Resources/Maps/Xion/Stair/Stair_3B.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_SoundTriggerBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SoundTriggerBox");
+	pProtoDesc.pPrototype = CSoundTriggerBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -496,7 +496,7 @@ void CEffect::Play(_float fTime)
         pMeshParticle->Play();
 }
 
-void CEffect::End(_bool bisRelease)
+void CEffect::End(_bool bisRelease, _int iTime)
 {
     if (bisRelease) {
         _vector  vRight = XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14);
@@ -514,7 +514,7 @@ void CEffect::End(_bool bisRelease)
     }
 
     for (auto pMesh : m_pMeshEffects)
-        pMesh->End();
+        pMesh->End(iTime);
     for (auto pSpriteParticle : m_pSpriteParticles)
         pSpriteParticle->End();
     for (auto pMeshParticle : m_pMeshParticles)

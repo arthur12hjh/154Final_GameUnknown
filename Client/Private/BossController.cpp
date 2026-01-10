@@ -90,11 +90,6 @@ HRESULT CBossController::Damage(void* pArg)
             if (0 < m_pBlackBoard->GetBossInfo()->iCurrentHealth)
             {
                 auto pGameManger = CGameManager::GetInstance();
-                pGameManger->Play_Cinematic(125, [&]() {
-                    auto pNayitba = static_cast<CNaytiba*>(m_pParent);
-                    pNayitba->Excution();
-                });
-
                 m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
             }
         }
@@ -148,7 +143,7 @@ HRESULT CBossController::Damage(void* pArg)
             }
             else
             {
-                if (SKILL_TYPE::REPULSE_SKILL != pDamageSKillDesc->eSkillType)
+                if (SKILL_TYPE::BLINK_SKILL > pDamageSKillDesc->eSkillType)
                 {
                     if (m_pBlackBoard->IsSuperAmor())
                     {
@@ -175,8 +170,12 @@ HRESULT CBossController::Damage(void* pArg)
                 else
                 {
                     // 여기서 리펄스 공격에서 마지막 리펄스인지를 확인한다.
-                    if(false == pNayitba->bIsRepulseHitReaction())
-                        bIsHitAble = false;
+                    if (SKILL_TYPE::REPULSE_SKILL == pDamageSKillDesc->eSkillType)
+                    {
+                        if (false == pNayitba->bIsRepulseHitReaction())
+                            bIsHitAble = false;
+                    }
+                    
                 }
             }
         }

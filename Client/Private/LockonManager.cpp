@@ -65,8 +65,6 @@ _bool CLockonManager::Find_NearestTarget(_float fTimeDelta, _bool isForce)
     }
 
     list<CGameObject*>* pTargets = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), m_strMonsterLayerTag.c_str());
-
-
     if (nullptr == pTargets || pTargets->empty())
     {
         m_pTarget = nullptr;
@@ -140,15 +138,6 @@ CNaytiba* CLockonManager::Get_LockonTarget()
 
 _vector CLockonManager::Get_LockOnPoint()
 {
-#ifdef _DEBUG
-    WCHAR Debug[MAX_PATH] = {};
-    wsprintf(Debug, TEXT("[DEBUG] Lock On Point : %d %d %d\n"), (_int)m_pTarget->GetMonsterData().vLockOnPoint.x,
-                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.y,
-                                                                (_int)m_pTarget->GetMonsterData().vLockOnPoint.z);
-
-    OutputDebugStringW(Debug);
-#endif // _DEBUG
-   
     return XMLoadFloat3(&m_pTarget->GetMonsterData().vLockOnPoint);
 }
 

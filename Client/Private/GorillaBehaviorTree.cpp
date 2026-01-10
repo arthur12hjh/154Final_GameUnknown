@@ -13,10 +13,12 @@
 #include "Deco_CheckAlive.h"
 #include "Deco_FindTarget.h"
 #include "Deco_AttackDelay.h"
+#include "Deco_BossPhase.h"
 #pragma endregion
 
 // Action Node
 #pragma region Task
+#include "Task_CutScene.h"
 #include "Task_Dead.h"
 #include "Task_Idle.h"
 #include "Task_Move.h"
@@ -82,6 +84,16 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 	if (nullptr == pRootSelect)
 		return E_FAIL;
 
+#pragma region CutScene
+	auto pCutScene = CSelectNode::Create(this);
+	if (nullptr == pCutScene)
+		return E_FAIL;
+
+	pCutScene->Bind_BehaviorNode(CDeco_BossPhase::Create(this));
+	pCutScene->Bind_BehaviorNode(CTask_CutScene::Create(this));
+
+#pragma endregion
+
 #pragma region Hit
 	auto pHitSquence = CSelectNode::Create(this);
 	if (nullptr == pHitSquence)
@@ -128,6 +140,7 @@ HRESULT CGorillaBehaviorTree::Ready_TreeNodes()
 
 	// 飘府备己 1瞒 飘府
 	pRootSelect->Bind_BehaviorNode(pAliveSquence);
+	pRootSelect->Bind_BehaviorNode(pCutScene);
 	pRootSelect->Bind_BehaviorNode(CTask_Dead::Create(this));
 	
 	m_pRootNode = pRootSelect;

@@ -314,7 +314,7 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
     // 이 방식은 Yaw 값에 영향을 받지 않으며,
     // z 성분이 0인 경우에도 안정적으로 동작한다.
     _float fTargetPitch = -asinf(XMVectorGetY(vTargetLookDir));
-    fTargetPitch = Clamp<_float>(fTargetPitch, -0.3f, XM_PIDIV2);
+    fTargetPitch = Clamp<_float>(fTargetPitch, -0.3f, 0.f);
 
     _vector vScale, vRotation, vTranslation;
     XMMatrixDecompose(&vScale, &vRotation, &vTranslation, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -323,16 +323,16 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
     _float fQuaternionScalar = XMVectorGetY(XMVector3Dot(vRotation, vTargetRot));
 
     _float fYawRatio = {};
-    if (-0.5f > abs(fQuaternionScalar))
+    if (-0.4f > abs(fQuaternionScalar))
         fYawRatio = 60.f;
     else
         fYawRatio = 15.f;
 
     _float fCamDistance = {};
-     if (m_pPlayerDesc->isUsingBlink)
-         fCamDistance = 15.f;
-     else
-         fCamDistance = m_fDistance + (5.f * fTargetPitch);
+    fCamDistance = m_fDistance + (5.f * fTargetPitch);
+
+    if (m_pPlayerDesc->isUsingScarletLink2 || m_pPlayerDesc->isUsingRepulse)
+        fCamDistance = 7.f;
 
     fYawRatio = Clamp<_float>(fTimeDelta * fYawRatio, 0.f, 1.f);
     _vector vLerpRoation = XMQuaternionSlerp(vRotation, vTargetRot, fYawRatio);

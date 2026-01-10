@@ -8,7 +8,7 @@ if not exist %OUTDIR% mkdir %OUTDIR%
 
 for %%f in (%*) do (
     echo 변환중: %%~nxf
-    %TEXCONV% -w 512 -h 512 -m 1 -f BC7_UNORM %%f -o %OUTDIR% -y
+    %TEXCONV% -w 2048 -h 2048 -m 1 -f BC7_UNORM %%f -o %OUTDIR% -y
 )
 
 echo 변환 완료
