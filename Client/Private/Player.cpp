@@ -356,7 +356,7 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -696,9 +696,25 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				break;
 			}
 			case INTERACTION_TYPE::ITEM:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
 				// 끝났거나 잠겨있다면, 그냥 Break 처리.
 				// 디폴트여도 상호작용은 안되니까 Break 처리.
 			default:

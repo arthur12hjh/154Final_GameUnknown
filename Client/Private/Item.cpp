@@ -254,11 +254,11 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
-	RigidBodyDesc.vMaterial = _float3(1.f, 1.f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 	RigidBodyDesc.vSize = Com_Size;
-	RigidBodyDesc.fMass = { 0.0001f };
+	RigidBodyDesc.fMass = { 0.8f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_CCT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_CUSTOM_6 | PHYSX_DEFAULT;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -268,7 +268,8 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, m_pRigidBody);
 	// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
 	_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-	m_pRigidBody->Add_Impulse(vDir, m_fDropForce);
+	m_pRigidBody->Add_Impulse(vDir, 10.f, 5.f);
+	m_pRigidBody->Set_ContactOffset(0.5f);
 
 	return S_OK;
 }

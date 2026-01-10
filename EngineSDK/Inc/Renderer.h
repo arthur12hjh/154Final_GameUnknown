@@ -48,7 +48,7 @@ public:
 	void Active_DoF(_bool bFlag, _float fLerpTime);
 	void Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
 	void Set_DoFInfo(_float fFocusDistance);
-
+	void Set_Cascade_Active(_bool bFlag);
 #ifdef _DEBUG
 	//RenderDoc 전용 로깅 코드
 	void		BeginMarker(ID3D11DeviceContext* pContext, const wchar_t* name);

@@ -22,6 +22,7 @@ public:
 
 		_float3						fDropPoint;
 		_float						fDropForce;
+		_float3						vParentLook;
 	}ITEM_DESC;
 
 protected:
