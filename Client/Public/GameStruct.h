@@ -174,6 +174,8 @@ namespace Client
 		class CTransform* pPlayerTransform = { nullptr };
 		class CCharacterController* pPlayerController = { nullptr };
 
+		//벤딩머신 상호작용 중, 코인이 보이게 할지
+		bool   isCoinVisible = { false };
 		bool   isRequestLockonToggle = { false };
 		float  fCurrentMinDist = { FLT_MAX };
 		float  fModeTimer = { 0.f };

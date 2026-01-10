@@ -471,10 +471,10 @@ HRESULT CBody_Player::Ready_VerticalJoints()
 				RootDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 				// SkirtBoneRoot 0 , 1, ... 10
 				RootDesc.tUserData.szActorTag = TEXT("SkirtBoneRoot") + to_wstring(i);
-				RootDesc.vSize = _float3(0.03f, 0.03f, 0.f);
-				RootDesc.fMass = { 0.f };
+				RootDesc.vSize = _float3(0.01f, 0.01f, 0.f);
+				RootDesc.fMass = { 1.f };
 				RootDesc.iCollisionGroup = PHYSX_CUSTOM_4;
-				RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+				RootDesc.iCollisionMask = PHYSX_DYNAMIC;
 				RootDesc.isSimulateSync = false;
 				RootDesc.isQuery = false;
 				XMStoreFloat4x4(&RootDesc.StartWorldMatrix, pRootBoneMatrix * OwnerWorld);
@@ -523,10 +523,10 @@ HRESULT CBody_Player::Ready_VerticalJoints()
 				//actor tag로 i번째 인덱스의 iVerticalCount번쨰 자식임을 명시한다.
 				ChildDesc.tUserData.szActorTag = TEXT("SkirtBoneChild") + to_wstring(i) + to_wstring(iVerticalCount);
 				ChildDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
-				ChildDesc.vSize = _float3(0.03f, 0.03f, 0.f);
-				ChildDesc.fMass = { 0.05f };
+				ChildDesc.vSize = _float3(0.01f, 0.01f, 0.f);
+				ChildDesc.fMass = { 1.f };
 				ChildDesc.iCollisionGroup = PHYSX_CUSTOM_4;
-				ChildDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+				ChildDesc.iCollisionMask =  PHYSX_DYNAMIC | PHYSX_CUSTOM_3;
 				ChildDesc.isSimulateSync = false;
 				ChildDesc.isQuery = false;
 				XMStoreFloat4x4(&ChildDesc.StartWorldMatrix, pChildBoneMatrix * OwnerWorld);
@@ -544,6 +544,7 @@ HRESULT CBody_Player::Ready_VerticalJoints()
 
 				pVerticalJointChain->Add_Joint(pRigidBody);
 				m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
+				pRigidBody->Set_ContactOffset(1.5f);
 			}
 
 #pragma endregion
@@ -616,7 +617,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
 	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 	RigidBodyDesc.tUserData.szActorTag = TEXT("BodyCollider");
-	RigidBodyDesc.vSize = _float3(0.2f, 0.5f, 0.f);
+	RigidBodyDesc.vSize = _float3(0.24f, 0.4f, 0.f);
 	RigidBodyDesc.fMass = { 0.f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_4;
@@ -659,7 +660,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 
 
 	//############################## 하반신
-	RigidBodyDesc.vSize = _float3(0.6f, 0.f, 0.f);
+	RigidBodyDesc.vSize = _float3(0.55f, 0.f, 0.f);
 
 	pBone = m_pModelCom->Get_BoneMatrixPtr("SC_PhotoMode_Hide");
 	OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
@@ -672,6 +673,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 
 	pRigidBody->Set_AngularDamping(0.01f);
 	pRigidBody->Set_LinearDamping(0.06f);
+	pRigidBody->Set_LocalPos(_float3(0.f, 0.f, 0.1f));
 
 	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);

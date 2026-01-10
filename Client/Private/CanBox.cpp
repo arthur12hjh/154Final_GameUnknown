@@ -64,7 +64,8 @@ void CCanBox::Update(_float fTimeDelta)
         else
         {
             auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
-            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
+            if (PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode || 
+                PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode)
             {
                 if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
                 {
@@ -194,6 +195,8 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     RigidBodyDesc.fMass = { 0.3f };
     _float3 vRigidSize = RigidBodyDesc.vSize;
     RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.f, vRigidSize.y * 2.f, vRigidSize.z * 1.f);
+    RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_5;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT;
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

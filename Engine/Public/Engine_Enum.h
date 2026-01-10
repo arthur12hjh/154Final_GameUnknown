@@ -23,6 +23,7 @@ namespace Engine
 #define PHYSX_CUSTOM_2  (1 << 9)
 #define PHYSX_CUSTOM_3  (1 << 10)
 #define PHYSX_CUSTOM_4  (1 << 11)
+#define PHYSX_CUSTOM_5  (1 << 12)
 
 #define CASCADE_LEVEL 5
 

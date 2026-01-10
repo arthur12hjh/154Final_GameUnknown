@@ -42,6 +42,12 @@ void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 		m_eDirection = PLAYER_DIRECTION::BACKWARD;
 	}
 
+	//¸ðÆ® ÄÑ
+	m_pPlayer->MotionTrailEnable(true);
+	m_pPlayer->SetVisibility(VISIBILITY::VISIBLE);
+	m_pPlayer->MotionTrailRimLight(1.6f, 2.f, { 1.f, 0.5f, 0.5f, 1.f });
+	m_pPlayer->MotionTrailCoolDown(0.1f);
+
 	m_pGameInstance->SetGameSpeed(0.6f);
 }
 
@@ -79,6 +85,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonJustEvadeState::Update(_float fTimeDelta)
 			m_fLerp = 1.f;
 
 		m_pGameInstance->SetGameSpeed(m_fLerp);
+		if(0.45f <= fAnimationRatio)
+			m_pPlayer->MotionTrailEnable(false);
 	}
 	else if (0.5f <= fAnimationRatio)
 	{
@@ -88,6 +96,8 @@ PLAYER_TRANSITION_DESC CPlayer_LockonJustEvadeState::Update(_float fTimeDelta)
 			m_fLerp = 1.f;
 	
 		m_pGameInstance->SetGameSpeed(m_fLerp);
+		if (0.55f <= fAnimationRatio)
+			m_pPlayer->MotionTrailEnable(false);
 	}
 
 	if (true == isAnimFinished)
@@ -100,6 +110,7 @@ PLAYER_TRANSITION_DESC CPlayer_LockonJustEvadeState::Update(_float fTimeDelta)
 
 _float CPlayer_LockonJustEvadeState::End()
 {
+	m_pPlayer->MotionTrailEnable(false);
 	m_pGameInstance->SetGameSpeed(1.f);
 	m_Desc->isInvincible = false;
 
