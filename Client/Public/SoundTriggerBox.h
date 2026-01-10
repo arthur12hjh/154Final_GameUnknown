@@ -8,8 +8,9 @@ class CSoundTriggerBox final : public CGameObject
 public:
 	typedef struct TriggerBoxDesc : public GAMEOBJECT_DESC
 	{
-		SOUND_TRIGGER_TYPE		eSoundBoxType;
-	}TRIGGER_BOX_DESC;
+		COLLIDER				eColType;
+		GROUND_SOUND_TYPE		eSoundBoxType;
+	}SOUNDTRIGGER_BOX_DESC;
 
 private:
 	CSoundTriggerBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -28,10 +29,10 @@ public:
 
 private:
 	CCollider*					m_pColliderCom = { nullptr };
-	SOUND_TRIGGER_TYPE			m_eSoundTriggerType = {};
+	GROUND_SOUND_TYPE			m_eGroundSoundType = {};
 
 private:
-	HRESULT						Ready_Components(const TRIGGER_BOX_DESC& pDesc);
+	HRESULT						Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc);
 
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 	void						OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);

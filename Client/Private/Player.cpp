@@ -801,6 +801,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 {
 	//무적이면 충돌처리 안하게 처리
 
+	_bool bIsHitReaction = { false };
 	_float3 vHitDir{}, vHitPoint{}, vImpactDir{};
 	_float4 vAttackerPos{};
 	_float fImpactForce;
@@ -841,65 +842,78 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 		break;
 	default:
-		if (true == m_PlayerDesc.isJustParryable)
+		if (ATK_INTERACTION_TYPE::END == m_PlayerDesc.eReactionType)
 		{
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
-			Desc.pArg = &HitDesc;
-			
-			m_pFSM->Handle_Transition(Desc);
-			DamageDesc.pAttacker = this;
-
-			auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
-			if (0 != pSkillDesc->iSkillID)
+			if (true == m_PlayerDesc.isJustParryable && (SKILL_PROPERTY::PARRYABLE & pSkillDesc->eProPerty))
 			{
-				if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+				Desc.isChangeMode = false;
+				Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
+				Desc.pArg = &HitDesc;
+
+				m_pFSM->Handle_Transition(Desc);
+				DamageDesc.pAttacker = this;
+
+				auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+				if (0 != pSkillDesc->iSkillID)
 				{
-					if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
-						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
-					else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+					if (NAYTIBA_TYPE::ELITE <= pNayitba->GetStaticMonsterData()->eNaytiba_Type)
+					{
+						if (ATTACK_DIRECTION::ATK_LEFT == pSkillDesc->eATK_Direction)
+							DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1009);
+						else if (ATTACK_DIRECTION::ATK_RIGHT == pSkillDesc->eATK_Direction)
+							DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+					}
+					else
 						DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
+
+					pNayitba->Damaged(&DamageDesc);
 				}
-				else
-					DamageDesc.pSkillData = m_pGameManager->Find_SkillData(1008);
 
-				pNayitba->Damaged(&DamageDesc);
+				//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 			}
-		
-			//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
-		}
-		// 가드만 성공
-		else if (true == m_PlayerDesc.isParryable)
-		{
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
-			Desc.pArg = &HitDesc;
-
-			m_pFSM->Handle_Transition(Desc);
-		}
-
-		else if (false == m_PlayerDesc.isSuperArmor)
-		{
-			//타격당할때 공격자를 바라보게 한다.
-			m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)), 
-				XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
-
-			Desc.isChangeMode = false;
-			Desc.eNextState = PLAYER_STATE::HIT;
-			Desc.pArg = &HitDesc;
-
-			if (m_pWeapon)
+			// 가드만 성공
+			// 여기서 실드게이지 체크해서 가드도 성공 여부 판단로직들어가면 어떨가함
+			else if (true == m_PlayerDesc.isParryable)
 			{
-				m_iSkillID = -1;
-				m_pWeapon->EnableCollider(false);
+				Desc.isChangeMode = false;
+				Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
+				Desc.pArg = &HitDesc;
+
+				m_pFSM->Handle_Transition(Desc);
 			}
 
-			m_pFSM->Handle_Transition(Desc);
-			m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+			else if (false == m_PlayerDesc.isSuperArmor)
+			{
+				bIsHitReaction = true;
+			}
 		}
+		else
+		{
+			bIsHitReaction = true;
+		}
+
 		break;
 	}
 
+	if (bIsHitReaction)
+	{
+		//타격당할때 공격자를 바라보게 한다.
+		m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)),
+			XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
+
+		Desc.isChangeMode = false;
+		Desc.eNextState = PLAYER_STATE::HIT;
+		Desc.pArg = &HitDesc;
+
+		if (m_pWeapon)
+		{
+			m_iSkillID = -1;
+			m_pWeapon->EnableCollider(false);
+		}
+
+		m_pFSM->Handle_Transition(Desc);
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
+	}
 }
 
 /* 실드 연산 로직 */

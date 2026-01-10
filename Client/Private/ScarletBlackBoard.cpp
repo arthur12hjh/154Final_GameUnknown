@@ -56,6 +56,7 @@ _bool CScarletBlackBoard::UnconditionallyAttack()
 
 void CScarletBlackBoard::SetEntarnceAttack(_bool bIsflag)
 {
+	m_fAttackDelay.x = m_fAttackDelay.y;
 	m_bIsEntarnceAttack = bIsflag;
 }
 

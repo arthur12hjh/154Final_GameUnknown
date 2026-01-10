@@ -24,7 +24,6 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 HRESULT CLevel_Logo::Initialize()
 {
 	m_pGameManager = CGameManager::GetInstance();
-
 	if (!m_pGameManager)
 		return E_FAIL;
 
@@ -36,8 +35,6 @@ HRESULT CLevel_Logo::Initialize()
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI")))) 
 		return E_FAIL;
-
-	m_pGameInstance->Manager_PlayBGM(TEXT("BGM_EVETrailer.wav"), 1.f);
 
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) { 
 		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);

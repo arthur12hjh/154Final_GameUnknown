@@ -6,6 +6,7 @@
 #include "ScarletBlackBoard.h"
 #include "ScarletBehaviorTree.h"
 #include "Nayitba.h"
+#include "Player.h"
 
 CTask_ScarletAttack::CTask_ScarletAttack() : CTask()
 {
@@ -76,6 +77,7 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	{
 		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetAttackData(nullptr);
+		m_pOwner->ResetToBaseState();
 		Compute_AttackCoolTime();
 
 		return NODE_STATE::COMPLETE;
@@ -232,13 +234,14 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 	else
 	{
 		m_pGameManager->Set_ScarletPatternFog(true, 0.4f);
-	
+
+		m_pSkillData.push(m_pGameManager->Find_SkillData(56));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(34));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(35));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(36));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(51));
 		m_pSkillData.push(m_pGameManager->Find_SkillData(37));
-	
+
 		m_bIsAttackStopDelay = true;
 		m_FinishedDelayDesc.iSkillID = 37;
 		m_FinishedDelayDesc.vKeyFrame = { 153, 153 };
@@ -528,6 +531,42 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 	}
 	break;
 #pragma endregion
+
+	case 25:
+#pragma region SWING FAST
+	{
+		// Length : 195
+		// Move Frame :  80 ~ 176
+		Desc.BeginTime = 0.17f;
+		Desc.EndTime = 0.66f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
+
+	case 26:
+#pragma region SWING TRIPLE
+	{
+		// Length : 220
+		// Move Frame :  80 ~ 176
+		Desc.BeginTime = 0.4f;
+		Desc.EndTime = 0.76f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+#pragma endregion
 	
 	case 27:
 #pragma region AIR SPIN
@@ -559,6 +598,16 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.35f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+		Desc.BeginTime = 0.37f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
 		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
@@ -810,15 +859,31 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		m_TimeLineDatas.emplace(Desc);
 	}
 	break;
+
+	case 39:
+#pragma region BLINK SHOT2
+	{
+		Desc.BeginTime = 0.33f;
+		Desc.EndTime = 0.65f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::LEFT_BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+	}
+	break;
+
 #pragma endregion
 
 	case 40:
 #pragma region GroggyCounter
 	{
-		Desc.BeginTime = 0.16f;
-		Desc.EndTime = 0.21f;
-		Desc.fRange = 3.f;
-		Desc.fSpeed = 5.f;
+		Desc.BeginTime = 0.13f;
+		Desc.EndTime = 0.2f;
+		Desc.fRange = 7.f;
+		Desc.fSpeed = 2.f;
 		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
@@ -828,7 +893,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.BeginTime = 0.26f;
 		Desc.EndTime = 0.32f;
 		Desc.fRange = 1.f;
-		Desc.fSpeed = 10.f;
+		Desc.fSpeed = 5.f;
 		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
@@ -898,6 +963,17 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.EndTime = 0.3f;
 		Desc.fRange = 20.f;
 		Desc.fSpeed = 7.f;
+		Desc.fAnimationSpeed = 2.5f;
+
+		Desc.eDirection = DIRECTION::BACK;
+		Desc.bIsTarget = false;
+		m_TimeLineDatas.emplace(Desc);
+
+
+		Desc.BeginTime = 0.3f;
+		Desc.EndTime = 0.5f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 0.f;
 		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::BACK;
@@ -1265,6 +1341,13 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 {
+	auto pPlayer = dynamic_cast<CPlayer*>(m_pBlackBoard->GetTarget());
+	if (pPlayer)
+	{
+		if (pPlayer->Get_Desc()->isUsingBlink)
+			return;
+	}
+
 	_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{};
 	vOwnerPos = vTempOwnerPos = m_pOwner->GetTransform()->Get_State(STATE::POSITION);
 	vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
@@ -1274,7 +1357,7 @@ void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)
 	if (XMVector3Equal(vDir, XMVectorZero()))
 		return;
 
-	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 20.f);
+	m_pOwner->GetTransform()->LookAt_Lerp(vOwnerPos + vDir, fTimeDelta, 40.f);
 }
 
 void CTask_ScarletAttack::ResetAttackTask(_bool bIsCoolTime)

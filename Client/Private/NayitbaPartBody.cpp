@@ -52,9 +52,7 @@ void CNayitbaPartBody::Priority_Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Update(_float fTimeDelta)
 {
-    XMStoreFloat4x4(&m_CombinedWorldMatrix,
-        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
+  
     if (m_bIsRimLight)
     {
         m_fRimLightTime.x += fTimeDelta;
@@ -153,6 +151,9 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
+    XMStoreFloat4x4(&m_CombinedWorldMatrix,
+        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
     for (auto TrailEffect : m_pTrailEffects)
     {
         if (nullptr == TrailEffect.first->pRootMatrix) {

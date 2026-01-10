@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "MonsterStateMimesis.h"
+#include "Player.h"
 #include "Nayitba.h"
 
 CMonsterAttackState::CMonsterAttackState() :
@@ -640,7 +641,17 @@ void CMonsterAttackState::LerpMoveAction(_float fTimeDelta, _float fSpeed, DIREC
 	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	_float fAnimPlayRatio = pEntity->Get_AnimationRatio();
 
-	m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
+	_bool bIsLookAt = true;
+	auto pPlayer = dynamic_cast<CPlayer*>(m_pTarget);
+	if (pPlayer)
+	{
+		if (pPlayer->Get_Desc()->isUsingBlink)
+			bIsLookAt = false;
+	}
+
+	if(bIsLookAt)
+		m_pOwner->GetTransform()->LookAt(LerpRotation(fTimeDelta, 5.f));
+
 	if (m_StaticMonsterData->fAttackRange >= m_fDistance)
 		return;
 	

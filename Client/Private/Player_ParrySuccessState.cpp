@@ -14,10 +14,12 @@ void CPlayer_ParrySuccessState::Start(void* pArg, _float fBlendRatio)
 	m_Desc->isLookFixed = true;
     m_eState = PLAYER_STATE::PARRY_SUCCESS;
     m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.3f, 0.12f);
+
+	m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_3.wav"), CHANNELID::EFFECT, 3.f);
 	m_pGameInstance->Active_RadialBlur(0.9f, 16, 0.66f);
 	m_pGameInstance->Shake_Camera(0.77f, 0.44f);
 
-	//ÆĞ¸µ ÇÏ¸é 2°³¾¿ Ã¤¿öÁÖ±â?
+	//ï¿½Ğ¸ï¿½ ï¿½Ï¸ï¿½ 2ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½Ö±ï¿½?
 	m_Desc->iCurrentBetaEnergy += 2;
 	if (m_Desc->iMaxBetaEnergy < m_Desc->iCurrentBetaEnergy)
 		m_Desc->iCurrentBetaEnergy = m_Desc->iMaxBetaEnergy;
