@@ -64,6 +64,20 @@ void CRigidBody::Set_RestOffset(_float fValue)
 	Get_PxShape()->setRestOffset(fValue);
 }
 
+void CRigidBody::Set_LocalPos(_float3 vLocalPos)
+{
+	PxShape* pShape = Get_PxShape();
+	if (nullptr == pShape)
+		return;
+
+	// 기존 로컬 회전 유지
+	PxTransform localPose = pShape->getLocalPose();
+
+	localPose.p = PxVec3(vLocalPos.x, vLocalPos.y, vLocalPos.z);
+
+	pShape->setLocalPose(localPose);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
     return S_OK;
@@ -94,34 +108,55 @@ HRESULT CRigidBody::Initialize(void* pArg)
 
 void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarget)
 {
-	if (true == m_isSyncByPhysx)
+	if (true == m_isFastArcEnabled)
 	{
-		PxVec3 vExtraGravity(0.f, -9.8f * 5.0f, 0.f); // 2배 중력
+		PxRigidDynamic* pRigidDynamic = m_pPxRigidBody->is<PxRigidDynamic>();
+		if (pRigidDynamic)
+		{
+			_float fGravityMul = m_fPlayRate * m_fPlayRate;
+			PxVec3 vGravity = m_pGameInstance->Get_PxScene()->getGravity();
+			PxVec3 vExtraForce = vGravity * (fGravityMul - 1.0f) * pRigidDynamic->getMass();
 
-		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->addForce(vExtraGravity, PxForceMode::eACCELERATION);
+			pRigidDynamic->addForce(vExtraForce, PxForceMode::eFORCE, true);
+		}
 	}
+
+	if (RIGIDBODY_TYPE::KINEMATIC == m_eType && true == isKinematicTarget)
+		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 	else
-	{
-		if (RIGIDBODY_TYPE::KINEMATIC == m_eType && true == isKinematicTarget)
-			static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
-		else
-			m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
-	}
+		m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 }
 
-void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower)
+void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower, _float fPlayRate)
 {
 	if (RIGIDBODY_TYPE::DYNAMIC != m_eType)
 		return;
 
-	PxVec3 vDir = PxVec3(XMVectorGetX(vImpulseDir), XMVectorGetY(vImpulseDir), XMVectorGetZ(vImpulseDir)) * fPower;
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->addForce(vDir, PxForceMode::eIMPULSE);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setMaxLinearVelocity(100.f);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSolverIterationCounts(8, 4);
-	static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setSleepThreshold(0.3f);
+	auto* pDyn = m_pPxRigidBody ? m_pPxRigidBody->is<PxRigidDynamic>() : nullptr;
+	if (!pDyn)
+		return;
 
-	m_isSyncByPhysx = true;
+	// 방향 정리(혹시 길이 0 들어오면 방지)
+	PxVec3 dir(XMVectorGetX(vImpulseDir), XMVectorGetY(vImpulseDir), XMVectorGetZ(vImpulseDir));
+	if (dir.magnitudeSquared() < 1e-8f)
+		return;
+
+	dir.normalize();
+
+	// 2배속 느낌: 초기 속도는 k배 (impulse도 k배)
+	PxVec3 vImpulse = dir * (fPower * fPlayRate);
+	pDyn->addForce(vImpulse, PxForceMode::eIMPULSE, true);
+
+	// (원래 네 세팅들) -> 사실 이런 건 생성/초기화 때 1회가 이상적이지만,
+	// 지금은 최소 수정 유지
+	pDyn->setMaxLinearVelocity(100.f);
+	pDyn->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	pDyn->setSolverIterationCounts(8, 4);
+	pDyn->setSleepThreshold(0.3f);
+
+	// FastArc(가속 중력) 활성화
+	m_isFastArcEnabled = (fPlayRate > 1.0f);
+	m_fPlayRate = fPlayRate;
 }
 
 HRESULT CRigidBody::Ready_PxMaterial(RIGIDBODY_DESC* pDesc)
@@ -296,7 +331,6 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 	{
 	case RIGIDBODY_TYPE::DYNAMIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidDynamic(Transform);
-		physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidDynamic*>(m_pPxRigidBody), m_fMass);
 		break;
 
 	case RIGIDBODY_TYPE::KINEMATIC:
@@ -327,6 +361,8 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 	else
 	{
 		m_pPxRigidBody->attachShape(*m_pShape);
+		if(RIGIDBODY_TYPE::DYNAMIC == m_eType && true == pDesc->isActiveMass)
+			physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidDynamic*>(m_pPxRigidBody), m_fMass);
 	}
 
 	/* 유저 데이터 세팅 */

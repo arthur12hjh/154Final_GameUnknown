@@ -131,7 +131,7 @@ namespace Tool_Map
 #pragma endregion
 
 #pragma region NPC
-		NPC_SCARLET, NPC_SHOP,
+		NPC_SCARLET, NPC_SHOP, NPC_DORORONG,
 #pragma endregion
 
 #pragma region Environment_TREE
