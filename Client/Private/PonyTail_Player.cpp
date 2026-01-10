@@ -123,6 +123,8 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pJointChain->Update(fTimeDelta);
 #endif
+
+	Sync_BonesByJoint();
 }
 
 HRESULT CPonyTail_Player::Render()
@@ -159,8 +161,6 @@ HRESULT CPonyTail_Player::Render()
 
 HRESULT CPonyTail_Player::Render_Shadow()
 {
-	Sync_BonesByJoint();
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
