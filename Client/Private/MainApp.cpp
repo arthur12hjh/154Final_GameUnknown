@@ -7,6 +7,7 @@
 #include "Camera_Free.h"
 #include "Camera_Player.h"
 #include "Camera_Action.h"
+#include "Camera_Npc.h"
 
 #include "GameManager.h"
 #include "JsonParser.h"
@@ -248,6 +249,11 @@ HRESULT CMainApp::Ready_Prototypes()
 	/* For.Prototype_GameObject_Camera_Action */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"),
 		CCamera_Action::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Camera_Action */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Npc"),
+		CCamera_Npc::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_RigidBody */

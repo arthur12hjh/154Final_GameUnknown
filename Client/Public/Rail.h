@@ -40,6 +40,9 @@ private:
 	_bool					m_bIsIdx1 = { false };
 	_bool					m_bIsIdx2 = { false };
 	_int					m_iAccuracy = { -1 };
+	_int					m_iPrevAccuracy = { -1 };
+
+	_float					m_fAccuracyTimeAcc = 0.f;
 
 public:
 	static CRail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

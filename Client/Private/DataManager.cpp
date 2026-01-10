@@ -349,7 +349,7 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
     size_t iMaxSize = NpcDataList.size();
-    for (auto i = 15; i < iMaxSize;)
+    for (auto i = 18; i < iMaxSize;)
     {
         NPC_DATA_DESC pNpcDesc = {};
         pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
@@ -383,6 +383,16 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
             CStringHelper::ConvertUTFToWide(szText, szWText);
             pNpcDesc.szScriptTags.push_back(szWText);
         }
+
+        pNpcDesc.vCamTargetPosOffset.x = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vCamTargetPosOffset.y = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vCamTargetPosOffset.z = (_float)atof(NpcDataList[i++].c_str());
+
+        pNpcDesc.fCamTargetDist = (_float)atof(NpcDataList[i++].c_str());
+
+        pNpcDesc.vCamTargetViewPosOffset.x = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vCamTargetViewPosOffset.y = (_float)atof(NpcDataList[i++].c_str());
+        pNpcDesc.vCamTargetViewPosOffset.z = (_float)atof(NpcDataList[i++].c_str());
 
         m_pNpcDatas.emplace(pNpcDesc.iNpcID, pNpcDesc);
     }

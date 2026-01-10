@@ -111,6 +111,8 @@ void CGameManager::SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelT
     if (iLevelID != TransportData->eTargetLevel)
         return;
 
+    m_iLevelTransportIndex = iLevelTransportIndex;
+
     m_pSavePlayerDesc.first.vOldPosition = TransportData->vTransportpoint;
 }
 

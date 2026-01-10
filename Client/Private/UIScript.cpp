@@ -81,8 +81,11 @@ HRESULT CUIScript::Render()
 			return E_FAIL;
 	}
 
-	if (FAILED(RenderScript()))
-		return E_FAIL;
+	//if (!m_isFinish)
+	{
+		if (FAILED(RenderScript()))
+			return E_FAIL;
+	}
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();
@@ -212,11 +215,14 @@ void CUIScript::CallbackEvent(void* pArg)
 
 void CUIScript::DefaultAnim(_float fTimeDelta)
 {
+	if (m_isFinish)
+		return;
+
 	m_fTimeAcc += fTimeDelta;
 
 	m_tScriptAnimDesc.vOffset.y = (m_tUIDesc.fOffsetY + m_pScriptDesc->vInitOffset.y);
 
-	if (m_fTimeAcc >= 3.f)
+	if (m_fTimeAcc >= 1.5f)
 	{
 		++m_iScriptIdx;
 		m_fTimeAcc = 0.f;
@@ -224,6 +230,7 @@ void CUIScript::DefaultAnim(_float fTimeDelta)
 		if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
 		{
 			End_Script();
+			m_isFinish = true;
 			return;
 		}
 	}
