@@ -40,6 +40,7 @@ public :
 
 	void								SavePlayerDesc();
 	void								SetPlayerNextLevelSpawnPosition(_uint iLevelID, _uint iLevelTransportIndex);
+	_uint								GetLevelTransportIndex() { return m_iLevelTransportIndex; }
 
 #pragma region MiniGame
 	void								SetMiniGameReward(_uint iItemID, _uint iCount);
@@ -160,6 +161,8 @@ private :
 	class CLinkAttackTester*						m_pLinkAttackTester = { nullptr };	
 	
 	FIELD_BGM_DESC									m_FieldBgmInfo = {};
+
+	_uint											m_iLevelTransportIndex{ 0 };
 
 #pragma region LEVEL 전환때 살려야할 데이터들
 	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};

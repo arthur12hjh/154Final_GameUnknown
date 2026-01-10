@@ -84,9 +84,11 @@ void CUIPopup::Late_Update(_float fTimeDelta)
 		m_isOpen = false;
 		m_isClosing = false;
 
+		LEVEL_CHANGER LevelChanger{ m_isLevelChange, ENUM_CLASS(m_eTargetLevel) };
+
 		UI_EVENT_ARG_DESC Arg{};
-		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
-		Arg.pData = &m_isLevelChange;
+		Arg.Type = UI_EVENT_ARG_DESC::LEVEL_CHANGER;
+		Arg.pData = &LevelChanger;
 		__super::Trigger_Event(TEXT("Change_Map"), &Arg);
 
 		UI_EVENT_ARG_DESC Arg2{};

@@ -54,8 +54,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -80,9 +80,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) {
 		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
 
-		m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+		LEVEL_CHANGER LevelChanger = *static_cast<LEVEL_CHANGER*>(Desc.pData);
+
+		m_bChangeLevel = LevelChanger.bChange;
+		m_eTargetLevel = LEVEL(LevelChanger.iTargetLevel);
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+	m_pGameInstance->Bind_Observer(TEXT("Go_DororongSaber"), m_pLevelChangeEvent);
 
 	m_pTeleportEvent = CTeleportEvent::Create([&](void* pArg) {
 		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
@@ -111,7 +115,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_isOverlay && m_pHUD)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 3.f);
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 2.f);
 		m_isOverlay = false;
 	}
 
@@ -155,9 +159,15 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning && m_bChangeLevel
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro")))
 	{
-		CGameManager::GetInstance()->SavePlayerDesc();
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
+
+		auto pGameManger = CGameManager::GetInstance();
+
+		pGameManger->SavePlayerDesc();
+		if(m_eTargetLevel == LEVEL::SCARLET)
+			pGameManger->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::SCARLET), 1);
+
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, m_eTargetLevel, false))))
 			return;
 
 		return;
@@ -333,6 +343,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
+	
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Npc"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("NpcCamera"), static_cast<CCamera*>(pCamera));
 
 	CameraDesc.fSpeedPerSec = 15.f;
 	CameraDesc.fFov = XMConvertToRadians(45.0f);
@@ -362,8 +378,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
-
-	
 
 	return S_OK;
 }
@@ -486,6 +500,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
+	NpcDesc.iNpcID = 1;
+	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;
+
+	NpcDesc.iNpcID = 4;
+	NpcDesc.vPosition = { 50.f, 1.f, 50.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;
+
+	/*NpcDesc.iNpcID = 5;
+	NpcDesc.vPosition = { 40.f, 1.f, 50.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;*/
+
 	NpcDesc.iNpcID = 5;
 	NpcDesc.vPosition = { 790.26f, 98.15f, 1517.58f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
@@ -959,9 +991,11 @@ void CLevel_GamePlay::Free()
 	m_pGameInstance->SetInteractionBaseObject(nullptr);
 
 	m_pGameInstance->UnBind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+	m_pGameInstance->UnBind_Observer(TEXT("Go_DororongSaber"), m_pLevelChangeEvent);
 	m_pGameInstance->UnBind_Observer(TEXT("TelePort"), m_pTeleportEvent);
 
 	Safe_Release(m_pLevelChangeEvent);
+	Safe_Release(m_pTeleportEvent);
 
 	__super::Free();
 }

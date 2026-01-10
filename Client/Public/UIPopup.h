@@ -29,6 +29,8 @@ public:
 
 	_bool Get_IsOpen() const { return m_isOpen; }
 
+	void Set_TargetLevel(LEVEL eTargetLevel) { m_eTargetLevel = eTargetLevel; }
+
 protected:
 	virtual HRESULT Ready_Components() override;
 	virtual HRESULT Bind_ShaderResources() override;
@@ -45,6 +47,8 @@ private:
 	_bool m_isClosing{ false };
 	_bool m_isLevelChange{ false };
 	_bool m_isTeleport{ false };
+
+	LEVEL m_eTargetLevel{ LEVEL::END };
 
 public:
 	static CUIPopup* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

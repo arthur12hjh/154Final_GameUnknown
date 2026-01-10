@@ -80,7 +80,7 @@ void CLevel_Scarlet::Update(_float fTimeDelta)
 
 	if (m_isOverlay && m_pHUD)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 2.f);
 		m_isOverlay = false;
 	}
 
