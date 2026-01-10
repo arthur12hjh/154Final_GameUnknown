@@ -318,7 +318,6 @@ void CItem::Free()
 
 	Safe_Release(m_pModelCom);
 	if (nullptr != m_pEffect) {
-		m_pEffect->End();
-		Safe_Release(m_pEffect);
+		m_pEffect->End(true, 1);
 	}
 }
