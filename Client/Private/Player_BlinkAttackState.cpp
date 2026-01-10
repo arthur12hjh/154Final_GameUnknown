@@ -76,7 +76,6 @@ _float CPlayer_BlinkAttackState::End()
     m_Desc->isInvincible = false;
     m_Desc->isLockChangable = true;
     m_pPlayer->SetSkillDataID(-1);
-    m_Desc->isUsingBlink = false;
 
     return m_fNextBlendRatio;
 }

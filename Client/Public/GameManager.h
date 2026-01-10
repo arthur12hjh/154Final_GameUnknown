@@ -140,6 +140,7 @@ public:
 	void											Set_LinkAttackTester(class CLinkAttackTester* pObject) { m_pLinkAttackTester = pObject; }
 	
 	void											Play_BossBGM(_uint iBossID, _uint iBossPhase);
+	void											Play_LevelBGM();
 	void											Release_GameMgr();
 
 private :
@@ -164,8 +165,6 @@ private :
 	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
 	MINIGAME_REWARD									m_MiniGameReward = {};
 #pragma endregion
-
-
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

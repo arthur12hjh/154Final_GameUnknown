@@ -82,10 +82,13 @@ void CTask_CutScene::FinishedCutScene()
 	// 대충 컷씬이 끝나면 여기서 End 함수를 호출해서 할거임 지금은 그냥 Idle로만 바꿀예정
 	if (m_pBlackBoard->IsLastPhase())
 	{
-		if(1 == m_pNaytiba->GetMonsterID())
+		if (1 == m_pNaytiba->GetMonsterID())
 			m_pNaytiba->Excution();
 		else
 			m_pNaytiba->Set_Dead(true);
+
+		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
+		CGameManager::GetInstance()->Play_LevelBGM();
 	}
 	else
 	{

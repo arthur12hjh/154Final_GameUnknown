@@ -184,6 +184,9 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	if (ReflectBullet(pHitActor))
 	{
 		CHARACTER_SKILL_DESC DummySkill = {};
+
+		if(m_pSkillData)
+		DummySkill.eProPerty = m_pSkillData->eProPerty;
 		pDamageDesc.pSkillData = &DummySkill;
 	}
 	else

@@ -25,9 +25,6 @@ CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CLevel_BeatSaber::Initialize()
 {
-    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    //m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
-
     if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
         return E_FAIL;
 

@@ -427,6 +427,7 @@ map<_wstring, CCinematicObject*>* CGameManager::Get_CinematicObjectsMap()
 {
     return m_pCinematicManager->Get_CinematicObjectsMap();
 }
+
 #pragma endregion
 
 void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
@@ -438,7 +439,7 @@ void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
     m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
     if (8 == iBossID)
     {
-        if (1 == iBossPhase)
+        if (0 == iBossPhase)
         {
             m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P1_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
                 {
@@ -447,7 +448,7 @@ void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
             );
           
         }
-        else if (2 == iBossPhase)
+        else if (1 == iBossPhase)
         {
             m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P2_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
                 {
@@ -458,7 +459,7 @@ void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
     }
     else if (1 == iBossID)
     {
-        if (1 == iBossPhase)
+        if (0 == iBossPhase)
         {
             m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_P1_INTRO.wav"), 3.f, 1.f, [&](FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
                 {
@@ -467,6 +468,25 @@ void CGameManager::Play_BossBGM(_uint iBossID, _uint iBossPhase)
             );
 
         }
+    }
+}
+
+void CGameManager::Play_LevelBGM()
+{
+    _uint iLevelID = m_pGameInstance->GetCurrentLevelID();
+    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+
+    switch (LEVEL(iLevelID))
+    {
+    case LEVEL::LOGO:
+        m_pGameInstance->Manager_PlayBGM(TEXT("BGM_EVETrailer.wav"), 1.f);
+        break;
+    case LEVEL::GAMEPLAY :
+        m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+        break;
+    case LEVEL::SCARLET:
+        m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.5f);
+        break;
     }
 }
 
@@ -483,16 +503,16 @@ void CGameManager::BGM_FinishedSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
     {
         if (8 == m_FieldBgmInfo.iBossID)
         {
-            if (1 == m_FieldBgmInfo.iBossPhase)
-                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P1_LOOP.wav"), 1.f, 1.f);
-            else if (2 == m_FieldBgmInfo.iBossPhase)
-                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P2_LOOP.wav"), 1.f, 1.f);
+            if (0 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P1_LOOP.wav"), 3.f);
+            else if (1 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_P2_LOOP.wav"), 3.f);
         }
 
         if (1 == m_FieldBgmInfo.iBossID)
         {
-            if (1 == m_FieldBgmInfo.iBossPhase)
-                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_P1_LOOP.wav"), 1.f, 1.f);
+            if (0 == m_FieldBgmInfo.iBossPhase)
+                m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_P1_LOOP.wav"), 3.f);
         }
     }
 }

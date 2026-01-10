@@ -196,7 +196,7 @@ namespace Client
 		const _float4x4* pGrabBone = { nullptr };
 		class CGameObject* pGrabAttackter = { nullptr };
 		bool isGrabbed = { false };
-		bool isUsingBlink = { false };
+		bool isUsingScarletLink2 = { false };
 		bool isUsingRepulse = { false };
 		// 골드
 		int iOwnGold{ 0 };

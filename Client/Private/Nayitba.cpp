@@ -128,7 +128,6 @@ void CNaytiba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 	{
 		m_pAIController->Update(fTimeDelta);
-
 	}
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
@@ -649,7 +648,7 @@ HRESULT CNaytiba::ADD_Components()
 
 		CAISenceComponent::AI_SENCE_COMPONENT_DESC SenceComDesc = {};
 		SenceComDesc.fAiSearchRadius = 360.f;
-		SenceComDesc.fAiTargetSearchDistance = 30.f;
+		SenceComDesc.fAiTargetSearchDistance = 50.f;
 		SenceComDesc.m_fAiTargetLostTime = 20.f;
 
 		/* Prototype_Component_TargetComponent */
@@ -820,7 +819,7 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 			if (pUIHUD)
 				pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
-			m_pGameManager->Play_BossBGM(m_iMonsterID, 1);
+			m_pGameManager->Play_BossBGM(m_iMonsterID, 0);
 			Safe_Release(pUIHUD);
 		}
 		else
