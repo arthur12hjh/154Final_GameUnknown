@@ -7,6 +7,7 @@
 #include "Camera_Free.h"
 #include "Camera_Player.h"
 #include "Camera_Action.h"
+#include "Camera_Npc.h"
 
 #include "GameManager.h"
 #include "JsonParser.h"
@@ -250,6 +251,11 @@ HRESULT CMainApp::Ready_Prototypes()
 		CCamera_Action::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Camera_Action */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Npc"),
+		CCamera_Npc::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	/* For.Prototype_Component_RigidBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
 		CRigidBody::Create(m_pDevice, m_pContext))))
@@ -331,7 +337,7 @@ HRESULT CMainApp::Ready_ClientDeferred()
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Power_Break"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
 
-	eScreenDesc.fEndTime = 1.57f;
+	eScreenDesc.fEndTime = 1.57f * 2;
 	eScreenDesc.iPass = 2;
 
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Slash_World"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))

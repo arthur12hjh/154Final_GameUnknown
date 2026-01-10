@@ -75,6 +75,8 @@ PS_NONLIGHT_OUT PS_DISTORTION(PS_IN In)
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
     Out.vDiffuse = g_vColor;
     Out.vDiffuse *= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r * g_fDissolveUVSize.x;
+    if(0.5 > Out.vDiffuse.a)
+        discard;
     return Out;
 }
 
@@ -304,12 +306,13 @@ PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_IN In)
     
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
 
-    
+    if (0.1f >= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r)
+        discard;
     pos.x *= -1;
     Out.vDiffuse.xy = pos.xy * 0.1 * g_vColor.a * g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r * g_fDissolveUVSize.x;
     Out.vDiffuse.zw = 0;
-    if (0.01f >= length(Out.vDiffuse.xy))
-        discard;
+    //if (0.01f >= length(Out.vDiffuse.xy))
+    //    discard;
     return Out;
 }
 
@@ -345,6 +348,27 @@ PS_NONLIGHT_OUT PS_SCARLET_MOTION_BLUR(PS_IN In)
     //Out.vDiffuse.rg = In.vTexcoord.xy;
     //Out.vDiffuse.b = 0;
     //Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_X_BLUR(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float2 uv = In.vPosition.xy / float2(1600, 900);
+    if (In.vProjPos.z / In.vProjPos.w > g_DepthTexture.Sample(DefaultSampler, uv * 2).r)
+        discard;
+    float2 MaskTexcoord = float2((1 - (In.vTexcoord.y + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.x + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    Out.vDiffuse = g_vColor;
+    Out.vDiffuse.a *= g_MaskTexture.Sample(NoneSampler, MaskTexcoord).r;
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = saturate(exp(-linearDepth * 10));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    
     return Out;
 }
 
@@ -434,7 +458,7 @@ technique11 DefaultTechnique
     pass Slash_Metaball
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
@@ -464,7 +488,7 @@ technique11 DefaultTechnique
     pass Motion_Blur
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
@@ -474,10 +498,20 @@ technique11 DefaultTechnique
     pass Scarlet_Slash_Motion_Blur
     {
         SetRasterizerState(RS_Cull_None);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SCARLET_MOTION_BLUR();
+    }
+    // idx 13
+    pass X_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_X_BLUR();
     }
 }

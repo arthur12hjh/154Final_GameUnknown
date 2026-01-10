@@ -119,6 +119,8 @@ void CLevel_Loading::Update(_float fTimeDelta)
 		}
 		if (FAILED(m_pGameInstance->Change_Level(pNewLevel)))
 			return;
+
+		CGameManager::GetInstance()->Play_LevelBGM();
 	}
 }
 

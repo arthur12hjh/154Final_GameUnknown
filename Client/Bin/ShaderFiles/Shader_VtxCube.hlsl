@@ -143,23 +143,12 @@ PS_OUT PS_RAIL(PS_IN In)
     float4 vMiss = float4(1.00f, 0.20f, 0.20f, 1.0f);
     float4 vBad = float4(0.95f, 0.95f, 1.00f, 1.0f);
     float4 vAccuracy = 0.f;
+    float4 vNeonAccuracy = 0.f;
     
     // 모든 칸 색상을 밝은 연두로 통일
     float4 vBrightLime = float4(0.5f, 1.0f, 0.0f, 1.0f);
 
-    float4 vColors[5];
-    //vColors[0] = float4(0.30f, 0.70f, 0.00f, 1.0f); // 진한 연두 (Start)
-    //vColors[1] = float4(0.42f, 0.77f, 0.12f, 1.0f);
-    //vColors[2] = float4(0.55f, 0.85f, 0.25f, 1.0f); // 중간 단계
-    //vColors[3] = float4(0.67f, 0.92f, 0.37f, 1.0f);
-    //vColors[4] = float4(0.80f, 1.00f, 0.50f, 1.0f); // 밝은 연두 (End)
-    
-    //vColors[0] = float4(0.00f, 0.30f, 0.70f, 1.0f); // 진한 연두 (Start)
-    //vColors[1] = float4(0.06f, 0.36f, 0.74f, 1.0f);
-    //vColors[2] = float4(0.12f, 0.42f, 0.78f, 1.0f); 
-    //vColors[3] = float4(0.18f, 0.48f, 0.82f, 1.0f); 
-    //vColors[4] = float4(0.25f, 0.55f, 0.85f, 1.0f); // 중간 단계
-    
+    float4 vColors[5];    
     vColors[0] = float4(0.2f, 0.30f, 0.70f, 1.0f); // 딥 블루 (Start)
     vColors[1] = float4(0.4f, 0.32f, 0.75f, 1.0f); // 블루 + 퍼플 기미
     vColors[2] = float4(0.6f, 0.28f, 0.75f, 1.0f); // 퍼플
@@ -196,16 +185,32 @@ PS_OUT PS_RAIL(PS_IN In)
         fMyWeight = g_fWeight2;
     }
 
-    if(g_iAccuracy == -1)
+
+    if (g_iAccuracy == -1)
+    {
         vAccuracy = vSkyBlue;
-    else if(g_iAccuracy == 0)
+        vNeonAccuracy = vNeonSkyBlue;
+    }
+    else if (g_iAccuracy == 0)
+    {
         vAccuracy = vMiss;
-    else if(g_iAccuracy == 1)
+        vNeonAccuracy = vAccuracy;
+    }
+    else if (g_iAccuracy == 1)
+    {
         vAccuracy = vBad;
-    else if(g_iAccuracy == 2)
+        vNeonAccuracy = vAccuracy;
+    }
+    else if (g_iAccuracy == 2)
+    {
         vAccuracy = vGood;
-    else if(g_iAccuracy == 3)
+        vNeonAccuracy = vAccuracy;
+    }
+    else if (g_iAccuracy == 3)
+    {
         vAccuracy = vPerfect;
+        vNeonAccuracy = vAccuracy;
+    }
     
     float fThreshold = lerp(-0.49f, 0.4f, fMyWeight);
     float fHeightMask = 1.f - smoothstep(fThreshold - 0.1f, fThreshold + 0.1f, In.vTexcoord.y);
@@ -327,7 +332,7 @@ PS_OUT PS_MAIN_BEAT_INDICATOR(PS_IN In)
     float4 vBlack = float4(0.f, 0.f, 0.f, 1.f);
     float4 vWhite = float4(1.f, 1.f, 1.f, 1.f);
     float4 vSkyBlue = float4(0.4f, 0.9f, 1.0f, 1.0f);
-
+    
     float4 vColors[10];
     vColors[0] = float4(0.2f, 0.0f, 0.2f, 1.0f); // 딥 퍼플 (가장 어두움)
     vColors[1] = float4(0.35f, 0.0f, 0.4f, 1.0f);

@@ -121,9 +121,9 @@ PS_OUT_DEFERRED PS_SLASH(PS_IN_DEFERRED In)
     PS_OUT_DEFERRED Out;
     float2 uv = In.vTexcoord;
     float fLine = uv.y + uv.x * 0.2;
-    float fTime = min(g_fTime, 1.57);
-    float fLineTime = min(g_fTime * 1.2, 1.57);
-    float fSmallLineTime = min(g_fTime * 1.5, 1.57);
+    float fTime = min(g_fTime * 0.5, 1.57);
+    float fLineTime = min(g_fTime * 0.5 * 1.2, 1.57);
+    float fSmallLineTime = min(g_fTime * 0.5 * 1.5, 1.57);
     float width = pow(cos(fSmallLineTime), 3) * 0.1;
     float edge = saturate(pow(smoothstep(width, 0, abs(fLine - 0.6)), 5));
     float BigWidth = pow(cos(fLineTime), 3) * 0.5;

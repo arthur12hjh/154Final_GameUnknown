@@ -156,6 +156,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 	case CNotify::PLAY_SCREEN:
 		return Notify_Play_Screen(AnimNotify);
 		break;
+	case CNotify::PLAY_BLUR:
+		return Notify_Play_Blur(AnimNotify);
+		break;
 	case Client::CNotify::END:
 		return E_FAIL;
 		break;
@@ -185,6 +188,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 	if (szNotifyTag == "Set_Cinematic_Object")			return SET_CINEMATIC_OBJECT;
 	if (szNotifyTag == "Play_Screen")					return PLAY_SCREEN;
+	if (szNotifyTag == "Play_Blur")						return PLAY_BLUR;
 	
 	return NOTIFY_TYPE::END;
 }
@@ -390,6 +394,12 @@ HRESULT CNotify::Notify_Play_Screen(const ANIM_NOTIFY& AnimNotify)
 	CStringHelper::ConvertUTFToWide(AnimNotify.szSocketTag.c_str(), szNotifyTag);
 
 	m_pGameManager->Set_Active_ReserveDeferred(szNotifyTag, true);
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Play_Blur(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pGameInstance->Active_RadialBlur(AnimNotify.fNumData01, AnimNotify.iNumData01, AnimNotify.fNumData02);
 	return S_OK;
 }
 

@@ -25,9 +25,6 @@ CLevel_BeatSaber::CLevel_BeatSaber(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CLevel_BeatSaber::Initialize()
 {
-    m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-    //m_pGameInstance->Manager_PlayBGM(TEXT("CountingStar.mp3"), 0.7f);
-
     if (FAILED(Load_SongList("../Bin/DataFiles/NoteData/SongList.csv")))
         return E_FAIL;
 
@@ -136,11 +133,11 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
                 auto pUIGameClear = static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"));
 
                 if (!pUIGameClear)
-                    return E_FAIL;
+                    return;
 
                 CBeatSaberCharacter* pDororong = static_cast<CBeatSaberCharacter*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Player"))->front());
                 if (nullptr == pDororong)
-                    return E_FAIL;
+                    return;
                     //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
                 if (pDororong->GetBeatSaberCharacterDesc().isFullCombo)
                     pUIGameClear->Set_Texture_Index(1);

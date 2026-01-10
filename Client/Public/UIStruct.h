@@ -34,6 +34,12 @@ namespace Client
 		unsigned int		iSkillState{ 0 };
 	}UI_SKILL_INFO_DESC;
 
+	typedef struct tagLevelChanger
+	{
+		bool bChange;
+		int iTargetLevel;
+	}LEVEL_CHANGER;
+
 	typedef struct tagUIEventArg {
 		enum ARG_TYPE {
 			NONE,
@@ -41,6 +47,7 @@ namespace Client
 			SKILL_STATE,
 			SKILL_INFO,
 			INTERACTION_STATE,
+			LEVEL_CHANGER,
 			INT,
 			FLOAT,
 			WSTRING,

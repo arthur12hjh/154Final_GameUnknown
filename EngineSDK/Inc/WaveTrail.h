@@ -44,11 +44,11 @@ private:
 	_float4			m_vPreHighPositions[3]{};
 	_float4			m_vPreLowPositions[3]{};
 private:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype(_int iNum);
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	static CWaveTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CWaveTrail* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _int iNum = 150);
 	virtual CWaveTrail* Clone(void* pArg) override;
 	virtual void Free() override;
 };

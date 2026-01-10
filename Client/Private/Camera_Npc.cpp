@@ -1,0 +1,316 @@
+#include "pch.h"
+#include "Camera_Npc.h"
+
+#include "GameInstance.h"
+#include "Interaction_Component.h"
+
+#include "Npc.h"
+#include "GameManager.h"
+#include "Player.h"
+
+CCamera_Npc::CCamera_Npc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CCamera { pDevice, pContext }
+{
+}
+
+CCamera_Npc::CCamera_Npc(const CCamera_Npc& Prototype) 
+	: CCamera { Prototype }
+{
+}
+
+HRESULT CCamera_Npc::Initialize_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CCamera_Npc::Initialize(void* pArg)
+{	
+	Camera_Npc_DESC* pDesc = static_cast<Camera_Npc_DESC*>(pArg);
+	m_fMouseSensor = pDesc->fMouseSensor;
+
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CCamera_Npc::Priority_Update(_float fTimeDelta)
+{
+	if (false == m_pGameInstance->IsMainCamera(this))
+		return;
+
+	//m_fMouseSensor = 0.1f;
+	//if (m_pGameInstance->IsMainCamera(this) && m_pTargetNpc)
+	//{
+	//	if (m_fAccTime <= m_fLerpTime && !m_isLerpEnd)
+	//	{
+	//		m_fAccTime += fTimeDelta;
+	//		_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
+	//		_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
+	//
+	//		_float fRatio = m_fAccTime / m_fLerpTime;
+	//		fRatio = Clamp(fRatio, 0.f, 1.f);
+	//
+	//		if (m_isReverse)
+	//			fRatio = 1.f - fRatio;
+	//
+	//		_vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
+	//		_vector vPivot = (m_pTargetNpc->Get_Position() + EndMat.r[3]) * 0.5f;
+	//
+	//		/*_vector vDir = XMVector3Normalize(EndMat.r[3] - StartMat.r[3]);
+	//
+	//		vDir = XMVectorSetY(vDir, 0.f);
+	//		vDir = XMVector3Normalize(vDir);*/
+	//
+	//		_vector vLookPos = vLookPos = XMLoadFloat4(&m_fTargetLookPos) +
+	//							XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);;
+	//
+	//		_vector vRight =
+	//			XMVector3Normalize(
+	//				XMVector3Cross(
+	//					XMVectorSet(0.f, 1.f, 0.f, 0.f),
+	//					vDir
+	//				)
+	//			);
+	//
+	//		_vector vNPCLook = m_pTargetNpc->GetTransform()->Get_State(STATE::LOOK);
+	//		vNPCLook = XMVectorSetY(vNPCLook, 0.f);
+	//		vNPCLook = XMVector3Normalize(vNPCLook);
+	//
+	//		_vector vNPCRight =
+	//			XMVector3Normalize(
+	//				XMVector3Cross(
+	//					XMVectorSet(0.f, 1.f, 0.f, 0.f),
+	//					vNPCLook
+	//				)
+	//			);
+	//
+	//		_vector vToCam =
+	//			XMVector3Normalize(StartMat.r[3] - XMLoadFloat4(&m_fTargetLookPos));
+	//
+	//		// 좌 / 우 판별
+	//		_float side =
+	//			XMVectorGetX(
+	//				XMVector3Dot(vNPCRight, vToCam)
+	//			);
+	//
+	//		_float sideSign = (side >= 0.f) ? -1.f : 1.f;
+	//
+	//		// 4. 원호 오프셋 (부호 적용)
+	//		_float arc = sinf(fRatio * XM_PI) * m_fTargetRadius * sideSign;
+	//
+	//		XMVECTOR vFinalPos =
+	//			vPosition + vRight * arc;
+	//
+	//		m_pTransformCom->Chase_Lerp(vFinalPos + vDir, fTimeDelta, m_fTargetRadius);
+	//		
+	//		if (m_isReverse)
+	//		{
+	//			if (1.f - fRatio >= 0.5f)
+	//				m_pTransformCom->Change_Look(XMVectorLerp(m_pTransformCom->Get_State(STATE::LOOK) + vDir, m_vPrevLook, 1.f - fRatio));
+	//			else
+	//				m_pTransformCom->LookAt(vLookPos);
+	//		}
+	//		else
+	//			m_pTransformCom->LookAt(vLookPos);
+	//
+	//		__super::Bind_Matrices(fTimeDelta);
+	//	}
+	//	else
+	//		m_isLerpEnd = true;
+	//}
+	
+	if (m_pGameInstance->IsMainCamera(this) && m_pTargetNpc)
+	{
+		if (m_fAccTime <= m_fLerpTime && !m_isLerpEnd)
+		{
+			m_fAccTime += fTimeDelta;
+
+			_float t = m_fAccTime / m_fLerpTime;
+			t = Clamp(t, 0.f, 1.f);
+			if (m_isReverse)
+				t = 1.f - t;
+
+			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
+			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
+
+			// Pivot (NPC ↔ EndPos 중간)
+			_vector vNpcPos = m_pTargetNpc->Get_Position();
+			_vector vEndPos = EndMat.r[3];
+			_vector vPivot = XMVectorLerp(vNpcPos, vEndPos, 0.5f);
+
+			// Start 파라미터 추출
+			_vector vStartToCam = StartMat.r[3] - vPivot;
+
+			_float startAngle = atan2f(
+				XMVectorGetZ(vStartToCam),
+				XMVectorGetX(vStartToCam)
+			);
+
+			_float startRadius =
+				XMVectorGetX(XMVector3Length(vStartToCam));
+
+			_float startHeight =
+				XMVectorGetY(vStartToCam);
+
+			// End 파라미터 추출
+			_vector vEndToCam = EndMat.r[3] - vPivot;
+
+			_float endAngle = atan2f(
+				XMVectorGetZ(vEndToCam),
+				XMVectorGetX(vEndToCam)
+			);
+
+			_float endRadius =
+				XMVectorGetX(XMVector3Length(vEndToCam));
+
+			_float endHeight =
+				XMVectorGetY(vEndToCam);
+
+			// 각도 보간 (최단 회전)
+			_float deltaAngle = endAngle - startAngle;
+			if (deltaAngle > XM_PI)  deltaAngle -= XM_2PI;
+			if (deltaAngle < -XM_PI) deltaAngle += XM_2PI;
+
+			_float angle = startAngle + deltaAngle * t;
+			_float radius = Lerp(startRadius, endRadius, t);
+			_float height = Lerp(startHeight, endHeight, t);
+
+			// 최종 위치 (원호)
+			_vector vFinalPos =
+				vPivot +
+				XMVectorSet(
+					cosf(angle) * radius,
+					height,
+					sinf(angle) * radius,
+					0.f
+				);
+
+			m_pTransformCom->Set_State(STATE::POSITION, vFinalPos);
+
+			// LookAt (연출용: Pivot 중심)
+			m_pTransformCom->LookAt(XMLoadFloat4(&m_fTargetLookPos));
+
+			__super::Bind_Matrices(fTimeDelta);
+		}
+		else
+		{
+			m_isLerpEnd = true;
+		}
+	}
+
+	if (m_isLerpEnd && m_isReverse)
+	{
+		m_fAccTime = 0.f;
+		m_isReverse = false;
+
+		m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
+
+		m_pGameInstance->GetMainCamera()->GetTransform()->LookAt(XMLoadFloat4(&m_fTargetLookPos));
+
+		m_pTargetNpc = nullptr;
+
+		XMStoreFloat4x4(&m_fStartLerpMatrix, XMMatrixIdentity());
+		XMStoreFloat4x4(&m_fEndLerpMatrix, XMMatrixIdentity());
+		m_fTargetRadius = 0.f;
+		m_fTargetLookPos = _float4(0.f, 0.f, 0.f, 0.f);
+	}
+}
+
+void CCamera_Npc::Update(_float fTimeDelta)
+{
+	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
+	//m_pColliderCom->UpdateColiision(WorldMat);
+
+	//카메라 쉐이킹을 위해서 부모 Update 호출. 
+	//__super::Update(fTimeDelta);
+}
+
+void CCamera_Npc::Late_Update(_float fTimeDelta)
+{
+	if (false == m_pGameInstance->IsMainCamera(this))
+		return;
+	
+//	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+//
+//#ifdef _DEBUG
+//	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
+//	m_pGameInstance->ADD_Collider(m_pColliderCom);
+//#endif
+}
+
+HRESULT CCamera_Npc::Render()
+{
+	return S_OK;
+}
+
+void CCamera_Npc::SetCameraAnimation(const _float4x4* StartLerpMatrix, const _float4x4* EndLerpMatrix, const _float4 fTargetLookPos, const _float fTargetRadius, _bool bIsReturn)
+{
+	m_isLerpEnd = false;
+	m_fTargetRadius = fTargetRadius;
+	m_fTargetLookPos = fTargetLookPos;
+	memcpy(&m_fStartLerpMatrix, StartLerpMatrix, sizeof(_float4x4));
+	memcpy(&m_fEndLerpMatrix, EndLerpMatrix, sizeof(_float4x4));
+}
+
+void CCamera_Npc::ReverseCameraAnimation()
+{
+	m_isReverse = true;
+	m_isLerpEnd = false;
+	m_fAccTime = 0.f;
+}
+
+void CCamera_Npc::CameraLock(_bool bIsKeyBoard, _bool bIsMouse)
+{
+	m_bIsLock[0] = bIsKeyBoard;
+	m_bIsLock[1] = bIsMouse;
+}
+
+void CCamera_Npc::GetCameraLock(_bool (&pOut)[2])
+{
+	pOut[0] = m_bIsLock[0];
+	pOut[1] = m_bIsLock[1];
+}
+
+void CCamera_Npc::SetCameraSpeed(_float fCameraSpeed)
+{
+	m_fCameraSpeed = fCameraSpeed;
+}
+
+void CCamera_Npc::SetTargetNpc(CNpc* pNpc)
+{
+	m_pTargetNpc = pNpc;
+}
+
+CCamera_Npc* CCamera_Npc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CCamera_Npc* pInstance = new CCamera_Npc(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created : pGraphic_Device");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CCamera_Npc::Clone(void* pArg)
+{
+	CCamera_Npc* pInstance = new CCamera_Npc(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CCamera_Npc");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CCamera_Npc::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pTargetNpc);
+}

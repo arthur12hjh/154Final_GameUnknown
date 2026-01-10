@@ -16,6 +16,7 @@
 #include "Npc.h"
 #include "Dororong_Saber.h"
 #include "SpawnBox.h"
+#include "SoundTriggerBox.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -115,6 +116,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 
 				CSpawnBox::MONSTER_DESC MonsterDesc = {};
 				CNpc::NPC_DESC NpcDesc = {};
+				CSoundTriggerBox::SOUNDTRIGGER_BOX_DESC SoundDesc = {};
 
 				switch (m_eCurrentObject)
 				{
@@ -1972,6 +1974,21 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 #pragma endregion
 
+#pragma region SOUNDBOX
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::GRASS;
+					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_SAND:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::SAND;
+					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_IRON:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::IRON;
+					break;
+#pragma endregion
+
 #pragma region Terrain
 				case DESESRT_RUIN_OBJECT::TERRAIN_DECREASE_RECT:
 					if (fHeight > 0)
@@ -2394,7 +2411,7 @@ HRESULT CMapTool_Desert::Render()
 
 	// 1. 메인 테마/레벨 선택 드롭다운 
 	ImGui::Text("Current Theme Selection");
-	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco", "DORORONG_SABER"};
+	const _char* themeNames[] = { "Building_Ruin", "ENVIRONMENT", "XION", "CANYON", "Archi", "Deco", "DORORONG_SABER", "SOUND_BOX"};
 	_int nSelectedTheme = (_int)m_eCurrentMap;
 
 	if (ImGui::Combo("Select Theme", &nSelectedTheme, themeNames, IM_ARRAYSIZE(themeNames)))
@@ -4596,7 +4613,36 @@ HRESULT CMapTool_Desert::Render()
 		}
 
 	}
+	else if (m_eCurrentMap == DESERT_THEME::SOUND_BOX)
+	{
+		ImGui::Text("Sound Trigger Box Objects");
+		_int nSelectedModel = -1;
 
+		const _char* modelNames[] = { "Grass", "Sand", "Iron" };
+
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			{
+				if (nSelectedModel == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 1)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_SAND;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 2)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_IRON;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+			}
+		}
+
+	}
 	// 삭제 버튼
 #pragma region Delete_Object
 	if (ImGui::Button("Delete All"))
@@ -5321,6 +5367,37 @@ HRESULT CMapTool_Desert::Save_Dororong_Saber_By_Layer(ofstream& ofs, const _tcha
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Sound_Trigger_Box_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CSoundTriggerBox* pSoundTBox = dynamic_cast<CSoundTriggerBox*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pSoundTBox))
+			{
+				SAVED_SOUND_TRIGGER_BOX_INFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				info.eType = pSoundTBox->Get_GroundSoundType();
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVED_SOUND_TRIGGER_BOX_INFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 {
 	std::ifstream ifs(szFilePath, std::ios::binary);
@@ -5662,6 +5739,37 @@ HRESULT CMapTool_Desert::Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tcha
 		CGameObject::GAMEOBJECT_DESC Desc = {};
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_SOUND_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_SOUND_TRIGGER_BOX_INFO));
+
+		CSoundTriggerBox::SOUNDTRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.eSoundBoxType = info.eType;
 
 		_vector vScale = {};
 		_vector vRotation = {};

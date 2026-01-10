@@ -1266,7 +1266,7 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData4.bin";
+	static _char szSaveFilePath[256] = "../Bin/DataFiles/MapData.bin";
 	ImGui::InputText("Map Save File Path", szSaveFilePath, sizeof(szSaveFilePath));
 
 	ImGui::Spacing(); // 메뉴 사이의 간격
@@ -1291,7 +1291,7 @@ HRESULT CMapTool::Render()
 	ImGui::Separator(); // 구분선을 추가
 	ImGui::Spacing();
 
-	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData3.bin";
+	static _char szLoadFilePath[256] = "../Bin/DataFiles/MapData4.bin";
 	ImGui::InputText("Map Load File Path", szLoadFilePath, sizeof(szLoadFilePath));
 
 	if (ImGui::Button("Load"))

@@ -38,9 +38,12 @@ private:
 	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체 
 	FMOD::Channel*				m_pChannelArr[CHANNELID::END];
 	SOUND_CALLBACK_DESC			m_ChannelEndCallBacks[CHANNELID::END];
+	_float						m_pChannelVolume[CHANNELID::END];
 
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
 	FMOD::System* m_pSystem;
+
+	
 
 	function<void(FMOD_CHANNELCONTROL* channelcontrol,
 		FMOD_CHANNELCONTROL_TYPE controltype,

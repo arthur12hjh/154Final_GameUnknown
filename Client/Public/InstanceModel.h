@@ -16,8 +16,8 @@ private:
 	virtual ~CInstanceModel() = default;
 
 public:
-	_uint				Get_NumInstance() const;
-	VTX_INSTANCE_MODEL* Get_InstanceVertices() const;
+	_uint						Get_NumInstance() const;
+	VTX_INSTANCE_MODEL*			Get_InstanceVertices() const;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;

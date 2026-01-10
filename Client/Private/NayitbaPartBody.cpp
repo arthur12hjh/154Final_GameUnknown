@@ -52,9 +52,7 @@ void CNayitbaPartBody::Priority_Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Update(_float fTimeDelta)
 {
-    XMStoreFloat4x4(&m_CombinedWorldMatrix,
-        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
-
+  
     if (m_bIsRimLight)
     {
         m_fRimLightTime.x += fTimeDelta;
@@ -153,6 +151,9 @@ void CNayitbaPartBody::Update(_float fTimeDelta)
 
 void CNayitbaPartBody::Late_Update(_float fTimeDelta)
 {
+    XMStoreFloat4x4(&m_CombinedWorldMatrix,
+        XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
     for (auto TrailEffect : m_pTrailEffects)
     {
         if (nullptr == TrailEffect.first->pRootMatrix) {
@@ -488,6 +489,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         Traildesc.fSpeed = NotifyReference.fNumData01;
         Traildesc.fPow = NotifyReference.fNumData02;
         Traildesc.bisLine = true;
+        Traildesc.bisLong = NotifyReference.iNumData02 == 1;
 
         _TCHAR szEffectTag[MAX_PATH];
         CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);

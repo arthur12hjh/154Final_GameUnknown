@@ -216,6 +216,7 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 
 				if (m_ButtonDescs[i].eTargetLevel != m_pGameInstance->GetCurrentLevelID())
 				{
+					static_cast<CUIPopup*>(m_pParent)->Set_TargetLevel(LEVEL(m_ButtonDescs[i].eTargetLevel));
 					static_cast<CUIPopup*>(m_pParent)->Close_Popup(true, false);
 				}
 				else

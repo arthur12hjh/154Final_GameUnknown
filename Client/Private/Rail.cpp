@@ -131,6 +131,22 @@ void CRail::Late_Update(_float fTimeDelta)
 
     m_iAccuracy = pDororong->GetBeatSaberCharacterDesc().iAccuracy;
 
+    if (m_iPrevAccuracy != m_iAccuracy)
+    {
+        m_fAccuracyTimeAcc = 0.f;
+        m_iPrevAccuracy = m_iAccuracy;
+    }
+    else
+    {
+        m_fAccuracyTimeAcc += fTimeDelta;
+
+        if (m_fAccuracyTimeAcc >= 1.f)
+        {
+            m_iAccuracy = -1;
+        }
+    }
+
+
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif
