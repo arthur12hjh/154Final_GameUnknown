@@ -23,6 +23,7 @@ public:
 		_float3						fDropPoint;
 		_float						fDropForce;
 		_float3						vParentLook;
+		_bool						isHemiSphere = { false };
 	}ITEM_DESC;
 
 protected:
@@ -51,6 +52,7 @@ protected:
 
 	_bool							m_bIsLerpAnimation = { false };
 	_float2							m_fLerpTime = { 0.f, 1.f };
+	_bool							m_isHemiSphere = { false };
 
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;

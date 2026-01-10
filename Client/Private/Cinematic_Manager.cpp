@@ -431,8 +431,6 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 m_pGameInstance->Clear_StaticShadowObjects();
             });
             break;
-        case CINEMATICNODE_STATE::END:
-            break;
     }
 }
 

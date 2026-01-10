@@ -25,6 +25,8 @@ HRESULT CPlayer_ScarletLinkAttackState::Initialize(void* pArg)
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
 
+    m_pGameInstance->Active_RadialBlur(1.1f, 16, 0.66f);
+
     return S_OK;
 }
 

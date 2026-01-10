@@ -121,6 +121,8 @@ void CDropComponent::CreateObjectToLayer()
         ItemDesc.bIsApplyTransform = true;
         ItemDesc.vScale = { 1.f, 1.f, 1.f };
         ItemDesc.fDropForce = m_pGameInstance->Random(m_fDropForce - 5.f, m_fDropForce + 5.f);
+        ItemDesc.isHemiSphere = m_isDropRangeHemiSphere;
+
         XMStoreFloat3(&ItemDesc.vParentLook, m_pOwner->GetTransform()->Get_State(STATE::POSITION));
         //ItemDesc.vRotation = { XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),
         //                       XMConvertToRadians(m_pGameInstance->Random(0, 360.f)),

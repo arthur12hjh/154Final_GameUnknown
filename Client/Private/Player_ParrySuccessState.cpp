@@ -13,9 +13,9 @@ void CPlayer_ParrySuccessState::Start(void* pArg, _float fBlendRatio)
 {
 	m_Desc->isLookFixed = true;
     m_eState = PLAYER_STATE::PARRY_SUCCESS;
-    m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.f, 0.12f);
-	m_pGameInstance->Active_RadialBlur(0.9f, 16, 0.6f);
-	m_pGameInstance->Shake_Camera(0.7f, 0.4f);
+    m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.3f, 0.12f);
+	m_pGameInstance->Active_RadialBlur(0.9f, 16, 0.66f);
+	m_pGameInstance->Shake_Camera(0.77f, 0.44f);
 
 	//패링 하면 2개씩 채워주기?
 	m_Desc->iCurrentBetaEnergy += 2;
@@ -28,7 +28,7 @@ PLAYER_TRANSITION_DESC CPlayer_ParrySuccessState::Update(_float fTimeDelta)
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
     _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
 
-	if (0.3f <= fAnimationRatio)
+	if (0.28f <= fAnimationRatio)
 	{
 		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)))
 			m_tNextState.eNextState = PLAYER_STATE::LIGHT_ATTACK;

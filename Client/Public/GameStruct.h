@@ -514,7 +514,7 @@ namespace Client
 		SET_CINEMATICLIGHT,		// 13, 컷씬 끝나면 거기에 맞는 셰이더 세팅으로 전환하는 용도
 		LOCKON_START,			// 14, 컷씬 끝나면 강제로 보스 락온 걸어주려고 만듬
 		LOCKON_END,				// 15, 컷씬 끝나면 강제로 보스 락온 꺼줌
-		BAKE_VILLAGE_SHADOW,		// 15
+		BAKE_VILLAGE_SHADOW,	// 16,
 		END };
 
 	typedef struct Cinematic_Index_Desc

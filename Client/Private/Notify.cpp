@@ -144,6 +144,8 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 		break;
 	case CNotify::CAMERA_SHAKE:
 		return Notify_Camera_Shake(AnimNotify);
+	case CNotify::RADIAL_BLUR:
+		return Notify_Radial_Blur(AnimNotify);
 	case CNotify::CHANGE_COLOR:
 		return m_pCharacter->CallNotify(CNotify::CHANGE_COLOR, &AnimNotify);
 		break;
@@ -181,6 +183,7 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
 	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
+	if (szNotifyTag == "Radial_Blur")					return RADIAL_BLUR;
 	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
 	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 	if (szNotifyTag == "Set_Cinematic_Object")			return SET_CINEMATIC_OBJECT;
@@ -370,6 +373,13 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
 
 	Safe_Release(pCamera);
+
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Radial_Blur(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pGameInstance->Active_RadialBlur(AnimNotify.fNumData01, AnimNotify.fNumData02, AnimNotify.fNumData03);
 
 	return S_OK;
 }
