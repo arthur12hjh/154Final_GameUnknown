@@ -18,6 +18,7 @@ void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 	//락 못바꾸게 처리
 	m_Desc->isLockChangable = false;
 	m_Desc->isInvincible = true;
+	m_Desc->isUsingBlink = true;
 
 	m_eState = PLAYER_STATE::BLINK_START;
 	m_pPlayer->Set_Animation("P_Eve_Sword_Normal_FlashBehindAttack_S", false, 1.2f);

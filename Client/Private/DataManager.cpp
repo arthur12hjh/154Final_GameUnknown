@@ -349,14 +349,21 @@ HRESULT CDataManager::LoadNpcData(void* pArg)
 
     CStringHelper::CSVRead("../Bin/DataFiles/AIData/NpcDatas.csv", NpcDataList);
     size_t iMaxSize = NpcDataList.size();
-    for (auto i = 9; i < iMaxSize;)
+    for (auto i = 15; i < iMaxSize;)
     {
         NPC_DATA_DESC pNpcDesc = {};
         pNpcDesc.iNpcID = atoi(NpcDataList[i++].c_str());
 
         strcpy_s(pNpcDesc.szName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szAnimationName, NpcDataList[i++].c_str());
         strcpy_s(pNpcDesc.szPrototypeModel, NpcDataList[i++].c_str());
         strcpy_s(pNpcDesc.szAIController, NpcDataList[i++].c_str());
+        
+        strcpy_s(pNpcDesc.szLeftWeaponPrototypeName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szLeftBoneName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szRightWeaponPrototypeName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szRightBoneName, NpcDataList[i++].c_str());
+        strcpy_s(pNpcDesc.szFaceName, NpcDataList[i++].c_str());
 
         pNpcDesc.vExtents.x = (_float)atof(NpcDataList[i++].c_str());
         pNpcDesc.vExtents.y = (_float)atof(NpcDataList[i++].c_str());

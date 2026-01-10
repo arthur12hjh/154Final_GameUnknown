@@ -57,6 +57,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
+	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
@@ -378,7 +381,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 186.f, 55.f, 229.f};
+	Desc.vPosition = { 190.f, 55.f, 233.f};
 	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
@@ -486,8 +489,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
-	NpcDesc.iNpcID = 4;
-	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
+	NpcDesc.iNpcID = 5;
+	NpcDesc.vPosition = { 790.26f, 98.15f, 1517.58f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
 		return E_FAIL;

@@ -69,10 +69,12 @@ public:
 	void									Setting_Data(_float fTimeDelta, const NAYITBA_DESC& Desc);
 	const NAYTIBA_NETWORK_DESC*				GetStaticMonsterData() { return m_pInitMonsterInfo; }
 
+	void									SetActivePartObject(_bool bIsActive);
 	void									SetAttackData(const CHARACTER_SKILL_DESC* pATKDesc);
 	void									SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution);
 	void									EnablePhysxController(_bool bEnable);
-
+	void									ResetToBaseState();
+	
 	_bool									bIsParryHitReaction();
 	_bool									bIsRepulseHitReaction();
 
@@ -129,7 +131,7 @@ private :
 	HRESULT									ADD_PartObjects();
 	
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
-	void									ResetToBaseState();
+
 
 	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	

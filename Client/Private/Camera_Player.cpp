@@ -48,6 +48,7 @@ HRESULT CCamera_Player::Initialize(void* pArg)
         m_pTransformCom->Set_State(STATE::POSITION, pPlayer->Get_Position());
 
     Safe_Release(pPlayer);
+    m_pPlayerDesc = pPlayer->Get_Desc();
 
     return S_OK;
 }
@@ -323,15 +324,21 @@ void CCamera_Player::LockOn_CamAction(_float fTimeDelta)
 
     _float fYawRatio = {};
     if (-0.5f > abs(fQuaternionScalar))
-        fYawRatio = 40.f;
+        fYawRatio = 60.f;
     else
         fYawRatio = 15.f;
+
+    _float fCamDistance = {};
+     if (m_pPlayerDesc->isUsingBlink)
+         fCamDistance = 15.f;
+     else
+         fCamDistance = m_fDistance + (5.f * fTargetPitch);
 
     fYawRatio = Clamp<_float>(fTimeDelta * fYawRatio, 0.f, 1.f);
     _vector vLerpRoation = XMQuaternionSlerp(vRotation, vTargetRot, fYawRatio);
 
     // 이때만 위치 보정
-    _vector vDir = m_pTransformCom->Get_State(STATE::LOOK) * -(m_fDistance + ( 5.f * fTargetPitch));
+    _vector vDir = m_pTransformCom->Get_State(STATE::LOOK) * -fCamDistance;
     vDir += m_pPlayerTransform->Get_State(STATE::UP) * (m_vPivot.y + 1.5f);
     vDir += m_pPlayerTransform->Get_State(STATE::RIGHT) * (m_vPivot.x + 1.f);
 

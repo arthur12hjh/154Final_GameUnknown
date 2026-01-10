@@ -258,7 +258,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.vSize = Com_Size;
 	RigidBodyDesc.fMass = { 0.0001f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_CCT;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

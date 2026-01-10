@@ -28,6 +28,7 @@ public:
 private:
 	CInteraction_Component* m_pInteractionCom = { nullptr };
 	_bool					m_isLerpFinished = { false }; 
+
 public:
 	static	CPlayer_SupplyBoxInteractionState* Create(void* pArg);
 	virtual	void			   Free() override;

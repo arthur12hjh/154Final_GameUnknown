@@ -2727,6 +2727,16 @@ HRESULT CLoader::Loading_For_Desert_Environment_Grass1(void* pArg)
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
+	
+	/* For.Prototype_Component_Model_Dororong */
+	PreTransformMatrix = XMMatrixScaling(3.f, 3.f, 3.f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixRotationX(XMConvertToRadians(-90.f));
+	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Cinematic_Dororong");
+	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Client/Bin/Resources/Models/Dororong/CH_NPC_Dororong.binx", PreTransformMatrix);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+
 
 	/* For.Prototype_GameObject_Npc */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc");

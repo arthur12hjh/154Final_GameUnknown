@@ -64,6 +64,20 @@ void CRigidBody::Set_RestOffset(_float fValue)
 	Get_PxShape()->setRestOffset(fValue);
 }
 
+void CRigidBody::Set_LocalPos(_float3 vLocalPos)
+{
+	PxShape* pShape = Get_PxShape();
+	if (nullptr == pShape)
+		return;
+
+	// 기존 로컬 회전 유지
+	PxTransform localPose = pShape->getLocalPose();
+
+	localPose.p = PxVec3(vLocalPos.x, vLocalPos.y, vLocalPos.z);
+
+	pShape->setLocalPose(localPose);
+}
+
 HRESULT CRigidBody::Initialize_Prototype()
 {
     return S_OK;

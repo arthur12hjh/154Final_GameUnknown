@@ -21,8 +21,12 @@ void CNpcIdleState::Start(void* pArg, CState* pPreState)
 
     if(pNpc->Get_NpcDesc()->iNpcID == 1)
         pNpc->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_03_05_loop");
-    else if (pNpc->Get_NpcDesc()->iNpcID == 4)
-        pNpc->Set_Animation("N_Digger_Idle");
+    else
+    {
+        m_szAnimationName = pNpc->Get_NpcDesc()->szAnimationName;
+        m_szAnimationName += "_Idle";
+        pNpc->Set_Animation(m_szAnimationName.c_str());
+    }
 }
 
 void CNpcIdleState::Update(_float fTimeDelta)
