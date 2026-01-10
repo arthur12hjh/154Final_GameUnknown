@@ -167,6 +167,8 @@ namespace Tool_Map
 		TERRAIN_INCREASE_RECT, TERRAIN_DECREASE_RECT, TERRAIN_FLAT, TERRAIN_UP, TERRAIN_DOWN, TERRAIN_HILL, MASK_BLACK, MASK_RED, MASK_GREEN, MASK_BLUE, 
 		
 		XION_BUILDING, PAD, RAIL, INDICATOR, DORORONG_BOX,
+
+		SOUND_BOX_GRASS, SOUND_BOX_IRON, 
 		
 		END
 	};
@@ -177,6 +179,14 @@ namespace Tool_Map
 		unsigned int	iObjectId = 0;
 
 	}RuinComponentDesc;
+
+	enum class GROUND_SOUND_TYPE
+	{
+		GRASS,
+		SAND,
+		IRON,
+		END
+	};
 }
 
 using namespace Tool_Map;
