@@ -90,7 +90,7 @@ HRESULT CTrailData::Bind_Texture(CShader* pShader)
 	if (FAILED(m_pTexture[2]->Bind_ShaderResource(pShader, "g_DissolveTexture", 0)))
 		return E_FAIL;
 
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		pShader->Bind_SRV("g_DepthTexture", m_pEffectSRV->Get_SRV());
 	}
 	if (FAILED(pShader->Begin(m_tData.iBegin + m_iRenderCount)))

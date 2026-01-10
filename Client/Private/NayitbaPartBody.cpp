@@ -488,6 +488,7 @@ void CNayitbaPartBody::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIF
         Traildesc.fSpeed = NotifyReference.fNumData01;
         Traildesc.fPow = NotifyReference.fNumData02;
         Traildesc.bisLine = true;
+        Traildesc.bisLong = NotifyReference.iNumData02 == 1;
 
         _TCHAR szEffectTag[MAX_PATH];
         CStringHelper::ConvertUTFToWide(NotifyReference.szNotifyArg02.c_str(), szEffectTag);

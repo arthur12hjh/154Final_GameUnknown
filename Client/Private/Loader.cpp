@@ -1520,6 +1520,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CWaveTrail::Create(m_pDevice, m_pContext);
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Short_Line_Trail */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Short_Line_Trail");
+	PrototypeDesc.pPrototype = CWaveTrail::Create(m_pDevice, m_pContext, 80);
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_TrailData */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailData");
 	PrototypeDesc.pPrototype = CTrailData::Create(m_pDevice, m_pContext);
@@ -1774,6 +1779,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletSting.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Monster_Sting */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Monster_Sting");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Monster_Sting.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Effect_Scarlet_Signal */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Scarlet_Signal");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/ScarletSignal.binx");
@@ -1839,6 +1849,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_Effect_Sword_Blood */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Sword_Blood");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Sword_Blood.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Box_Effect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Box_Effect");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Box_Effect.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 	
 	
