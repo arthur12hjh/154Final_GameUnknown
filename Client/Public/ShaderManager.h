@@ -108,6 +108,7 @@ private:
 
 	SCARLET_PHASE2_LERP_CACHE m_ScarletPhase2LerpCache;
 
+	//홍련 2페이즈인가?
 	_bool m_isScarletPhase2 = { false };
 	_bool m_isScarletPatternFogActivated = { false };
 	_float m_fScarletPatternFogTimeAcc = { 0.f };

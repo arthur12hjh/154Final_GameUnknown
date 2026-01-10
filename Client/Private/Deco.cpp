@@ -180,6 +180,9 @@ HRESULT CDeco::Ready_Col(const _tchar* pComponentTag)
 
     RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
 
+    RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_6;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
     RigidBodyDesc.vMaterial = _float3(0.5f, 0.5f, 0.3f);

@@ -21,6 +21,7 @@ public:
 	//얘는 캐스케이드만 추가
 	virtual HRESULT Add_RenderObject(class CGameObject* pRenderObject) override;
 	void* Get_Desc() override { return &m_tShadowLightDesc; }
+	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
 public:
 	//캐스케이드 그림자용 리소스 바인딩
 	HRESULT Bind_Shader_Resource(class CShader* pShader, const _char* pConstantName, D3DTS eType);

@@ -113,6 +113,7 @@ public:
 	void				Set_DoFInfo(_float fFocusDistance, _float fMaxRange, _float fIntensity);
 	// 초점 거리만 바꿔주는 오버라이딩 함수.
 	void				Set_DoFInfo(_float fFocusDistance);
+	void				Set_Cascade_Active(_bool bFlag);
 
 	HRESULT				Ready_CascadeShadow_Light(const CASCADE_SHADOW_DESC& Desc);
 	HRESULT				Ready_StaticShadow_Light(const STATIC_SHADOW_DESC& Desc);

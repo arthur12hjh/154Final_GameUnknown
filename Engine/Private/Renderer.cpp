@@ -406,6 +406,11 @@ void CRenderer::Set_DoFInfo(_float fFocusDistance)
 	m_pDepthofField->Set_DoFInfo(fFocusDistance);
 }
 
+void CRenderer::Set_Cascade_Active(_bool bFlag)
+{
+	m_pCascadeShadow->Set_Active(bFlag);
+}
+
 HRESULT CRenderer::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
 {
 	m_ClientShaderReserves.push_back(pReserveDeferred);
