@@ -257,7 +257,7 @@ HRESULT CPhysx_Manager::Add_Terrain_ToPhysx(CVIBuffer_Terrain* pTerrainVIBuffer)
     PxTransform pose(PxVec3(-0.5f, 0, -0.5f));
 
     PxMaterial* pMaterial = NULL;
-    pMaterial = m_PxPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+    pMaterial = m_PxPhysics->createMaterial(0.8f, 0.6f, 0.0f);
 
     PxShape* pTerrianShape = m_PxPhysics->createShape(hfGeom, *pMaterial);
     PxFilterData FilterData = {};

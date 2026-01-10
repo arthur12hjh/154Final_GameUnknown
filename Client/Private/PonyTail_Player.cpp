@@ -123,6 +123,8 @@ void CPonyTail_Player::Late_Update(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pJointChain->Update(fTimeDelta);
 #endif
+
+	Sync_BonesByJoint();
 }
 
 HRESULT CPonyTail_Player::Render()
@@ -159,8 +161,6 @@ HRESULT CPonyTail_Player::Render()
 
 HRESULT CPonyTail_Player::Render_Shadow()
 {
-	Sync_BonesByJoint();
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 
@@ -292,7 +292,7 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 	RootDesc.vSize = _float3(0.05f, 0.05f, 0.f);
 	RootDesc.fMass = { 0.f };
 	RootDesc.iCollisionGroup = PHYSX_CUSTOM_2;
-	RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+	RootDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_CUSTOM_3;
 	RootDesc.isSimulateSync = false;
 	RootDesc.isQuery = false;
 
@@ -319,7 +319,7 @@ HRESULT CPonyTail_Player::Ready_RootHair()
 	LinkDesc.fMass = { 0.05f };
 
 	LinkDesc.iCollisionGroup = PHYSX_CUSTOM_2;
-	LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+	LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_CUSTOM_3;
 	LinkDesc.isSimulateSync = false;
 	LinkDesc.isQuery = false;
 
@@ -438,7 +438,7 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		if (i <= 6)
 		{
 			LinkDesc.iCollisionGroup = PHYSX_CUSTOM_2;
-			LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
+			LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_CUSTOM_3;
 
 		}
 		// 하체 충돌도 안해
@@ -446,7 +446,7 @@ HRESULT CPonyTail_Player::Ready_ChildHair()
 		{
 
 			LinkDesc.iCollisionGroup = PHYSX_CUSTOM_2;
-			LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT;
+			LinkDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC ;
 		}
 
 		LinkDesc.isSimulateSync = false;

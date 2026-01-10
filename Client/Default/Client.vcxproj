@@ -165,6 +165,7 @@
     <ClInclude Include="..\public\Camera_BeatSaber.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
+    <ClInclude Include="..\Public\Coin_Player.h" />
     <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
@@ -522,6 +523,7 @@
     <ClCompile Include="..\private\Camera_BeatSaber.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
+    <ClCompile Include="..\Private\Coin_Player.cpp" />
     <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />

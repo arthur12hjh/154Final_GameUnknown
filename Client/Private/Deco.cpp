@@ -36,7 +36,10 @@ HRESULT CDeco::Initialize(void* pArg)
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base")) ||
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Garden")) || 
         wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Box")) ||
-        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")))
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Furniture")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Base_1A")) || 
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Statue")) ||
+        wcsstr(pDesc->szVIBuffer_PrototypeName, TEXT("Trash")))
     {
         if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
             return S_OK;
@@ -176,6 +179,9 @@ HRESULT CDeco::Ready_Col(const _tchar* pComponentTag)
     // ->> 엘레베이터는 고정되어있으니까 STATIC으로 세팅 해주는거에요.
 
     RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::STATIC;
+
+    RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_6;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT | PHYSX_CUSTOM_3;
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;

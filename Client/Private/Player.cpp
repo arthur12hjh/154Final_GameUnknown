@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Nayitba.h"
 
+#include "Coin_Player.h"
 #include "Body_Player.h"
 #include "Face_Player.h"
 #include "Hair_Player.h"
@@ -355,7 +356,7 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 	// 테스트 코드
 	if (true == m_PlayerDesc.HasTarget)
 	{
-		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
+		if (true == m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
 		{
 			PLAYER_TRANSITION_DESC Desc;
 			Desc.eNextState = PLAYER_STATE::REPULSE;
@@ -464,6 +465,17 @@ HRESULT CPlayer::Ready_PartObjects()
 		return E_FAIL;
 
 	m_pWeapon = static_cast<CWeapon *>(Find_PartObject(TEXT("Part_Weapon")));
+
+
+	CCoin_Player::COIN_DESC	CoinDesc{};
+	CoinDesc.pParent = this;
+	CoinDesc.pSocketMatrix = pBody->Get_BoneMatrixPtr("Weapon");
+	CoinDesc.pParentTransform = m_pTransformCom;
+
+	/* Part_Weapon */
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Coin"),
+		TEXT("Part_Coin"), &CoinDesc)))
+		return E_FAIL;
 
 	CFace_Player::FACE_PLAYER_DESC FaceDesc{};
 	FaceDesc.pParentTransform = m_pTransformCom;
@@ -646,8 +658,13 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 
 		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
 
- 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
+		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
 		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
+
+		PLAYER_TRANSITION_DESC Desc;
+		Desc.isChangeMode = true;
+		Desc.eMode = PLAYER_MODE::IDLE;
+		Desc.pArg = pInteractionCom;
 
 		switch (InteractionState)
 		{
@@ -656,13 +673,9 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			break;
 		case INTERACTION_STATE::CONTACT:
 		{
-			PLAYER_TRANSITION_DESC Desc;
-			Desc.isChangeMode = false;
-			Desc.pArg = pInteractionCom;
-
 			switch (pInteractionData->eType)
 			{
-			// 만약 서플라이 박스라면 (발로 차는 모션)
+				// 만약 서플라이 박스라면 (발로 차는 모션)
 			case INTERACTION_TYPE::SUPPLY_BOX:
 			{
 				Desc.eNextState = PLAYER_STATE::SUPPLYBOX_INTERACTION;
@@ -676,19 +689,38 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 				break;
 
 			}
-			case INTERACTION_TYPE::ITEM:
-			case INTERACTION_TYPE::DOOR:
-			case INTERACTION_TYPE::LIFT_CONTROLLER:
-			case INTERACTION_TYPE::NPC:
 			case INTERACTION_TYPE::VENDING_MACINE:
+			{
+				Desc.eNextState = PLAYER_STATE::VENDING_INTERACTION;
+				m_pFSM->Handle_Transition(Desc);
+				break;
+			}
+			case INTERACTION_TYPE::ITEM:
 			{
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
+			case INTERACTION_TYPE::DOOR:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::LIFT_CONTROLLER:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+			case INTERACTION_TYPE::NPC:
+			{
+				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
+				break;
+			}
+				// 끝났거나 잠겨있다면, 그냥 Break 처리.
+				// 디폴트여도 상호작용은 안되니까 Break 처리.
+			default:
+				break;
 			}
 		}
-		// 끝났거나 잠겨있다면, 그냥 Break 처리.
-		// 디폴트여도 상호작용은 안되니까 Break 처리.
 		case INTERACTION_STATE::LOCK:
 		case INTERACTION_STATE::END:
 			break;

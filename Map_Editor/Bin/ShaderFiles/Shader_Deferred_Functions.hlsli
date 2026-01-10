@@ -64,6 +64,29 @@ inline float BayerDither(float2 pixelPos)
 
 inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uint iSlice)
 {
+    /*
+        float2 vTexcoord;
+    
+    vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
+    vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
+
+    // 텍셀 사이즈는 캐스케이드 해상도에 맞춰야 함
+    float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
+
+    // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
+    float fBias = 0.0001f;
+
+    // 캐스케이드 밖이면 shadow 적용하지 않음
+    if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
+        return 1.f;
+            
+    vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord, iSlice));
+
+    return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x ) ? 0.5f : 1.f;
+    */
+    ///////////////////
+    
+    float fSum = 0.0f;
     float2 vTexcoord;
     
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
@@ -73,19 +96,34 @@ inline float Calc_Shadow_CSM(Texture2DArray ShadowTexure, vector vLightClip, uin
     float2 vTexel = 1.0f / float2(2048.0f, 2048.0f);
 
     // 0 ~ 1 사이로 정규화된 깊이에서 비교하니까..
-    float fBias = 0.4f;
+    float fBias = 0.00065f;
 
     // 캐스케이드 밖이면 shadow 적용하지 않음
     if (vTexcoord.x < 0.0f || vTexcoord.x > 1.0f || vTexcoord.y < 0.0f || vTexcoord.y > 1.0f)
-        return 1.f;
+        return 0.f;
             
-    vector vShadowDepth = ShadowTexure.Sample(ClampSampler, float3(vTexcoord, iSlice));
+    
+    [unroll]
+    for (int iX = -1; iX <= 1; ++iX)
+    {
+        [unroll]
+        for (int iY = -1; iY <= 1; ++iY)
+        {
+            float2 vOffset = float2(iX, iY) * vTexel;
+            vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float3(vTexcoord + vOffset, iSlice));
+            // 투영행렬까지만 곱했다면 w에 뷰스페이스 상의 z값 남아있을거고,
+            // 그림자엔 Far로 정규화한 0~1사이 값인 뷰 스페이스 상의 z가 있으니까 얠 다시 far 곱해서 연산. 
+            fSum += (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 1.0f : 0.0f;
+        }
+    }
 
-    return (vLightClip.z / vLightClip.w * 500.f - fBias > vShadowDepth.x * 500.f) ? 0.5f : 1.f;
+    fSum /= 9.0f;
+    return lerp(1.0f, 0.6f, fSum);
 }
 
 inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
 { 
+    /*
     float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
@@ -112,23 +150,35 @@ inline float Calc_Shadow(Texture2D ShadowTexure, vector vLightClip)
     
     fSum /= 9.0f; // 평균 (3x3)
     return lerp(1.0f, 0.5f, fSum); // 그림자 강도 적용
+    */
     
     
     //################################# NONE PCF
-    /*
-        float2 vTexcoord;
+    float2 vTexcoord;
     vTexcoord.x = (vLightClip.x / vLightClip.w) * 0.5f + 0.5f;
     vTexcoord.y = (vLightClip.y / vLightClip.w) * -0.5f + 0.5f;
 
-    float fBias = 0.0002f;
+    float fBias = 0.00065f;
+    float fSum = 0.f;
     
     if (vTexcoord.x < 0 || vTexcoord.x > 1 || vTexcoord.y < 0 || vTexcoord.y > 1)
         return 1.0f;
-
-    vector vShadowDepth = ShadowTexure.Sample(DefaultSampler, float2(vTexcoord));
     
-    return (vLightClip.z / vLightClip.w - fBias > vShadowDepth.x) ? 0.6f : 1.f;
-    */
+    float2 fTexelSize = 1.0f / float2(16384.f, 16384.f) * 1.f;
+    
+    // PCF 3x3 샘플
+    for (int x = -1; x <= 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            float2 vOffset = float2(x, y) * fTexelSize;
+            vector vShadowDepth = ShadowTexure.SampleCmpLevelZero(ShadowSampler, vTexcoord + vOffset, vLightClip.z / vLightClip.w - fBias);
+            fSum += vShadowDepth.r;
+        }
+    }
+    
+    fSum /= 9.0f; // 평균 (3x3)
+    return lerp(0.6f, 1.f, fSum); // 그림자 강도 적용    
 }
 
 inline float4 Calc_Blur(texture2D BlurTexture, float2 vTexcoord)

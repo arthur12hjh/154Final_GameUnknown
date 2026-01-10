@@ -12,7 +12,10 @@ CPlayer_ParryGuardState::CPlayer_ParryGuardState()
 void CPlayer_ParryGuardState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::PARRY_GUARD;
-    m_pPlayer->Set_Animation("Proto_Hit_Guard", false, 1.5f, 0.12f);
+    m_pPlayer->Set_Animation("Proto_Hit_Guard", false, 2.5f, 0.12f);
+
+	m_pGameInstance->Active_RadialBlur(0.5f, 16, 0.2f);
+	m_pGameInstance->Shake_Camera(0.5f, 0.1f);
 
 	m_Desc->isLookFixed = true;
 }
