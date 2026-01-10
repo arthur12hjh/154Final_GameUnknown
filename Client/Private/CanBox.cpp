@@ -145,6 +145,8 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     CDropComponent::DROP_COMPONENT_DESC DropComDesc = {};
     DropComDesc.fDropRange = 7.f;
     DropComDesc.fForce = 20.f;
+    //아이템이 자신의 look 방향 근처로만 떨어지게 해줌.
+    DropComDesc.isDropRangeHemiSphere = true;
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
         TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
         return E_FAIL;
