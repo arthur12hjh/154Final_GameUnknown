@@ -73,13 +73,13 @@ void GS_BLOSSOM(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     float fWeight = saturate(vMask.r * 2.f);
     float fCenterY = (InTri[0].vPosition.y + InTri[1].vPosition.y + InTri[2].vPosition.y) / 3.f;
     
-    float fHeightFactor = saturate(fCenterY * 0.1f);
+    float fHeightFactor = saturate(fCenterY * 0.4f);
     
     float fWave = 0.f;
     
     if (fWeight > 0.001f)
     {
-        fWave = sin(g_fTime * 2.5f + fCenterY) * 0.45f * fWeight * fHeightFactor;
+        fWave = sin(g_fTime + fCenterY) * 0.2f * fWeight * fHeightFactor;
     }
     
     
@@ -93,6 +93,7 @@ void GS_BLOSSOM(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
         
         vPos.x += fWave;
         vPos.z += fWave;
+        vPos.y += fWave * 0.3f;
         
         float4 vWorldPos = mul(vPos, g_WorldMatrix);
         Out.vPosition = mul(vWorldPos, matVP);
