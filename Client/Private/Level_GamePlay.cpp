@@ -19,6 +19,7 @@
 #include "UIScript.h"
 #include "ChangeLevelEvent.h"
 #include "TeleportEvent.h"
+#include "SoundTriggerBox.h"
 
 #include "SpriteParticle.h"
 
@@ -54,8 +55,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -65,6 +66,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Sound_Trigger_Box_Objects("../../Map_Editor/Bin/DataFiles/Desert_SoundTriggerBox.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -80,9 +82,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	m_pLevelChangeEvent = CChangeLevelEvent::Create([&](void* pArg) {
 		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
 
-		m_bChangeLevel = *static_cast<_bool*>(Desc.pData);
+		LEVEL_CHANGER LevelChanger = *static_cast<LEVEL_CHANGER*>(Desc.pData);
+
+		m_bChangeLevel = LevelChanger.bChange;
+		m_eTargetLevel = LEVEL(LevelChanger.iTargetLevel);
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+	m_pGameInstance->Bind_Observer(TEXT("Go_DororongSaber"), m_pLevelChangeEvent);
 
 	m_pTeleportEvent = CTeleportEvent::Create([&](void* pArg) {
 		UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
@@ -111,7 +117,7 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 
 	if (m_isOverlay && m_pHUD)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 3.f);
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 2.f);
 		m_isOverlay = false;
 	}
 
@@ -155,9 +161,15 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 	if (m_bLevelTransitioning && m_bChangeLevel
 		&& dynamic_cast<CUIHUD*>(m_pHUD)->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Outro")))
 	{
-		CGameManager::GetInstance()->SavePlayerDesc();
 		dynamic_cast<CUIHUD*>(m_pHUD)->Reset_AllWorldUI_State();
-		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, LEVEL::SCARLET, false))))
+
+		auto pGameManger = CGameManager::GetInstance();
+
+		pGameManger->SavePlayerDesc();
+		if(m_eTargetLevel == LEVEL::SCARLET)
+			pGameManger->SetPlayerNextLevelSpawnPosition(ENUM_CLASS(LEVEL::SCARLET), 1);
+
+		if (FAILED(m_pGameInstance->Change_Level(CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOADING, m_eTargetLevel, false))))
 			return;
 
 		return;
@@ -333,6 +345,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _wstring& strLayerTag)
 	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
 	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Action"), &CameraDesc);
 	m_pGameInstance->Add_Camera(TEXT("ActionCamera"), static_cast<CCamera*>(pCamera));
+	
+	CameraDesc.fSpeedPerSec = 15.f;
+	CameraDesc.fFov = XMConvertToRadians(45.0f);
+	CameraDesc.fRotationPerSec = XMConvertToRadians(120.0f);
+	pCamera = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_Camera_Npc"), &CameraDesc);
+	m_pGameInstance->Add_Camera(TEXT("NpcCamera"), static_cast<CCamera*>(pCamera));
 
 	CameraDesc.fSpeedPerSec = 15.f;
 	CameraDesc.fFov = XMConvertToRadians(45.0f);
@@ -362,8 +380,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Sky(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Sky"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag)))
 		return E_FAIL;
-
-	
 
 	return S_OK;
 }
@@ -486,6 +502,24 @@ HRESULT CLevel_GamePlay::Ready_Layer_NPC(const _wstring& strLayerTag)
 	CNpc::NPC_DESC NpcDesc = {};
 	NpcDesc.bIsApplyTransform = true;
 	NpcDesc.vScale = { 1.f, 1.f, 1.f };
+	NpcDesc.iNpcID = 1;
+	NpcDesc.vPosition = { 60.f, 1.f, 60.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;
+
+	NpcDesc.iNpcID = 4;
+	NpcDesc.vPosition = { 50.f, 1.f, 50.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;
+
+	/*NpcDesc.iNpcID = 5;
+	NpcDesc.vPosition = { 40.f, 1.f, 50.f };
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &NpcDesc)))
+		return E_FAIL;*/
+
 	NpcDesc.iNpcID = 5;
 	NpcDesc.vPosition = { 790.26f, 98.15f, 1517.58f };
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Npc"),
@@ -614,6 +648,22 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Data(const _char* szFilePath)
 
 	if (FAILED(Load_Monster_Desert_Format(ifs, TEXT("Prototype_GameObject_Nayitba"), TEXT("Layer_Monster")))) return S_OK;
 	if (FAILED(Load_Npc_Desert_Format(ifs, TEXT("Prototype_GameObject_Npc"), TEXT("Layer_Npc")))) return S_OK;
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 
@@ -886,6 +936,37 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_SOUND_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_SOUND_TRIGGER_BOX_INFO));
+
+		CSoundTriggerBox::SOUNDTRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.eSoundBoxType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Load_Level_CinematicObjectData(const _char* szFilePath)
 {
 	/*
@@ -959,9 +1040,11 @@ void CLevel_GamePlay::Free()
 	m_pGameInstance->SetInteractionBaseObject(nullptr);
 
 	m_pGameInstance->UnBind_Observer(TEXT("Change_Map"), m_pLevelChangeEvent);
+	m_pGameInstance->UnBind_Observer(TEXT("Go_DororongSaber"), m_pLevelChangeEvent);
 	m_pGameInstance->UnBind_Observer(TEXT("TelePort"), m_pTeleportEvent);
 
 	Safe_Release(m_pLevelChangeEvent);
+	Safe_Release(m_pTeleportEvent);
 
 	__super::Free();
 }

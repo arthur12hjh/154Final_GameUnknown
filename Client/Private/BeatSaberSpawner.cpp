@@ -65,15 +65,13 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
             CBeatSaberCharacter* pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
 
             if (!pDororong)
-            {
-                Safe_Release(pDororong);
                 return;
-            }
 
             if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= m_iNoteCount)
                 pDororong->Set_FullCombo(true);
 
             m_bIsPlay = false;
+            Safe_Release(pDororong);
         }
     }
 }

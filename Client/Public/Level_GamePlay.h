@@ -52,6 +52,12 @@ public:
 		_uint			iNpcID = 0;
 	}SAVEDNPCINFO;
 
+	typedef struct SavedSoundTriggerBoxInfo
+	{
+		_float4x4			worldMatrix;
+		GROUND_SOUND_TYPE	eType = GROUND_SOUND_TYPE::END;
+	}SAVED_SOUND_TRIGGER_BOX_INFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -85,7 +91,8 @@ private:
 
 	HRESULT Load_Map_Desert_Data(const _char* szFilePath);
 	HRESULT Load_Monster_Desert_Data(const _char* szFilePath);
-	
+	HRESULT Load_Sound_Trigger_Box_Objects(const _char* szFilePath);
+
 	HRESULT Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT Load_Interaction_Objects_By_Layer(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag, _bool bIsGamePlay = false);
@@ -95,6 +102,7 @@ private:
 	HRESULT Load_Monster_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Npc_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
+	HRESULT Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
 	HRESULT Load_Light_Data();
@@ -108,6 +116,7 @@ private:
 	CTeleportEvent* m_pTeleportEvent{ nullptr };
 
 	_bool m_bChangeLevel{ false };
+	LEVEL m_eTargetLevel{ LEVEL::END };
 	_bool m_bTeleport{ false };
 	_bool m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 

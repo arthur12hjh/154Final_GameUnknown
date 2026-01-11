@@ -28,6 +28,14 @@ void CSound_Manager::Free()
 	}
 	m_mapSound.clear();
 
+	for (_uint i = 0; i < CHANNELID::END; ++i)
+	{
+		for (auto& iter : m_ChannelEndCallBacks[i])
+			Safe_Delete(iter);
+
+		m_ChannelEndCallBacks[i].clear();
+	}
+	
 	m_pSystem->release();
 	m_pSystem->close();
 }
@@ -86,32 +94,28 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 
 	bool bPlay = FALSE;
 
-	if (m_pChannelArr[eID])
-	{
-		m_pChannelArr[eID]->stop();
-		m_pChannelArr[eID] = nullptr;
-	}
-
-	FMOD_RESULT res = m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[eID]);
+	SOUND_CALLBACK_DESC* SoundDesc = new SOUND_CALLBACK_DESC;
+	FMOD::Channel* pBGMChannel = nullptr;
+	FMOD_RESULT res = m_pSystem->playSound(iter->second, nullptr, FALSE, &pBGMChannel);
 	if (res != FMOD_OK) {
 		printf("playSound error: %s\n", FMOD_ErrorString(res));
 	}
+	pBGMChannel->setVolume(fVolume);
+	m_pChannelVolume[eID] = fVolume;
 
-	m_pChannelArr[eID]->setVolume(fVolume);
-	m_pChannelVolume[CHANNELID::BGM] = fVolume;
+	SoundDesc->EndCallBackFunc = pFinishedCallBack;
+	m_ChannelEndCallBacks[eID].push_back(SoundDesc);
+	m_pChannelArr[eID].push_back(pBGMChannel);
 	if (INFINITE != iLoopCount)
 	{
-		m_pChannelArr[eID]->setLoopCount(iLoopCount);
+		pBGMChannel->setLoopCount(iLoopCount);
 		if (pFinishedCallBack)
 		{
-			m_pFinishedFunction[eID] = pFinishedCallBack;
-			m_pChannelArr[eID]->setCallback(Finished_BGMSoundCallBack);
-			m_ChannelEndCallBacks[eID].EndCallBackFunc = m_pFinishedFunction[eID];
-			m_pChannelArr[eID]->setUserData(&m_ChannelEndCallBacks[eID]);
+			pBGMChannel->setCallback(Finished_BGMSoundCallBack);
+			pBGMChannel->setUserData((void*)m_ChannelEndCallBacks[eID].back());
 		}
 	}
 
-	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
@@ -125,45 +129,45 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	if (iter == m_mapSound.end())
 		return;
 
-	if (m_pChannelArr[CHANNELID::BGM])
-	{
-		m_pChannelArr[CHANNELID::BGM]->stop();
-		m_pChannelArr[CHANNELID::BGM] = nullptr;
-	}
+	SOUND_CALLBACK_DESC* SoundDesc = new SOUND_CALLBACK_DESC;
+	FMOD::Channel* pBGMChannel = nullptr;
+	m_pSystem->playSound(iter->second, nullptr, FALSE, &pBGMChannel);
 
-	m_pSystem->playSound(iter->second, nullptr, FALSE, &m_pChannelArr[CHANNELID::BGM]);
-	m_pChannelArr[CHANNELID::BGM]->setMode(FMOD_LOOP_NORMAL);
-	m_pChannelArr[CHANNELID::BGM]->setVolume(fVolume);
+	pBGMChannel->setMode(FMOD_LOOP_NORMAL);
+	pBGMChannel->setVolume(fVolume);
 	m_pChannelVolume[CHANNELID::BGM] = fVolume;
 
+	SoundDesc->EndCallBackFunc = pFinishedCallBack;
+	m_ChannelEndCallBacks[CHANNELID::BGM].push_back(SoundDesc);
+	m_pChannelArr[CHANNELID::BGM].push_back(pBGMChannel);
 	if (INFINITE != iLoopCount)
 	{
-		m_pChannelArr[CHANNELID::BGM]->setLoopCount(iLoopCount);
+		pBGMChannel->setLoopCount(iLoopCount);
 		if (pFinishedCallBack)
 		{
-			m_pFinishedFunction[CHANNELID::BGM] = pFinishedCallBack;
-			m_pChannelArr[CHANNELID::BGM]->setCallback(Finished_BGMSoundCallBack);
-
-			m_ChannelEndCallBacks[CHANNELID::BGM].EndCallBackFunc = m_pFinishedFunction[CHANNELID::BGM];
-			m_pChannelArr[CHANNELID::BGM]->setUserData(&m_ChannelEndCallBacks[CHANNELID::BGM]);
+			pBGMChannel->setCallback(Finished_BGMSoundCallBack);
+			pBGMChannel->setUserData((void*)m_ChannelEndCallBacks[CHANNELID::BGM].back());
 		}
 	}
-
-	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
 	_bool bIsChannelPlaying;
-	if (m_pChannelArr[eID])
+	auto pBGMChannel = m_pChannelArr[eID];
+
+	_uint iIndex = 0;
+	for (auto& iter : m_pChannelArr[eID])
 	{
-		m_pChannelArr[eID]->isPlaying(&bIsChannelPlaying);
-		if (bIsChannelPlaying)
-		{
-			m_pChannelArr[eID]->stop();
-			m_pChannelArr[eID] = nullptr;
-		}
+		iter->isPlaying(&bIsChannelPlaying);
+		iter->stop();
+
+		Safe_Delete(m_ChannelEndCallBacks[eID][iIndex]);
+		iIndex++;
 	}
+
+	m_ChannelEndCallBacks[eID].clear();
+	m_pChannelArr[eID].clear();
 }
 
 void CSound_Manager::Manager_StopAll()
@@ -171,40 +175,55 @@ void CSound_Manager::Manager_StopAll()
 	_bool bIsChannelPlaying;
 	for (int i = 0; i < CHANNELID::END; ++i)
 	{
-		if (m_pChannelArr[i])
+		_uint iIndex = 0;
+		for (auto& iter : m_pChannelArr[i])
 		{
-			m_pChannelArr[i]->isPlaying(&bIsChannelPlaying);
-			if (bIsChannelPlaying)
-			{
-				m_pChannelArr[i]->stop();
-				m_pChannelArr[i] = nullptr;
-			}
+			iter->isPlaying(&bIsChannelPlaying);
+			iter->stop();
+
+			Safe_Delete(m_ChannelEndCallBacks[i][iIndex]);
+			iIndex++;
 		}
+		m_ChannelEndCallBacks[i].clear();
+		m_pChannelArr[i].clear();
 	}
 }
 
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
 {
-	m_pChannelArr[eID]->setVolume(fVolume);
-	m_pChannelVolume[CHANNELID::BGM] = fVolume;
-	m_pSystem->update();
+	for (auto& iter : m_pChannelArr[eID])
+		iter->setVolume(fVolume);
+	
+	m_pChannelVolume[eID] = fVolume;
 }
 
 void CSound_Manager::Tick(_float fTimeDelta)
 {
 	_bool IsPlay = { false };
+	
+
 	for (_uint i = 0; i < CHANNELID::END; ++i)
 	{
-		m_pChannelArr[i]->getPosition(&m_ChannelEndCallBacks[i].pChannelTrackPosition, FMOD_TIMEUNIT_MS);
-		m_pChannelArr[i]->isPlaying(&IsPlay);
-		if (CHANNELID::BGM != i && IsPlay)
-			m_pChannelArr[CHANNELID::BGM]->setVolume(1.f);
+		size_t iChannelSize = m_pChannelArr[i].size();
+		for (_uint j = 0; j < iChannelSize; ++j)
+		{
+			m_pChannelArr[i][j]->getPosition(&m_ChannelEndCallBacks[i][j]->pChannelTrackPosition, FMOD_TIMEUNIT_MS);
+
+			if(CHANNELID::BGM < i)
+				m_pChannelArr[i][j]->isPlaying(&IsPlay);
+		}
 	}
 	
-	if (!IsPlay)
-		m_pChannelArr[CHANNELID::BGM]->setVolume(m_pChannelVolume[CHANNELID::BGM]);
+	for (auto& iter : m_pChannelArr[CHANNELID::BGM])
+	{
+		if (!IsPlay)
+			iter->setVolume(m_pChannelVolume[CHANNELID::BGM]);
+		else
+			iter->setVolume(1.f);
+	}
 
 	m_pSystem->update();
+	Remove_EndSound();
 }
 
 _uint CSound_Manager::Get_BGMLength(const TCHAR* pSoundKey)
@@ -223,25 +242,33 @@ _uint CSound_Manager::Get_BGMLength(const TCHAR* pSoundKey)
 	return iLength;
 }
 
-_uint CSound_Manager::Get_ChannelLength(CHANNELID eChannelID)
+_uint CSound_Manager::Get_ChannelLength(CHANNELID eChannelID, _uint iIndex)
 {
 	FMOD::Sound* pCurSound = nullptr;
 	_uint iLength{};
 
-	m_pChannelArr[ENUM_CLASS(eChannelID)]->getCurrentSound(&pCurSound);
+	if (m_pChannelArr[ENUM_CLASS(eChannelID)].size() <= iIndex && 0 > iIndex)
+		return 0;
+
+	m_pChannelArr[ENUM_CLASS(eChannelID)][iIndex]->getCurrentSound(&pCurSound);
 	pCurSound->getLength(&iLength, FMOD_TIMEUNIT_MS);
 	return iLength;
+
 }
 
-_float CSound_Manager::Get_ChannelRatio(CHANNELID eChannelID)
+_float CSound_Manager::Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex)
 {
 	FMOD::Sound* pCurSound = nullptr;
 	_uint iPosition{}, iLength{};
 
-	m_pChannelArr[ENUM_CLASS(eChannelID)]->getCurrentSound(&pCurSound);
+	if (m_pChannelArr[ENUM_CLASS(eChannelID)].size() <= iIndex && 0 > iIndex)
+		return 0.f;
+
+	auto pChannelSound = m_pChannelArr[ENUM_CLASS(eChannelID)][iIndex];
+	pChannelSound->getCurrentSound(&pCurSound);
 	pCurSound->getLength(&iLength, FMOD_TIMEUNIT_MS);
 
-	m_pChannelArr[ENUM_CLASS(eChannelID)]->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
+	pChannelSound->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
 	return (_float)iPosition / (_float)iLength;
 }
 
@@ -290,4 +317,33 @@ void CSound_Manager::LoadSoundFile()
 
 	m_pSystem->update();
 	_findclose(handle);
+}
+
+void CSound_Manager::Remove_EndSound()
+{
+	_bool IsPlay = { false };
+	for (_uint i = 0; i < CHANNELID::END; ++i)
+	{
+		_uint iIndex = {};
+		for (auto iter = m_pChannelArr[i].begin(); iter != m_pChannelArr[i].end();)
+		{
+			(*iter)->isPlaying(&IsPlay);
+			if (!IsPlay)
+			{
+				auto Funciter = m_ChannelEndCallBacks[i].begin() + iIndex;
+
+				Safe_Delete(*Funciter);
+				m_ChannelEndCallBacks[i].erase(Funciter);
+				iter = m_pChannelArr[i].erase(iter);
+				
+				if(0 <iIndex)
+					iIndex--;
+			}
+			else
+			{
+				iter++;
+				iIndex++;
+			}
+		}
+	}
 }

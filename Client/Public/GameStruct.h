@@ -588,6 +588,9 @@ namespace Client
 		_uint						iInteractionID;
 
 		vector<_wstring>			szScriptTags{};
+		_float3						vCamTargetPosOffset{};
+		_float						fCamTargetDist{};
+		_float3						vCamTargetViewPosOffset{};
 	}NPC_DATA_DESC;
 
 	// LINK_ATTACK -> 그로기 상태에서 들어가는값
@@ -690,9 +693,11 @@ namespace Client
 
 	enum class GROUND_SOUND_TYPE
 	{
-		GRASS,
 		SAND,
+		GRASS,
 		IRON,
+		BRIDGE,
+		CONCRETE,
 		END
 	};
 

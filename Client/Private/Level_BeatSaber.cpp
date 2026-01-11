@@ -47,8 +47,8 @@ HRESULT CLevel_BeatSaber::Initialize()
         return E_FAIL;
 
     if (FAILED(Ready_Layer_BeatSpawner(TEXT("Layer_BeatSaberSpawner"))))
-
         return E_FAIL;
+
     if (FAILED(Ready_Layer_UI(TEXT("Layer_UserInterface"))))
         return E_FAIL;
 
@@ -74,6 +74,7 @@ HRESULT CLevel_BeatSaber::Initialize()
 
         _wstring szSongFileName = pData->SongFileName;
 
+        m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
         m_pGameInstance->Manager_PlayBGM(szSongFileName.c_str(), 0.7f);
         });
     m_pGameInstance->Bind_Observer(TEXT("PreListen"), m_pPreListenEvent);
@@ -483,4 +484,6 @@ void CLevel_BeatSaber::Free()
     m_pGameInstance->UnBind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
 
     Safe_Release(m_pPlaySongEvent);
+    Safe_Release(m_pLevelChangeEvent);
+    Safe_Release(m_pPreListenEvent);
 }
