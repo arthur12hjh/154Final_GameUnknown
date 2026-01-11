@@ -498,6 +498,10 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
         Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -530,6 +534,10 @@ void GS_NONLIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NONLIGHT_O
         Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -654,6 +662,10 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -690,6 +702,10 @@ void GS_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT> 
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -749,6 +765,10 @@ void GS_BILLBOARD_ROTATION(point GS_IN In[1], inout TriangleStream<GS_WEIGHT_OUT
     Out[3].vTexcoord = float2(0.f, 1.f);
     Out[3].vLifeTime = In[0].vLifeTime;
     Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+    
+    
+    
+    
     Out[0].vSeed = In[0].vSeed;
     Out[1].vSeed = In[0].vSeed;
     Out[2].vSeed = In[0].vSeed;
@@ -871,6 +891,10 @@ void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NO
         Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR * 0.5f, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);              
         Out[3].vLifeTime = In[0].vLifeTime;
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -903,6 +927,10 @@ void GS_NONLIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_NO
         Out[3].vPosition = mul(float4(In[0].vPosition.xyz + vR - vL, 1.f), matVP);
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1027,6 +1055,10 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos, matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1063,6 +1095,10 @@ void GS_WEIGHT_THUNDER_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIG
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos - float4(vL, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1187,6 +1223,10 @@ void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1223,6 +1263,10 @@ void GS_WEIGHT_YSIZE_BILLBOARD(point GS_YSIZE_IN In[1], inout TriangleStream<GS_
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1348,6 +1392,10 @@ void GS_SWORD_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -1384,6 +1432,10 @@ void GS_SWORD_WEIGHT_BILLBOARD(point GS_IN In[1], inout TriangleStream<GS_WEIGHT
         Out[3].vTexcoord = float2(0.f, 1.f);
         Out[3].vLifeTime = In[0].vLifeTime;
         Out[3].vProjPos = mul(In[0].vProjPos + float4(vR, 0) - float4(vL, 0), matVP);
+        
+        
+        
+        
         Out[0].vSeed = In[0].vSeed;
         Out[1].vSeed = In[0].vSeed;
         Out[2].vSeed = In[0].vSeed;
@@ -2817,6 +2869,69 @@ PS_NONLIGHT_OUT PS_REPURSE(PS_WEIGHT_IN In)
     return Out;
 }
 
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_FIRECRACKER(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    float2 dir = In.vTexcoord - float2(0.5f, 0.5f);
+    float len = saturate(pow(length(dir) * 5, 1.5));
+    dir = normalize(dir) * len * g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).r * (In.vLifeTime.x / In.vLifeTime.y) * g_fDissolveUVSpeed.y;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x - dir.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y - dir.y);
+    
+    float2 DiffuseTexcoord = float2(In.vTexcoord.x - dir.x / g_fMaskUVSize.x, In.vTexcoord.y - dir.y / g_fMaskUVSize.y);
+    
+    Out.vDiffuse = g_vColor * pow(g_DiffuseTexture.Sample(DefaultSampler, DiffuseTexcoord), 4);
+    
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.r += 1 - maxColor;
+    //Out.vDiffuse.g += 1 - maxColor;
+    //Out.vDiffuse.b += 1 - maxColor;
+    
+    Out.vDiffuse.a *= pow(g_MaskTexture.Sample(DefaultSampler, MaskTexcoord).r, 3.f) * max(5 - In.vLifeTime.x * 15, saturate((In.vLifeTime.y - In.vLifeTime.x)) * g_fDissolveUVSpeed.x) * maxColor;
+    //Out.vDiffuse.a = saturate(pow(Out.vDiffuse.a * 2, 2));
+    
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = lerp(0.3, 0.5, saturate(exp(-linearDepth * 20)));
+    if (weight > Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_FIRECRACKER_BLOOM(PS_NONLIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    
+    float2 dir = In.vTexcoord - float2(0.5f, 0.5f);
+    float len = saturate(pow(length(dir) * 5, 1.5));
+    dir = normalize(dir) * len * g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).r * (In.vLifeTime.x / In.vLifeTime.y) * g_fDissolveUVSpeed.y;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x - dir.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y - dir.y);
+    
+    float2 DiffuseTexcoord = float2(In.vTexcoord.x - dir.x / g_fMaskUVSize.x, In.vTexcoord.y - dir.y / g_fMaskUVSize.y);
+    
+    Out.vDiffuse = g_vColor * pow(g_DiffuseTexture.Sample(DefaultSampler, DiffuseTexcoord), 4);
+    
+    float maxColor = max(Out.vDiffuse.r, max(Out.vDiffuse.g, Out.vDiffuse.b));
+    //Out.vDiffuse.r += 1 - maxColor;
+    //Out.vDiffuse.g += 1 - maxColor;
+    //Out.vDiffuse.b += 1 - maxColor;
+    Out.vDiffuse.a *= pow(g_MaskTexture.Sample(DefaultSampler, MaskTexcoord).r, 3.f) * max(5 - In.vLifeTime.x * 15, saturate((In.vLifeTime.y - In.vLifeTime.x)) * g_fDissolveUVSpeed.x) * maxColor;
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
 BlendState BS_Dust
 {
     BlendEnable[0] = true;
@@ -3284,5 +3399,24 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_METABALL();
     }
-
+    // idx 44
+    pass Firecracker
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_WEIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_FIRECRACKER();
+    }
+    // idx 45
+    pass Firecracker_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_FIRECRACKER_BLOOM();
+    }
 }

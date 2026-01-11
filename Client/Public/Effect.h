@@ -44,7 +44,7 @@ public:
     virtual HRESULT Render() override;
     void    Stop();
     void    Play(_float fTime = -10);
-    void    End(_bool bisRelease = true, _int iTime = 0);
+    void    End(_bool bisRelease = true, _float fTime = 0.f);
 
 private:
     HRESULT Load_Binary(const _char* szFile);

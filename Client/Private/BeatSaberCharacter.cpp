@@ -7,6 +7,8 @@
 
 #include "Note.h"
 
+#include "Effect.h"
+
 #pragma region State
 #include "BeatSaberFsm.h"
 #include "BeatSaber_IdleState.h"
@@ -110,6 +112,13 @@ void CBeatSaberCharacter::ResetPoints()
 	m_CharacterDesc.iScore = 0;
 	m_CharacterDesc.iComboCnt = 0;
 	m_CharacterDesc.isFullCombo = false;
+
+	m_pEffect[0]->Stop();
+	m_pEffect[1]->Stop();
+	m_pEffect[2]->Stop();
+	m_pEffect[3]->Stop();
+	m_pEffect[4]->Stop();
+	m_pEffect[5]->Stop();
 }
 
 HRESULT CBeatSaberCharacter::Ready_CharacterData()
@@ -178,6 +187,41 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 	m_pFsm->Change_State(TEXT("Idle"));
 #pragma endregion
 
+	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+	EffectDesc.fRotationPerSec = 1.f;
+	EffectDesc.fSpeedPerSec = 1.f;
+	EffectDesc.pRootMatrix = nullptr;
+	EffectDesc.pWorldMatrix = nullptr;
+
+	EffectDesc.fRot = _float3(0, 0, 0);
+	EffectDesc.fSize = 0.09f;
+
+	EffectDesc.vPos = XMVectorSet(5.6f, 3.5f, -3.2f, 1.f);
+	m_pEffect[0] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	m_pEffect[2] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire_Good"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	m_pEffect[4] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire_Perfect"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	EffectDesc.vPos = XMVectorSet(-2.65f, 3.5f, 5.15f, 1.f);
+	m_pEffect[1] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	m_pEffect[3] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire_Good"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	m_pEffect[5] = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Fire_Perfect"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+	m_pEffect[0]->Stop();
+	m_pEffect[1]->Stop();
+	m_pEffect[2]->Stop();
+	m_pEffect[3]->Stop();
+	m_pEffect[4]->Stop();
+	m_pEffect[5]->Stop();
 	return S_OK;
 }
 
@@ -277,6 +321,77 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					m_CharacterDesc.iAccuracy = 0;
 					bIsSuccess = true;
 				}
+
+
+				CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+				EffectDesc.fRotationPerSec = 1.f;
+				EffectDesc.fSpeedPerSec = 1.f;
+				EffectDesc.pRootMatrix = nullptr;
+				EffectDesc.pWorldMatrix = nullptr;
+
+				EffectDesc.vPos = -m_pTransformCom->Get_State(STATE::LOOK) * m_pGameInstance->Random(7.f, 10.f) + m_pTransformCom->Get_State(STATE::RIGHT) * m_pGameInstance->Random(-7.f, 7.f) + m_pTransformCom->Get_State(STATE::UP) * m_pGameInstance->Random(9.f, 13.f);
+				EffectDesc.fRot = _float3(0, 0, 0);
+				EffectDesc.fSize = m_pGameInstance->Random(0.3f, 0.5f);
+				EffectDesc.fSpeed = 1.5f;
+				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.1f);
+				_float fRand = m_pGameInstance->Random(0.f, 4.f);
+				if (3.f < fRand) {
+					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Firecracker"),
+						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+				}
+				else if (2.f < fRand) {
+					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Bikini"),
+						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+				}
+				else if (1.f < fRand) {
+					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Pain"),
+						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+				}
+				else {
+					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Gosu"),
+						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+				}
+				if (0 == m_CharacterDesc.iComboCnt % 5) {
+					EffectDesc.fSpeed = 1.f;
+					EffectDesc.fSize = 0.04f;
+					_float3 fDir;
+					XMStoreFloat3(&fDir, -m_pTransformCom->Get_State(STATE::LOOK));
+					EffectDesc.pDir = &fDir;
+					if (5 == m_CharacterDesc.iComboCnt) {
+						EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 9 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
+						m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Good"),
+							ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+					}
+					else {
+						EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 8 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
+						m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Perfect"),
+							ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+					}
+				}
+				if (15 < m_CharacterDesc.iComboCnt) {
+					m_pEffect[0]->Stop();
+					m_pEffect[1]->Stop();
+					m_pEffect[2]->Stop();
+					m_pEffect[3]->Stop();
+					m_pEffect[4]->Play();
+					m_pEffect[5]->Play();
+				}
+				else if (5 < m_CharacterDesc.iComboCnt) {
+					m_pEffect[0]->Stop();
+					m_pEffect[1]->Stop();
+					m_pEffect[2]->Play();
+					m_pEffect[3]->Play();
+					m_pEffect[4]->Stop();
+					m_pEffect[5]->Stop();
+				}
+				else if (0 < m_CharacterDesc.iComboCnt) {
+					m_pEffect[0]->Play();
+					m_pEffect[1]->Play();
+					m_pEffect[2]->Stop();
+					m_pEffect[3]->Stop();
+					m_pEffect[4]->Stop();
+					m_pEffect[5]->Stop();
+				}
 			}
 		}
 
@@ -293,7 +408,14 @@ void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameOb
 		m_CharacterDesc.iGameLife--;
 		m_CharacterDesc.iComboCnt = 0;
 		m_CharacterDesc.iAccuracy = 0;
-
+		m_pEffect[0]->Play();
+		m_pEffect[1]->Play();
+		m_pEffect[2]->Stop();
+		m_pEffect[3]->Stop();
+		m_pEffect[4]->Stop();
+		m_pEffect[5]->Stop();
+		
+		
 		if (0 >= m_CharacterDesc.iGameLife)
 		{
 			// 게임 실패
@@ -331,4 +453,10 @@ void CBeatSaberCharacter::Free()
 
 	m_pGameManager->Bind_BeatSaberCharacter(nullptr);
 	Safe_Release(m_pFsm);
+	Safe_Release(m_pEffect[0]);
+	Safe_Release(m_pEffect[1]);
+	Safe_Release(m_pEffect[2]);
+	Safe_Release(m_pEffect[3]);
+	Safe_Release(m_pEffect[4]);
+	Safe_Release(m_pEffect[5]);
 }

@@ -1885,7 +1885,56 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Box_Effect");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Box_Effect.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
-	
+
+
+
+
+
+	/* For.Prototype_Component_Effect_Dororong_Fire */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Fire");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Fire.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Fire_Good */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Fire_Good");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Fire_Good.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Fire_Perfect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Fire_Perfect");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Fire_Perfect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Good */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Good");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Good.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Perfect */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Perfect");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Perfect.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Firecracker */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Firecracker");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Firecracker.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Bikini */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Bikini");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Bikini.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Gosu */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Gosu");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Gosu.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Dororong_Pain */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Dororong_Pain");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Dororong_Pain.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	
 	/* For.Prototype_Component_TrailEffect_Default_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Default_Slash");
@@ -4887,8 +4936,6 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	THREAD_DESC* Desc = static_cast<THREAD_DESC*>(pArg);
 	PROTOTYPE_DESC pProtoDesc = {};
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
-
-	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
 	/* For.Prototype_Component_Model_Base_1A */
 	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));

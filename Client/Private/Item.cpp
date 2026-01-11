@@ -61,11 +61,10 @@ HRESULT CItem::Initialize(void* pArg)
 	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.5f;
+	EffectDesc.fSize = 0.175f;
 	EffectDesc.iFloor = 2;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-	Safe_AddRef(m_pEffect);
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
@@ -193,6 +192,10 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
 
 				Safe_Release(pPlayer);
+
+				if (nullptr != m_pEffect) {
+					m_pEffect->End(true, 1);
+				}
 			}
 		}
 		Safe_Release(pHUD);
@@ -315,9 +318,5 @@ CGameObject* CItem::Clone(void* pArg)
 void CItem::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pModelCom);
-	if (nullptr != m_pEffect) {
-		m_pEffect->End(true, 1);
-	}
 }

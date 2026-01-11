@@ -59,7 +59,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_MotionBlur() override;
 	void	Set_ParentMat(const _float4x4* pParentMat) { m_pParentMat = pParentMat; }
-	void    End(_int iTime);
+	void    End(_float fTime);
 private:
 	const _float4x4* m_pParentMat = { nullptr };
 	CModel* m_pModelCom = { nullptr };
