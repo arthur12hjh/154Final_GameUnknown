@@ -421,40 +421,6 @@ void CUIBase::Text_Split(const wchar_t* text, vector<_wstring>& pOut)
 		pOut.clear();
 		return;
 	}
-
-	//// 2. 줄 높이 / 전체 높이
-	//float lineHeight = m_pSpriteFont->GetLineSpacing() * scale;
-	//float totalHeight = lineHeight * lines.size();
-
-	//// 3. 시작 Y (전체 블록 중앙 기준)
-	//float startY = centerPos.y - totalHeight * 0.5f;
-
-	//// 4. 줄별 렌더
-	//for (size_t i = 0; i < lines.size(); ++i)
-	//{
-	//	const std::wstring& line = lines[i];
-
-	//	// 빈 줄도 높이는 유지
-	//	float lineWidth = 0.f;
-	//	if (!line.empty())
-	//	{
-	//		XMVECTOR size = m_pSpriteFont->MeasureString(line.c_str());
-	//		lineWidth = XMVectorGetX(size) * scale;
-	//	}
-
-	//	float x = centerPos.x - lineWidth * 0.5f;
-	//	float y = startY + lineHeight * i;
-
-	//	m_pSpriteFont->DrawString(
-	//		m_pSpriteBatch,
-	//		line.c_str(),
-	//		XMFLOAT2(x, y),
-	//		color,
-	//		0.f,
-	//		XMFLOAT2(0.f, 0.f),
-	//		scale
-	//	);
-	//}
 }
 
 #ifdef _DEBUG

@@ -108,6 +108,7 @@ private:
 	CTeleportEvent* m_pTeleportEvent{ nullptr };
 
 	_bool m_bChangeLevel{ false };
+	LEVEL m_eTargetLevel{ LEVEL::END };
 	_bool m_bTeleport{ false };
 	_bool m_bLevelTransitioning{ false }; // 레벨 전환 중 체크
 

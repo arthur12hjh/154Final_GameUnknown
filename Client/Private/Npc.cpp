@@ -6,6 +6,7 @@
 #include "StringHelper.h"
 #include "InteractionBinder.h"
 
+#include "Player.h"
 #include "PlayerCCTHitReporter.h"
 #include "PlayerBehaviorCallback.h"
 #include "PlayerCCTQueryFilterCallback.h"
@@ -23,6 +24,10 @@
 #include "UIHUD.h"
 #include "UIScript.h"
 #include "Item.h"
+
+#include "Camera_Npc.h"
+#include "NpcEvent.h"
+#include "UIShop.h"
 
 CNpc::CNpc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CCharacter(pDevice, pContext)
@@ -53,20 +58,42 @@ HRESULT CNpc::Initialize(void* pArg)
     if (FAILED(Ready_Components()))
         return E_FAIL;
 
- 
-
     return S_OK;
 }
 
 void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
-
     if (5 == m_NpcDesc->iNpcID)
         m_pDropCom->DropRewardItem();
 
+    if (m_pGameManager->GetLevelTransportIndex() == 2 && m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && !m_isReturnDororong)
+    {
+        CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+        if (!pHUD)
+        {
+            Safe_Release(pHUD);
+            return;
+        }
+
+        if (pHUD->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro")))
+        {
+            m_isReturnDororong = true;
+
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+            auto pPlayer = m_pGameManager->GetGameCharacter();
+
+            m_pInteractionCom->Action_InteractionEvent(fTimeDelta, pPlayer);
+
+            Safe_Release(pPlayer);
+        }
+        Safe_Release(pHUD);
+    }
+
     m_pCCT->Update_PrePxPosition(m_pTransformCom);
     m_pAIController->Priority_Update(fTimeDelta);
+
 }
 
 void CNpc::Update(_float fTimeDelta)
@@ -77,37 +104,8 @@ void CNpc::Update(_float fTimeDelta)
     {
         if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
         {
-            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-            if (!pHUD)
-            {
-                Safe_Release(pHUD);
-                return;
-            }
-
-            if (!dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")))->Get_Has_Script_Desc())
-            {
-                if (m_NpcDesc->iNpcID == 4) // »óÁ¡ npc
-                {
-                    pHUD->Open_Shop();
-                }
-                m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
-            }
-
-            Safe_Release(pHUD);
+            Npc_Action();
         }
-        //else
-        //{
-        //    auto pPlayerDesc = m_pGameManager->Get_PlayerDesc();
-        //    if (PLAYER_MODE::BATTLE == pPlayerDesc->ePlayerMode || PLAYER_MODE::IDLE == pPlayerDesc->ePlayerMode)
-        //    {
-        //        //if (INTERACTION_STATE::LOCK == m_pInteractionCom->Get_InterState())
-        //        {
-        //            // ³ªÁß¿¡ ¿©±â¼­ Á¶°Ç Ã¼Å©ÇÏ¼¼¿ä
-        //            //m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
-        //        }
-        //    }
-        //}
     }
 
     m_pCullingCollider->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
@@ -241,20 +239,6 @@ HRESULT CNpc::Ready_Components()
     m_pAIController = static_cast<CAIController*>(pInstnace);
 
     /* Com_Interaction */
-   /* CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
-    InteractionDesc.vSize = Com_Size;
-    InteractionDesc.BeginCallBackFunc = [&]() { this->Begin_Interaction(); };
-    InteractionDesc.EndCallBackFunc = [&]() { this->End_Interaction(); };
-    InteractionDesc.InteractionEvent = [&](_float fTimeDelta, CGameObject* pActionObject) { Excute_Interaction(fTimeDelta, pActionObject); };
-
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Interaction"),
-        TEXT("Com_Interaction"), reinterpret_cast<CComponent**>(&m_pInteractionCom), &InteractionDesc)))
-        return E_FAIL;
-
-    m_pInteractionCom->SetInteractionHitType(HIT_TYPE::INTERACTION);
-    m_pInteractionCom->ADD_InteractionIgnoreObject(HIT_TYPE::NPC);*/
-
-    /* Com_Interaction */
     CInteraction_Component::INTERACTION_DESC InteractionDesc = {};
     InteractionDesc.vSize = Com_Size;
     InteractionDesc.BeginCallBackFunc = [&]() { Begin_Interaction(); };
@@ -280,6 +264,9 @@ HRESULT CNpc::Ready_Components()
         if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_DropComponent"),
             TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
             return E_FAIL;
+
+        m_pNpcEvent = CNpcEvent::Create([&](void* pArg) {});
+        m_pGameInstance->Add_Event(TEXT("Go_DororongSaber"), m_pNpcEvent);
     }
 
     /* Com_CCT */
@@ -289,7 +276,7 @@ HRESULT CNpc::Ready_Components()
 
     Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
     Desc.tUserData = tUserData;
-    //Ä¸½¶ ÄÁÆ®·Ñ·¯¿¡¼­ x´Â ±¸ ¼ººÐ y´Â ±âµÕ ¼ººÐ
+    //Ä¸ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     Desc.vSize = { m_NpcDesc->vExtents.x, m_NpcDesc->vExtents.y, 0.f };
     XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
     Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
@@ -313,14 +300,14 @@ void CNpc::Begin_Interaction()
     if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
         m_pGameInstance->ADD_Interaction(m_pInteractionCom);
 
-    //// ENDÀÏ ¶© ´Ù½Ã ¾È º¸ÀÌ°Ô
+    //// ENDï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½
     //if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
     //    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
 {
-    // ¿©±â¼­ ÇÃ·¹ÀÌ¾î »óÅÂ Ã³¸® ¹× Lock »óÅÂ °ü¸®
+    // ï¿½ï¿½ï¿½â¼­ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ Lock ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (!m_pInteractionCom->IsInteractionEnable())
         m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
@@ -335,29 +322,221 @@ void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
     {
         m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
         m_pInteractionCom->Set_Duration(0.f);
-
-        CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-        if (!pHUD)
-        {
-            Safe_Release(pHUD);
-            return;
-        }
-
-        CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
-
-        if (!pScript)
-            return;
-
-        pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[0]));
-
-        Safe_Release(pHUD);
+        
+        Change_Camera();
+        m_eNpcState = NPC_STATE::MEAT;
     }
 }
 
 void CNpc::End_Interaction()
 {
     m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+}
+
+void CNpc::Npc_Action()
+{
+    CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return;
+    }
+
+    CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+    if (!pScript)
+        return;
+
+    auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
+
+    if (!pNpcCamera)
+    {
+        Safe_Release(pNpcCamera);
+        return;
+    }
+
+    switch (m_eNpcState)
+    {
+    case NPC_STATE::IDLE:
+        break;
+    case NPC_STATE::MEAT:
+    {
+        if (pNpcCamera->Get_LerpEnd())
+        {
+            pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[m_iScriptIdx]));
+            m_eNpcState = NPC_STATE::TALK;
+        }
+        break;
+    }
+    case NPC_STATE::TALK:
+    {
+        if (!pScript->Get_Has_Script_Desc())
+        {
+            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET))
+                m_eNpcState = NPC_STATE::BYE;
+
+            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG))
+            {
+                if (m_iScriptIdx == 0)
+                    m_eNpcState = NPC_STATE::ACTION_BEGIN;
+                else if(m_iScriptIdx > 0)
+                    m_eNpcState = NPC_STATE::BYE;
+            }
+
+            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ï¿½ï¿½ï¿½ï¿½ npc || // ï¿½ï¿½ï¿½Î·ï¿½ npc
+            {
+                if (m_iScriptIdx == 0)
+                    m_eNpcState = NPC_STATE::ACTION_BEGIN;
+                else if (m_iScriptIdx > 0)
+                    m_eNpcState = NPC_STATE::BYE;
+            }
+        }
+        break;
+    }
+    case NPC_STATE::ACTION_BEGIN:
+    {
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // ï¿½ï¿½ï¿½ï¿½ npc
+        {
+            pHUD->Open_Shop();
+            m_eNpcState = NPC_STATE::ACTION;
+        }
+
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && m_iScriptIdx == 0) // ï¿½ï¿½ï¿½Î·ï¿½ npc
+        {
+            LEVEL_CHANGER LevelChanger{ true, ENUM_CLASS(LEVEL::BEATSABER_GAME) };
+
+            UI_EVENT_ARG_DESC Arg{};
+            Arg.Type = UI_EVENT_ARG_DESC::LEVEL_CHANGER;
+            Arg.pData = &LevelChanger;
+            m_pNpcEvent->Notify(&Arg);
+        }
+        break;
+    }
+    case NPC_STATE::ACTION:
+    {
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // ï¿½ï¿½ï¿½ï¿½ npc
+        {
+            if(!dynamic_cast<CUIShop*>(pHUD->Get_UIObject(TEXT("Layer_Shop"), TEXT("UI_Shop")))->Get_IsOpen())
+                m_eNpcState = NPC_STATE::ACTION_END;
+        }
+        break;
+    }
+    case NPC_STATE::ACTION_END:
+    {
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG))
+        {
+            if (m_iScriptIdx == 0)
+            {
+                ++m_iScriptIdx;
+                pScript->End_Script();
+                pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[m_iScriptIdx]));
+                m_eNpcState = NPC_STATE::TALK;
+            }
+            else
+                m_eNpcState = NPC_STATE::BYE;
+        }
+        break;
+    }
+    case NPC_STATE::BYE:
+    {
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ï¿½ï¿½ï¿½Î·ï¿½ npc
+        {
+            m_pDropCom->DropRewardItem();
+        }
+
+        Return_Camera();
+        m_eNpcState = NPC_STATE::IDLE;
+        m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+        break;
+    }
+    }
+
+    Safe_Release(pNpcCamera);
+    Safe_Release(pHUD);
+}
+
+void CNpc::Change_Camera()
+{
+    _float4x4 matPlayerCamera{};
+    XMStoreFloat4x4(&matPlayerCamera, m_pGameInstance->GetCameraWorldMatrix(TEXT("PlayerCamera")));
+
+    _float4 vPos{};
+    XMStoreFloat4(&vPos, m_pTransformCom->Get_State(STATE::POSITION));
+    vPos.x += m_NpcDesc->vCamTargetViewPosOffset.x;
+    vPos.y += m_NpcDesc->vCamTargetViewPosOffset.y;
+    vPos.z += m_NpcDesc->vCamTargetViewPosOffset.z;
+
+    _vector vPrevLook = m_pGameInstance->GetMainCamera()->GetTransform()->Get_State(STATE::LOOK);
+
+    auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
+
+    if (!pPlayer)
+    {
+        Safe_Release(pPlayer);
+        return;
+    }
+
+    pPlayer->SetActive(false);
+
+    m_pGameInstance->SetMainCamera(TEXT("NpcCamera"));
+    auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
+
+    if (!pNpcCamera)
+    {
+        Safe_Release(pNpcCamera);
+        return;
+    }
+
+    pNpcCamera->SetTargetNpc(this);
+    pNpcCamera->SetPrevLook(vPrevLook);
+
+    _float4x4 matNpcCam{};
+    XMStoreFloat4x4(&matNpcCam, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
+
+    _vector vTargetPos = m_pTransformCom->Get_State(STATE::POSITION) - m_pTransformCom->Get_State(STATE::LOOK) * m_NpcDesc->fCamTargetDist;
+
+    _float4 vResult{};
+    XMStoreFloat4(&vResult, vTargetPos);
+
+    matNpcCam.m[3][0] = vResult.x + m_NpcDesc->vCamTargetPosOffset.x;
+    matNpcCam.m[3][1] = vResult.y + m_NpcDesc->vCamTargetPosOffset.y;
+    matNpcCam.m[3][2] = vResult.z + m_NpcDesc->vCamTargetPosOffset.z;
+
+    pNpcCamera->SetCameraAnimation(&matPlayerCamera, &matNpcCam, vPos, (m_NpcDesc->fCamTargetDist * 0.5f));
+
+    m_iScriptIdx = 0;
+
+    if (m_pGameManager->GetLevelTransportIndex() == 2 && m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
+        m_iScriptIdx = 1;
+
+    Safe_Release(pPlayer);
+    Safe_Release(pNpcCamera);
+}
+
+void CNpc::Return_Camera()
+{
+    auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
+
+    if (!pNpcCamera)
+    {
+        Safe_Release(pNpcCamera);
+        return;
+    }
+
+    auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+    if (!pPlayer)
+    {
+        Safe_Release(pPlayer);
+        return;
+    }
+
+    pPlayer->SetActive(true);
+
+    Safe_Release(pPlayer);
+
+    pNpcCamera->ReverseCameraAnimation();
 }
 
 CNpc* CNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -386,8 +565,11 @@ void CNpc::Free()
 {
     __super::Free();
 
+    m_pGameInstance->Remove_Event(TEXT("Go_DororongSaber"));
+
     Safe_Release(m_pDropCom);
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);
     Safe_Release(m_pInteractionCom);
+    Safe_Release(m_pNpcEvent);
 }

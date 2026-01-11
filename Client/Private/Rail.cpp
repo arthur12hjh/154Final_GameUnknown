@@ -46,7 +46,7 @@ void CRail::Update(_float fTimeDelta)
         m_bIsColorArr[0] = true;
         m_bIsIdx0 = true;
         m_fTimeArr[0] = 0.f;
-        m_fColorWeightArr[0] = 0.f; // ¸¸¾à Ã³À½ºÎÅÍ ´Ù½Ã Â÷¿À¸£°Ô ÇÏ°í ½Í´Ù¸é ÁÖ¼® ÇØÁ¦
+        m_fColorWeightArr[0] = 0.f; // ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
     {
@@ -128,6 +128,22 @@ void CRail::Late_Update(_float fTimeDelta)
 
     m_iAccuracy = pDororong->GetBeatSaberCharacterDesc().iAccuracy;
     Safe_Release(pDororong);
+
+    if (m_iPrevAccuracy != m_iAccuracy)
+    {
+        m_fAccuracyTimeAcc = 0.f;
+        m_iPrevAccuracy = m_iAccuracy;
+    }
+    else
+    {
+        m_fAccuracyTimeAcc += fTimeDelta;
+
+        if (m_fAccuracyTimeAcc >= 1.f)
+        {
+            m_iAccuracy = -1;
+        }
+    }
+
 #ifdef _DEBUG
     //m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif

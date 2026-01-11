@@ -1186,11 +1186,17 @@
     <Filter Include="02.GameObjects\Map\Desert\Environment\Tree\Grass">
       <UniqueIdentifier>{4ddd9ff4-0e4e-4f6d-b0f7-97723d65312d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Npc">
+      <UniqueIdentifier>{99d73d12-0082-4d5e-980f-7b3e705abfa4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Character\Player\03. Weapon\Coin">
       <UniqueIdentifier>{692f4d8b-7262-4606-ad00-e44aa13fd334}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\TriggerBox\SoundTriggerBox">
       <UniqueIdentifier>{b805a78d-b82e-44b9-84aa-464f0d525ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Character\AI\Npc\NpcEvent">
+      <UniqueIdentifier>{9771dfdf-1bbc-4a50-9130-4d675059507e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2269,6 +2275,9 @@
     <ClInclude Include="..\Public\TeleportEvent.h">
       <Filter>01.Levels\TeleportEvent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Npc.h">
+      <Filter>02.GameObjects\Camera\Camera_Npc</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Npc_LeftWeaponPart.h">
       <Filter>02.GameObjects\Character\AI\Npc\Weapon\Left</Filter>
     </ClInclude>
@@ -2280,6 +2289,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Coin_Player.h">
       <Filter>02.GameObjects\Character\Player\03. Weapon\Coin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NpcEvent.h">
+      <Filter>02.GameObjects\Character\AI\Npc\NpcEvent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3322,6 +3334,9 @@
     <ClCompile Include="..\Private\TeleportEvent.cpp">
       <Filter>01.Levels\TeleportEvent</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Camera_Npc.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Npc</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Npc_LeftWeaponPart.cpp">
       <Filter>02.GameObjects\Character\AI\Npc\Weapon\Left</Filter>
     </ClCompile>
@@ -3333,6 +3348,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Coin_Player.cpp">
       <Filter>02.GameObjects\Character\Player\03. Weapon\Coin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NpcEvent.cpp">
+      <Filter>02.GameObjects\Character\AI\Npc\NpcEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

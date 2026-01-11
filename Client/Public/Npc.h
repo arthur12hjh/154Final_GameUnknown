@@ -14,6 +14,7 @@ NS_BEGIN(Client)
 struct Npc_Data_Desc;
 class CInteractionBinder;
 class CDropComponent;
+class CNpcEvent;
 
 class CNpc final : public CCharacter
 {
@@ -22,6 +23,10 @@ public :
 	{
 		_uint				iNpcID;
 	}NPC_DESC;
+
+private:
+	enum class NPC_STATE { IDLE, MEAT, TALK, ACTION_BEGIN, ACTION, ACTION_END, BYE };
+	enum class NPC_ID { DEFAULT, SCARLET, ADAM, BOLT, DIG, DORORONG};
 
 private :
 	CNpc(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -46,6 +51,13 @@ private:
 	CInteractionBinder*			m_pInteractionCom = { nullptr };
 	CDropComponent*				m_pDropCom = { nullptr };
 	CAIController*				m_pAIController = { nullptr };
+	CNpcEvent*					m_pNpcEvent = { nullptr };
+
+	NPC_STATE					m_eNpcState{ NPC_STATE::IDLE };
+	//NPC_ID						m_eNpcID{ NPC_ID::END };
+
+	_uint						m_iScriptIdx{ 0 };
+	_bool						m_isReturnDororong{ false };
 
 private :
 	HRESULT						Ready_PartObjects();
@@ -54,6 +66,10 @@ private :
 	void						Begin_Interaction();
 	void						Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject);
 	void						End_Interaction();
+
+	void						Npc_Action();
+	void						Change_Camera();
+	void						Return_Camera();
 
 public:
 	static CNpc*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
