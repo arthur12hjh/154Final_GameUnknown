@@ -698,6 +698,8 @@ namespace Client
 		IRON,
 		BRIDGE,
 		CONCRETE,
+		ROCK,
+		CONTAINER,
 		END
 	};
 
