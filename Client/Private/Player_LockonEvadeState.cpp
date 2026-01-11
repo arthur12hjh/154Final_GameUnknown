@@ -13,7 +13,7 @@ void CPlayer_LockonEvadeState::Start(void* pArg, _float fBlendRatio)
 {
 	m_eState = PLAYER_STATE::EVADE;
 
-	m_pGameInstance->Manager_PlaySound(TEXT("SE_Downer_Evade_00.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	m_pGameInstance->Manager_PlaySound(TEXT("SE_Downer_Evade_00.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Evade_Forward", false, 1.2f);

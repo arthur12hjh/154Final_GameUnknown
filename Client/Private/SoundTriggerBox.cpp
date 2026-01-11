@@ -134,7 +134,7 @@ HRESULT CSoundTriggerBox::Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc)
 		return E_FAIL;
 
 	// 충돌 끝낫을때 이벤트는 사용해야하는 때가 오면 그때 만들게요
-	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { End_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::STATIC);
@@ -151,15 +151,16 @@ HRESULT CSoundTriggerBox::Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc)
 
 void CSoundTriggerBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-    auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-    if (pCharacter)
-    {
-        pCharacter->SetGroundSoundType(m_eGroundSoundType);
-    }
+  
 }
 
 void CSoundTriggerBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if (pCharacter)
+	{
+		pCharacter->SetGroundSoundType(m_eGroundSoundType);
+	}
 }
 
 void CSoundTriggerBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)

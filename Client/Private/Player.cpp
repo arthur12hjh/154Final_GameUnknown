@@ -111,8 +111,10 @@ void CPlayer::Play_Sound(const ANIM_NOTIFY& NotifyReference)
 	}
 	else if ("JUMP" == NotifyReference.szNotifyArg01)
 	{
-		// 여기서 Walk Sound
-		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_JumpStep_Default1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		if(GROUND_SOUND_TYPE::SAND == m_eGroundSoundType)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_JumpStep_Default1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else if (GROUND_SOUND_TYPE::IRON == m_eGroundSoundType)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 3.f);
 	}
 	else if ("Just_Evade" == NotifyReference.szNotifyArg01)
 	{
