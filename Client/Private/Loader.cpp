@@ -92,6 +92,8 @@
 #include "CinematicModel_Dororong.h"
 
 #include "CinematicPartBody.h"
+#include "CinematicPartFacial.h"
+
 
 #pragma endregion
 
@@ -610,6 +612,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
+	vector<MODEL_TYPE> szPartModelTypeList;
 
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
@@ -621,6 +624,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//잠깐바꿔놓음
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_short.binx");
 
+
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+
 	//// 크리스마스
 	//if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
 	//	szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Christmas/Eve_Body_Christmas.binx",
@@ -629,8 +637,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	//// 오피스 스타일
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::GAMEPLAY), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle_WeightLimited.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_OfficeStyle/Eve_Body_OfficeStyle_WeightLimited.fbx",
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix, szPartModelTypeList)))
 		return E_FAIL;
 	
 	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), szPlayerTag))->Import_Texture(2, TEXTURE_TYPE::ORSS,
@@ -806,6 +814,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CCinematicPartBody::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_CinematicPartFacial */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicPartFacial"),
+		CCinematicPartFacial::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion
 
 	/* For.Prototype_GameObject_LinkAttackTester */
@@ -862,15 +875,21 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
+	vector<MODEL_TYPE> szPartModelTypeList;
 
 
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Scarlet_Face_Morph"));
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Scarlet"));
 
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/Scarlet_Facial_v3.binMorph");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.binx");
+
+	szPartModelTypeList.push_back(MODEL_TYPE::FACIAL);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(pProtoDesc.iLevelID, m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test05.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix, szPartModelTypeList)))
 		return E_FAIL;
 
 	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Model_Face_Scarlet")))->Import_Texture(0, TEXTURE_TYPE::ORSS,
@@ -4919,7 +4938,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	/* For.Prototype_Component_Model_Base_1A */
-	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Base_1A_COL");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Camp/Base_1A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

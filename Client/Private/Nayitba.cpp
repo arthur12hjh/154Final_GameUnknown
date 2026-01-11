@@ -819,7 +819,6 @@ void CNaytiba::BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState)
 			if (pUIHUD)
 				pUIHUD->Set_Boss_Desc(m_pInitMonsterInfo, &m_MonsterInfo);
 
-			m_pGameManager->Play_BossBGM(m_iMonsterID, 0);
 			Safe_Release(pUIHUD);
 		}
 		else

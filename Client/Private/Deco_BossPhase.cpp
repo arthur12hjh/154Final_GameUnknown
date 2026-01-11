@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Deco_BossPhase.h"
 
+#include "GameInstance.h"
 #include "BehaviorTree.h"
 #include "BossBlackBoard.h"
 #include "Nayitba.h"
@@ -44,6 +45,7 @@ CBehaviorNode::NODE_STATE CDeco_BossPhase::Update(_float fTimeDelta)
 						// 컷씬끝나고 페이즈 세팅해야할거같음
 						//m_pBlackBoard->Set_BossPhase(CBossBlackBoard::BOSS_PAHSE(iCurrentPhaseIndex + 1));
 
+						m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
 						m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::CUTSCENE);
 					}
 				}

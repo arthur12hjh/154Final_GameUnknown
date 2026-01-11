@@ -20,6 +20,12 @@
           "szObjectTag": "Prototype_GameObject_CinematicModel_Scarlet"
         },
         {
+          "eState": 17,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "BGM_BOSS_SCARLET_PHASECHANGE.wav"
+        },
+        {
           "eState": 4,
           "fTrackPosition": 0.0,
           "iActiveIndex": 0,
@@ -50,6 +56,12 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 6.5,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_01_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 8.0,
           "iActiveIndex": 1413,
@@ -60,6 +72,12 @@
           "fTrackPosition": 13.5,
           "iActiveIndex": 1414,
           "szObjectTag": "ActionCamera_ScarletBattleEnter04"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 16.36,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_02_VO.wav"
         },
         {
           "eState": 3,
@@ -74,6 +92,12 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter06"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 32.17,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_laugh_S_5_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 35.7,
           "iActiveIndex": 1417,
@@ -86,10 +110,28 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter08"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 41.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Hum_3_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 47.9,
           "iActiveIndex": 1419,
           "szObjectTag": "ActionCamera_ScarletBattleEnter09"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 51.23,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_03_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 53.44,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_04_VO.wav"
         },
         {
           "eState": 2,
@@ -161,6 +203,12 @@
               "fInputFloat": 0.0
             }
           ]
+        },
+        {
+          "eState": 18,
+          "fTrackPosition": 57.4,
+          "iActiveIndex": 81,
+          "szObjectTag": ""
         }
       ],
         "iCinematicID": 142,

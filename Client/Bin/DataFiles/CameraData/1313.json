@@ -33,6 +33,17 @@
                     25.124000549316406,
                     331.4570007324219
                 ]
+            },
+            {
+                "fTangentEnd": 0.0,
+                "fTangentStart": 0.0,
+                "fTrackPosition": 8.0,
+                "iInterpolationFlag": 0,
+                "vTrackValue": [
+                    260.97900390625,
+                    25.124000549316406,
+                    331.4570007324219
+                ]
             }
         ],
         "FOVTrackList": [

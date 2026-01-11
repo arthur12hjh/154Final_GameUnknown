@@ -44,6 +44,7 @@ private:
 	CPartObject*					m_pScabbard = { nullptr };
 	class CCinematicPartBody*		m_pBottle = { nullptr };
 	class CCinematicPartBody*		m_pGlass = { nullptr };
+	class CModel*					m_pFacial  = { nullptr };
 
 	_float3		m_vRotationQuaternion = {};
 	_float		m_fMoveTime = 0.f;

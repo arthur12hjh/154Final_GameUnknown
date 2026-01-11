@@ -14,6 +14,16 @@ NS_BEGIN(Animation_Editor)
 
 class CFace_Scarlet final : public CPartObject
 {
+public:
+	enum class FACE_MATERIAL {
+		//이 4개는 그냥 둬야함
+		DEFAULT, SHADOW, RIMLIGHT, MOTIONBLUR,
+
+		MI_CH_M_NA_961_Head, MI_CH_M_NA_961_Eyebrow, MI_CH_M_NA_961_Eyes,
+		MI_CH_M_NA_961_Lens, MI_CH_M_NA_961_Eyelashes, MI_CH_M_NA_961_Tearline,
+		MI_CH_M_NA_961_Eyeshadow, MI_CH_M_NA_961_EyeBlend, MI_CH_M_NA_961_NoseShadow,
+		MI_CH_M_NA_961_Teeth
+	};
 
 public:
 	typedef struct tagFace_Scarlet_Desc : public CPartObject::PARTOBJECT_DESC
@@ -21,10 +31,14 @@ public:
 		const _uint* pParentState = { nullptr };
 		void* pBodyPtr = { nullptr };
 	}FACE_SCARLET_DESC;
+
 private:
 	CFace_Scarlet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFace_Scarlet(const CFace_Scarlet& Prototype);
 	virtual ~CFace_Scarlet() = default;
+
+public:
+	HRESULT								Mapping_Shader_Material(_uint iIdx);
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

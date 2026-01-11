@@ -15,7 +15,7 @@ public:
 	HRESULT Initialize(class CModel* pModel, binMorphAnimation* pMorphAnimation);
 	_int Update_TrackPosition(class CModel* pModel, _bool isLoop, _float fTimeDelta);
 	_bool Update_CurrentKeyFrameIndices();
-	
+
 	void Reset();
 
 	_float Get_Duration() { return m_fDuration; }
@@ -29,8 +29,10 @@ public:
 
 	_char* Get_Name() { return m_szName; }
 
-	void Set_Name(_char* szName) { strcpy_s(m_szName, szName); }
+	vector<class CMorphChannel*>* Get_MorphChannels() { return &m_MorphChannels; }
 
+	void Set_Name(_char* szName) { strcpy_s(m_szName, szName); }
+	void Set_CurrentTrackPosition(_float fCurrentTrackPosition) { m_fCurrentTrackPosition = fCurrentTrackPosition; }
 
 private:
 	_char								m_szName[MAX_PATH] = {};

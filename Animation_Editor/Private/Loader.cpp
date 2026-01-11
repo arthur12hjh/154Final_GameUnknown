@@ -101,14 +101,14 @@ void CLoader::Output()
 
 HRESULT CLoader::Loading_For_Editor()	
 {
-	m_strMessage = TEXT("누가 내 Loader에 똥쌌어! 내가쌌어");
+	m_strMessage = TEXT("Loading For Editor.");
 
 	/* For.Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("누가 내 Loader에 똥쌌어!");
+	m_strMessage = TEXT("Loading For Editor..");
 
 	/* For.Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_VIBuffer_Cube"),
@@ -195,15 +195,9 @@ HRESULT CLoader::Loading_For_Editor()
 		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Cinematic/Gorilla/Cine_Gorilla.binx", PreTransformMatrix))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_Scarlet_Face_Morph */
-	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph"),
-		CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::FACIAL, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Facial.fbx", PreTransformMatrix))))
-		return E_FAIL;
+	m_strMessage = TEXT("Loading For Facial...");
 
-	dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(0, TEXTURE_TYPE::ORSS,
-		"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_ORSS.dds",
-		"g_ORSSTexture", TRUE);
+	m_strMessage = TEXT("Loading For Editor...");
 
 	/* For.Prototype_Component_Model_Scarlet_Weapon */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
@@ -231,7 +225,9 @@ HRESULT CLoader::Loading_For_Editor()
 
 
 
-	m_strMessage = TEXT("모름");
+
+	m_strMessage = TEXT("Loading For Editor....");
+
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -272,7 +268,9 @@ HRESULT CLoader::Loading_For_Editor()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPointParticle.hlsl"), VTX_POS_INSTANCE_PARTICLE::Elements, VTX_POS_INSTANCE_PARTICLE::iNumElements))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("절대 콜라이더를 로드하고 있지 않습니다.");
+
+	m_strMessage = TEXT("Loading For Editor.....");
+
 	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Collider_AABB"),
 		CBoxCollider::Create(m_pDevice, m_pContext))))
@@ -288,7 +286,8 @@ HRESULT CLoader::Loading_For_Editor()
 		CSphereCollider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	m_strMessage = TEXT("절대 객체원형을 로드하고 있지 않습니다.");
+	m_strMessage = TEXT("Loading For Editor......");
+
 	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_GameObject_BackGround"),
 	//	CBackGround::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
@@ -442,6 +441,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
+	vector<MODEL_TYPE> szPartModelTypeList;
 
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Eve"));
 	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
@@ -451,9 +451,13 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_20.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix, szPartModelTypeList)))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_Weapon */
@@ -497,18 +501,24 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 
 	vector<_wstring> szPartPrototypeTagList;
 	vector<string> szPartModelFilePathList;
+	vector<MODEL_TYPE> szPartModelTypeList;
 
-	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Face_Scarlet"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Scarlet_Face_Morph"));
+	szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Scarlet_Face"));
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_Hair_Eve"));
 	//szPartPrototypeTagList.push_back(TEXT("Prototype_Component_Model_PonyTail_Eve"));
 	//
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Facial_v3.binMorph");
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_Scarlet_Face.binx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
 	//szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_PonyTail.binx");
 
+	szPartModelTypeList.push_back(MODEL_TYPE::FACIAL);
+	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
+
  	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
 		szPlayerTag, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Body/CH_M_Scarlet_Body_test04.binx",
-		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix)))
+		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix, szPartModelTypeList)))
 		return E_FAIL;
 
 	PROTOTYPE_DESC pProtoDesc = {};
@@ -536,6 +546,119 @@ HRESULT CLoader::Loading_For_Scarlet(void* pArg)
 	//	return E_FAIL;
 
 	//Desc->OnCompleted(this_thread::get_id());
+
+
+	///* For.Prototype_Component_Model_Scarlet_Face_Morph */
+	//PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
+	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph"),
+	//	CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::FACIAL, "../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Facial_v1.glb", PreTransformMatrix))))
+	//	return E_FAIL;
+
+		/*dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(0, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_A.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(0, TEXTURE_TYPE::NORMAL,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_N.dds",
+			"g_NormalTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(0, TEXTURE_TYPE::ORSS,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Head_ORSS.dds",
+			"g_ORSSTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(1, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Eyebrow_D.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(1, TEXTURE_TYPE::OPACITY,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Eyebrow.dds",
+			"g_OpacityTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(2, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Eye_D.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(2, TEXTURE_TYPE::NORMAL,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/T_EYE_NORMALS.dds",
+			"g_NormalTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(3, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Lens_A.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(3, TEXTURE_TYPE::OPACITY,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_Lens_A.dds",
+			"g_OpacityTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(3, TEXTURE_TYPE::ORM,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Base_Gray_D.dds",
+			"g_ORMTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(3, TEXTURE_TYPE::EMISSIVE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/T_SolidBlack_Linear.dds",
+			"g_EmissiveTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(4, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Eyelashes_D.dds",
+			"g_DiffuseTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(5, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Tearline_A.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(5, TEXTURE_TYPE::OPACITY,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Tearline_A.dds",
+			"g_OpacityTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(5, TEXTURE_TYPE::NORMAL,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/T_Eye_Wet_Normal.dds",
+			"g_NormalTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(6, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/T_EyeOcclusion.dds",
+			"g_DiffuseTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(7, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Tearline_A.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(7, TEXTURE_TYPE::OPACITY,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Tearline_A.dds",
+			"g_OpacityTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(8, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Scarlet_Tearline_A.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(8, TEXTURE_TYPE::OPACITY,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/CH_M_NA_961_NoseShadow.dds",
+			"g_OpacityTexture", TRUE);
+
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(9, TEXTURE_TYPE::DIFFUSE,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Tex_NA_21_Teeth.dds",
+			"g_DiffuseTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(9, TEXTURE_TYPE::ORM,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Tex_P_EVE_Teeth_ORM.dds",
+			"g_ORMTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(9, TEXTURE_TYPE::NORMAL,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Tex_P_EVE_Teeth_N.dds",
+			"g_NormalTexture", TRUE);
+
+		dynamic_cast<CModel*>(m_pGameInstance->Get_Prototype(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph")))->Import_Texture(9, TEXTURE_TYPE::ORSS,
+			"../Bin/Resources/Models/Character/Monster/Scarlet/CH_M_Scarlet_Face/Tex_P_EVE_Teeth_SSS.dds",
+			"g_ORSSTexture", TRUE);*/
+
 
 	return S_OK;
 }
