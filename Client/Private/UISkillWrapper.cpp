@@ -40,12 +40,12 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pCharactor->Get_Desc()->eBetaSkillState[i]);
 			m_iSkillID[i] = const_cast<_uint*>(&pCharactor->Get_Desc()->iBetaSkillId[i]);
-			//m_ePrevSkillState[i] = *m_eSkillState[i];
+			m_ePrevSkillState[i] = SKILL_STATE::DEFAULT;
 		}
 
 		m_iCurrentBeta = const_cast<LONGLONG*>(&pCharactor->Get_Desc()->iCurrentBetaEnergy);
 		m_eRushState = const_cast<SKILL_STATE*>(&pCharactor->Get_Desc()->eRushState);
-		m_ePrevRushState = *m_eRushState;
+		m_ePrevRushState = SKILL_STATE::DEFAULT;
 		m_fMaxRushCoolTime = const_cast<_float*>(&pCharactor->Get_Desc()->fMaxRushCoolTime);
 		m_fCurrentRushCoolTime = const_cast<_float*>(&pCharactor->Get_Desc()->fCurrentRushCoolTime);
 	}
@@ -58,12 +58,12 @@ HRESULT CUISkillWrapper::Initialize(void* pArg)
 		{
 			m_eSkillState[i] = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eBetaSkillState[i]);
 			m_iSkillID[i] = const_cast<_uint*>(&pGaraPlayer->Get_Desc()->iBetaSkillId[i]);
-			//m_ePrevSkillState[i] = *m_eSkillState[i];
+			m_ePrevSkillState[i] = SKILL_STATE::DEFAULT;
 		}
 
 		m_iCurrentBeta = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);
 		m_eRushState = const_cast<SKILL_STATE*>(&pGaraPlayer->Get_Desc()->eRushState);
-		m_ePrevRushState = *m_eRushState;
+		m_ePrevRushState = SKILL_STATE::DEFAULT;
 		m_fMaxRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fMaxRushCoolTime);
 		m_fCurrentRushCoolTime = const_cast<_float*>(&pGaraPlayer->Get_Desc()->fCurrentRushCoolTime);
 		

@@ -8740,6 +8740,13 @@ HRESULT CLoader::Loading_UI_For_GamePlay_Level(void* pArg)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);
 
+	/* For.Prototype_GameObject_UI_TriggerKey */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_UI_TriggerKey");
+	pProtoDesc.pPrototype = CUITriggerKey::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
 	return S_OK;
 }
 

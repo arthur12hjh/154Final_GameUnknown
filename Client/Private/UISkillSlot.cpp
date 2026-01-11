@@ -94,7 +94,8 @@ void CUISkillSlot::Late_Update(_float fTimeDelta)
 	}
 	
 	if((m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
-			|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE))
+		|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::USE)
+		|| m_tSkillInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 		&& m_tSkillInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_bPlayingAnim == false)
 	{

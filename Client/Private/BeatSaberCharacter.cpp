@@ -83,18 +83,24 @@ void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
 
 HRESULT CBeatSaberCharacter::Render()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render();
 
 	return S_OK;
 }
 
 HRESULT CBeatSaberCharacter::Render_Shadow()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_Shadow();
 
 	return S_OK;
 }
 
 HRESULT CBeatSaberCharacter::Render_MotionBlur()
 {
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject.second->Render_MotionBlur();
 
 	return S_OK;
 }

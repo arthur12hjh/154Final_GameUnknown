@@ -1150,9 +1150,6 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector">
       <UniqueIdentifier>{5a6f274d-b730-4b22-9e21-a031d3a597ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey">
-      <UniqueIdentifier>{52b87961-1c6e-4cfb-9d58-3ef44f1df75b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\TraceLight">
       <UniqueIdentifier>{5d300786-8dd3-4948-a762-4e8eb6c0083e}</UniqueIdentifier>
     </Filter>
@@ -1197,6 +1194,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Character\AI\Npc\NpcEvent">
       <UniqueIdentifier>{9771dfdf-1bbc-4a50-9130-4d675059507e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UIObjects\UIBase\UITriggerKey">
+      <UniqueIdentifier>{52b87961-1c6e-4cfb-9d58-3ef44f1df75b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2255,7 +2255,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UITriggerKey.h">
-      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey</Filter>
+      <Filter>02.GameObjects\UIObjects\UIBase\UITriggerKey</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TargetLight.h">
       <Filter>02.GameObjects\TraceLight</Filter>
@@ -3314,7 +3314,7 @@
       <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UISongSelector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UITriggerKey.cpp">
-      <Filter>02.GameObjects\UIObjects\UIBase\UIBeatSaber\UITriggerKey</Filter>
+      <Filter>02.GameObjects\UIObjects\UIBase\UITriggerKey</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TargetLight.cpp">
       <Filter>02.GameObjects\TraceLight</Filter>
