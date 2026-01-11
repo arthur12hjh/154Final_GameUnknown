@@ -1995,6 +1995,14 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
 					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::CONCRETE;
 					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_ROCK:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::ROCK;
+					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::CONTAINER;
+					break;
 #pragma endregion
 
 #pragma region Terrain
@@ -2033,7 +2041,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, nullptr);
 				}
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_SAND || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_IRON
-						|| m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE)
+						|| m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_ROCK || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &SoundDesc);
 				}
@@ -4631,7 +4639,7 @@ HRESULT CMapTool_Desert::Render()
 		ImGui::Text("Sound Trigger Box Objects");
 		_int nSelectedModel = -1;
 
-		const _char* modelNames[] = { "Grass", "Sand", "Iron", "Bridge", "Concrete" };
+		const _char* modelNames[] = { "Grass", "Sand", "Iron", "Bridge", "Concrete", "Rock", "Container"};
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -4660,6 +4668,16 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedModel == 4)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 5)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_ROCK;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 6)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
 			}
