@@ -36,6 +36,7 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 	CScarletBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 	_uint iCurrentPhaseIndex = ENUM_CLASS(ePhase);
 
+	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
 	if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
 	{
 		auto pGameManger = CGameManager::GetInstance();
@@ -51,7 +52,7 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 			}
 			else if (1 == m_pNaytiba->GetMonsterID())
 			{
-				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_FINISH.wav"), 3.f);
+				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_DED_BOSS_GIGAS_FINISH.wav"), 3.f);
 				pGameManger->Play_Cinematic(125, [&]() { FinishedCutScene(); });
 			}
 			break;

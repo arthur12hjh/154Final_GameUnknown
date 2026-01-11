@@ -962,6 +962,7 @@ void CLevel_GamePlay::Free()
 	m_pGameInstance->UnBind_Observer(TEXT("TelePort"), m_pTeleportEvent);
 
 	Safe_Release(m_pLevelChangeEvent);
+	Safe_Release(m_pTeleportEvent);
 
 	__super::Free();
 }
