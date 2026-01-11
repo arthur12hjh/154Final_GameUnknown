@@ -292,6 +292,8 @@ void CS(uint3 Gid : SV_GroupID,
         g_Out[DTid.x].vLifeTime = Input[DTid.x].vLifeTime;
         if (0 > g_Out[DTid.x].vLifeTime.x)
         {
+            if (5 == viLoopAndCount.x)
+                return;
             if (0 == viLoopAndCount.x && 2 != vfisSphere.x)
                 return;
             if (4 == viLoopAndCount.x)
