@@ -119,7 +119,7 @@ void CDropComponent::CreateObjectToLayer()
         CItem::ITEM_DESC ItemDesc = {};
         ItemDesc.iInteractionID = 0;
         ItemDesc.bIsApplyTransform = true;
-        ItemDesc.vScale = { 1.f, 1.f, 1.f };
+        ItemDesc.vScale = { 3.f, 3.f, 3.f };
         ItemDesc.fDropForce = m_pGameInstance->Random(m_fDropForce - 5.f, m_fDropForce + 5.f);
         ItemDesc.isHemiSphere = m_isDropRangeHemiSphere;
 

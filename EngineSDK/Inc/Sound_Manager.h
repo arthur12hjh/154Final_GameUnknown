@@ -28,29 +28,25 @@ public:
 	void	Tick(_float fTimeDelta);
 	_uint	Get_BGMLength(const TCHAR* pSoundKey);
 
-	_uint	Get_ChannelLength(CHANNELID eChannelID);
-	_float	Get_ChannelRatio(CHANNELID eChannelID);
+	_uint	Get_ChannelLength(CHANNELID eChannelID, _uint iIndex);
+	_float	Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex);
 
 private:
 	// 사운드 리소스 정보를 갖는 객체 
 	map<TCHAR*, FMOD::Sound*>	m_mapSound;
 
 	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체 
-	FMOD::Channel*				m_pChannelArr[CHANNELID::END];
-	SOUND_CALLBACK_DESC			m_ChannelEndCallBacks[CHANNELID::END];
-	_float						m_pChannelVolume[CHANNELID::END];
+	vector<FMOD::Channel*>			m_pChannelArr[CHANNELID::END];
+	vector<SOUND_CALLBACK_DESC*>	m_ChannelEndCallBacks[CHANNELID::END];
+
+	_float							m_pChannelVolume[CHANNELID::END];
 
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
 	FMOD::System* m_pSystem;
 
-	
-
-	function<void(FMOD_CHANNELCONTROL* channelcontrol,
-		FMOD_CHANNELCONTROL_TYPE controltype,
-		FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,
-		void* commanddata1, void* commanddata2)> m_pFinishedFunction[CHANNELID::END];
 private:
-	void LoadSoundFile();
+	void						LoadSoundFile();
+	void						Remove_EndSound();
 
 public :
 	static	CSound_Manager*		Create();

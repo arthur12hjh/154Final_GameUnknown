@@ -10,6 +10,7 @@
 
 #include "UIBase.h"
 #include "UIHUD.h"
+#include "Effect.h"
 
 CCanBox::CCanBox(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CProb_Interaction(pDevice, pContext)
@@ -247,6 +248,19 @@ void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
             /* if (m_pEventHandle)
                 m_pEventHandle->Notify(nullptr);*/
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+
+            CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+            EffectDesc.fRotationPerSec = 1.f;
+            EffectDesc.fSpeedPerSec = 1.f;
+
+            EffectDesc.pRootMatrix = nullptr;
+            EffectDesc.pWorldMatrix = nullptr;
+
+            EffectDesc.vPos = m_pTransformCom->Get_State(STATE::POSITION);
+            EffectDesc.fRot = _float3(0, 0, 0);
+            EffectDesc.fSize = 0.4f;
+            EffectDesc.fSpeed = 1.f;
+            m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Box_Effect"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
         }
     }
     else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())

@@ -30,10 +30,18 @@ HRESULT CTrailEffect::Initialize(void* pArg)
     
     TRAIL_DATA* pDesc = static_cast<TRAIL_DATA*>(pArg);
     if (pDesc->bisLine) {
-        /* Com_Trail */
-        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Line_Trail"),
-            TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pWaveTrail), pArg)))
-            return E_FAIL;
+        if (pDesc->bisLong) {
+            /* Com_Trail */
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Short_Line_Trail"),
+                TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pWaveTrail), pArg)))
+                return E_FAIL;
+        }
+        else {
+            /* Com_Trail */
+            if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Line_Trail"),
+                TEXT("Com_Trail"), reinterpret_cast<CComponent**>(&m_pWaveTrail), pArg)))
+                return E_FAIL;
+        }
     }
     else {
         if (pDesc->bisLong) {

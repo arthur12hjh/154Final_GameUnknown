@@ -182,7 +182,7 @@ HRESULT CTrailData::Bind_Texture(CShader* pShader)
 		return E_FAIL;
 
 
-	if (RENDER::BLUR == m_eRender) {
+	if (RENDER::BLUR == m_eRender || RENDER::METABALL == m_eRender) {
 		ID3D11Texture2D* pDepthTexture = nullptr;
 		D3D11_TEXTURE2D_DESC texDesc = {};
 		ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));

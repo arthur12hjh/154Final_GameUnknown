@@ -161,9 +161,9 @@ HRESULT CMeshEffect::Render_MotionBlur()
 	return S_OK;
 }
 
-void CMeshEffect::End()
+void CMeshEffect::End(_int iTime)
 {
-	m_tData.fEndTime = m_fTime;
+	m_tData.fEndTime = m_fTime + iTime;
 	m_bisEnd = true;
 }
 

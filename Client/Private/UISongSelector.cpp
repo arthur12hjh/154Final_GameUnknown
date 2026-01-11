@@ -30,7 +30,7 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_SongDescs.reserve(2);
+	m_SongDescs.reserve(3);
 
 	/*for (size_t i = 0; i < 10; ++i)
 	{
@@ -46,24 +46,15 @@ HRESULT CUISongSelector::Initialize(void* pArg)
 	_stprintf_s(Desc.szVideoTag, TEXT("DoroDoro"));
 	m_SongDescs.push_back(Desc);
 
-	/*Desc.szSongName = TEXT("Be My Light(Test)");
-	Desc.szSongKey = TEXT("Test");
-	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
-	m_SongDescs.push_back(Desc);*/
-
-	Desc.szSongName = TEXT("TEST");
-	Desc.szSongKey = TEXT("Test");
+	Desc.szSongName = TEXT("Be My Light");
+	Desc.szSongKey = TEXT("BML");
 	_stprintf_s(Desc.szVideoTag, TEXT("BML"));
 	m_SongDescs.push_back(Desc);
 
-	/*m_Songs.push_back(TEXT("asdl"));
-	m_Songs.push_back(TEXT("asdlkfjafsdfs"));
-	m_Songs.push_back(TEXT("asdlkfss"));
-	m_Songs.push_back(TEXT("asdlkf"));
-	m_Songs.push_back(TEXT("asdlkasdfasdfasdfa"));
-	m_Songs.push_back(TEXT("aff"));
-	m_Songs.push_back(TEXT("asdfja"));
-	m_Songs.push_back(TEXT("asdlkfja"));*/
+	Desc.szSongName = TEXT("Heart Breaker");
+	Desc.szSongKey = TEXT("HEARTBREAKER");
+	_stprintf_s(Desc.szVideoTag, TEXT("HEARTBREAKER"));
+	m_SongDescs.push_back(Desc);
 
 	return S_OK;
 }

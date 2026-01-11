@@ -671,7 +671,7 @@ PS_NONLIGHT_OUT PS_CIRCLE_SLASH_NONLIGHT(PS_IN In)
     else
     {
         float fSpeedTime = g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x;
-        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + (g_fTime * g_fMaskUVSpeed.x) * (1 - saturate(fSpeedTime * 0.25))) * g_fMaskUVSize.x) ;
+        MaskTexcoord.x = ((In.vTexcoord.x + g_fMaskUV.x + (g_fTime * g_fMaskUVSpeed.x) * (1 - saturate(fSpeedTime * 0.25))) * g_fMaskUVSize.x);
         DiffuseTexcoord.x = ((In.vTexcoord.x + g_fDiffuseUV.x + 1 + (g_fTime * g_fDiffuseUVSpeed.x - 1)) * g_fDiffuseUVSize.x) % 1;
         vColor.a *= saturate((2 - pow(g_fTime * g_fMaskUVSpeed.x * 0.8, 1.5)));
     }
@@ -1206,6 +1206,57 @@ PS_NONLIGHT_OUT PS_SLASH_MOTION_BLUR(PS_TANGENT_IN In)
     return Out;
 }
 
+float hole[16] =
+{
+    0, 8, 2, 10,
+    12, 4, 14, 6,
+     3, 11, 1, 9,
+    15, 7, 13, 5
+};
+
+PS_NONBLEND_OUT PS_WHITE(PS_IN In)
+{
+    PS_NONBLEND_OUT Out;
+    
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    if (0 > MaskTexcoord.y || 1 < MaskTexcoord.y)
+        discard;
+    
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    float threshold = hole[index] / 32.0;
+    if (0 >= g_vColor.a * saturate(g_fTime) * (1 - In.vTexcoord.y) - threshold || (0 < g_fEndTime && 0 >= g_vColor.a * (1 - In.vTexcoord.y) * saturate(g_fEndTime - g_fTime) - threshold))
+        discard;
+    Out.vDiffuse = g_vColor * 6;
+    Out.vNormal = float4(normalize(In.vNormal) * 0.5f + 0.5f, 1.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vEmissive = g_vColor * 6;
+    Out.vBloom = 0;
+    
+    //vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    //if (vMtrlDiffuse.a < 0.4f)
+    //    discard;
+    //
+    //int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    //
+    //float threshold = hole[index] / 32.0;
+    //if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    //    discard;
+    //
+    //float3 normal = normalize(In.vNormal);
+    //
+    //Out.vDiffuse = float4(1, 1, 1, 1);
+    //
+    //Out.vNormal = float4(normal * 0.5f + 0.5f, 1.f);
+    //Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 1.0f);
+    //Out.vORM = float4(0, 0, 0, 0);
+    //Out.vEmissive = vMtrlDiffuse * g_vColor;
+    
+    return Out;
+}
+
 
 BlendState BS_BlendAlphaMax
 {
@@ -1222,7 +1273,7 @@ BlendState BS_BlendAlphaMax
 
 
 technique11 DefaultTechnique
-{ 
+{
     // idx 0
     pass Normal
     {
@@ -1502,6 +1553,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_TANGENT();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SLASH_MOTION_BLUR();
+    }
+    // idx 28
+    pass Emissive
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_WHITE();
     }
 
 
