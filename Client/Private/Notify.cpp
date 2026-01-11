@@ -144,8 +144,6 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 		break;
 	case CNotify::CAMERA_SHAKE:
 		return Notify_Camera_Shake(AnimNotify);
-	case CNotify::RADIAL_BLUR:
-		return Notify_Radial_Blur(AnimNotify);
 	case CNotify::CHANGE_COLOR:
 		return m_pCharacter->CallNotify(CNotify::CHANGE_COLOR, &AnimNotify);
 		break;
@@ -157,6 +155,9 @@ HRESULT CNotify::CallNotify(ANIM_NOTIFY AnimNotify)
 		break;
 	case CNotify::PLAY_SCREEN:
 		return Notify_Play_Screen(AnimNotify);
+		break;
+	case CNotify::PLAY_BLUR:
+		return Notify_Play_Blur(AnimNotify);
 		break;
 	case Client::CNotify::END:
 		return E_FAIL;
@@ -183,11 +184,11 @@ CNotify::NOTIFY_TYPE CNotify::ClassificationNotify(const string& szNotifyTag)
 	if (szNotifyTag == "Shoot_Projectile")				return SHOOT_PROJECTILE;
 	if (szNotifyTag == "Play_Cinematic")				return PLAY_CINEMATIC;
 	if (szNotifyTag == "Camera_Shake")					return CAMERA_SHAKE;
-	if (szNotifyTag == "Radial_Blur")					return RADIAL_BLUR;
 	if (szNotifyTag == "Change_Color")					return CHANGE_COLOR;
 	if (szNotifyTag == "Set_Visiblity")					return SET_VISIBLITY;
 	if (szNotifyTag == "Set_Cinematic_Object")			return SET_CINEMATIC_OBJECT;
 	if (szNotifyTag == "Play_Screen")					return PLAY_SCREEN;
+	if (szNotifyTag == "Play_Blur")						return PLAY_BLUR;
 	
 	return NOTIFY_TYPE::END;
 }
@@ -377,13 +378,6 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	return S_OK;
 }
 
-HRESULT CNotify::Notify_Radial_Blur(const ANIM_NOTIFY& AnimNotify)
-{
-	m_pGameInstance->Active_RadialBlur(AnimNotify.fNumData01, AnimNotify.fNumData02, AnimNotify.fNumData03);
-
-	return S_OK;
-}
-
 HRESULT CNotify::Set_Cinematic_Object(const ANIM_NOTIFY& AnimNotify)
 {
 	if (dynamic_cast<CCinematicObject*>(m_pCharacter) == nullptr)
@@ -400,6 +394,12 @@ HRESULT CNotify::Notify_Play_Screen(const ANIM_NOTIFY& AnimNotify)
 	CStringHelper::ConvertUTFToWide(AnimNotify.szSocketTag.c_str(), szNotifyTag);
 
 	m_pGameManager->Set_Active_ReserveDeferred(szNotifyTag, true);
+	return S_OK;
+}
+
+HRESULT CNotify::Notify_Play_Blur(const ANIM_NOTIFY& AnimNotify)
+{
+	m_pGameInstance->Active_RadialBlur(AnimNotify.fNumData01, AnimNotify.iNumData01, AnimNotify.fNumData02);
 	return S_OK;
 }
 

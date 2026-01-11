@@ -37,7 +37,7 @@ HRESULT CReed::Initialize(void* pArg)
 	VTX_INSTANCE_MODEL* pInstanceData = (VTX_INSTANCE_MODEL*)MappedResource.pData;
 	
 
-	for(_uint i = 0; i < 10000; ++i)
+	for(_uint i = 0; i < 7000; ++i)
 	{
 		_float fReedX = m_pGameInstance->Random(-100.f, 100.f) + 256.f;
 		_float fReedZ = m_pGameInstance->Random(-180.f, 50.f) + 256.f;
