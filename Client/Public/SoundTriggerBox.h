@@ -8,7 +8,7 @@ class CSoundTriggerBox final : public CGameObject
 public:
 	typedef struct TriggerBoxDesc : public GAMEOBJECT_DESC
 	{
-		COLLIDER				eColType;
+		//COLLIDER				eColType;
 		GROUND_SOUND_TYPE		eSoundBoxType;
 	}SOUNDTRIGGER_BOX_DESC;
 
@@ -30,6 +30,8 @@ public:
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 	GROUND_SOUND_TYPE			m_eGroundSoundType = {};
+
+	_bool 						m_bIsRender = { false };	
 
 private:
 	HRESULT						Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc);

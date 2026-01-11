@@ -19,6 +19,7 @@
 #include "UIScript.h"
 #include "ChangeLevelEvent.h"
 #include "TeleportEvent.h"
+#include "SoundTriggerBox.h"
 
 #include "SpriteParticle.h"
 
@@ -65,6 +66,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	Load_Sound_Trigger_Box_Objects("../../Map_Editor/Bin/DataFiles/Desert_SoundTriggerBox.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
 	CAttackHitBox::HIT_BOX_DESC pHitBoxDesc = {};
@@ -652,6 +654,22 @@ HRESULT CLevel_GamePlay::Load_Monster_Desert_Data(const _char* szFilePath)
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
+
+	ifs.close();
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Load_Map_Desert_Format(std::ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
 {
 	_uint iNumObjs = 0;
@@ -913,6 +931,37 @@ HRESULT CLevel_GamePlay::Load_Instancing_By_Layer(ifstream& ifs, const _tchar* p
 		{
 			return E_FAIL;
 		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_SOUND_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_SOUND_TRIGGER_BOX_INFO));
+
+		CSoundTriggerBox::SOUNDTRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.eSoundBoxType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
 	}
 
 	return S_OK;

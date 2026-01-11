@@ -16,6 +16,7 @@ void CPlayer_LockonJustEvadeState::Start(void* pArg, _float fBlendRatio)
 	m_eState = PLAYER_STATE::JUST_EVADE;
 	m_Desc->isInvincible = true;
 	
+	m_pGameInstance->Manager_PlaySound(TEXT("EVE_BackStab1_Skill_start_01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
 	{
 		m_pPlayer->Set_Animation("Proto_Lockon_Sword_Just_Evade1_Forward_3", false, 1.2f);

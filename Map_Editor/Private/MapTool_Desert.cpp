@@ -1987,6 +1987,14 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
 					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::IRON;
 					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::BRIDGE;
+					break;
+				case DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE:
+					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
+					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::CONCRETE;
+					break;
 #pragma endregion
 
 #pragma region Terrain
@@ -2023,6 +2031,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::PAD || m_eCurrentObject == DESESRT_RUIN_OBJECT::RAIL || m_eCurrentObject == DESESRT_RUIN_OBJECT::INDICATOR || m_eCurrentObject == DESESRT_RUIN_OBJECT::DORORONG_BOX)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, nullptr);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_SAND || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_IRON
+						|| m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &SoundDesc);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -4618,7 +4631,7 @@ HRESULT CMapTool_Desert::Render()
 		ImGui::Text("Sound Trigger Box Objects");
 		_int nSelectedModel = -1;
 
-		const _char* modelNames[] = { "Grass", "Sand", "Iron" };
+		const _char* modelNames[] = { "Grass", "Sand", "Iron", "Bridge", "Concrete" };
 
 		if (ImGui::CollapsingHeader("Models"))
 		{
@@ -4637,6 +4650,16 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedModel == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_IRON;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 3)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE;
+					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
+				}
+				else if (nSelectedModel == 4)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
 			}
@@ -5024,6 +5047,48 @@ HRESULT CMapTool_Desert::Render()
 		}
 	}
 
+	ImGui::Spacing();// 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	// 사운드 트리거 박스 저장 로드
+
+	static _char szSaveSoundBoxFilePath[256] = "../Bin/DataFiles/Desert_SoundTriggerBox.bin";
+	ImGui::InputText("SoundBox Save File Path", szSaveSoundBoxFilePath, sizeof(szSaveSoundBoxFilePath));
+
+	// 에디터 세이브 / 로드
+	if (ImGui::Button("Save_Sound_Box"))
+	{
+		// 맵 오브젝트 저장
+		if (FAILED(Save_Sound_Trigger_Box_Objects(szSaveSoundBoxFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"사운드 트리거 박스 저장 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"사운드 트리거 박스 저장 성공.", L"알림", MB_OK);
+		}
+	}
+
+	ImGui::Spacing(); // 메뉴 사이의 간격
+	ImGui::Separator(); // 구분선을 추가
+	ImGui::Spacing();
+
+	static _char szLoadSoundBoxFilePath[256] = "../Bin/DataFiles/Desert_SoundTriggerBox.bin";
+	ImGui::InputText("SoundBox Load File Path", szLoadSoundBoxFilePath, sizeof(szLoadSoundBoxFilePath));
+
+	if (ImGui::Button("Load_Sound_Box"))
+	{
+		if (FAILED(Load_Sound_Trigger_Box_Objects(szLoadSoundBoxFilePath)))
+		{
+			MessageBoxW(g_hWnd, L"사운드 트리거 박스 로드 실패", L"알림", MB_OK | MB_ICONERROR);
+		}
+		else
+		{
+			MessageBoxW(g_hWnd, L"사운드 트리거 박스 로드 성공.", L"알림", MB_OK);
+		}
+	}
+
 	ImGui::End();
 
 	return S_OK;
@@ -5112,6 +5177,23 @@ HRESULT CMapTool_Desert::Save_Dororong_Saber_Objects(const _char* szFilePath)
 	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Rail")))) return E_FAIL;
 	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_Beat_Indicator")))) return E_FAIL;
 	if (FAILED(Save_Dororong_Saber_By_Layer(ofs, TEXT("Layer_DororongBox")))) return E_FAIL;
+
+	ofs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Save_Sound_Trigger_Box_Objects(const _char* szFilePath)
+{
+	// 맵 데이터 파일 열기
+	std::ofstream ofs(szFilePath, std::ios::binary);
+	if (!ofs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Save_Sound_Trigger_Box_By_Layer(ofs, TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
 
 	ofs.close();
 
@@ -5463,6 +5545,22 @@ HRESULT CMapTool_Desert::Load_Dororong_Saber_Objects(const _char* szFilePath)
 	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Rail"), TEXT("Layer_Rail")))) return E_FAIL;
 	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_Beat_Indicator"), TEXT("Layer_Beat_Indicator")))) return E_FAIL;
 	if (FAILED(Load_Dororong_Saber_By_Layer(ifs, TEXT("Prototype_GameObject_DororongBox"), TEXT("Layer_DororongBox")))) return E_FAIL;
+
+	ifs.close();
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
+{
+	std::ifstream ifs(szFilePath, std::ios::binary);
+	if (!ifs.is_open())
+	{
+		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);
+		return E_FAIL;
+	}
+
+	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 

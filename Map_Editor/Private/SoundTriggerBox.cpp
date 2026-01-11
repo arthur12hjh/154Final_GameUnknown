@@ -42,12 +42,18 @@ void CSoundTriggerBox::Update(_float fTimeDelta)
     _matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
     //m_pCullingCollider->UpdateColiision(WorldMat);
     m_pCollider->UpdateColiision(WorldMat);
+
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
+    {
+        m_bIsRender = !m_bIsRender;
+    }
 }
 
 void CSoundTriggerBox::Late_Update(_float fTimeDelta)
 {
     /*if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
     {*/
+    m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 #ifdef _DEBUG
     m_pGameInstance->Add_DebugComponent(m_pCollider);
 #endif
@@ -57,6 +63,26 @@ void CSoundTriggerBox::Late_Update(_float fTimeDelta)
 
 HRESULT CSoundTriggerBox::Render()
 {
+    if(m_bIsRender == true)
+    {
+        if (m_eGroundSoundType == GROUND_SOUND_TYPE::IRON)
+        {
+            COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+            pObbCollider->Render_Face(_float4(1.f, 0.f, 0.f, 1.f));
+        }
+        else if (m_eGroundSoundType == GROUND_SOUND_TYPE::BRIDGE)
+        {
+            COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+            pObbCollider->Render_Face(_float4(0.f, 1.f, 0.f, 1.f));
+        }
+        else if (m_eGroundSoundType == GROUND_SOUND_TYPE::CONCRETE)
+        {
+            COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+            pObbCollider->Render_Face(_float4(0.f, 0.f, 1.f, 1.f));
+        }
+        
+    }
+
     return S_OK;
 }
 
@@ -78,7 +104,7 @@ HRESULT CSoundTriggerBox::Ready_Components()
     OBBDesc.vSize = _float3(1.f, 1.f, 1.f);
     OBBDesc.vCenter = _float3(0.f, OBBDesc.vSize.y, 0.f);
 
-    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::VILLAGE), TEXT("Prototype_Component_Collider_OBB"),
+    if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::DESERT), TEXT("Prototype_Component_Collider_OBB"),
         TEXT("Com_Collider_OBB"), reinterpret_cast<CComponent**>(&m_pCollider), &OBBDesc)))
         return E_FAIL;
 

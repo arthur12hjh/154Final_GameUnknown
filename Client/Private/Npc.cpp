@@ -64,8 +64,8 @@ HRESULT CNpc::Initialize(void* pArg)
 void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
-    
-   
+    if (5 == m_NpcDesc->iNpcID)
+        m_pDropCom->DropRewardItem();
 
     if (m_pGameManager->GetLevelTransportIndex() == 2 && m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && !m_isReturnDororong)
     {
@@ -276,7 +276,7 @@ HRESULT CNpc::Ready_Components()
 
     Desc.eCharacterControllerType = CCharacterController::CCT_SHAPE::CAPSULE;
     Desc.tUserData = tUserData;
-    //Ä¸½¶ ÄÁÆ®·Ñ·¯¿¡¼­ x´Â ±¸ ¼ººÐ y´Â ±âµÕ ¼ººÐ
+    //Ä¸ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     Desc.vSize = { m_NpcDesc->vExtents.x, m_NpcDesc->vExtents.y, 0.f };
     XMStoreFloat4(&Desc.vStartPos, m_pTransformCom->Get_State(STATE::POSITION));
     Desc.vMaterial = _float3(0.5f, 0.5f, 0.f);
@@ -300,14 +300,14 @@ void CNpc::Begin_Interaction()
     if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
         m_pGameInstance->ADD_Interaction(m_pInteractionCom);
 
-    //// ENDÀÏ ¶© ´Ù½Ã ¾È º¸ÀÌ°Ô
+    //// ENDï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½
     //if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
     //    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
 {
-    // ¿©±â¼­ ÇÃ·¹ÀÌ¾î »óÅÂ Ã³¸® ¹× Lock »óÅÂ °ü¸®
+    // ï¿½ï¿½ï¿½â¼­ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ Lock ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (!m_pInteractionCom->IsInteractionEnable())
         m_pInteractionCom->Set_Duration(m_pInteractionCom->Get_Duration() + fTimeDelta);
 
@@ -384,7 +384,7 @@ void CNpc::Npc_Action()
                     m_eNpcState = NPC_STATE::BYE;
             }
 
-            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // »óÁ¡ npc || // µµ·Î·Õ npc
+            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ï¿½ï¿½ï¿½ï¿½ npc || // ï¿½ï¿½ï¿½Î·ï¿½ npc
             {
                 if (m_iScriptIdx == 0)
                     m_eNpcState = NPC_STATE::ACTION_BEGIN;
@@ -396,13 +396,13 @@ void CNpc::Npc_Action()
     }
     case NPC_STATE::ACTION_BEGIN:
     {
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // »óÁ¡ npc
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // ï¿½ï¿½ï¿½ï¿½ npc
         {
             pHUD->Open_Shop();
             m_eNpcState = NPC_STATE::ACTION;
         }
 
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && m_iScriptIdx == 0) // µµ·Î·Õ npc
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && m_iScriptIdx == 0) // ï¿½ï¿½ï¿½Î·ï¿½ npc
         {
             LEVEL_CHANGER LevelChanger{ true, ENUM_CLASS(LEVEL::BEATSABER_GAME) };
 
@@ -415,7 +415,7 @@ void CNpc::Npc_Action()
     }
     case NPC_STATE::ACTION:
     {
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // »óÁ¡ npc
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG)) // ï¿½ï¿½ï¿½ï¿½ npc
         {
             if(!dynamic_cast<CUIShop*>(pHUD->Get_UIObject(TEXT("Layer_Shop"), TEXT("UI_Shop")))->Get_IsOpen())
                 m_eNpcState = NPC_STATE::ACTION_END;
@@ -440,7 +440,7 @@ void CNpc::Npc_Action()
     }
     case NPC_STATE::BYE:
     {
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // µµ·Î·Õ npc
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ï¿½ï¿½ï¿½Î·ï¿½ npc
         {
             m_pDropCom->DropRewardItem();
         }
@@ -564,8 +564,6 @@ CGameObject* CNpc::Clone(void* pArg)
 void CNpc::Free()
 {
     __super::Free();
-
-    m_pGameInstance->Remove_Event(TEXT("Go_DororongSaber"));
 
     Safe_Release(m_pDropCom);
     Safe_Release(m_pAIController);
