@@ -55,7 +55,7 @@ void CDesert_Architecture::Late_Update(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+	//m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 

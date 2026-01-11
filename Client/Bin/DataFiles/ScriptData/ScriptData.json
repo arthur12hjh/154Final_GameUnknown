@@ -56,7 +56,7 @@
                 }
             ]
         },
-        "NpcTest": {
+        "NpcScarlet": {
             "szAnimTag": "Default",
             "bCanControl": false,
             "vInitOffset": [
@@ -94,20 +94,6 @@
                 }
             ]
         },
-        "NpcTest2": {
-            "szAnimTag": "Default",
-            "bCanControl": true,
-            "vInitOffset": [
-                0.0,
-                350.0
-            ],
-            "szSpeaker": "홍련",
-            "Scripts": [
-                {
-                    "szText": "줴훈줴훈.."
-                }
-            ]
-        },
         "NpcD1G-g2r": {
             "szAnimTag": "Default",
             "bCanControl": true,
@@ -118,7 +104,79 @@
             "szSpeaker": "D1G-g2r",
             "Scripts": [
                 {
-                    "szText": "대줴훈대줴훈.."
+                    "szText": "도롱.."
+                },
+                {
+                    "szText": "아니.."
+                },
+                {
+                    "szText": "저는 상점을 운영중인 D1G-g2r입니다."
+                },
+                {
+                    "szText": "몇 개 없지만 구경하고 가세요"
+                }
+            ]
+        },
+        "NpcD1G-g2r2": {
+            "szAnimTag": "Default",
+            "bCanControl": true,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "D1G-g2r",
+            "Scripts": [
+                {
+                    "szText": "이용해주셔서 감사합니다."
+                },
+                {
+                    "szText": "혹시.."
+                },
+                {
+                    "szText": "골드가 부족하시면"
+                },
+                {
+                    "szText": "마을에 있는 도로롱에게 말을 걸어보세요"
+                },
+                {
+                    "szText": "재밌는 일이 일어날지도..?"
+                }
+            ]
+        },
+        "NpcDororong": {
+            "szAnimTag": "Default",
+            "bCanControl": true,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "도로롱",
+            "Scripts": [
+                {
+                    "szText": "도로도로!\n(나를 찾다니!)"
+                },
+                {
+                    "szText": "도로도로.. 도로도로!\n(실력을 보여봐라!)"
+                }
+            ]
+        },
+        "NpcDororong2": {
+            "szAnimTag": "Default",
+            "bCanControl": true,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "도로롱",
+            "Scripts": [
+                {
+                    "szText": "도로.. 도로롱..\n(너 좀.. 하는군..)"
+                },
+                {
+                    "szText": "도로도로..\n(가져가..)"
+                },
+                {
+                    "szText": "도로로.. 도로..\n(다음에.. 또와..)"
                 }
             ]
         }

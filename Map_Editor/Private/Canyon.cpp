@@ -66,7 +66,7 @@ void CCanyon::Late_Update(_float fTimeDelta)
 
 	// 나는 맵의 신이다.
 #ifdef _DEBUG
-    m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
+    //m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
 #endif
 }
 

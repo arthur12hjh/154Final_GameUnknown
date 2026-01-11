@@ -1023,14 +1023,19 @@ _uint CGameInstance::Get_BGMLength(const TCHAR* pSoundKey)
 	return m_pSoundManager->Get_BGMLength(pSoundKey);
 }
 
-_uint CGameInstance::Get_ChannelLength(CHANNELID eChannelID)
+void CGameInstance::Get_BGMMinVolume(_float fBGMMinVolume)
 {
-	return m_pSoundManager->Get_ChannelLength(eChannelID);
+	m_pSoundManager->Get_BGMMinVolume(fBGMMinVolume);
 }
 
-_float CGameInstance::Get_ChannelRatio(CHANNELID eChannelID)
+_uint CGameInstance::Get_ChannelLength(CHANNELID eChannelID, _uint iIndex)
 {
-	return m_pSoundManager->Get_ChannelRatio(eChannelID);
+	return m_pSoundManager->Get_ChannelLength(eChannelID, iIndex);
+}
+
+_float CGameInstance::Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex)
+{
+	return m_pSoundManager->Get_ChannelRatio(eChannelID, iIndex);
 }
 
 #pragma endregion

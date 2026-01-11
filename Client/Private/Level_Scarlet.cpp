@@ -80,7 +80,7 @@ void CLevel_Scarlet::Update(_float fTimeDelta)
 
 	if (m_isOverlay && m_pHUD)
 	{
-		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"));
+		static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro"), 2.f);
 		m_isOverlay = false;
 	}
 
@@ -355,7 +355,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Trigger(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Load_Map_Data()
 {
-	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData4.bin", std::ios::binary);
+	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData3.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);

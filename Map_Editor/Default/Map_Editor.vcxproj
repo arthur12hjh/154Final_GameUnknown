@@ -257,6 +257,7 @@
     <ClInclude Include="..\Public\Rock8.h" />
     <ClInclude Include="..\public\SciFi_Door.h" />
     <ClInclude Include="..\public\Sky_Desert.h" />
+    <ClInclude Include="..\public\SoundTriggerBox.h" />
     <ClInclude Include="..\public\SpawnBox.h" />
     <ClInclude Include="..\Public\Stair.h" />
     <ClInclude Include="..\public\StaticMap.h" />
@@ -394,6 +395,7 @@
     <ClCompile Include="..\Private\Rock8.cpp" />
     <ClCompile Include="..\private\SciFi_Door.cpp" />
     <ClCompile Include="..\private\Sky_Desert.cpp" />
+    <ClCompile Include="..\private\SoundTriggerBox.cpp" />
     <ClCompile Include="..\private\SpawnBox.cpp" />
     <ClCompile Include="..\Private\Stair.cpp" />
     <ClCompile Include="..\private\StaticMap.cpp" />

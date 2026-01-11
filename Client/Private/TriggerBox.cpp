@@ -138,9 +138,15 @@ void CTriggerBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameOb
 	{
 		// 게임매니저에서 시네마틱 실행
 		if (141 == m_iTriggerCode)
+		{
+			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
 			m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_CINEMA_INTRO.wav"), 3.f);
+		}
 		else if (124 == m_iTriggerCode)
-			m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_INTRO.wav"), 3.f);
+		{
+			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+			//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_XION_BOSS_RAVENBEAST_INTRO.wav"), 3.f);
+		}
 
  		CGameManager::GetInstance()->Play_Cinematic(static_cast<_uint>(m_iTriggerCode));
 	}

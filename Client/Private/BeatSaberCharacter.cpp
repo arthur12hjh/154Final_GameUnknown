@@ -63,6 +63,7 @@ void CBeatSaberCharacter::Update(_float fTimeDelta)
 
 	m_pFsm->Update(fTimeDelta);
 
+
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
 
@@ -450,5 +451,6 @@ void CBeatSaberCharacter::Free()
 {
 	__super::Free();
 
+	m_pGameManager->Bind_BeatSaberCharacter(nullptr);
 	Safe_Release(m_pFsm);
 }

@@ -13,6 +13,9 @@
 #include "TriggerBox.h"
 
 #include "UIHUD.h"
+#include "UIBase.h"
+
+#include "UIActionEvent.h"
 
 CCinematicManager::CCinematicManager()
     : m_pGameInstance{ CGameInstance::GetInstance() }
@@ -29,6 +32,9 @@ HRESULT CCinematicManager::Initialize()
     m_iCurrentCinematicID = -1;
     m_bIsCinematicPlaying = false;
     m_bIsCinematicSkip = FALSE;
+
+    m_pUIActionEvent = CUIActionEvent::Create([&](void* pArg) {});
+    m_pGameInstance->Add_Event(TEXT("Cinematic_Skip"), m_pUIActionEvent);
 
     return S_OK;
 }
@@ -100,6 +106,26 @@ HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> F
     m_pCurrentCinematicDesc = &iter->second;
     m_FinishedCinematic = FinishedFunc;
     m_bIsCinematicPlaying = TRUE;
+
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return S_OK;
+    }
+
+    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
+
+    if (!pTriggerKey)
+        return S_OK;
+
+    pTriggerKey->SetVisibility(VISIBILITY::VISIBLE);
+
+    for (auto& pChild : *pTriggerKey->Get_Children())
+        pTriggerKey->Update_Children(pChild);
+    
+    Safe_Release(pHUD);
 
     return S_OK;
 }
@@ -214,6 +240,12 @@ HRESULT CCinematicManager::Skip_Cinematic()
 {
     m_bIsCinematicSkip = TRUE;
 
+    _bool bActive = true;
+    UI_EVENT_ARG_DESC Arg{};
+    Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+    Arg.pData = &bActive;
+    m_pUIActionEvent->Notify(&Arg);
+
     return S_OK;
 }
 
@@ -224,6 +256,26 @@ map<_wstring, CCinematicObject*>* CCinematicManager::Get_CinematicObjectsMap()
 
 HRESULT CCinematicManager::Reset_Cinematic()
 {
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return S_OK;
+    }
+
+    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
+
+    if (!pTriggerKey)
+        return S_OK;
+
+    pTriggerKey->SetVisibility(VISIBILITY::HIDDEN);
+
+    for (auto& pChild : *pTriggerKey->Get_Children())
+        pTriggerKey->Update_Children(pChild);
+
+    Safe_Release(pHUD);
+
     m_bIsCinematicPlaying = FALSE;
     m_bIsCinematicSkip = FALSE;
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
@@ -483,4 +535,8 @@ void CCinematicManager::Free()
     m_ActionCameraMap.clear();
 
     Safe_Release(m_pGameInstance);
+
+    m_pGameInstance->Remove_Event(TEXT("Cinematic_Skip"));
+
+    Safe_Release(m_pUIActionEvent);
 }
