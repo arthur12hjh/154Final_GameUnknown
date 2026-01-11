@@ -268,6 +268,7 @@ public:
 
 
 	_uint			Get_BGMLength(const TCHAR* pSoundKey);
+	void			Get_BGMMinVolume(_float	fBGMMinVolume);
 	_uint			Get_ChannelLength(CHANNELID eChannelID, _uint iIndex = 0);
 	_float			Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex = 0);
 #pragma endregion

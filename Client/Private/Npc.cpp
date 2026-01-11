@@ -565,8 +565,6 @@ void CNpc::Free()
 {
     __super::Free();
 
-    m_pGameInstance->Remove_Event(TEXT("Go_DororongSaber"));
-
     Safe_Release(m_pDropCom);
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);

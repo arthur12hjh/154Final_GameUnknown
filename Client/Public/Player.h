@@ -30,6 +30,8 @@ public:
 
 
 	virtual void	 Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
+	virtual void	 Play_Sound(const ANIM_NOTIFY& NotifyReference) override;
+
 	virtual void	 Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
 	virtual HRESULT	 CallNotify(_uint iNotiType, const AnimNotify* pNotify);
 
@@ -100,6 +102,9 @@ private:
 	void Execution_Nayitba();
 	void LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType);
 	
+	void	Play_WalkSound();
+
+
 public:
 	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
