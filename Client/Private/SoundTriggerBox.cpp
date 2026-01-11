@@ -207,4 +207,6 @@ CGameObject* CSoundTriggerBox::Clone(void* pArg)
 void CSoundTriggerBox::Free()
 {
     __super::Free();
+
+	Safe_Release(m_pColliderCom);
 }
