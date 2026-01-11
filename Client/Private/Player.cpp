@@ -102,6 +102,24 @@ void CPlayer::Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTa
 
 }
 
+void CPlayer::Play_Sound(const ANIM_NOTIFY& NotifyReference)
+{
+	if ("WALK" == NotifyReference.szNotifyArg01)
+	{
+		// 여기서 Walk Sound
+		Play_WalkSound();
+	}
+	else if ("JUMP" == NotifyReference.szNotifyArg01)
+	{
+		// 여기서 Walk Sound
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_JumpStep_Default1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if ("Just_Evade" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_BackStab1_Common_Sound.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+}
+
 void CPlayer::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
 {
 	auto pPartObject = Find_PartObject(strPartTag);
@@ -1049,6 +1067,37 @@ void CPlayer::LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType)
 	}
 
 	m_pFSM->Handle_Transition(TransitionDesc);
+}
+
+void CPlayer::Play_WalkSound()
+{
+	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
+	switch (m_eGroundSoundType)
+	{
+	case GROUND_SOUND_TYPE::IRON :
+		if (25 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 3.f);
+		else if (50 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_02.wav"), CHANNELID::EFFECT, 3.f);
+		else if (75 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_03.wav"), CHANNELID::EFFECT, 3.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_05.wav"), CHANNELID::EFFECT, 3.f);
+		break;
+	default :
+		if (20 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 15.f);
+		else if (40 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 15.f);
+		else if(60 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 15.f);
+		else if (80 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 15.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 15.f);
+		break;
+	}
+
 }
 
 CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

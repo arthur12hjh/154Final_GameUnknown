@@ -66,7 +66,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_10",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -76,7 +76,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -106,7 +106,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_16",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -116,7 +116,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -146,7 +146,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_13",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -156,7 +156,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -186,7 +186,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_07",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -196,7 +196,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -226,7 +226,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_10",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -236,7 +236,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -266,7 +266,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_16",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -276,7 +276,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -306,7 +306,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_13",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -316,7 +316,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -346,7 +346,7 @@
                 "szNotifyTag": "Active_SFX",
                 "szSocketTag": "R_Hand_ex_07",
                 "vNotifyPosition": [
-                    -0.05,
+                    -0.05000000074505806,
                     0.0,
                     0.0
                 ],
@@ -356,7 +356,7 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.05,
+                    0.05000000074505806,
                     0.0,
                     0.0
                 ]
@@ -396,9 +396,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.6,
-                    0.6,
-                    0.6
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    0.6000000238418579
                 ]
             }
         ],
