@@ -198,6 +198,7 @@
 #include "Desert_Grass.h"
 #include "DisplayBox.h"
 #include "Shutter.h"
+#include "SoundTriggerBox.h"
 #pragma endregion
 
 #pragma region Dororong_Saber
@@ -400,7 +401,7 @@ HRESULT CLoader::Loading()
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Shop(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Popup(pArg); });
 
-			m_strMessage = TEXT("Player Hide and Seek with King JaeHoon");
+			m_strMessage = TEXT("Loading Character");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Npc(pArg); });
@@ -8404,6 +8405,13 @@ HRESULT CLoader::Loading_For_GamePlay_Npc(void* pArg)
 	/* For.Prototype_GameObject_Npc_Right_Weapon */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_Npc_Right_Weapon");
 	pProtoDesc.pPrototype = CNpc_RightWeaponPart::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_SoundTriggerBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SoundTriggerBox");
+	pProtoDesc.pPrototype = CSoundTriggerBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

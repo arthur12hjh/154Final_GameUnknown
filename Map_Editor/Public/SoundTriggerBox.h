@@ -39,6 +39,7 @@ private:
 	CCollider*				m_pCollider = { nullptr };
 	GROUND_SOUND_TYPE		m_eGroundSoundType = {};
 
+	_bool					m_bIsRender = { false };
 private:
 	HRESULT					Ready_Components();
 
