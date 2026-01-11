@@ -95,7 +95,8 @@ void CUIRushSlot::Late_Update(_float fTimeDelta)
 
 		Safe_Release(pHUD);
 	}
-	else if (m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+	else if ((m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE_ON)
+		|| m_tRushInfo.iPrevSkillState == ENUM_CLASS(SKILL_STATE::DEFAULT))
 		&& m_tRushInfo.iSkillState == ENUM_CLASS(SKILL_STATE::ACTIVE)
 		&& m_bPlayingAnim == false)
 	{

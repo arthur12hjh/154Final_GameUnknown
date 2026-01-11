@@ -78,12 +78,21 @@ void CUIResult::Update(_float fTimeDelta)
 
 			m_fGlowPower = 15.f + (1.f - 15.f) * ease;
 		}
+
+		m_bActiveSpace = false;
 	}
 	else
 		return;
 
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && m_eVisibility == VISIBILITY::VISIBLE)
+	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE) && !m_bActiveSpace && m_eVisibility == VISIBILITY::VISIBLE)
 	{
+		m_bActiveSpace = true;
+		UI_EVENT_ARG_DESC Arg{};
+		Arg.szActionTag = TEXT("SpaceKey_Event");
+		Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+		Arg.pData = &m_bActiveSpace;
+		__super::Trigger_Event(TEXT("SpaceKey_Event"), &Arg);
+
 		//아이템 저장
 		if(0 < m_iCurScore)
 			m_pGameManager->SetMiniGameReward(1, m_iCurScore);
