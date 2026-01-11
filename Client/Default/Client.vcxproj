@@ -166,6 +166,7 @@
     <ClInclude Include="..\Public\Camera_Npc.h" />
     <ClInclude Include="..\Public\CinematicModel_Dororong.h" />
     <ClInclude Include="..\Public\CinematicPartBody.h" />
+    <ClInclude Include="..\Public\CinematicPartFacial.h" />
     <ClInclude Include="..\Public\Coin_Player.h" />
     <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\DororongBox.h" />
@@ -526,6 +527,7 @@
     <ClCompile Include="..\Private\Camera_Npc.cpp" />
     <ClCompile Include="..\Private\CinematicModel_Dororong.cpp" />
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
+    <ClCompile Include="..\Private\CinematicPartFacial.cpp" />
     <ClCompile Include="..\Private\Coin_Player.cpp" />
     <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\DororongBox.cpp" />

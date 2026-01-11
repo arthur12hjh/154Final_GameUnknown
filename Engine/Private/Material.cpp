@@ -98,7 +98,8 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const binMaterial* pB
 			else
 				hr = CreateWICTextureFromFile(m_pDevice, szAbsolutePath, nullptr, &pSRV);
 
-			if (FAILED(hr))
+			if (FAILED(hr)
+				&& i == BINMATERIAL::BASE_COLOR)
 				return E_FAIL;
 
 			m_SRVs[i].push_back(pSRV);
@@ -130,6 +131,14 @@ HRESULT CMaterial::Import_Texture(aiTextureType eType, ID3D11ShaderResourceView*
 	if(pSRV == nullptr)
 		return E_FAIL;
 
+	if (!m_SRVs[eType].empty())
+	{
+		for (auto& pRemainedSRV : m_SRVs[eType])
+			Safe_Release(pRemainedSRV);
+		m_SRVs[eType].clear();
+	}
+
+	// 하나만 유지
 	m_SRVs[eType].push_back(pSRV);
 
 	return S_OK;

@@ -57,6 +57,8 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 			}
 			break;
 		case 1:
+			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+			m_pGameInstance->Manager_StopAll();
 			m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_FINISH.wav"), 3.f);
 			if (8 == m_pNaytiba->GetMonsterID())
 				pGameManger->Play_Cinematic(143, [&]() { FinishedCutScene(); });

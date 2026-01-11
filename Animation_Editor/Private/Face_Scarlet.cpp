@@ -20,6 +20,72 @@ CFace_Scarlet::CFace_Scarlet(const CFace_Scarlet& Prototype)
 }
 
 
+HRESULT CFace_Scarlet::Mapping_Shader_Material(_uint iIdx)
+{
+	// idx 0 (Shader pass : 4)	
+	if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Head") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Head))))
+			return E_FAIL;
+	}
+	// idx 1 (Shader pass : 5)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Eyebrow") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Eyebrow))))
+			return E_FAIL;
+	}
+	// idx 2 (Shader pass : 6)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Eyes") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Eyes))))
+			return E_FAIL;
+	}
+	// idx 3 (Shader pass : 7)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Lens") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Lens))))
+			return E_FAIL;
+	}
+	// idx 4 (Shader pass : 8)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Eyelashes") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Eyelashes))))
+			return E_FAIL;
+	}
+	// idx 5 (Shader pass : 9)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Tearline") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Tearline))))
+			return E_FAIL;
+	}
+	// idx 6 (Shader pass : 10)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Eyeshadow") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Eyeshadow))))
+			return E_FAIL;
+	}
+	// idx 7 (Shader pass : 11)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_EyeBlend") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_EyeBlend))))
+			return E_FAIL;
+	}
+	// idx 8 (Shader pass : 12)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_NoseShadow") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_NoseShadow))))
+			return E_FAIL;
+	}
+	// idx 9 (Shader pass : 13)	
+	else if (strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(iIdx)), "MI_CH_M_NA_961_Teeth") == 0)
+	{
+		if (FAILED(m_pShaderCom->Begin(ENUM_CLASS(FACE_MATERIAL::MI_CH_M_NA_961_Teeth))))
+			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CFace_Scarlet::Initialize_Prototype()
 {
 	return S_OK;
@@ -39,11 +105,21 @@ HRESULT CFace_Scarlet::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::DIFFUSE, "g_DiffuseTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::OPACITY, "g_OpacityTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::NORMAL, "g_NormalTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::EMISSIVE, "g_EmissiveTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORM, "g_ORMTexture");
+	m_pModelCom->Bind_MaterialTag(TEXTURE_TYPE::ORSS, "g_ORSSTexture");
+
 	Bind_BoneToPartBody(pDesc->pBodyPtr);
 
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	//m_pTransformCom->Rotation(XMConvertToRadians(90.f), XMConvertToRadians(90.f), XMConvertToRadians(0.f));
 
 
+	m_pModelCom->Set_MorphAnimationIndex(7, TRUE);
+	//m_pModelCom->Set_MorphAnimationIndex(12, TRUE);
 
 	return S_OK;
 }
@@ -51,6 +127,7 @@ HRESULT CFace_Scarlet::Initialize(void* pArg)
 void CFace_Scarlet::Priority_Update(_float fTimeDelta)
 {
 	int a = 10;
+	m_pModelCom->Set_MorphAnimationIndex(8, TRUE);
 }
 
 void CFace_Scarlet::Update(_float fTimeDelta)
@@ -66,6 +143,7 @@ void CFace_Scarlet::Update(_float fTimeDelta)
 
 	XMStoreFloat4x4(&m_CombinedWorldMatrix,
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+	//XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
 }
 
@@ -73,6 +151,8 @@ void CFace_Scarlet::Late_Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
+
+	m_pModelCom->Play_MorphAnimation(fTimeDelta);
 
 #ifdef _DEBUG
 
@@ -92,28 +172,23 @@ HRESULT CFace_Scarlet::Render()
 		//if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 		//	return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_ShapeKeys(i, m_pShaderCom, "g_ShapeKeyWeights")))
+			return E_FAIL;
+
 		if (FAILED(m_pBodyModelCom->Bind_BoneMatrixSRV(m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
 		if (FAILED(m_pBodyModelCom->Bind_PreBoneMatrixSRV(m_pShaderCom)))
 			return E_FAIL;
 
-		if (FAILED(m_pBodyModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
+		if (FAILED(m_pModelCom->Bind_GlobalOffsetMatrices(m_pShaderCom)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, 0)))
+		if (FAILED(m_pModelCom->Bind_AllMaterials(i, m_pShaderCom, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_EmissiveTexture", aiTextureType_EMISSIVE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_ORMTexture", aiTextureType_METALNESS, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Begin(0)))
+		//여기서 머테리얼 인덱스 따라 패스 구분.
+		if (FAILED(Mapping_Shader_Material(i)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))
@@ -166,7 +241,7 @@ HRESULT CFace_Scarlet::Render_Shadow()
 HRESULT CFace_Scarlet::Ready_Components()
 {
 	/* Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Face_Scarlet"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::EDITOR), TEXT("Prototype_Component_Model_Scarlet_Face_Morph"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 

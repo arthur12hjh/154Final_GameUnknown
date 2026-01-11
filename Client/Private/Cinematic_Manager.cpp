@@ -280,7 +280,8 @@ HRESULT CCinematicManager::Reset_Cinematic()
     m_bIsCinematicSkip = FALSE;
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
     {
-        Play_Node(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex]);
+        if(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex].eState != CINEMATICNODE_STATE::PLAY_SOUND)
+            Play_Node(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex]);
         ++m_iCurrentCinematicNodeIndex;
     }
 
@@ -300,6 +301,8 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
     _wstring strObjectName;
     CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
     list<CGameObject*>* pObjectList = nullptr;
+    _float fVolume;
+    _TCHAR szSoundTag[MAX_PATH];
 
     switch (CinematicNodeDesc.eState)
     {
@@ -368,7 +371,9 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             break;
         }
         case CINEMATICNODE_STATE::PLAY_SOUND:
-
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szSoundTag);
+            fVolume = (_float)CinematicNodeDesc.iActiveIndex / 10.f;
+            m_pGameInstance->Manager_PlaySound(szSoundTag, CHANNELID::EFFECT, fVolume);
             break;
         case CINEMATICNODE_STATE::MOVE_CHARACTER:
             CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
@@ -482,6 +487,18 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 m_pGameInstance->Bake_StaticShadow();
                 m_pGameInstance->Clear_StaticShadowObjects();
             });
+            break;
+        // 17¹ø
+        case CINEMATICNODE_STATE::PLAY_BGM:
+            m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szSoundTag);
+            fVolume = (_float)CinematicNodeDesc.iActiveIndex / 10.f;
+            m_pGameInstance->Manager_PlayBGM(szSoundTag, fVolume);
+            break;
+        // 18¹ø
+        case CINEMATICNODE_STATE::PLAY_BOSSBGM:
+            m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+            CGameManager::GetInstance()->Play_BossBGM(CinematicNodeDesc.iActiveIndex / 10, CinematicNodeDesc.iActiveIndex % 10);
             break;
     }
 }
