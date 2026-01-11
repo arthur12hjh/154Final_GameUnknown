@@ -43,6 +43,8 @@ public:
 	_uint Get_NumVectices() const { return m_iNumVertices; }
 	_uint Get_VertexStride() const { return m_iVertexStride; }
 
+	_uint Get_NumShapeKeys() const { return m_iNumShapeKeys; }
+
 	_uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
 
 	DXGI_FORMAT Get_IndexFormat() const { return m_eIndexFormat; }
@@ -52,7 +54,6 @@ public:
 	const vector<class CShapeKey*>* Get_ShapeKeys() { return &m_ShapeKeys; }
 	void Reset_ShapeWeight();
 	void Set_ShapeWeight(_uint iShapeKeyIndex, _float fWeight);
-	void Bind_ShapeWeight();
 	HRESULT Bind_ShapeKeys(class CShader* pShader, const _char* pConstantName);
 	// </end>
 
@@ -79,8 +80,10 @@ private:
 	vector<_float3>					m_CombinedShapeKeyDeltaPositions;
 	vector<_float3>					m_CombinedShapeKeyDeltaNormals;
 
-	ID3D11Buffer* m_pCombinedShapeKeyBuffer = { nullptr };
-	ID3D11ShaderResourceView* m_pCombinedShapeKeySRV = { nullptr };
+
+	ID3D11Buffer*					m_pShapeKeyWeightsBuffer = { nullptr };
+	ID3D11ShaderResourceView*		m_pCombinedPositionsSRV = { nullptr };
+	ID3D11ShaderResourceView*		m_pCombinedNormalsSRV = { nullptr };
 	
 #pragma endregion
 
@@ -90,6 +93,8 @@ private:
 	HRESULT Ready_VertexBuffer_For_Anim(const class CModel* pModel, const binMesh* pBinMesh);
 
 	HRESULT Ready_ShapeKeys(const class CModel* pModel, const binMesh* pBinMesh);
+	HRESULT Ready_ShapeKeyBuffers();
+	HRESULT Ready_CombinedShapeKeySRVs();
 
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const class CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix);

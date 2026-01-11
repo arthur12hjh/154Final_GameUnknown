@@ -19,6 +19,7 @@
 #include "NaytibaLeftWeaponPart.h"
 #include "NaytibaRightWeaponPart.h"
 #include "CinematicPartBody.h"
+#include "CinematicPartFacial.h"
 
 #include "Player.h"
 #include "PlayerCCTHitReporter.h"
@@ -266,14 +267,19 @@ HRESULT CCinematicModel_Scarlet::Ready_PartObjects()
 		return E_FAIL;
 
 	Import_ModelPtr();
-	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);	
 
-	CNaytibaFace::NAYTIBA_FACE_DESC FaceDesc = { };
+	CCinematicPartFacial::FACIAL_CINEMATIC_DESC FaceDesc = { };
 	FaceDesc.pParentTransform = m_pTransformCom;
+	FaceDesc.pSocketMatrix = nullptr;
 	FaceDesc.vScale = { 1.f, 1.f, 1.f };
-	FaceDesc.pBodyModelCom = m_pBodyModelCom;
-	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba_Face"), TEXT("Part_Face"), &FaceDesc)))
+	FaceDesc.isAnim = TRUE;
+	FaceDesc.szModelTag = TEXT("Prototype_Component_Model_Scarlet_Face_Morph");
+	FaceDesc.pBody = m_pBodyModelCom;
+	if (FAILED(__super::Add_PartObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CinematicPartFacial"), TEXT("Part_Face"), &FaceDesc)))
 		return E_FAIL;
+
+	m_pFacial = static_cast<CModel*>(static_cast<CCinematicPartFacial*>(Find_PartObject(TEXT("Part_Face")))->Find_Component(TEXT("Com_Model")));
 
 	CCinematicPartBody::BODY_CINEMATIC_DESC	WeaponDesc{};
 	WeaponDesc.szModelTag = TEXT("Prototype_Component_Model_Scarlet_Weapon");
@@ -387,7 +393,7 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_Battle_Enter()
 	m_pGlass->Set_Render(TRUE);
 	m_bIsDoFActivated = FALSE;
 	m_fDoFTimeAcc = 0.f;
-
+	static_cast<CModel*>(static_cast<CCinematicPartFacial*>(Find_PartObject(TEXT("Part_Face")))->Find_Component(TEXT("Com_Model")))->Set_MorphAnimation("Scarlet_Entrance_Scarlet_Curves", TRUE, 1.f, 0.f, FALSE, -1.f, 19000.f);
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Weapon")))->SetActive(TRUE);
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Scabbard")))->SetActive(TRUE);
 
@@ -577,6 +583,14 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_PhaseChange(_floa
 
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+	_float fCurrentMorphTrackPosition = m_pFacial->Get_fCurrentMorphTrackPosition();
+
+
+	if (m_fMoveTime > 7.16f)
+	{
+		m_pFacial->Set_MorphAnimation("MV_Nikke_Scarlet_Phase2_Scarlet_Curves", TRUE, 1.f, 0.f, FALSE, -1.f);
+	}
+
 
 	if (m_iAnimationSequence == 3)
 	{
@@ -630,6 +644,34 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_Battle_Finish(_float fTi
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+	_float fCurrentMorphTrackPosition = m_pFacial->Get_fCurrentMorphTrackPosition();
+
+	if (m_fMoveTime > 20.4f)
+	{
+		m_pFacial->Set_MorphAnimation("MV_Nikke_Scarlet_QTE_AfterBattle_Scarlet_Curves", TRUE, 1.f, 0.f, FALSE, -1.f);
+	}
+
+	if (fCurrentMorphTrackPosition >= 11160
+		&& fCurrentMorphTrackPosition < 15000)
+	{
+		m_pFacial->Set_MorphTrackPosition(15000);
+	}
+	else if (fCurrentMorphTrackPosition >= 20107
+		&& fCurrentMorphTrackPosition < 21770)
+	{
+		m_pFacial->Set_MorphTrackPosition(21770);
+	}
+	else if (fCurrentMorphTrackPosition >= 31389
+		&& fCurrentMorphTrackPosition < 34823)
+	{
+		m_pFacial->Set_MorphTrackPosition(34823);
+	}
+	else if (fCurrentMorphTrackPosition >= 39774
+		&& fCurrentMorphTrackPosition < 43425)
+	{
+		m_pFacial->Set_MorphTrackPosition(43425);
+	}
 
 	if (isFinished)
 	{

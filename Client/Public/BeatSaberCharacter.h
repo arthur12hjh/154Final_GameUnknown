@@ -8,6 +8,7 @@ NS_END
 NS_BEGIN(Client)
 class CBeatSaberCharacterBody;
 class CBeatSaberFsm;
+class CEffect;
 
 class CBeatSaberCharacter : public CCharacter
 {
@@ -38,7 +39,7 @@ private :
 	BEATSABER_CHARACTER_DESC		m_CharacterDesc = {};
 	CBeatSaberFsm*					m_pFsm = { nullptr };
 	CPartObject*					m_pPartBody = { nullptr };
-
+	CEffect*						m_pEffect[6] = { nullptr };
 	_float							m_fTimeDelta;
 	_float							m_BoxSizeZ = {};
 

@@ -120,8 +120,6 @@ HRESULT CUITriggerKey::Bind_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture0", m_tUIDesc.m_tUITextureDesc.iTextureIndex)))
 		return E_FAIL;
-	if (FAILED(m_pHoldGaugeTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
-		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_tUIDesc.fAlpha, sizeof(_float))))
 		return E_FAIL;
@@ -129,8 +127,15 @@ HRESULT CUITriggerKey::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fScale", &m_tUIDesc.m_tUIShaderDesc.fScale, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseCoolTime", &bUseCoolTime, sizeof(_bool))))
-		return E_FAIL;
+
+	if (m_tUIDesc.m_tUITextureDesc.iTextureIndex != 0
+		&& m_tUIDesc.m_tUITextureDesc.iTextureIndex != 2)
+	{
+		if (FAILED(m_pHoldGaugeTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture1", 0)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bUseCoolTime", &bUseCoolTime, sizeof(_bool))))
+			return E_FAIL;
+	}
 
 	_float fRatio = m_fInteractionTime / 2.f;
 

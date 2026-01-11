@@ -516,6 +516,8 @@ namespace Client
 		LOCKON_START,			// 14, 컷씬 끝나면 강제로 보스 락온 걸어주려고 만듬
 		LOCKON_END,				// 15, 컷씬 끝나면 강제로 보스 락온 꺼줌
 		BAKE_VILLAGE_SHADOW,	// 16,
+		PLAY_BGM,				// 17,
+		PLAY_BOSSBGM,			// 18,
 		END };
 
 	typedef struct Cinematic_Index_Desc
@@ -698,6 +700,8 @@ namespace Client
 		IRON,
 		BRIDGE,
 		CONCRETE,
+		ROCK,
+		CONTAINER,
 		END
 	};
 

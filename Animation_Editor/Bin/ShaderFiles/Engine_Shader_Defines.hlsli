@@ -10,6 +10,7 @@ struct BoneTransformMatrix
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
+
 sampler AnisoTropy_BLUR_Sampler = sampler_state // 밉맵이 있어야 의미가 있음
 {
     Filter = AnisoTropic;

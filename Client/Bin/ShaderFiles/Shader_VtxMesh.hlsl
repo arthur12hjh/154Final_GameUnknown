@@ -79,7 +79,7 @@ void GS_BLOSSOM(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     
     if (fWeight > 0.001f)
     {
-        fWave = sin(g_fTime + fCenterY) * 0.2f * fWeight * fHeightFactor;
+        fWave = sin(g_fTime + fCenterY) * 0.25f * fWeight * fHeightFactor;
     }
     
     

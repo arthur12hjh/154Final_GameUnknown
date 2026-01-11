@@ -8,6 +8,7 @@
 #include "Channel.h"
 #include "ShapeKey.h"
 #include "MorphAnimation.h"
+#include "MorphChannel.h"
 #include "ComputeShader.h"
 #include "GameInstance.h"
 #include "StringHelper.h"
@@ -36,6 +37,8 @@ CModel::CModel(const CModel& Prototype)
     , m_pOutRootReadBack{nullptr }
     , m_pBoneMatricesSRV{ nullptr }
     , m_pPreBoneMatricesSRV{ nullptr }
+    , m_pShapeKeyWeightBuffer{ nullptr }
+    , m_pShapeKeyWeightSRV{ nullptr }
     , m_pComputeShaderCom{ nullptr }
     , m_pCombinedMatrixComputeShaderCom{ nullptr }
 {
@@ -110,6 +113,31 @@ vector<class CAnimation*>* CModel::Get_Animations()
     return &m_Animations;
 }
 
+_float CModel::Get_CurrentMorphDuration()
+{
+    return m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_Duration();
+}
+
+_uint CModel::Get_CurrentMorphTrackPosition()
+{
+    return m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_TrackPosition();
+}
+
+_float CModel::Get_fCurrentMorphTrackPosition()
+{
+    return m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_fTrackPosition();
+}
+
+_float CModel::Get_CurrentMorphSaturatedTrackPosition()
+{
+    return m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_SaturatedTrackPosition();
+}
+
+void CModel::Set_MorphTrackPosition(_float fTrackPosition)
+{
+    m_MorphAnimations[m_iCurrentMorphAnimIndex]->Set_CurrentTrackPosition(fTrackPosition);
+}
+
 vector<class CBone*>* CModel::Get_Bones()
 {
     return &m_Bones;
@@ -142,10 +170,17 @@ void CModel::Set_ShapeWeight(const _char* szShapeTag, _float fWeight)
         pMesh->Set_ShapeWeight(iter->second, fWeight);
 }
 
-void CModel::Bind_ShapeWeight()
+void CModel::Bind_ShapeWeight(_uint iMeshIndex, class CShader* pShader)
 {
-    for (auto& pMesh : m_Meshes)
-        pMesh->Bind_ShapeWeight();
+    D3D11_MAPPED_SUBRESOURCE MappedSubResource = {};
+    m_pContext->Map(m_pShapeKeyWeightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);
+
+    _float* pWeights = reinterpret_cast<_float*>(MappedSubResource.pData);
+    memcpy(pWeights, m_ShapeKeyWeights, sizeof(_float) * MAX_SHAPEKEY);
+
+    m_pContext->Unmap(m_pShapeKeyWeightBuffer, 0);
+
+    pShader->Bind_SRV("g_ShapeKeyWeights", m_pShapeKeyWeightSRV);
 }
 
 void CModel::Reset_ShapeWeight()
@@ -482,28 +517,22 @@ void CModel::Set_MorphAnimationIndex(_int iAnimIndex, _bool isLoop, _float fAnim
     if (m_iCurrentMorphAnimIndex == iMorphAnimIndex && bIsRestart == FALSE)
         return;
 
+    m_fMorphEndTrackPosition = fEndTrackPosition;
+    m_fMorphStartTrackPosition = fStartTrackPosition;
+
+    memset(m_ShapeKeyWeights, 0, sizeof(_float) * MAX_SHAPEKEY);
+
     m_iCurrentMorphAnimIndex = iMorphAnimIndex;
     m_isMorphLoop = isLoop;
 
     m_MorphAnimations[m_iCurrentMorphAnimIndex]->Reset();
 
+
+    m_MorphAnimations[m_iCurrentMorphAnimIndex]->Set_CurrentTrackPosition(m_fMorphStartTrackPosition);
+
     return;
 }
 
-
-/// <기존 CPU ShapeKey 작동방식>
-//  1. fCurrentTrackPosition == 0이면 모든 pCurrentKeyFrameIndices 초기화
-//  2. LastKeyFrame에 마지막 키프레임 구조체 받기
-//  3. fCurrentTrackPosition이 LaskKeyFrame의 fTrackPosition보다 클 경우, 마지막 프레임으로 고정하고 신호를 쏴준다.
-//  4. 아닐 경우, 다음 인덱스의 fTrackPosition과 fTrackPosition을 비교해서 더하기를 해준다.
-//    4-2. 지금 Weight랑 다음 Weight 사이를 보간해준다.
-//	  4-3. Set_ShapeWeight()를 실행해준다.
-//    4-4. 이를 반복한다.
-/// <앞으로의 GPU ShapeKey 작동방식>
-//  1. Set_MorphAnimation
-//  2. 
-//  3. 
-//  
 
 void CModel::Set_MorphAnimation(const _char* szAnimationTag, _bool isLoop, _float fAnimationPlayRate, _float fLerpDuration, _bool bIsRestart, _float fEndTrackPosition, _float fStartTrackPosition, _bool isResetTrackPosition)
 {
@@ -516,10 +545,18 @@ void CModel::Set_MorphAnimation(const _char* szAnimationTag, _bool isLoop, _floa
     if (m_iCurrentMorphAnimIndex == iMorphAnimIndex && bIsRestart == FALSE)
         return;
 
+    m_fMorphEndTrackPosition = fEndTrackPosition;
+    m_fMorphStartTrackPosition = fStartTrackPosition;
+
+    memset(m_ShapeKeyWeights, 0, sizeof(_float) * MAX_SHAPEKEY);
+
     m_iCurrentMorphAnimIndex = iMorphAnimIndex;
     m_isMorphLoop = isLoop;
 
     m_MorphAnimations[m_iCurrentMorphAnimIndex]->Reset();
+
+
+    m_MorphAnimations[m_iCurrentMorphAnimIndex]->Set_CurrentTrackPosition(m_fMorphStartTrackPosition);
 
     return;
 }
@@ -528,11 +565,9 @@ HRESULT CModel::Initialize_ShapeKeyIndexMap()
 {
     m_ShapeKeyIndexMap.clear();
 
-    _uint iShapeKeyIndex = 0;
-    for (auto& pShapeKey : *m_Meshes[0]->Get_ShapeKeys())
+    for (_uint i = 0; i < (_uint)m_Meshes[0]->Get_ShapeKeys()->size(); ++i)
     {
-        m_ShapeKeyIndexMap.emplace(pShapeKey->Get_Name(), iShapeKeyIndex);;
-        ++iShapeKeyIndex;
+        m_ShapeKeyIndexMap[m_Meshes[0]->Get_ShapeKeys()->at(i)->Get_Name()] = i;
     }
 
     return S_OK;
@@ -730,6 +765,31 @@ HRESULT CModel::Initialize_AnimationBufferResource()
     return S_OK;
 }
 
+
+
+/// <기존 CPU ShapeKey 작동방식>
+//  1. fCurrentTrackPosition == 0이면 모든 pCurrentKeyFrameIndices 초기화
+//  2. LastKeyFrame에 마지막 키프레임 구조체 받기
+//  3. fCurrentTrackPosition이 LaskKeyFrame의 fTrackPosition보다 클 경우, 마지막 프레임으로 고정하고 신호를 쏴준다.
+//  4. 아닐 경우, 다음 인덱스의 fTrackPosition과 fTrackPosition을 비교해서 더하기를 해준다.
+//    4-2. 지금 Weight랑 다음 Weight 사이를 보간해준다.
+//	  4-3. Set_ShapeWeight()를 실행해준다.
+//    4-4. 이를 반복한다.
+//
+/// <앞으로의 GPU ShapeKey 작동방식>
+// 1. ShapeKey[164] * vDeltaPosition[9124] * _float3를 SRV 형태로 Mesh마다 하나씩 만들어준다.
+//  2. Play_MorphAnimaiton()에서 이번 프레임에 영향을 받는 ShapeKeyList를 뽑아서 들고 있는다.
+//  3. Bind_ShapeKeys에서 Mesh의 ShapeKeySRV와 이 ShapeKeyList를 던져준다.
+// 
+/// <폐기. (구) ShapeKey 기획>
+//  1. 애니메이션과 거의 동일하다. Initialize_MorphAnimationBufferResource를 통해 SRV를 만든다.
+//    1-1. ID3D11Buffer 형식으로 각 키프레임을 만든 다음, 이를 SRV형태로 가공해 vector<ID3D11ShaderResourceView*> 형태로 들고 있는다.
+//  2. Set_MorphAnimation()에서 인덱스를 찾아준다.
+//  3. Play_MorphAnimation()에서 MorphAnimation의 CurrentTrackPosition을 Update해준다. 
+//  4. Render시 Bind_ShapeKeys()에서 CMesh의 m_pCombinedShapeKeySRV가 아닌 MorphAnimationSRV를 바인딩해주고(어떻게?), 이를 Vertex Shader에서 가공해 사용한다.
+//    4-1. 또한 m_MorphAnimations[m_iCurrentMorphAnimIndex]의 TicksPerSecond, fTrackPosition, Duration, fTimeDelta를 받아와 Bind_RawValue로 넘겨준다.
+//  
+
 HRESULT CModel::Release_AnimationChannel()
 {
     // 나중에 활성 메모리 부족하면 작업해야함
@@ -827,8 +887,8 @@ HRESULT CModel::Import_Texture(_uint iMeshIndex, TEXTURE_TYPE eType, const _char
     //}
 
 #ifdef _DEBUG
-    //if (bIsSaved == TRUE)
-    //    m_pGameInstance->WriteBinx(m_ModelFilePath, m_eType, &m_pModel);
+    /*if (bIsSaved == TRUE)
+        m_pGameInstance->WriteBinMorph(m_ModelFilePath, m_eType, &m_pModel);*/
 #endif
     return S_OK;
 }
@@ -1005,13 +1065,9 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
             m_pGameInstance->WriteBinMorph(szBinModelFilePath, eType, &m_pModel);
         }
 
-
-
         //m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
         //if (nullptr == m_pAIScene)
         //   return E_FAIL;
-
-
 
     }
     else if (false == strcmp(".glb", szEXT))
@@ -1022,15 +1078,28 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
         char szDrive[MAX_PATH] = {};
         char szDir[MAX_PATH] = {};
         char szFileName[MAX_PATH] = {};
-        char szBinExtractor[MAX_PATH] = { ".binx" };
-        _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
-        strcat_s(szBinModelFilePath, szDrive);
-        strcat_s(szBinModelFilePath, szDir);
-        strcat_s(szBinModelFilePath, szFileName);
-        strcat_s(szBinModelFilePath, szBinExtractor);
+        if (eType != MODEL_TYPE::FACIAL)
+        {
+            char szBinExtractor[MAX_PATH] = { ".binx" };
+            _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+            strcat_s(szBinModelFilePath, szDrive);
+            strcat_s(szBinModelFilePath, szDir);
+            strcat_s(szBinModelFilePath, szFileName);
+            strcat_s(szBinModelFilePath, szBinExtractor);
 
-        m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
+            m_pGameInstance->WriteBinx(szBinModelFilePath, eType, &m_pModel);
+        }
+        else
+        {
+            char szBinExtractor[MAX_PATH] = { ".binMorph" };
+            _splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, nullptr, 0);
+            strcat_s(szBinModelFilePath, szDrive);
+            strcat_s(szBinModelFilePath, szDir);
+            strcat_s(szBinModelFilePath, szFileName);
+            strcat_s(szBinModelFilePath, szBinExtractor);
 
+            m_pGameInstance->WriteBinMorph(szBinModelFilePath, eType, &m_pModel);
+        }
         //m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
         //if (nullptr == m_pAIScene)
         //   return E_FAIL;
@@ -1086,6 +1155,7 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const _char* pModelFilePa
 
         if (FAILED(Ready_MorphAnimations()))
             return E_FAIL;
+
     }
 
 
@@ -1119,6 +1189,12 @@ HRESULT CModel::Initialize(void* pArg)
         || m_eType == MODEL_TYPE::FACIAL)
     {
         if (FAILED(Ready_ComputeShader()))
+            return E_FAIL;
+    }
+
+    if (m_eType == MODEL_TYPE::FACIAL)
+    {
+        if (FAILED(Ready_ShapeKeyWeightBuffer()))
             return E_FAIL;
     }
 
@@ -1157,6 +1233,14 @@ HRESULT CModel::Bind_ShapeKeys(_uint iMeshIndex, CShader* pShader, const _char* 
 {
     if (iMeshIndex >= m_iNumMeshes)
         return E_FAIL;
+
+    _uint iNumShapeKeys = m_Meshes[iMeshIndex]->Get_NumShapeKeys();
+
+    if(FAILED(pShader->Bind_RawValue("g_iNumShapeKeys",
+        &iNumShapeKeys, sizeof(_uint))))
+        return E_FAIL;
+
+    Bind_ShapeWeight(iMeshIndex, pShader);
 
     return m_Meshes[iMeshIndex]->Bind_ShapeKeys(pShader, pConstantName);
 }
@@ -1286,21 +1370,32 @@ _bool CModel::Play_Animation(_float fTimeDelta, CTransform* pTransform, _float f
     return m_isFinish;
 }
 
-
+/// <앞으로의 GPU ShapeKey 작동방식>
+//  1. ShapeKey[164] * vDeltaPosition[9124] * _float3를 SRV 형태로 Mesh마다 하나씩 만들어준다.
+//  2. Play_MorphAnimaiton()에서 ShapeKey[164] 중 이번 프레임에 영향을 받는 ShapeKey 인덱스들과, KEYFRAME의 보간 완료된 변경값을 들고 있는다.
+//  3. Bind_ShapeKeys에서 Mesh의 ShapeKeySRV와 이 ShapeKeyList를 던져준다.
+/// <Play_MorphAnimation>
+//  1. Update_TrackPosition을 통해 시간 관련 GlobalBuffer를 구한다.
+//     -     float g_fCurrentTrackPosition;
+//     -     float g_fTimeDelta;
+//     -     float g_fTickPerSecond;
+//     -     float g_fDuration;
+//    1-1. Animation에서 Channel을 호출해 현재 MORPH_KEYFRAME, 다음 MORPH_KEYFRAME을 찾아준다.
+//  2. Render에서 Bind_ShapeWeight를 호출해 시간 GlobalBuffer를 던지고 현재/다음 MORPH_KEYFRAME에서 추출한 ShapeKeyIndex + Weight 결과만 VS로 던진다
+//  3. Vertex Shader에서 이를 계산해준다.
 //
 _bool CModel::Play_MorphAnimation(_float fTimeDelta)
 {
-    _float fScaledDeltaTime = fTimeDelta * m_fMorphAnimationPlayRate;
+    _float fScaledDeltaTime = (_float)fTimeDelta * m_fMorphAnimationPlayRate;
 
     if (-1 == m_iCurrentMorphAnimIndex ||
         m_iCurrentMorphAnimIndex >= m_iNumMorphAnimations)
         return false;
 
+    if (m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_MorphChannels()->size() == 0)
+        return FALSE;
 
-    Reset_ShapeWeight();
 
-
-    // 애니메이션 트랙 업데이트
     _int iAnimationState =
         m_MorphAnimations[m_iCurrentMorphAnimIndex]->Update_TrackPosition(this, m_isMorphLoop, fScaledDeltaTime);
 
@@ -1309,16 +1404,23 @@ _bool CModel::Play_MorphAnimation(_float fTimeDelta)
     else if (iAnimationState == iFLAG_ANIMATION_PLAY)
         m_isFinish = FALSE;
     else if (iAnimationState == iFLAG_ANIMATION_RESET)
-    {
         m_isFinish = FALSE;
-    }
 
-    //m_MorphAnimations[m_iCurrentMorphAnimIndex]->Update_CurrentKeyFrameIndices();
+    _float fCurrentMorphTrackPosition = m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_fTrackPosition();
 
-    //Bind_MorphAnimations(fScaledDeltaTime);
+    const MORPH_KEYFRAME* pCurrentMorphKeyFrame = nullptr;
+
+    // 실수로 채널을 한 개만 만들었기 때문에.. ㅎ
+    auto& pMorphChannel = (*m_MorphAnimations[m_iCurrentMorphAnimIndex]->Get_MorphChannels())[0];
+
+    pMorphChannel->Update_ShapeMorphing(fCurrentMorphTrackPosition, pCurrentMorphKeyFrame);
+
+    // 4. 상태 갱신 (핵심)
+    Apply_MorphState(pCurrentMorphKeyFrame);
 
     return m_isFinish;
 }
+
 
 
 HRESULT CModel::Bind_MaterialTag(TEXTURE_TYPE eType, const _char* szBindTag)
@@ -1484,8 +1586,29 @@ HRESULT CModel::Ready_Animations()
 //    return S_OK;
 //}
 
+
+void CModel::Apply_MorphState(const MORPH_KEYFRAME* pCurrent)
+{
+    memset(m_ShapeKeyWeights, 0, sizeof(_float) * MAX_SHAPEKEY);
+
+    // 1. Current 기준 (HOLD 기본)
+    if (pCurrent)
+    {
+        for (size_t i = 0; i < pCurrent->vValues.size(); ++i)
+        {
+            _uint iShapeKeyIndex = pCurrent->vValues[i];
+            _float fCurrentWeight = pCurrent->vWeights[i];
+
+            _float fFinalWeight = fCurrentWeight;
+
+            m_ShapeKeyWeights[iShapeKeyIndex] = fFinalWeight;
+        }
+    }
+}
+
 HRESULT CModel::Bind_MorphAnimations(_float fTimeDelta)
 {
+
     return S_OK;
 }
 
@@ -1501,6 +1624,32 @@ HRESULT CModel::Ready_MorphAnimations()
 
         m_MorphAnimations.push_back(pMorphAnimation);
     }
+
+    return S_OK;
+}
+
+HRESULT CModel::Ready_ShapeKeyWeightBuffer()
+{
+    D3D11_BUFFER_DESC BufferDesc = {};
+    BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    BufferDesc.ByteWidth = sizeof(_float) * MAX_SHAPEKEY;
+    BufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+    BufferDesc.StructureByteStride = sizeof(_float);
+
+    
+    m_pDevice->CreateBuffer(&BufferDesc, nullptr, &m_pShapeKeyWeightBuffer);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+    SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+    SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+    SRVDesc.Buffer.FirstElement = 0;
+    SRVDesc.Buffer.NumElements = MAX_SHAPEKEY;
+
+    m_pDevice->CreateShaderResourceView(
+        m_pShapeKeyWeightBuffer, &SRVDesc, &m_pShapeKeyWeightSRV);
+
 
     return S_OK;
 }
@@ -1888,6 +2037,57 @@ HRESULT CModel::Ready_SkeletonBones(CModel* pSkeleton)
     for (auto& pSkeletonBone : *pSkeleton->Get_Bones())
     {
         m_Bones.push_back(pSkeletonBone->Clone());
+    }
+
+    // ------------------------------------------------------------------
+    // 1. Skeleton Bone 이름들을 Set으로 구성
+    // ------------------------------------------------------------------
+    std::unordered_set<std::string> skeletonBoneNames;
+    skeletonBoneNames.reserve(pSkeleton->Get_Bones()->size());
+
+    for (auto& pSkeletonBone : *pSkeleton->Get_Bones())
+    {
+        const char* pName = pSkeletonBone->Get_Name();
+        if (pName && pName[0] != '\0')
+        {
+            skeletonBoneNames.insert(pName);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // 2. vNodes 에는 있지만 Skeleton 에는 없는 이름 찾기
+    // ------------------------------------------------------------------
+    std::vector<std::string> missingBoneNames;
+    missingBoneNames.reserve(m_pModel->vNodes.size());
+
+    for (size_t i = 0; i < m_pModel->vNodes.size(); ++i)
+    {
+        const char* nodeName = m_pModel->vNodes[i].szName;
+        if (nodeName == nullptr || nodeName[0] == '\0')
+            continue;
+
+        // Skeleton Set에 존재하지 않으면 누락된 본
+        if (skeletonBoneNames.find(nodeName) == skeletonBoneNames.end())
+        {
+            missingBoneNames.emplace_back(nodeName);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // 3. 결과 출력
+    // ------------------------------------------------------------------
+    if (!missingBoneNames.empty())
+    {
+        printf("=== Nodes에만 존재하고 Skeleton에는 없는 Bone 목록 ===\n");
+        for (const auto& name : missingBoneNames)
+        {
+            printf("  - %s\n", name.c_str());
+        }
+        printf("총 %zu개\n", missingBoneNames.size());
+    }
+    else
+    {
+        printf("모든 Node Bone 이름이 Skeleton과 매칭됩니다.\n");
     }
 
     return S_OK;
@@ -2325,6 +2525,8 @@ void CModel::Free()
 
     Safe_Release(m_pBoneMatricesSRV);
     Safe_Release(m_pPreBoneMatricesSRV);
+    Safe_Release(m_pShapeKeyWeightBuffer);
+    Safe_Release(m_pShapeKeyWeightSRV);
     Safe_Release(m_pComputeShaderCom);
     Safe_Release(m_pCombinedMatrixComputeShaderCom);
 

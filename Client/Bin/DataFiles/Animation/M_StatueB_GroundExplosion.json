@@ -142,7 +142,7 @@
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
-                "szNotifyArg08": "",
+                "szNotifyArg08": "Part_Body",
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "B_L_HandCenter",
                 "vNotifyPosition": [
@@ -156,9 +156,9 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.8999999761581421,
-                    0.8999999761581421,
-                    0.8999999761581421
+                    0.6,
+                    0.6,
+                    0.6
                 ]
             },
             {

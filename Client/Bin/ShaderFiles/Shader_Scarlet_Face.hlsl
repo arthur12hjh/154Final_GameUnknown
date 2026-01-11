@@ -32,13 +32,38 @@ matrix g_OffsetMatrices[512];
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);
 StructuredBuffer<BoneTransformMatrix> g_PreBoneMatrixBuffer : register(t17);
-StructuredBuffer<float3> g_ShapeKeyDeltaPositionBuffer : register(t19);
-float g_fShapekeyWeight;
 
+uint g_iNumShapeKeys;
+uint g_iNumVertices;
+
+StructuredBuffer<float3> g_ShapeKeyDeltaPositionsBuffer : register(t19);
+StructuredBuffer<float3> g_ShapeKeyDeltaNormalsBuffer : register(t20);
+StructuredBuffer<float> g_ShapeKeyWeights : register(t21);
 
 VS_OUT VS_MAIN(VS_IN In, uint iVertexIndex : SV_VertexID)
 {
     VS_OUT Out;
+    
+    // ∆‰¿Ãº»
+    float3 vShapeDeltaPosition = float3(0, 0, 0);
+    float3 vShapeDeltaNormal = float3(0, 0, 0);
+
+    [loop]
+    for (uint i = 0; i < g_iNumShapeKeys; ++i)
+    {
+        float fWeight = g_ShapeKeyWeights[i];
+
+        uint iBaseIndex = i * g_iNumVertices + iVertexIndex;
+
+        vShapeDeltaPosition += g_ShapeKeyDeltaPositionsBuffer[iBaseIndex] * fWeight;
+        vShapeDeltaNormal += g_ShapeKeyDeltaNormalsBuffer[iBaseIndex] * fWeight;
+    }
+    
+    
+    float3 vMorphPosition = In.vPosition + vShapeDeltaPosition;
+    //float3 vMorphPosition = In.vPosition;
+    //vSkinnedNormal.xyz -= g_ShapeKeyDeltaNormalsBuffer[iVertexIndex];
+
     
     float fWeightSum = (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z + In.vBlendWeight.w);
     
@@ -65,14 +90,11 @@ VS_OUT VS_MAIN(VS_IN In, uint iVertexIndex : SV_VertexID)
                         MatrixZ * fWeightZ +
                         MatrixW * fWeightW;
     
-    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vPosition = mul(vector(vMorphPosition, 1.f), BoneMatrix);
     float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;
     float3 vSkinnedTangent = mul(float4(In.vTangent, 0.f), BoneMatrix).xyz;
     float3 vSkinnedBinorm = mul(float4(In.vBinormal, 0.f), BoneMatrix).xyz;
-    
-    vPosition.xyz -= g_ShapeKeyDeltaPositionBuffer[iVertexIndex];
-    //vSkinnedNormal.xyz -= g_ShapeKeyDeltaNormalBuffer[iVertexIndex];
-    
+     
     matrix matWV, matWVP, matOldWV, matOldWVP;
     
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
@@ -490,7 +512,7 @@ technique11 DefaultTechnique
     // 4
     pass MI_CH_M_NA_961_Head
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -500,7 +522,7 @@ technique11 DefaultTechnique
     // 5
     pass MI_CH_M_NA_961_Eyebrow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -510,7 +532,7 @@ technique11 DefaultTechnique
     // 6
     pass MI_CH_M_NA_961_Eyes
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -520,7 +542,7 @@ technique11 DefaultTechnique
     // 7
     pass MI_CH_M_NA_961_Lens
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -530,7 +552,7 @@ technique11 DefaultTechnique
     // 8
     pass MI_CH_M_NA_961_Eyelashes
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -540,7 +562,7 @@ technique11 DefaultTechnique
     // 9
     pass MI_CH_M_NA_961_Tearline
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -550,7 +572,7 @@ technique11 DefaultTechnique
     // 10
     pass MI_CH_M_NA_961_Eyeshadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -560,7 +582,7 @@ technique11 DefaultTechnique
     // 11
     pass MI_CH_M_NA_961_EyeBlend
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -570,7 +592,7 @@ technique11 DefaultTechnique
     // 12
     pass MI_CH_M_NA_961_NoseShadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -580,7 +602,7 @@ technique11 DefaultTechnique
     // 13
     pass MI_CH_M_NA_961_Teeth
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Cull_None);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
