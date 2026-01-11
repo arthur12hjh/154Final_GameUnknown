@@ -29,6 +29,9 @@ namespace Engine
 
 #define CASCADE_LEVEL 5
 
+#define MAX_SHAPEKEY 256
+#define ANIM_THRESHOLD 1e-7
+
 #ifdef _DEBUG
 	enum class GAMELOOP_TYPE	{ PRIORITY, UPDATE, LATE_UPDATE, RENDER, COLLISION, END};
 #endif // _DEBUG

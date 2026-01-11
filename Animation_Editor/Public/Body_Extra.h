@@ -28,6 +28,7 @@ public:
 	typedef struct tagBody_Extra_Desc : public CPartObject::PARTOBJECT_DESC
 	{
 		_wstring szModelTag;
+		void* pBodyPtr = { nullptr };
 	}BODY_EXTRA_DESC;
 private:
 	CBody_Extra(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -53,6 +54,8 @@ public:
 private:
 
 private:
+	CModel* m_pBodyModelCom = { nullptr };
+
 	_wstring			m_szModelTag;
 	_float m_fWeightTest;
 	
@@ -63,6 +66,8 @@ private:
 private:
 	HRESULT Ready_Components();
 	HRESULT Bind_ShaderResources();
+
+	HRESULT Bind_BoneToPartBody(void* pArg);
 
 public:
 	static CBody_Extra* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

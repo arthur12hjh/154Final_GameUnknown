@@ -59,9 +59,6 @@ _int CMorphAnimation::Update_TrackPosition(class CModel* pModel, _bool isLoop, _
 		if (true == isLoop)
 		{
 			m_fCurrentTrackPosition = m_fCurrentTrackPosition - m_fDuration;
-			for (auto& pMorphChannel : m_MorphChannels)
-				pMorphChannel->Reset();
-
 			return iFLAG_ANIMATION_RESET;
 		}
 		else
@@ -70,15 +67,6 @@ _int CMorphAnimation::Update_TrackPosition(class CModel* pModel, _bool isLoop, _
 			return iFLAG_ANIMATION_FINISH;
 		}
 	}
-
-	_uint iIndex = {};
-
-	for (auto& pMorphChannel : m_MorphChannels)
-		pMorphChannel->Update_ShapeMorphing(pModel, m_fCurrentTrackPosition);
-
-
-	pModel->Bind_ShapeWeight();
-
 
 	return iFLAG_ANIMATION_PLAY;
 }
@@ -91,6 +79,7 @@ _bool CMorphAnimation::Update_CurrentKeyFrameIndices()
 
 void CMorphAnimation::Reset()
 {
+	m_fCurrentTrackPosition = 0.f;
 	for (auto& pMorphChannel : m_MorphChannels)
 		pMorphChannel->Reset();
 }

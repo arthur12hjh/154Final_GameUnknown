@@ -724,9 +724,18 @@ namespace Engine
 
 	typedef struct ShapeKeyInfo
 	{
-		XMFLOAT4X4 BoneLocalTransformMatrix;
-		XMFLOAT4X4 BoneCombinedTransformMatrix;
+		XMFLOAT3 vDeltaPosition;
+		XMFLOAT3 vDeltaNormal;
 	}SHAPEKEY_INFO;
+
+	typedef struct CB_Morph
+	{
+		unsigned int g_iNumShapeKeys;
+		unsigned int g_iNumVertices;
+		unsigned int _padding0;
+		unsigned int _padding1;
+		float g_ShapeKeyWeights[256];
+	}CB_MORPH;
 }
 
 #endif // Engine_Struct_h__

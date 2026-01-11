@@ -173,8 +173,14 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 
-	if(fDist < 100.f)
-		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+	if (fDist < 100.f)
+	{
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pParent);
+		if (pPlayer)
+		{
+			m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+		}
+	}
 }
 
 HRESULT CBody_Player::Render()

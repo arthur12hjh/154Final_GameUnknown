@@ -1198,6 +1198,9 @@
     <Filter Include="02.GameObjects\UIObjects\UIBase\UITriggerKey">
       <UniqueIdentifier>{52b87961-1c6e-4cfb-9d58-3ef44f1df75b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\CinematicModel\CinematicPartFacial">
+      <UniqueIdentifier>{8d39c806-5120-43c2-bade-f5244a4dc109}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2293,6 +2296,9 @@
     <ClInclude Include="..\Public\NpcEvent.h">
       <Filter>02.GameObjects\Character\AI\Npc\NpcEvent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CinematicPartFacial.h">
+      <Filter>02.GameObjects\CinematicModel\CinematicPartFacial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3351,6 +3357,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\NpcEvent.cpp">
       <Filter>02.GameObjects\Character\AI\Npc\NpcEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CinematicPartFacial.cpp">
+      <Filter>02.GameObjects\CinematicModel\CinematicPartFacial</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

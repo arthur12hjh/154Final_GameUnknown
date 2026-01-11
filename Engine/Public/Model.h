@@ -31,6 +31,14 @@ public:
 
 	// <애니메이션 함수들>
 	vector<class CAnimation*>* Get_Animations();
+
+
+	_float Get_CurrentMorphDuration();
+
+	_uint Get_CurrentMorphTrackPosition();
+	_float	Get_fCurrentMorphTrackPosition();
+	_float Get_CurrentMorphSaturatedTrackPosition();
+	void Set_MorphTrackPosition(_float fTrackPosition);
 	// </end>
 
 	// <Bone 정보 받는 함수들>
@@ -42,7 +50,7 @@ public:
 	_int Get_ShapeIndex(const _char* pShapeName) const; //안써시발아
 	void Set_ShapeWeightIndex(_uint iShapeKeyIndex, _float fWeight);
 	void Set_ShapeWeight(const _char* szShapeTag, _float fWeight);
-	void Bind_ShapeWeight();
+	void Bind_ShapeWeight(_uint iMeshIndex, class CShader* pShader);
 
 	void Reset_ShapeWeight();
 
@@ -174,7 +182,7 @@ public:
 	aiTextureType	Convert_TextureType(TEXTURE_TYPE eType);
 
 	// 이거 모션트레일 전용 PreBoneMatrix Copy해오는겁니다.
-	ID3D11Buffer*			Get_PreBoneMatrix();
+	ID3D11Buffer* Get_PreBoneMatrix();
 
 
 	virtual HRESULT Render(_uint iMeshIndex);
@@ -193,15 +201,15 @@ private:
 
 	COMPUTE_GLOBALBUFFER			m_GlobalBuffer;
 
-	ID3D11Buffer*					m_pOutSource = { nullptr };
-	ID3D11Buffer*					m_pRootSource = { nullptr };
-	ID3D11Buffer*					m_pPreBoneMatrices = { nullptr };
-	ID3D11Buffer*					m_pLerpBoneMatrices = { nullptr };
-	ID3D11Buffer*					m_pOutReadBack = { nullptr };
-	ID3D11Buffer*					m_pOutRootReadBack = { nullptr };
+	ID3D11Buffer* m_pOutSource = { nullptr };
+	ID3D11Buffer* m_pRootSource = { nullptr };
+	ID3D11Buffer* m_pPreBoneMatrices = { nullptr };
+	ID3D11Buffer* m_pLerpBoneMatrices = { nullptr };
+	ID3D11Buffer* m_pOutReadBack = { nullptr };
+	ID3D11Buffer* m_pOutRootReadBack = { nullptr };
 
-	ID3D11ShaderResourceView*		m_pBoneMatricesSRV = { nullptr };
-	ID3D11ShaderResourceView*		m_pPreBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView* m_pBoneMatricesSRV = { nullptr };
+	ID3D11ShaderResourceView* m_pPreBoneMatricesSRV = { nullptr };
 
 	unordered_map<string, _int>		m_AnimationIndexMap;
 	unordered_map<_int, _int>		m_PartialBoneCountMap;
@@ -226,14 +234,19 @@ private:
 	unordered_map<string, _int>		m_ShapeKeyIndexMap;
 
 	_uint							m_iNumMorphAnimations;
+	_int							m_iNumShapeKeys;
 	_int							m_iCurrentMorphAnimIndex = { -1 };
 	_bool							m_isMorphLoop = { false };
 	_bool							m_isMorphFinish = { false };
 	_float							m_fMorphAnimationPlayRate = 1.f;
 	vector<class CMorphAnimation*>	m_MorphAnimations;
 
-	//ID3D11Buffer*					m_pShapeKeyBuffer = { nullptr };
-	//ID3D11ShaderResourceView*		m_pShapeKeySRV = { nullptr };
+	_float						m_fMorphEndTrackPosition = -1.f;
+	_float						m_fMorphStartTrackPosition = 0.f;
+
+	_float							m_ShapeKeyWeights[MAX_SHAPEKEY];
+	ID3D11Buffer*					m_pShapeKeyWeightBuffer = { nullptr };
+	ID3D11ShaderResourceView*		m_pShapeKeyWeightSRV = { nullptr };
 #pragma endregion
 
 	_float4x4					m_PreRootMatrix{};
@@ -274,9 +287,12 @@ private:
 #pragma region FACIAL METHOD
 	// 페이셜 모델 관련 처리들. ShapeKey(AnimMesh)와 MorphAnimation은 사실 Mesh단에서 처리해줘야한다.
 	// 굳이 그런 복잡한 로직 별로임 ㅇㅅㅇ.. 걍 모델로 끌고 나오자
+	void Apply_MorphState(const MORPH_KEYFRAME* pCurrent);
+	
 	HRESULT Bind_MorphAnimations(_float fTimeDelta);
-
+	
 	HRESULT Ready_MorphAnimations();
+	HRESULT Ready_ShapeKeyWeightBuffer();
 #pragma endregion
 
 	HRESULT Ready_ComputeShader();

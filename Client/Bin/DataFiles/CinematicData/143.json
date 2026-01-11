@@ -44,16 +44,118 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter01"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Cast_S_2_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 0.9,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Atk_L_1_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.3,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_cast_l3_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.9,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Atk_M_2_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.9,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s7_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 5.79,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s4_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 10.79,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Cast_S_1_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 10.79,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s1_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 11.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Atk_L_1_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 12.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s4_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 14.1,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Atk_M_1_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 14.5,
           "iActiveIndex": 1512,
           "szObjectTag": "ActionCamera_ScarletBattleEnter02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 14.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s17_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 17.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_cast_l6_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 18.3,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_Scarlet_Atk_M_2_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 18.3,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_atk_s7_VO.wav"
+        },
+        {
+          "eState": 17,
+          "fTrackPosition": 22.0,
+          "iActiveIndex": 20,
+          "szObjectTag": "BGM_CAMP_NIKKE_08_ON.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 23.0,
           "iActiveIndex": 1513,
           "szObjectTag": "ActionCamera_ScarletBattleEnter03"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 24.7,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_01_VO.wav"
         },
         {
           "eState": 3,
@@ -68,10 +170,22 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 29.68,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_02_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 33.5,
           "iActiveIndex": 1516,
           "szObjectTag": "ActionCamera_ScarletBattleEnter06"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 33.74,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_03_VO.wav"
         },
         {
           "eState": 3,
@@ -80,10 +194,22 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter07"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 37.3,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_04_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 40.0,
           "iActiveIndex": 1518,
           "szObjectTag": "ActionCamera_ScarletBattleEnter08"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 47.5,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_05_VO.wav"
         },
         {
           "eState": 3,
@@ -92,10 +218,22 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter09"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 56.7,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_06_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 58.0,
           "iActiveIndex": 1520,
           "szObjectTag": "ActionCamera_ScarletBattleEnter10"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 64.67,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_QTE_Success_07_VO.wav"
         },
         {
           "eState": 3,
