@@ -721,10 +721,10 @@ void CRenderer::Render_Occlusion()
 
 void CRenderer::Render_NonBlend()
 {
-	_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
+	/*_uint iNonBlendCount = m_RenderObjects[ENUM_CLASS(RENDER::NONBLEND)].size();
 	_uint iRenderedCount = 0;
 
-	_char szDebugString[256];
+	_char szDebugString[256];*/
 
 	/* Diffuse + Normal + Depth .... */
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
@@ -737,7 +737,7 @@ void CRenderer::Render_NonBlend()
 			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
 			{
 				pRenderObject->Render();
-				iRenderedCount++;
+				//iRenderedCount++;
 			}
 		}
 
@@ -752,7 +752,7 @@ void CRenderer::Render_NonBlend()
 			if (pRenderObject->GetVisibility() == VISIBILITY::VISIBLE)
 			{
 				pRenderObject->Render();
-				iRenderedCount++;
+				//iRenderedCount++;
 			}
 		}
 
@@ -764,9 +764,9 @@ void CRenderer::Render_NonBlend()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return;
 
-	snprintf(szDebugString, sizeof(szDebugString),
+	/*snprintf(szDebugString, sizeof(szDebugString),
 		"Frame Render Count (NONBLEND Group): Total %u, Rendered %u\n", iNonBlendCount, iRenderedCount);
-	OutputDebugStringA(szDebugString);
+	OutputDebugStringA(szDebugString);*/
 }
 
 void CRenderer::Render_LightAcc()
