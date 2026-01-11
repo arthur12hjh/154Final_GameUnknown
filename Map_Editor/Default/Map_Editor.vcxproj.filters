@@ -259,6 +259,9 @@
     <Filter Include="02.GameObjects\Maps\Dororong_Saber\Dororong_Box">
       <UniqueIdentifier>{01260953-ea8b-4d68-9124-f523f3560f7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\SoundBox">
+      <UniqueIdentifier>{a87adf56-1ab3-48c5-8c9a-24ffb9cd5926}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -608,6 +611,9 @@
     <ClInclude Include="..\public\DororongBox.h">
       <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SoundTriggerBox.h">
+      <Filter>02.GameObjects\Maps\Desert\SoundBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -940,6 +946,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DororongBox.cpp">
       <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SoundTriggerBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\SoundBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

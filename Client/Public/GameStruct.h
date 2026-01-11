@@ -690,9 +690,11 @@ namespace Client
 
 	enum class GROUND_SOUND_TYPE
 	{
-		GRASS,
 		SAND,
+		GRASS,
 		IRON,
+		BRIDGE,
+		CONCRETE,
 		END
 	};
 
