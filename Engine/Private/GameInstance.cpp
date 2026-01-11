@@ -1023,6 +1023,11 @@ _uint CGameInstance::Get_BGMLength(const TCHAR* pSoundKey)
 	return m_pSoundManager->Get_BGMLength(pSoundKey);
 }
 
+void CGameInstance::Get_BGMMinVolume(_float fBGMMinVolume)
+{
+	m_pSoundManager->Get_BGMMinVolume(fBGMMinVolume);
+}
+
 _uint CGameInstance::Get_ChannelLength(CHANNELID eChannelID, _uint iIndex)
 {
 	return m_pSoundManager->Get_ChannelLength(eChannelID, iIndex);

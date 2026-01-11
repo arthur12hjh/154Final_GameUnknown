@@ -107,7 +107,7 @@
                 "szSocketTag": "Ab_R_Hand",
                 "vNotifyPosition": [
                     0.0,
-                    -1.2,
+                    -1.2000000476837158,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -117,7 +117,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.2,
+                    1.2000000476837158,
                     0.0
                 ]
             },
@@ -147,7 +147,7 @@
                 "szSocketTag": "Ab_R_Hand",
                 "vNotifyPosition": [
                     0.0,
-                    -1.2,
+                    -1.2000000476837158,
                     0.0
                 ],
                 "vNotifyRotation": [
@@ -157,7 +157,7 @@
                 ],
                 "vNotifyScale": [
                     0.0,
-                    1.2,
+                    1.2000000476837158,
                     0.0
                 ]
             }

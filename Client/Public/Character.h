@@ -25,7 +25,8 @@ public:
 
 	// Clone 한 GameObject 켜는 노티파이 끌고 들어가는 함수
 	virtual void					Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference) {};
-	
+	virtual void					Play_Sound(const ANIM_NOTIFY& NotifyReference) {};
+
 	virtual HRESULT					Initialize_Prototype() override;
 	virtual HRESULT					Initialize(void* pArg) override;
 
@@ -41,8 +42,6 @@ public:
 
 	void							SetActionEnable(_bool bFlag);
 	const	_bool					GetActionEnable();
-
-
 
 	// 캐릭터 잡기 패턴이나 어디다가 붙여야할떄 사용
 	void							SocketAttachment(const _float4x4* pAttachedMatrix);

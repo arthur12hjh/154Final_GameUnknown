@@ -80,6 +80,16 @@ HRESULT CSoundTriggerBox::Render()
             COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
             pObbCollider->Render_Face(_float4(0.f, 0.f, 1.f, 1.f));
         }
+        else if (m_eGroundSoundType == GROUND_SOUND_TYPE::ROCK)
+        {
+            COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+            pObbCollider->Render_Face(_float4(1.f, 0.f, 1.f, 1.f));
+        }
+        else if (m_eGroundSoundType == GROUND_SOUND_TYPE::CONTAINER)
+        {
+            COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pCollider);
+            pObbCollider->Render_Face(_float4(1.f, 1.f, 0.f, 1.f));
+        }
         
     }
 

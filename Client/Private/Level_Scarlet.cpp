@@ -355,7 +355,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Trigger(const _wstring& strLayerTag)
 
 HRESULT CLevel_Scarlet::Load_Map_Data()
 {
-	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData4.bin", std::ios::binary);
+	std::ifstream ifs("../../Map_Editor/Bin/DataFiles/MapData3.bin", std::ios::binary);
 	if (!ifs.is_open())
 	{
 		MessageBoxW(g_hWnd, L"Failed to open MapData", L"Error", MB_OK | MB_ICONERROR);

@@ -30,7 +30,8 @@ public:
 
 	_uint	Get_ChannelLength(CHANNELID eChannelID, _uint iIndex);
 	_float	Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex);
-
+	
+	void	Get_BGMMinVolume(_float	fBGMMinVolume);
 private:
 	// 사운드 리소스 정보를 갖는 객체 
 	map<TCHAR*, FMOD::Sound*>	m_mapSound;
@@ -40,9 +41,12 @@ private:
 	vector<SOUND_CALLBACK_DESC*>	m_ChannelEndCallBacks[CHANNELID::END];
 
 	_float							m_pChannelVolume[CHANNELID::END];
+	_float							m_fBGMMinVolume = { 1.f };
 
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
-	FMOD::System* m_pSystem;
+	FMOD::System*					m_pSystem;
+
+
 
 private:
 	void						LoadSoundFile();

@@ -13,6 +13,7 @@ NS_BEGIN(Client)
 
 class CCinematicObject;
 class CCamera_Action;
+class CUIActionEvent;
 
 class CCinematicManager : public CBase
 {
@@ -59,6 +60,8 @@ private:
 	function<void()>			m_FinishedCinematic = {nullptr};
 
 	queue<_wstring>				m_CinematicCameraQueue;
+
+	CUIActionEvent*				m_pUIActionEvent{ nullptr };
 
 private:
 	void						Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);

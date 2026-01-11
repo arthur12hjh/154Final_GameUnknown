@@ -357,10 +357,7 @@ HRESULT CNotify::Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify)
 
 HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 {
-	_TCHAR szNotifyTag[MAX_PATH];
-	CStringHelper::ConvertUTFToWide(AnimNotify.szNotifyArg01.c_str(), szNotifyTag);
-	m_pGameInstance->Manager_PlaySound(szNotifyTag, CHANNELID::EFFECT, 1.f);
-
+	m_pCharacter->Play_Sound(AnimNotify);
 	return S_OK;
 }
 

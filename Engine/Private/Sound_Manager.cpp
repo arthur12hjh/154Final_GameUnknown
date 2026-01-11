@@ -216,10 +216,19 @@ void CSound_Manager::Tick(_float fTimeDelta)
 	
 	for (auto& iter : m_pChannelArr[CHANNELID::BGM])
 	{
+		_float fRatio = {};
+		iter->getVolume(&fRatio);
+
 		if (!IsPlay)
-			iter->setVolume(m_pChannelVolume[CHANNELID::BGM]);
+		{
+			fRatio = Lerp<_float>(fRatio, m_pChannelVolume[CHANNELID::BGM], fTimeDelta);
+			iter->setVolume(fRatio);
+		}
 		else
-			iter->setVolume(1.f);
+		{
+			fRatio = Lerp<_float>(fRatio, m_fBGMMinVolume, fTimeDelta * 5.f);
+			iter->setVolume(fRatio);
+		}
 	}
 
 	m_pSystem->update();
@@ -270,6 +279,11 @@ _float CSound_Manager::Get_ChannelRatio(CHANNELID eChannelID, _uint iIndex)
 
 	pChannelSound->getPosition(&iPosition, FMOD_TIMEUNIT_MS);
 	return (_float)iPosition / (_float)iLength;
+}
+
+void CSound_Manager::Get_BGMMinVolume(_float fBGMMinVolume)
+{
+	m_fBGMMinVolume = fBGMMinVolume;
 }
 
 void CSound_Manager::LoadSoundFile()

@@ -76,6 +76,16 @@ HRESULT CSoundTriggerBox::Render()
 			COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pColliderCom);
 			pObbCollider->Render_Face(_float4(0.f, 0.f, 1.f, 1.f));
 		}
+		else if (m_eGroundSoundType == GROUND_SOUND_TYPE::ROCK)
+		{
+			COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pColliderCom);
+			pObbCollider->Render_Face(_float4(1.f, 0.f, 1.f, 1.f));
+		}
+		else if (m_eGroundSoundType == GROUND_SOUND_TYPE::CONTAINER)
+		{
+			COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pColliderCom);
+			pObbCollider->Render_Face(_float4(1.f, 1.f, 0.f, 1.f));
+		}
 
 	}
 
@@ -134,7 +144,7 @@ HRESULT CSoundTriggerBox::Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc)
 		return E_FAIL;
 
 	// 충돌 끝낫을때 이벤트는 사용해야하는 때가 오면 그때 만들게요
-	m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
+	m_pColliderCom->BindOverlappingEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { OverlappingEvent(vHitPoint, vHitDir, pHitActor); });
 	m_pColliderCom->BindEndOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { End_OverlapEvent(vHitPoint, vHitDir, pHitActor); });
 
 	m_pColliderCom->SetColliderHitType(HIT_TYPE::STATIC);
@@ -151,15 +161,16 @@ HRESULT CSoundTriggerBox::Ready_Components(const SOUNDTRIGGER_BOX_DESC& pDesc)
 
 void CSoundTriggerBox::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
-    auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
-    if (pCharacter)
-    {
-        pCharacter->SetGroundSoundType(m_eGroundSoundType);
-    }
+  
 }
 
 void CSoundTriggerBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
 {
+	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
+	if (pCharacter)
+	{
+		pCharacter->SetGroundSoundType(m_eGroundSoundType);
+	}
 }
 
 void CSoundTriggerBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor)
@@ -196,4 +207,6 @@ CGameObject* CSoundTriggerBox::Clone(void* pArg)
 void CSoundTriggerBox::Free()
 {
     __super::Free();
+
+	Safe_Release(m_pColliderCom);
 }

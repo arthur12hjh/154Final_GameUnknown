@@ -280,7 +280,7 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     
     if (fWeight > 0.001f)
     {
-        fWave = sin(g_fTime + fCenterY) * 0.3f * fWeight * fHeightFactor;
+        fWave = sin(g_fTime + fCenterY) * 0.5f * fWeight * fHeightFactor;
     }
     
     matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -293,7 +293,7 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
         
         vWorldPos.x += fWave;
         vWorldPos.z += fWave;
-        vWorldPos.z += fWave * 0.3f;
+        vWorldPos.z += fWave * 0.4f;
         
         Out.vPosition = mul(vWorldPos, matVP);
         
