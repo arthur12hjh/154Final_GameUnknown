@@ -47,6 +47,8 @@ public:
 	virtual HRESULT							Damaged(void* pArg) override;
 	virtual HRESULT							ActionSuccess(void* pArg) override;
 	virtual HRESULT							CallNotify(_uint iNotiType, const AnimNotify* pNotify);
+	virtual void							Play_Sound(const ANIM_NOTIFY& NotifyReference) override;
+
 	virtual void							RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost = 0);
 	virtual void							PlayDeadEffect();
 	virtual void							Attack_Interaction(void* pArg = nullptr);
@@ -108,6 +110,7 @@ private:
 	_bool									m_bIsSuperMonster = { false };
 	_bool									m_bIsTimeVisible = { false };
 	_float2									m_vHitVisibleDuration = { 0, 5.f };
+	_bool									m_bIsPlaySound = false;
 	CUIBase*								m_pStatusUI = { nullptr };
 
 	_uint									m_iComboCount = { };
@@ -131,8 +134,6 @@ private :
 	HRESULT									ADD_PartObjects();
 	
 	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
-
-
 	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	
 #pragma region Notify Event
@@ -143,6 +144,12 @@ private :
 	void									Change_Color(const AnimNotify* pNotify);
 	void									Draw_AttackLine(const AnimNotify* pNotify);
 	void									Play_SFXEffect(const AnimNotify* pNotify);
+	void									Play_MoveSound(_uint iType);
+
+	void									Play_StatueMoveSound(_uint iType, _float fRandomIndex);
+	void									Play_BanacleMoveSound(_uint iType);
+	void									Play_AntlionMoveSound(_uint iType);
+	void									Play_GorillaMoveSound(_uint iType, _uint SoundType);
 
 	_bool									Compare_SFX_Name(const string& szSFXName);
 #pragma endregion

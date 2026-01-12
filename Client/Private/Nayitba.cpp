@@ -128,7 +128,10 @@ void CNaytiba::Update(_float fTimeDelta)
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 200.f) || m_pTargetCom->GetTarget())
 	{
 		m_pAIController->Update(fTimeDelta);
+		m_bIsPlaySound = true;
 	}
+	else
+		m_bIsPlaySound = false;
 
 	if (NAYTIBA_STATE::DEAD != m_MonsterInfo.eNaytibaState)
 	{
@@ -217,7 +220,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
-	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type) 
 	{
 		if (10 >= m_MonsterInfo.iCurrentHealth)
 		{
@@ -290,6 +293,37 @@ HRESULT CNaytiba::CallNotify(_uint iNotiType, const AnimNotify* pNotify)
 	}
 
 	return S_OK;
+}
+
+void CNaytiba::Play_Sound(const ANIM_NOTIFY& NotifyReference)
+{
+	if (false == m_bIsPlaySound)
+		return;
+
+	if ("WALK" == NotifyReference.szNotifyArg01)
+	{
+		// 여기서 Walk Sound
+		if (1 == m_iMonsterID)
+			Play_GorillaMoveSound(0, NotifyReference.iNumData01);
+		else if (3 == m_iMonsterID)
+			Play_BanacleMoveSound(0);
+		else if (7 == m_iMonsterID)
+			Play_AntlionMoveSound(1);
+		else
+			Play_MoveSound(0);
+	}
+	if ("RUN" == NotifyReference.szNotifyArg01)
+	{
+		// 여기서 Walk Sound
+		if (1 == m_iMonsterID)
+			Play_GorillaMoveSound(1, NotifyReference.iNumData01);
+		else if (3 == m_iMonsterID)
+			Play_BanacleMoveSound(1);
+		else if (7 == m_iMonsterID)
+			Play_AntlionMoveSound(1);
+		else
+			Play_MoveSound(1);
+	}
 }
 
 void CNaytiba::RecoveryPoint(RECOVERY_TYPE eRecoveryType, long long iCost)
@@ -517,6 +551,9 @@ _bool CNaytiba::bIsRepulseHitReaction()
 
 NAYITBA_EXECUTION_TYPE CNaytiba::bIsThesholdAction()
 {
+	if (NAYTIBA_TYPE::ELITE > m_pInitMonsterInfo->eNaytiba_Type)
+		return NAYITBA_EXECUTION_TYPE::END;
+
 	return m_eExcution;
 }
 
@@ -987,7 +1024,7 @@ _bool CNaytiba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 	
 	if (m_pAttack_Data)
 	{
-		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty))
+		if (false == (SKILL_PROPERTY::GUARD & m_pAttack_Data->eProPerty) )
 		{
 			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iDamage);
 		}
@@ -995,7 +1032,13 @@ _bool CNaytiba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 			bIsCheckDefenceLogic = true;
 	}
 	else
+	{
+		if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
+		{
+			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iDamage);
+		}
 		bIsCheckDefenceLogic = true;
+	}
 
 	if (bIsCheckDefenceLogic)
 	{
@@ -1228,6 +1271,166 @@ void CNaytiba::Play_SFXEffect(const AnimNotify* pNotify)
 	if (Compare_SFX_Name(pNotify->szNotifyArg01))
 	{
 		m_pPartBody->SetRimLightData(true, 4.f, 3.f, { 0.8f ,0.8f, 0.8f, 1.f }, 0.4f);
+	}
+}
+
+void CNaytiba::Play_MoveSound(_uint iType)
+{
+	// Type Number : 0 => WALK 사운드
+	// Type Number : 1 => RUN  사운드
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	switch (m_eGroundSoundType)
+	{
+	case GROUND_SOUND_TYPE::IRON:
+		if (0 == iType)
+		{
+			if (25 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_Walk_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (50 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_Walk_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (75 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_Walk_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_Walk_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		}
+		else
+		{
+			if (25 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_run_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (50 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_run_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (75 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_run_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_foot_metal_thin_run_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		}
+		break;
+	default :
+		if (0 == iType)
+		{
+			if (4 == m_iMonsterID || 5 == m_iMonsterID)
+				Play_StatueMoveSound(0, fRandomIndex);
+			else
+			{
+				if (20 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Mon_foot_M_Default_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else if (40 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Mon_foot_M_Default_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else if (60 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Mon_foot_M_Default_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else if (80 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Mon_foot_M_Default_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else
+					m_pGameInstance->Manager_PlaySound(TEXT("Mon_foot_M_Default_5.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			}
+		}
+		else
+		{
+			if (25 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_6.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (50 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_5.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else if (75 >= fRandomIndex)
+				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			else
+				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		}
+		break;
+	}
+}
+
+void CNaytiba::Play_StatueMoveSound(_uint iType, _float fRandomIndex)
+{
+	if (25 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Foot_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+	else if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Foot_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+	else if (75 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Foot_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Foot_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+}
+
+void CNaytiba::Play_BanacleMoveSound(_uint iType)
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	switch (m_eGroundSoundType)
+	{
+	case GROUND_SOUND_TYPE::IRON:
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_metal_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_metal_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_metal_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_metal_5.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		break;
+	case GROUND_SOUND_TYPE::SAND:
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_sand_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_sand_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_sand_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_footstep_sand_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		break;
+	}
+}
+
+void CNaytiba::Play_AntlionMoveSound(_uint iType)
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	switch (m_eGroundSoundType)
+	{
+	case GROUND_SOUND_TYPE::IRON:
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_metal_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_metal_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_metal_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_metal_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		break;
+	case GROUND_SOUND_TYPE::SAND:
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_sand_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_sand_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_sand_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Footstep_sand_4.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+		break;
+	}
+}
+
+void CNaytiba::Play_GorillaMoveSound(_uint iType, _uint SoundType)
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (1 == SoundType)
+	{
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_GorillaB_Hand_1.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_GorillaB_Hand_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_GorillaB_Hand_3.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_GorillaB_Hand_4.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+	}
+	else
+	{
+		if (25 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_Attack_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else if (50 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_4.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else if (75 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_3.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 	}
 }
 
