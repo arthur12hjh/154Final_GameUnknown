@@ -18,6 +18,9 @@ class CUIActionEvent;
 class CCinematicManager : public CBase
 {
 private:
+	enum class SCRIPT_ACTION{ BEGIN, PLAY, STOP, END };
+
+private:
 	CCinematicManager();
 	virtual ~CCinematicManager() = default;
 
@@ -70,6 +73,9 @@ private:
 	void						Active_CinematicCameraQueue();
 
 	HRESULT						Reset_Cinematic();
+	HRESULT						Reset_UI();
+
+	void						Script_Action(SCRIPT_ACTION eAction);
 
 public:
 	static CCinematicManager* Create();

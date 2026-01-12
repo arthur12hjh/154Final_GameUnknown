@@ -330,6 +330,9 @@ HRESULT CLevel_Scarlet::Ready_Layer_UI(const _wstring& strLayerTag)
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Cinematic"))))
 		return E_FAIL;
 
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

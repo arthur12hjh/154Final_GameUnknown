@@ -14,6 +14,7 @@
 
 #include "UIHUD.h"
 #include "UIBase.h"
+#include "UIScript.h"
 
 #include "UIActionEvent.h"
 
@@ -90,6 +91,23 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         Skip_Cinematic();
     }
 
+    /* Dear. 대재훈
+        Script_Action(SCRIPT_ACTION::BEGIN); // 스크립트 삽입 입니다 호출하면 알아서 들어갈겁니다 (현재 시네마틱 실행하면 알아서 들어가고 있어요)
+        Script_Action(SCRIPT_ACTION::PLAY); // 스크립트 다음 대사 재생
+        Script_Action(SCRIPT_ACTION::STOP); // 스크립트 멈추기(안보이기)
+        Script_Action(SCRIPT_ACTION::END); // 스크립트 해제 (현재 스킵 적용 되고 있습니다)
+    */
+
+    // 스크립트 테스트
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
+    {
+        Script_Action(SCRIPT_ACTION::PLAY);
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
+    {
+        Script_Action(SCRIPT_ACTION::STOP);
+    }
+
     return S_OK;
 }
 
@@ -124,9 +142,12 @@ HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> F
     for (auto& pChild : *pTriggerKey->Get_Children())
         pTriggerKey->Update_Children(pChild);
 
-    Safe_Release(pHUD);
 
     m_pGameInstance->Add_Event(TEXT("Cinematic_Skip"), m_pUIActionEvent);
+
+    Script_Action(SCRIPT_ACTION::BEGIN);
+
+    Safe_Release(pHUD);
 
     return S_OK;
 }
@@ -257,27 +278,7 @@ map<_wstring, CCinematicObject*>* CCinematicManager::Get_CinematicObjectsMap()
 
 HRESULT CCinematicManager::Reset_Cinematic()
 {
-    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-    if (!pHUD)
-    {
-        Safe_Release(pHUD);
-        return S_OK;
-    }
-
-    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
-
-    if (!pTriggerKey)
-        return S_OK;
-
-    pTriggerKey->SetVisibility(VISIBILITY::HIDDEN);
-
-    for (auto& pChild : *pTriggerKey->Get_Children())
-        pTriggerKey->Update_Children(pChild);
-
-    Safe_Release(pHUD);
-
-    m_pGameInstance->Remove_Event(TEXT("Cinematic_Skip"));
+    Reset_UI();
 
     m_bIsCinematicPlaying = FALSE;
     m_bIsCinematicSkip = FALSE;
@@ -296,6 +297,77 @@ HRESULT CCinematicManager::Reset_Cinematic()
         m_FinishedCinematic();
 
     return S_OK;
+}
+
+HRESULT CCinematicManager::Reset_UI()
+{
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return S_OK;
+    }
+
+    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
+
+    if (!pTriggerKey)
+        return S_OK;
+
+    pTriggerKey->SetVisibility(VISIBILITY::HIDDEN);
+
+    for (auto& pChild : *pTriggerKey->Get_Children())
+        pTriggerKey->Update_Children(pChild);
+
+    m_pGameInstance->Remove_Event(TEXT("Cinematic_Skip"));
+
+    Script_Action(SCRIPT_ACTION::END);
+
+    Safe_Release(pHUD);
+
+    return S_OK;
+}
+
+void CCinematicManager::Script_Action(SCRIPT_ACTION eAction)
+{
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return;
+    }
+
+    CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+    if (!pScript)
+        return;
+
+    switch (eAction)
+    {
+    case SCRIPT_ACTION::BEGIN:
+    {
+        pScript->Begin_Script(CGameManager::GetInstance()->Get_ScriptData(to_wstring(m_iCurrentCinematicID)));
+        break;
+    }
+    case SCRIPT_ACTION::PLAY:
+    {
+        pScript->Play_Next_Script();
+        break;
+    }
+    case SCRIPT_ACTION::STOP:
+    {
+        pScript->Stop_Script();
+        break;
+    }
+    case SCRIPT_ACTION::END:
+    {
+        pScript->End_Script();
+        break;
+    }
+    }
+
+    Safe_Release(pHUD);
 }
 
 void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
@@ -357,6 +429,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         break;
     case CINEMATICNODE_STATE::FADE_IN:
     {
+        Reset_UI();
         CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
         static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Intro"));
         Safe_Release(pHUD);
@@ -365,6 +438,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
     }
     case CINEMATICNODE_STATE::FADE_OUT:
     {
+
         CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
         _float fDelay = (_float)CinematicNodeDesc.iActiveIndex;
@@ -517,12 +591,22 @@ void CCinematicManager::Active_CinematicCameraQueue()
         return;
 
     _float4x4 PrePosMatrix = {};
-    CCamera* pCamera = nullptr;
+    CCamera* pCamera = nullptr; 
 
     m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
     pCamera = m_pGameInstance->GetMainCamera();
     m_CinematicCameraQueue.pop();
     Safe_Release(pCamera);
+
+    //m_pGameInstance->ADD_FrameFinalFunction([&]() {
+    //    if (m_CinematicCameraQueue.empty())
+    //        return;
+
+    //    m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
+    //    pCamera = m_pGameInstance->GetMainCamera();
+    //    m_CinematicCameraQueue.pop();
+    //    Safe_Release(pCamera);
+    //}, 6);
 }
 
 CCinematicManager* CCinematicManager::Create()

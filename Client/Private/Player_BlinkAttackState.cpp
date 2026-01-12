@@ -78,6 +78,12 @@ _float CPlayer_BlinkAttackState::End()
     m_Desc->isUsingBlink = false;
     m_pPlayer->SetSkillDataID(-1);
 
+    CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+    CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+        CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+        }, 4);
+
     return m_fNextBlendRatio;
 }
 

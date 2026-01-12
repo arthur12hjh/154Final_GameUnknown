@@ -26,6 +26,7 @@
 #include "Player_Parts.h"
 #include "PlayerState.h"
 #include "Prob_Interaction.h"
+#include "Camera.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -586,7 +587,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 5000;
+	m_PlayerDesc.iOwnGold			= 0;
 
 	return S_OK;
 }
@@ -672,6 +673,16 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
+		// 메인 카메라가 플레이어 카메라일 때만 상호작용 가능하게
+		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
+
+		if (!m_pGameInstance->IsMainCamera(pCamera))
+		{
+			Safe_Release(pCamera);
+			return;
+		}
+		Safe_Release(pCamera);
+
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
