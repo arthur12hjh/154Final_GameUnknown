@@ -62,6 +62,7 @@ PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
         m_pPlayer->Set_Animation("P_Eve_Sword_Normal_MoveBackAttack1_E", false, 1.6f, 0.f);
         m_pGameInstance->Active_DoF(false, 0.2f);
         m_Desc->pPlayerController->Set_Gravity(true, 14.f);
+        m_Desc->isUsingRepulse = false;
     }
     
     if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.4f >= fAnimationRatio && 
@@ -77,7 +78,6 @@ _float CPlayer_RepulseState::End()
 {
     m_pGameInstance->SetGameSpeed(1.f);
     m_Desc->isInvincible = false;
-    m_Desc->isUsingRepulse = false;
     m_Desc->isLockChangable = true;
     m_pPlayer->SetSkillDataID(-1);
 
