@@ -82,11 +82,11 @@
                 ]
             },
             {
-                "fNumData01": 1.0,
+                "fNumData01": 3.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 15,
+                "iNotifyKeyFrame": 14,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,

@@ -114,11 +114,6 @@ void CNaytiba::Update(_float fTimeDelta)
 			VisibleStatusUI(fTimeDelta);*/
 	} 
 
-	if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
-	{
-		
-	}
-
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
@@ -218,6 +213,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (nullptr == pDesc->pSkillData)
 		return E_FAIL;
 
+	Play_HitSound();
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type) 
@@ -233,7 +229,6 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	{
 		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-		
 	}
 
 	VisibleStatusUI(0.f);
@@ -515,8 +510,11 @@ void CNaytiba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
 	m_eExcution = eExcution;
 
-	if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == m_eExcution)
-		m_pPartBody->SetRimLightData(true, 2.5f, 0.5f, { 0.18f, 0.04f, 0.04f, 1.f }, 5.f);
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == m_eExcution)
+			m_pPartBody->SetRimLightData(true, 2.5f, 0.5f, { 0.18f, 0.04f, 0.04f, 1.f }, 5.f);
+	}
 }
 
 void CNaytiba::EnablePhysxController(_bool bEnable)
@@ -1432,6 +1430,34 @@ void CNaytiba::Play_GorillaMoveSound(_uint iType, _uint SoundType)
 		else
 			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 	}
+}
+
+void CNaytiba::Play_HitSound()
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (4 == m_iMonsterID || 5 == m_iMonsterID)
+		Play_HitStatueSound(fRandomIndex);
+	else
+	{
+		if(50 > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_00.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	}
+}
+
+void CNaytiba::Play_HitStatueSound(_float fRandomIndex)
+{
+	if (25 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact02.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else if (75 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact03.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact04.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		
+
 }
 
 _bool CNaytiba::Compare_SFX_Name(const string& szSFXName)

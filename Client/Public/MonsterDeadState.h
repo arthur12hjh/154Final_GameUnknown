@@ -49,6 +49,16 @@ private :
 	void										SettingDefaultDeadAnim();
 	void										SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc);
 
+#pragma region Sound
+private:
+	void										Hit_BeholderSound(_float fRandomIndex);
+	void										Hit_StatueSound(_float fRandomIndex);
+	void										Hit_BanacleSound(_float fRandomIndex);
+	void										Hit_TentacleSound(_float fRandomIndex);
+	void										Hit_AntlionSound(_float fRandomIndex);
+	void										Hit_TurretSound(_float fRandomIndex);
+#pragma endregion
+
 public:
 	static	CMonsterDeadState*					Create(void* pArg);
 	virtual	void								Free() override;

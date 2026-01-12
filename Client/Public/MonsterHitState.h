@@ -26,6 +26,14 @@ private :
 	_float3										m_vImpactDir = {};
 	_float										m_fImpactForce = {};
 
+private :
+	void										Hit_BeholderSound(_float fRandomIndex);
+	void										Hit_StatueSound(_float fRandomIndex, _uint iID);
+	void										Hit_BanacleSound(_float fRandomIndex);
+	void										Hit_TentacleSound(_float fRandomIndex);
+	void										Hit_AntlionSound(_float fRandomIndex);
+	void										Hit_TurretSound(_float fRandomIndex);
+
 public:
 	static	CMonsterHitState*					Create(void* pArg);
 	virtual	void								Free() override;

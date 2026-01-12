@@ -54,6 +54,7 @@ private:
 
     // 이거 _bool 값으로 리프트 가운데 설치하는 컨트롤러는 이거 켜줘야합니다.
     _bool                               m_bIsControllLift = { false };
+    //_bool                               m_bIsSound = { false };
 	_uint   					        m_iPlatformID = { 0 };     
 	_uint   				            m_iPosition = { 0 };    // Top(0), Bottom(1)
 

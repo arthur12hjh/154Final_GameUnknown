@@ -67,6 +67,19 @@ private :
 	void										LerpMoveAction(_float fTimeDelta, _float fSpeed, DIRECTION eType = DIRECTION::FRONT);
 	_vector										LerpRotation(_float fRatio, _float fSpeed = 1.f);
 
+private :
+	void										Play_AttackSound();
+
+#pragma region ATK_SOUND
+	void										Play_TentacleSound();
+	void										Play_BeholderSound();
+	void										Play_AntlionSound();
+	void										Play_DroidTurretSound();
+	void										Play_BanacleSound();
+	void										Play_StatueSound(_uint iMonsterID);
+#pragma endregion
+
+
 
 public:
 	static	CMonsterAttackState*				Create(void* pArg);
