@@ -45,7 +45,7 @@ namespace Engine
 	볼류메트릭이 쓸 변수는 
 	Type, Diffuse, Position, Range,
 	vDirection, vPosition,
-	fAttenuation0?
+	fAttenuation0, fDensity.
 	*/
 	typedef struct tagLightDesc
 	{
