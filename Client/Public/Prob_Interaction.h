@@ -51,6 +51,7 @@ protected:
 
 	//_float							m_fInteractionDuration = {};
 	//_uint							m_iInteractionID{};
+	_bool							m_bIsSound = { false };
 
 protected :
 	virtual HRESULT					Begin_OverlapCallBack();

@@ -436,7 +436,7 @@ HRESULT CUIBase::Ready_Components_For_Debug()
 
 void CUIBase::Render_Debug_Rect()
 {
-	CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+	/*CUIHUD* pUIHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 	if (pUIHUD && pUIHUD->Get_Show_Debug_Rect())
 	{
@@ -467,7 +467,7 @@ void CUIBase::Render_Debug_Rect()
 		Safe_Release(pUIHUD);
 		return;
 	}
-	Safe_Release(pUIHUD);
+	Safe_Release(pUIHUD);*/
 }
 
 HRESULT CUIBase::Bind_Debug_ShaderResources()
