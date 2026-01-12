@@ -124,6 +124,7 @@ void CTask_GorillaHit::Damaged_Attack(const Character_Skill_Desc* pData, _vector
 			m_szAnimationName = "Result_Hit_Stand_Light_Bw";
 
 		XMStoreFloat3(&m_vImpactDir, -1.f * vDir);
+		Play_HitSound(0);
 		m_fImpactForce = 3.f;
 	}
 	else
@@ -133,6 +134,9 @@ void CTask_GorillaHit::Damaged_Attack(const Character_Skill_Desc* pData, _vector
 			XMStoreFloat3(&m_vImpactDir, XMVectorZero());
 			m_fImpactForce = 0.f;
 			m_szAnimationName = pData->szHitAnimationName;
+
+			if (SKILL_TYPE::BETA_SKILL == pData->eSkillType)
+				Play_HitSound(1);
 		}
 		else
 		{
@@ -144,10 +148,34 @@ void CTask_GorillaHit::Damaged_Attack(const Character_Skill_Desc* pData, _vector
 		}
 	}
 
+	
 	if (m_pBlackBoard->bIsExcution())
 		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
 	else
 		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f, true);
+}
+
+void CTask_GorillaHit::Play_HitSound(_uint iHitIndex)
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (1 == iHitIndex)
+	{
+		if (33.f > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_M_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else if (66.f > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_M_2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_M_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if (0 == iHitIndex)
+	{
+		if (33.f > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_S_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else if (66.f > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_S_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_dmg_S_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
 }
 
 CTask_GorillaHit* CTask_GorillaHit::Create(CBehaviorTree* pOwnerTree)

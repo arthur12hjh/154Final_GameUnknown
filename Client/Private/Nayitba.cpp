@@ -213,7 +213,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (nullptr == pDesc->pSkillData)
 		return E_FAIL;
 
-	Play_HitSound();
+
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type) 
@@ -999,6 +999,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 		case AI_TYPE::AGGRESSIVE:
 		case AI_TYPE::PASSIVE:  // 공격형
 		{
+			Play_HitSound();
 			if (m_bIsSuperMonster)
 				return m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, 0);
 			else
@@ -1040,6 +1041,9 @@ _bool CNaytiba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 
 	if (bIsCheckDefenceLogic)
 	{
+		_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Normal_Parry_Sword_02.wav"), CHANNELID::EFFECT, 10.f, 1.f);
+
 		_vector vOwnerPos{}, vTempOwnerPos{}, vTargetPos{}, vDir{};
 		vOwnerPos = vTempOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 		vTargetPos = pDamageDesc->pAttacker->GetTransform()->Get_State(STATE::POSITION);
@@ -1066,6 +1070,8 @@ _bool CNaytiba::DefenseTypeDamage(const DEFAULT_DAMAGE_DESC* pDamageDesc, _float
 		else
 			m_pGameManager->ComputeDamageLogic(&m_MonsterInfo, iDamage);
 	}
+	else
+		Play_HitSound();
 	
 	return true;
 }
@@ -1422,13 +1428,13 @@ void CNaytiba::Play_GorillaMoveSound(_uint iType, _uint SoundType)
 	else
 	{
 		if (25 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_Attack_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_Attack_footstep_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 		else if (50 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_4.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_4.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 		else if (75 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_3.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_3.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	}
 }
 

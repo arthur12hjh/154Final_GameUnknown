@@ -141,7 +141,7 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 		return E_FAIL;
 
 	m_pGameInstance->Clear_StaticShadowObjects();
-
+	
 	return S_OK;
 }
 
@@ -258,6 +258,8 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
 		return E_FAIL;
 
+	auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+	pPlayer->SetGroundSoundType(GROUND_SOUND_TYPE::GRASS);
 	return S_OK;
 }
 

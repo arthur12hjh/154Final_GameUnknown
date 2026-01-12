@@ -113,9 +113,13 @@ void CPlayer::Play_Sound(const ANIM_NOTIFY& NotifyReference)
 	else if ("JUMP" == NotifyReference.szNotifyArg01)
 	{
 		if(GROUND_SOUND_TYPE::SAND == m_eGroundSoundType)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_JumpStep_Default1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
-		else if (GROUND_SOUND_TYPE::IRON == m_eGroundSoundType)
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_JumpStep_Default1.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+		else if (GROUND_SOUND_TYPE::IRON == m_eGroundSoundType || GROUND_SOUND_TYPE::CONTAINER == m_eGroundSoundType)
 			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 3.f);
+		else if (GROUND_SOUND_TYPE::BRIDGE == m_eGroundSoundType)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Bodyfall_2.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+		else if (GROUND_SOUND_TYPE::GRASS == m_eGroundSoundType)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Bodyfall_3.wav"), CHANNELID::EFFECT, 5.f, 1.f);
 	}
 	else if ("Just_Evade" == NotifyReference.szNotifyArg01)
 	{
@@ -1087,6 +1091,7 @@ void CPlayer::Play_WalkSound()
 	_float fRandom = m_pGameInstance->Random(0.f, 100.f);
 	switch (m_eGroundSoundType)
 	{
+	case GROUND_SOUND_TYPE::CONTAINER:
 	case GROUND_SOUND_TYPE::IRON :
 		if (25 >= fRandom)
 			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 3.f);
@@ -1097,17 +1102,37 @@ void CPlayer::Play_WalkSound()
 		else
 			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_05.wav"), CHANNELID::EFFECT, 3.f);
 		break;
+	case GROUND_SOUND_TYPE::BRIDGE:
+		if (25 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_1.wav"), CHANNELID::EFFECT, 5.f);
+		else if (50 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_2.wav"), CHANNELID::EFFECT, 5.f);
+		else if (75 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_4.wav"), CHANNELID::EFFECT, 5.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_7.wav"), CHANNELID::EFFECT, 5.f);
+		break;
+	case GROUND_SOUND_TYPE::GRASS:
+		if (25 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_1.wav"), CHANNELID::EFFECT, 3.f);
+		else if (50 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_2.wav"), CHANNELID::EFFECT, 3.f);
+		else if (75 >= fRandom)
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_3.wav"), CHANNELID::EFFECT, 3.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_4.wav"), CHANNELID::EFFECT, 3.f);
+		break;
 	default :
 		if (20 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 18.f);
 		else if (40 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 18.f);
 		else if(60 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 18.f);
 		else if (80 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 18.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 18.f);
 		break;
 	}
 
