@@ -357,7 +357,13 @@ HRESULT CNotify::Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify)
 
 HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 {
-	m_pCharacter->Play_Sound(AnimNotify);
+	if("" == AnimNotify.szNotifyArg02)
+		m_pCharacter->Play_Sound(AnimNotify);
+	else
+	{
+		_wstring szPlaySoundTag = wstring(AnimNotify.szNotifyArg02.begin(), AnimNotify.szNotifyArg02.end());
+		m_pGameInstance->Manager_PlaySound(szPlaySoundTag.c_str(), CHANNELID::EFFECT, AnimNotify.fNumData01, 1.f);
+	}
 	return S_OK;
 }
 

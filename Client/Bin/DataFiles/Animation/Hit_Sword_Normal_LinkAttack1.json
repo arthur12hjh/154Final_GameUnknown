@@ -43,11 +43,11 @@
             },
             {
                 "fNumData01": 1.100000023841858,
-                "fNumData02": 16.0,
+                "fNumData02": 0.6600000262260437,
                 "fNumData03": 0.6600000262260437,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 258,
-                "iNumData01": 0,
+                "iNumData01": 16,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -63,7 +63,7 @@
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
-                "szNotifyTag": "Radial_Blur",
+                "szNotifyTag": "Play_Blur",
                 "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,

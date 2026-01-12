@@ -34,6 +34,7 @@ HRESULT CItem::Initialize(void* pArg)
 	m_fAmount = pDesc->fAmount;
 	m_fDropForce = pDesc->fDropForce;
 	m_isHemiSphere = pDesc->isHemiSphere;
+	m_vParentLook = pDesc->vParentLook;
 	//_vector vOwnerPos = m_pTransformCom->Get_State(STATE::POSITION);
 	//_vector vDropPoint = XMLoadFloat3(&pDesc->fDropPoint);
 
@@ -61,11 +62,13 @@ HRESULT CItem::Initialize(void* pArg)
 	EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
 	EffectDesc.vPos = XMVectorSet(0, 0, 0, 1);
 	EffectDesc.fRot = _float3(0, 0, 0);
-	EffectDesc.fSize = 0.5f;
+	EffectDesc.fSize = 0.175f;
 	EffectDesc.iFloor = 2;
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Item_Aura"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-	Safe_AddRef(m_pEffect);
+
+	m_pTransformCom->Set_State(STATE::POSITION, m_pTransformCom->Get_State(STATE::POSITION) + XMVectorSet(0.f, 0.5f, 0.f, 0.f));
+
 	if (FAILED(ADD_Components(*pDesc)))
 		return E_FAIL;
 
@@ -193,6 +196,10 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
 
 				Safe_Release(pPlayer);
+
+				if (nullptr != m_pEffect) {
+					m_pEffect->End(true, 1);
+				}
 			}
 		}
 		Safe_Release(pHUD);
@@ -255,10 +262,10 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
 	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.vSize = Com_Size;
-	RigidBodyDesc.fMass = { 0.8f };
+	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.5f, Com_Size.y * 0.5f, Com_Size.z * 0.5f);
+	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_CUSTOM_6 | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -271,8 +278,16 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	{
 		// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
 		_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-		m_pRigidBody->Add_Impulse(vDir, 5.f, 8.f);
-		m_pRigidBody->Set_ContactOffset(0.5f);
+		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
+	}
+	else if (true == m_isHemiSphere)
+	{
+		_vector vDir = XMVector3Normalize(XMVector3Rotate(XMVectorSetY(XMLoadFloat3(&m_vParentLook), 0.f), 
+			XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), m_pGameInstance->Random(-1.f * XM_PI / 2.f, XM_PI / 2.f))));
+
+		vDir += XMVectorSet(0.f, 5.f, 0.f, 0.f);
+
+		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
 	}
 
 	return S_OK;
@@ -315,9 +330,5 @@ CGameObject* CItem::Clone(void* pArg)
 void CItem::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pModelCom);
-	if (nullptr != m_pEffect) {
-		m_pEffect->End(true, 1);
-	}
 }

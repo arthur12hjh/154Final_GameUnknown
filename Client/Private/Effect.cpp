@@ -311,10 +311,10 @@ void CEffect::Update(_float fTimeDelta)
     else if(-10 < m_fStopTime){
         m_fStopTime = -10;
         for (auto pSpriteParticle : m_pSpriteParticles) {
-            pSpriteParticle->End();
+            pSpriteParticle->End(0.f);
         }
         for (auto pMeshParticle : m_pMeshParticles) {
-            pMeshParticle->End();
+            pMeshParticle->End(0.f);
         }
     }
     for (auto pMeshEffect : m_pMeshEffects) {
@@ -496,7 +496,7 @@ void CEffect::Play(_float fTime)
         pMeshParticle->Play();
 }
 
-void CEffect::End(_bool bisRelease, _int iTime)
+void CEffect::End(_bool bisRelease, _float fTime)
 {
     if (bisRelease) {
         _vector  vRight = XMVectorSet(m_CombinedWorldMatrix._11, m_CombinedWorldMatrix._12, m_CombinedWorldMatrix._13, m_CombinedWorldMatrix._14);
@@ -514,11 +514,11 @@ void CEffect::End(_bool bisRelease, _int iTime)
     }
 
     for (auto pMesh : m_pMeshEffects)
-        pMesh->End(iTime);
+        pMesh->End(fTime);
     for (auto pSpriteParticle : m_pSpriteParticles)
-        pSpriteParticle->End();
+        pSpriteParticle->End(max(fTime - 0.5f, 0.f));
     for (auto pMeshParticle : m_pMeshParticles)
-        pMeshParticle->End();
+        pMeshParticle->End(max(fTime - 0.5f, 0.f));
 }
 
 CEffect* CEffect::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* szFile)
