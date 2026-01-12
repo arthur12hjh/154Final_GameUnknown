@@ -263,7 +263,7 @@ HRESULT CNpc::Ready_Components()
             TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
             return E_FAIL;
 
-        m_pNpcEvent = CNpcEvent::Create([&](void* pArg) {});
+        m_pNpcEvent = CNpcEvent::Create(nullptr);
         m_pGameInstance->Add_Event(TEXT("Go_DororongSaber"), m_pNpcEvent);
     }
 
