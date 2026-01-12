@@ -66,6 +66,8 @@ void CUIScript::Late_Update(_float fTimeDelta)
 		LoadingAnim(fTimeDelta);
 	else if (m_pScriptDesc->szAnimTag == TEXT("Default"))
 		DefaultAnim(fTimeDelta);
+	else if (m_pScriptDesc->szAnimTag == TEXT("CutScene"))
+		CutSceneAnim(fTimeDelta);
 }
 
 HRESULT CUIScript::Render()
@@ -81,11 +83,8 @@ HRESULT CUIScript::Render()
 			return E_FAIL;
 	}
 
-	//if (!m_isFinish)
-	{
-		if (FAILED(RenderScript()))
-			return E_FAIL;
-	}
+	if (FAILED(RenderScript()))
+		return E_FAIL;
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();
@@ -96,21 +95,34 @@ HRESULT CUIScript::Render()
 
 void CUIScript::Play_Next_Script()
 {
+	if (!m_pScriptDesc)
+	{
+		End_Script();
+		return;
+	}
+
 	if (m_pScriptDesc->Scripts.size() > 0)
 	{
 		++m_iScriptIdx;
+		m_iPrevScriptIdx = m_iScriptIdx;
 		m_fTimeAcc = 0.f;
+		m_tUIDesc.fAlpha = 1.f;
 	}
 
 	if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
 		End_Script();
 }
 
+void CUIScript::Stop_Script()
+{
+	m_tUIDesc.fAlpha = 0.f;
+}
+
 HRESULT CUIScript::RenderSpeaker()
 {
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(
 		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_pScriptDesc->szSpeaker.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
-	_float fAlpha{ m_tScriptAnimDesc.fAlpha };
+	_float fAlpha{ m_tScriptAnimDesc.fAlpha * m_tUIDesc.fAlpha };
 
 	_float2 vPivot{
 		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (fTextSize.x * 0.5f),
@@ -122,12 +134,26 @@ HRESULT CUIScript::RenderSpeaker()
 		vPivot.y + 1.f
 	};
 
-	_vector vColor = XMVectorSet(
-		COLOR_PATTERN_SCARLET.x * fAlpha,
-		COLOR_PATTERN_SCARLET.y * fAlpha,
-		COLOR_PATTERN_SCARLET.z * fAlpha,
-		COLOR_PATTERN_SCARLET.w * fAlpha
-	);
+	_vector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+
+	if (m_pScriptDesc->szSpeaker == TEXT("홍련"))
+	{
+		vColor = XMVectorSet(
+			COLOR_PATTERN_SCARLET.x * fAlpha,
+			COLOR_PATTERN_SCARLET.y * fAlpha,
+			COLOR_PATTERN_SCARLET.z * fAlpha,
+			COLOR_PATTERN_SCARLET.w * fAlpha
+		);
+	}
+	if (m_pScriptDesc->szSpeaker == TEXT("도로롱"))
+	{
+		vColor = XMVectorSet(
+			COLOR_PATTERN_DORORONG.x * fAlpha,
+			COLOR_PATTERN_DORORONG.y * fAlpha,
+			COLOR_PATTERN_DORORONG.z * fAlpha,
+			COLOR_PATTERN_DORORONG.w * fAlpha
+		);
+	}
 
 	_vector vShadowColor = XMVectorSet(
 		0.f * fAlpha,
@@ -153,7 +179,7 @@ HRESULT CUIScript::RenderScript()
 {
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(
 		m_tUIDesc.m_tUITextDesc.szFont.c_str(), m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(), true, m_tUIDesc.m_tUITextDesc.fScale);
-	_float fAlpha{ m_tScriptAnimDesc.fAlpha };
+	_float fAlpha{ m_tScriptAnimDesc.fAlpha * m_tUIDesc.fAlpha };
 
 	_float2 vPivot{
 		m_tUIDesc.fX + m_tUIDesc.fOffsetX - (fTextSize.x * 0.5f),
@@ -179,15 +205,71 @@ HRESULT CUIScript::RenderScript()
 		1.f * fAlpha
 	);
 
-	m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
-		m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(),
-		vShadowPivot,
-		vShadowColor, m_tUIDesc.m_tUITextDesc.fScale);
+	vector<_wstring> SplitedTexts{};
+	Text_Split(m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(), SplitedTexts);
 
-	m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
-		m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(),
-		vPivot,
-		vColor, m_tUIDesc.m_tUITextDesc.fScale);
+	_uint iLines = 0;
+
+	if (SplitedTexts.size() > 0)
+	{
+		for (auto& SplitedText : SplitedTexts)
+		{
+			_float2 vNewSize =
+				m_pGameInstance->Get_Text_Size(TEXT("KoPub"), SplitedText.c_str(), true, 0.8f);
+
+			_float2 vNewPivot{
+				m_tUIDesc.fX + m_tUIDesc.fOffsetX - (vNewSize.x * 0.5f),
+				vPivot.y + ((iLines * (SplitedTexts.size() / 2)) * (vNewSize.y))
+			};
+
+			_float2 vNewShadowPivot{
+				vNewPivot.x + 1.f,
+				vNewPivot.y + 1.f
+			};
+
+			m_pGameInstance->Render_Text(
+				TEXT("KoPub"),
+				SplitedText.c_str(),
+				vNewPivot,
+				vColor,
+				0.8f
+			);
+
+			m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+				SplitedText.c_str(),
+				vNewShadowPivot,
+				vShadowColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+			if (m_pScriptDesc->szSpeaker == TEXT("도로롱") && iLines > 0)
+			{
+				vColor = XMVectorSet(
+					COLOR_PATTERN_GRAY.x * fAlpha,
+					COLOR_PATTERN_GRAY.y * fAlpha,
+					COLOR_PATTERN_GRAY.z * fAlpha,
+					COLOR_PATTERN_GRAY.w * fAlpha
+				);;
+			}
+
+			m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+				SplitedText.c_str(),
+				vNewPivot,
+				vColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+			++iLines;
+		}
+	}
+	else
+	{
+		m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+			m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(),
+			vShadowPivot,
+			vShadowColor, m_tUIDesc.m_tUITextDesc.fScale);
+
+		m_pGameInstance->Render_Text(m_tUIDesc.m_tUITextDesc.szFont.c_str(),
+			m_pScriptDesc->Scripts[m_iScriptIdx].szScriptText.c_str(),
+			vPivot,
+			vColor, m_tUIDesc.m_tUITextDesc.fScale);
+	}
 
 	return S_OK;
 }
@@ -215,9 +297,6 @@ void CUIScript::CallbackEvent(void* pArg)
 
 void CUIScript::DefaultAnim(_float fTimeDelta)
 {
-	if (m_isFinish)
-		return;
-
 	m_fTimeAcc += fTimeDelta;
 
 	m_tScriptAnimDesc.vOffset.y = (m_tUIDesc.fOffsetY + m_pScriptDesc->vInitOffset.y);
@@ -225,15 +304,20 @@ void CUIScript::DefaultAnim(_float fTimeDelta)
 	if (m_fTimeAcc >= 1.5f)
 	{
 		++m_iScriptIdx;
+		m_iPrevScriptIdx = m_iScriptIdx;
 		m_fTimeAcc = 0.f;
 
 		if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
 		{
 			End_Script();
-			m_isFinish = true;
 			return;
 		}
 	}
+}
+
+void CUIScript::CutSceneAnim(_float fTimeDelta)
+{
+	m_tScriptAnimDesc.vOffset.y = (m_tUIDesc.fOffsetY + m_pScriptDesc->vInitOffset.y);
 }
 
 void CUIScript::LoadingAnim(_float fTimeDelta)
@@ -269,11 +353,15 @@ void CUIScript::ScriptControl()
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LCONTROL))
 	{
 		++m_iScriptIdx;
+		m_iPrevScriptIdx = m_iScriptIdx;
 		m_fTimeAcc = 0.f;
 	}
 
 	if (m_iScriptIdx >= m_pScriptDesc->Scripts.size())
+	{
 		m_iScriptIdx = 0;
+		m_iPrevScriptIdx = m_iScriptIdx;
+	}
 }
 
 CUIScript* CUIScript::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
