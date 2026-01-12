@@ -59,6 +59,7 @@ private:
 
 	_float						m_fTrailTime = -10.f;
 	_float						m_fChargeTime = -10.f;
+	_float						m_fChargeSoundTime = 0.f;
 	_bool						m_bIsTrail = FALSE;
 	_bool						m_bisBlood = FALSE;
 	_bool						m_bisGigasSpark = FALSE;

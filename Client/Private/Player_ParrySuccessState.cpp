@@ -15,7 +15,7 @@ void CPlayer_ParrySuccessState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::PARRY_SUCCESS;
     m_pPlayer->Set_Animation("Proto_Guard_Parry", false, 2.3f, 0.12f);
 
-	m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_3.wav"), CHANNELID::EFFECT, 3.f);
+	//m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_3.wav"), CHANNELID::EFFECT, 3.f);
 	m_pGameInstance->Active_RadialBlur(0.9f, 16, 0.66f);
 	m_pGameInstance->Shake_Camera(0.77f, 0.44f);
 

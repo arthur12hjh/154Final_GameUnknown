@@ -1957,6 +1957,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Monster_Slash.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_TrailEffect_Monster_Slash */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Item_Trail");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Item_Trail.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	//Desc->OnCompleted(this_thread::get_id());
 
 	return S_OK;

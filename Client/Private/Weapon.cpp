@@ -179,6 +179,11 @@ void CWeapon::Late_Update(_float fTimeDelta)
 
 	if (m_fChargeTime > 0.f)
 	{
+		m_fChargeSoundTime += fTimeDelta;
+		if (m_fChargeSoundTime >= 1.8f && m_fChargeSoundTime < 10.f) {
+			m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChargePoint_2.wav"), CHANNELID::EFFECT, 0.8f, 1.f);
+			m_fChargeSoundTime = 15.f;
+		}
 		m_fChargeTime -= fTimeDelta;
 		if (m_fChargeTime <= 0.f)
 		{
@@ -369,6 +374,7 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 	{
 		if (nullptr == m_pCharge)
 		{
+			m_fChargeSoundTime = 0.f;
 			CEffect::EFFECT_TRANSFORM_DESC ChargeDesc;
 			ChargeDesc.fRotationPerSec = 1.f;
 			ChargeDesc.fSpeedPerSec = 1.f;
@@ -379,6 +385,9 @@ void CWeapon::Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& Notify
 
 			m_pCharge = static_cast<CEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_SwordCharge"), &ChargeDesc));
 			m_pCharge->Play();
+
+			m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChargePoint_3.wav"), CHANNELID::EFFECT, 1.2f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_energy_spark_01.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
 		}
 		m_fChargeTime = NotifyReference.fNumData01;
 	}
