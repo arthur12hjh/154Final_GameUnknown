@@ -136,6 +136,8 @@ void CUIInteractionFX::CallbackEvent(void* pArg)
 	if (AnimTag != m_tUIDesc.m_AnimTags.end())
 		pHUD->Anim_Play(m_tUIDesc.szLayerTag, m_tUIDesc.szUITag, AnimTag->first);
 
+	m_pGameInstance->Manager_PlaySound(TEXT("UI_Interaction_Success_MainHUD.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+
 	Safe_Release(pHUD);
 }
 

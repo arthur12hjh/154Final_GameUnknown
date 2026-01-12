@@ -80,6 +80,12 @@ HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreC
         //혹시 모를 Shake 초기화.
         m_pMainCamera->Shake(0.f, 0.f);
 
+        CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+        CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+            CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+        }, 2);
+
         if (nullptr != pPreCameraMatrix)
         {
             memcpy(pPreCameraMatrix, m_pMainCamera->GetTransform()->Get_WorldMatrixPtr(), sizeof(_float4x4));

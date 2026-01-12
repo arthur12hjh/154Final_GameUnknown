@@ -28,7 +28,7 @@ protected:
 	void						Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor);
 
 private :
-	CEffect*					m_pEffect = {};
+	CEffect*					m_pEffect = { nullptr };
 	_bool						m_bIsBezierLerp = { false };
 	_float3						m_vLerpPoints[5] = {};
 	_float2						m_LerpTime = { 0.f, 1.f };

@@ -69,8 +69,9 @@ void CUIButton::Late_Update(_float fTimeDelta)
 			_bool bTrue = true;
 			Arg.Type = UI_EVENT_ARG_DESC::BOOL;
 			Arg.pData = &bTrue;
-
 			__super::Trigger_Event(TEXT("Click"), &Arg);
+
+			m_pGameInstance->Manager_PlaySound(TEXT("LOGO_BTN_CLICK.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			m_eBtnState = BTN_STATE::HOVER;
 			break;
 		}
@@ -81,6 +82,7 @@ void CUIButton::Late_Update(_float fTimeDelta)
 		}
 		case CUIButton::BTN_STATE::HOVER:
 		{
+			m_pGameInstance->Manager_PlaySound(TEXT("LOGO_BTN_HOVER.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			__super::Trigger_Event(TEXT("Hover"), &Arg);
 			break;
 		}

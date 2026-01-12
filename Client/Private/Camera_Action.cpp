@@ -73,6 +73,7 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         SetCameraInfo(CameraInfo, 0001);
     }
 
+    // 피벗이사가지없는련
     _float3 vPivot = _float3(0.f, 0.f, 0.f);
     if(m_pCameraAnimationData != nullptr)
 		vPivot = m_pCameraAnimationData->vBaseCameraPivot;
@@ -92,14 +93,7 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
 
     m_pTransformCom->Set_State(STATE::POSITION, TransformMatrix.r[3]);
 
-    if (m_fCurrentAnimationTime == 0.f)
-    {
-        // 초기화 == seconds power fire ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-        m_pTransformCom->Set_State(STATE::RIGHT, XMVectorSet(1.f, 0.f, 0.f, 0.f));
-        m_pTransformCom->Set_State(STATE::UP, XMVectorSet(0.f, 1.f, 0.f, 0.f));
-        m_pTransformCom->Set_State(STATE::LOOK, XMVectorSet(0.f, 0.f, 1.f, 0.f));
-    }
-    else if(m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
+    if(m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
         m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&vPivot));
     else if (m_CameraSource.eType == CAMERA_SOURCE_TYPE::LOOK_PIVOT)
     {
@@ -122,7 +116,6 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         pCamera->Set_MainCamera(TEXT("PlayerCamera"));
         Safe_Release(pCamera);
     }
-
 }
 
 void CCamera_Action::Update(_float fTimeDelta)

@@ -251,6 +251,9 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pThreadPool->Update_Async();
 	m_pLevel_Manager->Update(fTimeDelta);
 
+	//마지막에 예약된 함수들 실행. 아마 모션블러 온오프 기능만 넣을듯
+	Execute_FrameFinalFunctions();
+
 	m_fTimeAcc += fTimeDelta;
 }
 
@@ -394,6 +397,28 @@ void CGameInstance::Compute_TimeDelta(const _wstring& strTimerTag)
 void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTime, function<void()> Function)
 {
 	m_pTimer_Manager->ADD_DelayFunction(szTimerName, fAfterTime, Function);
+}
+
+void CGameInstance::ADD_FrameFinalFunction(function<void()> Function, _uint iFrame)
+{
+	m_FrameFinalFunctions.push_back(make_pair(Function, iFrame));
+}
+
+void CGameInstance::Execute_FrameFinalFunctions()
+{
+	for (auto iter = m_FrameFinalFunctions.begin(); iter != m_FrameFinalFunctions.end();)
+	{
+		iter->second--;
+
+		if (iter->second <= 0)
+		{
+			iter->first();
+			iter = m_FrameFinalFunctions.erase(iter);
+		}
+
+		else
+			iter++;
+	}
 }
 
 #pragma endregion
@@ -556,6 +581,11 @@ void* CGameInstance::Get_Cascade_Desc()
 HRESULT CGameInstance::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
 {
 	return m_pRenderer->Reserve_Deferred(pReserveDeferred);
+}
+
+void CGameInstance::Set_MoitonBlur_Active(_bool bFlag)
+{
+	return m_pRenderer->Set_MoitonBlur_Active(bFlag);
 }
 
 #ifdef _DEBUG

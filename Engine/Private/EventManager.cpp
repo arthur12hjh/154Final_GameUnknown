@@ -12,7 +12,10 @@ HRESULT CEventManager::Add_Event(const WCHAR* szEventTag, CEventHandle* pEvent)
 	if (iter == m_Events.end())
 		m_Events.emplace(szEventTag, pEvent);
 	else
-		return E_FAIL;
+	{
+		Safe_Release(iter->second);
+		iter->second = pEvent;
+	}
 
 	Safe_AddRef(pEvent);
 	return S_OK;

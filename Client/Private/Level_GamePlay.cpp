@@ -52,8 +52,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 	//	return E_FAIL;
@@ -110,10 +110,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	{
-		CGameManager::GetInstance()->Play_Cinematic(126);
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	//{
+	//	CGameManager::GetInstance()->Play_Cinematic(126);
+	//}
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -425,7 +425,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;*/
 	
-	/*Desc.iMonsterID = 3;
+	Desc.iMonsterID = 9;
 	{
 		for (_uint i = 0; i < 10; ++i)
 		{
@@ -434,7 +434,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 				return E_FAIL;
 		}
-	}*/
+	}
 
 	//Desc.iMonsterID = 3;
 	//{
@@ -597,6 +597,19 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
+	
+	if (CGameManager::GetInstance()->GetLevelTransportIndex() == 2)
+	{
+		pTriggerBoxDesc.iTriggerCode = 127;
+		pTriggerBoxDesc.vPosition = { 812.065f, 98.135f, 1517.918f };
+		pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
+
+		//  도로롱 조우
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }

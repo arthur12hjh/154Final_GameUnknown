@@ -26,6 +26,14 @@ HRESULT CPlayer_ScarletPhase2tLinkAttackState::Initialize(void* pArg)
     m_Desc->isSuperArmor = true;
     m_Desc->pPlayerController->Set_Active(false);
 
+    m_pGameInstance->Active_RadialBlur(1.1f, 16, 0.66f);
+
+    CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+    CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+        CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+        }, 4);
+
     return S_OK;
 }
 

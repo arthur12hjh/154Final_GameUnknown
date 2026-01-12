@@ -411,6 +411,11 @@ void CRenderer::Set_Cascade_Active(_bool bFlag)
 	m_pCascadeShadow->Set_Active(bFlag);
 }
 
+void CRenderer::Set_MoitonBlur_Active(_bool bFlag)
+{
+	m_pMotionBlur->Set_Active(bFlag);
+}
+
 HRESULT CRenderer::Reserve_Deferred(CReserveDeferred* pReserveDeferred)
 {
 	m_ClientShaderReserves.push_back(pReserveDeferred);

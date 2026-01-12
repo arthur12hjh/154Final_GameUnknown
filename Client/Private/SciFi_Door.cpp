@@ -66,10 +66,17 @@ void CSciFi_Door::Priority_Update(_float fTimeDelta)
 
 void CSciFi_Door::Update(_float fTimeDelta)
 {
+	//m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_1.wav"), CHANNELID::EFFECT);
 	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
 	{
 		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
+			if (m_eCurState == SCIFI_DOOR_STATE::CLOSE && !m_bIsSound)
+			{
+				m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_2.wav"), CHANNELID::EFFECT, 20.f);
+				m_bIsSound = true;
+			}
+
 			if (m_pModelCom->Play_Animation(fTimeDelta))
 			{
 				switch (m_eCurState)
@@ -91,6 +98,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 				}
 
 				m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+				m_bIsSound = false;
 			}
 		}
 		else if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && (!m_bUnlocked || !m_bCanlock))
@@ -98,10 +106,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			if (!pHUD)
-			{
-				Safe_Release(pHUD);
 				return;
-			}
 
 			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
 				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close"))

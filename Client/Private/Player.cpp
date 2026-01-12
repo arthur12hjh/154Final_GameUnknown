@@ -26,6 +26,7 @@
 #include "Player_Parts.h"
 #include "PlayerState.h"
 #include "Prob_Interaction.h"
+#include "Camera.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -631,7 +632,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 5000;
+	m_PlayerDesc.iOwnGold			= 0;
 
 	return S_OK;
 }
@@ -717,6 +718,13 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
+		// 메인 카메라가 플레이어 카메라일 때만 상호작용 가능하게
+		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
+
+		if (!m_pGameInstance->IsMainCamera(pCamera))
+			return;
+		Safe_Release(pCamera);
+
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
@@ -762,6 +770,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
+				m_pGameInstance->Manager_PlaySound(TEXT("GET_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
@@ -829,7 +838,7 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			EffectDesc.fSize = 9.f;
 			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
 				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-				m_pGameInstance->Manager_PlaySound(TEXT("SE_Item_Buff_AttackPowerUp_10s_1.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
@@ -1192,7 +1201,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
-	m_pGameManager->Bind_GameCharacter(nullptr);
+	if(m_pGameManager)
+		m_pGameManager->Bind_GameCharacter(nullptr);
 
 	__super::Free();
 
