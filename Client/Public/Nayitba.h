@@ -146,10 +146,26 @@ private :
 	void									Play_SFXEffect(const AnimNotify* pNotify);
 	void									Play_MoveSound(_uint iType);
 
+#pragma region Move Sound
 	void									Play_StatueMoveSound(_uint iType, _float fRandomIndex);
 	void									Play_BanacleMoveSound(_uint iType);
 	void									Play_AntlionMoveSound(_uint iType);
 	void									Play_GorillaMoveSound(_uint iType, _uint SoundType);
+#pragma endregion
+
+#pragma region HIT SOUND
+	void									Play_HitSound();
+
+	void									Play_HitBeholderSound(_float fRandomIndex);
+	void									Play_HitTentacleSound(_float fRandomIndex);
+	void									Play_HitTurretSound(_float fRandomIndex);
+	void									Play_HitStatueSound(_float fRandomIndex);
+	void									Play_HitBanacleSound(_float fRandomIndex);
+	void									Play_HitAntlionSound(_float fRandomIndex);
+	void									Play_HitGorillaSound(_float fRandomIndex);
+#pragma endregion
+
+
 
 	_bool									Compare_SFX_Name(const string& szSFXName);
 #pragma endregion

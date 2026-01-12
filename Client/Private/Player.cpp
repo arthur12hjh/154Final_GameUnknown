@@ -1130,7 +1130,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
-	m_pGameManager->Bind_GameCharacter(nullptr);
+	if(m_pGameManager)
+		m_pGameManager->Bind_GameCharacter(nullptr);
 
 	__super::Free();
 

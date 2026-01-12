@@ -567,7 +567,6 @@ void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
 		if (0.5f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.5f;
-			m_fPlayRatio = 1.f;
 			bMoveAction = true;
 		}
 	}

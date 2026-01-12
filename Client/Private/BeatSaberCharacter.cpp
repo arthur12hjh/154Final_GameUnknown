@@ -453,10 +453,4 @@ void CBeatSaberCharacter::Free()
 
 	m_pGameManager->Bind_BeatSaberCharacter(nullptr);
 	Safe_Release(m_pFsm);
-	Safe_Release(m_pEffect[0]);
-	Safe_Release(m_pEffect[1]);
-	Safe_Release(m_pEffect[2]);
-	Safe_Release(m_pEffect[3]);
-	Safe_Release(m_pEffect[4]);
-	Safe_Release(m_pEffect[5]);
 }

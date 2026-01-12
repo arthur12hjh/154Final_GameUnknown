@@ -218,6 +218,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	if (nullptr == pDesc->pSkillData)
 		return E_FAIL;
 
+	Play_HitSound();
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	pDesc->bIsHitMotion = ActionDamageLogic(pDesc);
 	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type) 
@@ -233,7 +234,6 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	{
 		m_eExcution = NAYITBA_EXECUTION_TYPE::END;
 		m_MonsterInfo.eNaytibaState = NAYTIBA_STATE::DEAD;
-		
 	}
 
 	VisibleStatusUI(0.f);
@@ -1432,6 +1432,58 @@ void CNaytiba::Play_GorillaMoveSound(_uint iType, _uint SoundType)
 		else
 			m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Gorilla_SmashChain_footstep_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 	}
+}
+
+void CNaytiba::Play_HitSound()
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (2 == m_iMonsterID)
+		Play_HitBeholderSound(fRandomIndex);
+	else if (3 == m_iMonsterID)
+		Play_HitBanacleSound(fRandomIndex);
+	else if (4 == m_iMonsterID || 5 == m_iMonsterID)
+		Play_HitStatueSound(fRandomIndex);
+	else if (7 == m_iMonsterID)
+		Play_HitAntlionSound(fRandomIndex);
+	else if (9 == m_iMonsterID)
+		Play_HitTentacleSound(fRandomIndex);
+	else if (10 == m_iMonsterID)
+		Play_HitTurretSound(fRandomIndex);
+}
+
+void CNaytiba::Play_HitBeholderSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitTentacleSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitTurretSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitStatueSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitBanacleSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitAntlionSound(_float fRandomIndex)
+{
+
+}
+
+void CNaytiba::Play_HitGorillaSound(_float fRandomIndex)
+{
+
 }
 
 _bool CNaytiba::Compare_SFX_Name(const string& szSFXName)

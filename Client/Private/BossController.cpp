@@ -94,7 +94,10 @@ HRESULT CBossController::Damage(void* pArg)
             }
         }
         else
+        {
+            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK);
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::THESHOLD);
+        }
     }
     else if(false == m_pBlackBoard->IsPhaseLastAttack())
     {

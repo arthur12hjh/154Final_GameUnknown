@@ -24,6 +24,21 @@ void CMonsterDeadState::Start(void* pArg, CState* pPreState)
 	auto pEntity = static_cast<CNaytiba*>(m_pOwner);
 	auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
+	_uint iMonsterID = pEntity->GetMonsterID();
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (2 == iMonsterID)
+		Hit_BeholderSound(fRandomIndex);
+	else if (3 == iMonsterID)
+		Hit_BanacleSound(fRandomIndex);
+	else if (4 == iMonsterID || 5 == iMonsterID)
+		Hit_StatueSound(fRandomIndex);
+	else if (7 == iMonsterID)
+		Hit_AntlionSound(fRandomIndex);
+	else if (9 == iMonsterID)
+		Hit_TentacleSound(fRandomIndex);
+	else if (10 == iMonsterID)
+		Hit_TurretSound(fRandomIndex);
+
 	m_pMonsterDefaultData = pEntity->GetStaticMonsterData();
 	m_pLastHitSkill = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
 	// 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 
@@ -168,6 +183,51 @@ void CMonsterDeadState::SettingNoneDeadAnim(DEFAULT_DAMAGE_DESC* pDesc)
 		m_szAnimationName = "Result_State_Groggy_S";
 		m_eDeadState = DEAD_STATE::END;
 	}
+}
+
+void CMonsterDeadState::Hit_BeholderSound(_float fRandomIndex)
+{
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Die_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Die_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterDeadState::Hit_StatueSound(_float fRandomIndex)
+{
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Die_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Die_3.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterDeadState::Hit_BanacleSound(_float fRandomIndex)
+{
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_DEAD_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_DEAD_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterDeadState::Hit_TentacleSound(_float fRandomIndex)
+{
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_5.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_6.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterDeadState::Hit_AntlionSound(_float fRandomIndex)
+{
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Antlion_Growl2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Antlion_Growl.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterDeadState::Hit_TurretSound(_float fRandomIndex)
+{
+	m_pGameInstance->Manager_PlaySound(TEXT("M_Droid_vo_dead_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 }
 
 CMonsterDeadState* CMonsterDeadState::Create(void* pArg)
