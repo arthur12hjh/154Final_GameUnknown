@@ -490,9 +490,6 @@ HRESULT CDataManager::LoadScriptData(void* pArg)
 
         if (Value.contains("szSpeaker"))
         {
-            //string szSpeaker = Value["szSpeaker"];
-            //WCHAR szText[MAX_PATH]{};
-            //CStringHelper::ConvertUTFToWide(szSpeaker.c_str(), szText);
             ScriptDesc.szSpeaker = UTF8ToWString(Value["szSpeaker"]);
         }
 
