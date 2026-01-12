@@ -395,9 +395,6 @@ _int CPlayer::GetSkillDataID()
 
 void CPlayer::Update_TestLogic(_float fTimeDelta)
 {
-
-	m_PlayerDesc.iCurrentBetaEnergy++;
-
 	m_fTestTimer += fTimeDelta;
 	m_fShieldTimer += fTimeDelta;
 
