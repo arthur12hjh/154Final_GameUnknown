@@ -67,7 +67,7 @@ void CSciFi_Door::Priority_Update(_float fTimeDelta)
 void CSciFi_Door::Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_1.wav"), CHANNELID::EFFECT);
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 5.f))
 	{
 		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
@@ -320,6 +320,8 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 			if (!pScript)
 				return;
 
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_Interaction_ATLDoorSwitch_Fail2.mp3"), CHANNELID::EFFECT, 5.f);
+			
 			pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("DoorInteractionScript")));
 		}
 		Safe_Release(pHUD);
