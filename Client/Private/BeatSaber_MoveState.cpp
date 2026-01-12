@@ -25,7 +25,7 @@ void CBeatSaber_MoveState::Update(_float fTimeDelta)
     auto BeatSaberCharacter = static_cast<CBeatSaberCharacter*>(m_pOwner);
 
     SelectEvadeAnim(BeatSaberCharacter);
-    BeatSaberCharacter->Play_Animation(fTimeDelta * 4.5f);
+    BeatSaberCharacter->Play_Animation(fTimeDelta * 4.f);
 }
 
 void CBeatSaber_MoveState::End()

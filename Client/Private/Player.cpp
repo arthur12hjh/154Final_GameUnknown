@@ -677,10 +677,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
 
 		if (!m_pGameInstance->IsMainCamera(pCamera))
-		{
-			Safe_Release(pCamera);
 			return;
-		}
 		Safe_Release(pCamera);
 
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
@@ -728,6 +725,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
+				m_pGameInstance->Manager_PlaySound(TEXT("GET_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
@@ -796,6 +794,8 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
 				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 			
+			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}

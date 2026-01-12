@@ -176,7 +176,10 @@ void CUIUnlockFX::CallbackEvent(void* pArg)
 	if (arg->szActionTag == TEXT("Costume_Puzzle_Unlock"))
 	{
 		if (arg->Type == UI_EVENT_ARG_DESC::ARG_TYPE::BOOL)
+		{
 			m_bPlay = *static_cast<_bool*>(arg->pData);
+			m_pGameInstance->Manager_PlaySound(TEXT("PUZZLE_COMPLETE.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
+		}
 	}
 }
 

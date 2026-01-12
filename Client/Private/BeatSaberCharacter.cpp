@@ -322,7 +322,6 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					bIsSuccess = true;
 				}
 
-
 				m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 				EffectDesc.fRotationPerSec = 1.f;
@@ -334,7 +333,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				EffectDesc.fRot = _float3(0, 0, 0);
 				EffectDesc.fSize = m_pGameInstance->Random(0.3f, 0.5f);
 				EffectDesc.fSpeed = 1.5f;
-				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.1f);
+				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.05f);
 				_float fRand = m_pGameInstance->Random(0.f, 4.f);
 				if (3.f < fRand) {
 					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Firecracker"),

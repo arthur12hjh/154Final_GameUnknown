@@ -70,10 +70,7 @@ void CNpc::Priority_Update(_float fTimeDelta)
         CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
         if (!pHUD)
-        {
-            Safe_Release(pHUD);
             return;
-        }
 
         if (pHUD->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro")))
         {
@@ -336,10 +333,7 @@ void CNpc::Npc_Action()
     CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
     if (!pHUD)
-    {
-        Safe_Release(pHUD);
         return;
-    }
 
     CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
 
@@ -349,10 +343,7 @@ void CNpc::Npc_Action()
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     switch (m_eNpcState)
     {
@@ -465,7 +456,12 @@ void CNpc::Change_Camera()
     vPos.y += m_NpcDesc->vCamTargetViewPosOffset.y;
     vPos.z += m_NpcDesc->vCamTargetViewPosOffset.z;
 
-    _vector vPrevLook = m_pGameInstance->GetMainCamera()->GetTransform()->Get_State(STATE::LOOK);
+    auto pPlayerCamera = m_pGameInstance->GetMainCamera();
+
+    if (!pPlayerCamera)
+        return;
+
+    _vector vPrevLook = pPlayerCamera->GetTransform()->Get_State(STATE::LOOK);
 
     auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
 
@@ -503,6 +499,7 @@ void CNpc::Change_Camera()
         m_iScriptIdx = 1;
 
     Safe_Release(pPlayer);
+    Safe_Release(pPlayerCamera);
     Safe_Release(pNpcCamera);
 }
 
@@ -511,24 +508,20 @@ void CNpc::Return_Camera()
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
     if (!pPlayer)
-    {
-        Safe_Release(pPlayer);
         return;
-    }
 
     pPlayer->SetActive(true);
 
     Safe_Release(pPlayer);
-
+    
     pNpcCamera->ReverseCameraAnimation();
+
+    Safe_Release(pNpcCamera);
 }
 
 CNpc* CNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

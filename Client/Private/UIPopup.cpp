@@ -255,6 +255,8 @@ void CUIPopup::Open_Popup()
 	
 	m_isOpen = true;
 	m_isClosing = false;
+
+	m_pGameInstance->Manager_PlaySound(TEXT("POPUP_OPEN.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 }
 
 void CUIPopup::Close_Popup(_bool isLevelChange, _bool isTeleport)
@@ -273,6 +275,8 @@ void CUIPopup::Close_Popup(_bool isLevelChange, _bool isTeleport)
 		m_isLevelChange = isLevelChange;
 	else
 		m_isTeleport = isTeleport;
+	
+	m_pGameInstance->Manager_PlaySound(TEXT("POPUP_CLOSE.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 }
 
 CUIPopup* CUIPopup::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
