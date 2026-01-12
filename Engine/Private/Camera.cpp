@@ -13,6 +13,9 @@ CCamera::CCamera(const CCamera& Prototype)
 
 void CCamera::Shake(_float fShakeTime, _float fIntensity)
 {
+	if (fShakeTime <= 0.f)
+		return;
+
 	m_IsShake = true;
 
 	m_fIntensity = fIntensity;

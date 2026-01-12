@@ -50,6 +50,9 @@ HRESULT CCamera_Action::Initialize(void* pArg)
 
 void CCamera_Action::Priority_Update(_float fTimeDelta)
 {
+    if (false == m_pGameInstance->IsMainCamera(this))
+        return;
+
     _vector vFOVPosition;
 
     // 우리가 채널형식으로 정의할건 m_vFOVTracks와 m_vPivotTracks이다
@@ -70,6 +73,7 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         SetCameraInfo(CameraInfo, 0001);
     }
 
+    // 피벗이사가지없는련
     _float3 vPivot = _float3(0.f, 0.f, 0.f);
     if(m_pCameraAnimationData != nullptr)
 		vPivot = m_pCameraAnimationData->vBaseCameraPivot;
@@ -102,9 +106,6 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         m_pTransformCom->Set_State(STATE::LOOK, TransformMatrix.r[2]);
     }
 
-    if (false == m_pGameInstance->IsMainCamera(this))
-        return;
-
     __super::Bind_Matrices(fTimeDelta);
 
     m_fCurrentAnimationTime += fTimeDelta;
@@ -115,7 +116,6 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
         pCamera->Set_MainCamera(TEXT("PlayerCamera"));
         Safe_Release(pCamera);
     }
-
 }
 
 void CCamera_Action::Update(_float fTimeDelta)
