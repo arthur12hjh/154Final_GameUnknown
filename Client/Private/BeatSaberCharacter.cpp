@@ -452,6 +452,7 @@ void CBeatSaberCharacter::Free()
 {
 	__super::Free();
 
-	m_pGameManager->Bind_BeatSaberCharacter(nullptr);
+	if(m_pGameManager)
+		m_pGameManager->Bind_BeatSaberCharacter(nullptr);
 	Safe_Release(m_pFsm);
 }
