@@ -470,10 +470,7 @@ void CNpc::Change_Camera()
     auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
 
     if (!pPlayer)
-    {
-        Safe_Release(pPlayer);
         return;
-    }
 
     pPlayer->SetActive(false);
 
@@ -481,10 +478,7 @@ void CNpc::Change_Camera()
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     pNpcCamera->SetTargetNpc(this);
     pNpcCamera->SetPrevLook(vPrevLook);

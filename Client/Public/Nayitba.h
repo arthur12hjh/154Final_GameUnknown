@@ -155,17 +155,8 @@ private :
 
 #pragma region HIT SOUND
 	void									Play_HitSound();
-
-	void									Play_HitBeholderSound(_float fRandomIndex);
-	void									Play_HitTentacleSound(_float fRandomIndex);
-	void									Play_HitTurretSound(_float fRandomIndex);
 	void									Play_HitStatueSound(_float fRandomIndex);
-	void									Play_HitBanacleSound(_float fRandomIndex);
-	void									Play_HitAntlionSound(_float fRandomIndex);
-	void									Play_HitGorillaSound(_float fRandomIndex);
 #pragma endregion
-
-
 
 	_bool									Compare_SFX_Name(const string& szSFXName);
 #pragma endregion

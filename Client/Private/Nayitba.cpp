@@ -114,11 +114,6 @@ void CNaytiba::Update(_float fTimeDelta)
 			VisibleStatusUI(fTimeDelta);*/
 	} 
 
-	if (NAYITBA_EXECUTION_TYPE::END != m_eExcution)
-	{
-		
-	}
-
 	m_MonsterPreState = m_MonsterInfo.eNaytibaState;
 	// 이건 말해봐야할듯 락온이 플레이어 기준으로 반경을 체크하는데
 	// 락온보고 일단 고정상수로 두고 하는데 어디서 받아오거나 했으면함
@@ -515,8 +510,11 @@ void CNaytiba::SetThesholdAction(NAYITBA_EXECUTION_TYPE eExcution)
 {
 	m_eExcution = eExcution;
 
-	if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == m_eExcution)
-		m_pPartBody->SetRimLightData(true, 2.5f, 0.5f, { 0.18f, 0.04f, 0.04f, 1.f }, 5.f);
+	if (NAYTIBA_TYPE::ELITE <= m_pInitMonsterInfo->eNaytiba_Type)
+	{
+		if (NAYITBA_EXECUTION_TYPE::LINK_ATTACK == m_eExcution)
+			m_pPartBody->SetRimLightData(true, 2.5f, 0.5f, { 0.18f, 0.04f, 0.04f, 1.f }, 5.f);
+	}
 }
 
 void CNaytiba::EnablePhysxController(_bool bEnable)
@@ -1437,52 +1435,28 @@ void CNaytiba::Play_GorillaMoveSound(_uint iType, _uint SoundType)
 void CNaytiba::Play_HitSound()
 {
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
-	if (2 == m_iMonsterID)
-		Play_HitBeholderSound(fRandomIndex);
-	else if (3 == m_iMonsterID)
-		Play_HitBanacleSound(fRandomIndex);
-	else if (4 == m_iMonsterID || 5 == m_iMonsterID)
+	if (4 == m_iMonsterID || 5 == m_iMonsterID)
 		Play_HitStatueSound(fRandomIndex);
-	else if (7 == m_iMonsterID)
-		Play_HitAntlionSound(fRandomIndex);
-	else if (9 == m_iMonsterID)
-		Play_HitTentacleSound(fRandomIndex);
-	else if (10 == m_iMonsterID)
-		Play_HitTurretSound(fRandomIndex);
-}
-
-void CNaytiba::Play_HitBeholderSound(_float fRandomIndex)
-{
-
-}
-
-void CNaytiba::Play_HitTentacleSound(_float fRandomIndex)
-{
-
-}
-
-void CNaytiba::Play_HitTurretSound(_float fRandomIndex)
-{
-
+	else
+	{
+		if(50 > fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_00.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	}
 }
 
 void CNaytiba::Play_HitStatueSound(_float fRandomIndex)
 {
-
-}
-
-void CNaytiba::Play_HitBanacleSound(_float fRandomIndex)
-{
-
-}
-
-void CNaytiba::Play_HitAntlionSound(_float fRandomIndex)
-{
-
-}
-
-void CNaytiba::Play_HitGorillaSound(_float fRandomIndex)
-{
+	if (25 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact02.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else if (75 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact03.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact04.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		
 
 }
 
