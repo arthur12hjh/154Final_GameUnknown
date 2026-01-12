@@ -106,10 +106,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			if (!pHUD)
-			{
-				Safe_Release(pHUD);
 				return;
-			}
 
 			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
 				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close"))

@@ -236,6 +236,7 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 		if (MouseEnter(vUIPos, vUISize))
 		{
 			m_eBtnState = BTN_STATE::HOVER;
+			//m_pGameInstance->Manager_PlaySound(TEXT("PUZZLE_BUTTON_HOVER_0.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 
 			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
 			{
@@ -258,6 +259,7 @@ HRESULT CUICostumePuzzleButtons::SetUp_Buttons()
 						Arg2.Type = UI_EVENT_ARG_DESC::BOOL;
 						Arg2.pData = &bActive;
 						__super::Trigger_Event(TEXT("Costume_Button_Click"), &Arg2);
+						m_pGameInstance->Manager_PlaySound(TEXT("PUZZLE_BUTTON_CLICK_0.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 					}
 				}
 			}
