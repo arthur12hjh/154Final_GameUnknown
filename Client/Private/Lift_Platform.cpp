@@ -45,9 +45,22 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 		_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 		m_pCullingCollider->UpdateColiision(WorldMat);
+
+		if (!m_bIsSound)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_PlatformBot_Loop_1.wav"), CHANNELID::EFFECT, 15.f);
+			m_bIsSound = true;
+		}
 	}
 	else
-		int a = 10;
+	{
+		if(m_bIsSound)
+		{ 
+			m_bIsSound = false;
+			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 3.f);
+		}
+	}
+		
 }
 
 void CLift_Platform::Update(_float fTimeDelta)

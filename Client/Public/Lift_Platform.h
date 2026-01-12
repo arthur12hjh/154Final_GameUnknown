@@ -48,6 +48,7 @@ private :
 	CModel*							m_pModelCom = { nullptr };
 
 	_bool							m_bIsPaltformMove = { false };
+	_bool							m_bIsSound = { false };
 
 	_float3							m_vTargetPoint = {};
 	_float							m_vLerpSpeed = { 0.5f };
