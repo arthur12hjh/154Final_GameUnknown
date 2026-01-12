@@ -153,7 +153,8 @@ CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelInd
 
 	if (PROTOTYPE::GAMEOBJECT == ePrototype)
 		pGameObject = dynamic_cast<CGameObject*>(pPrototype)->Clone(pArg);
-	else		pGameObject = dynamic_cast<CComponent*>(pPrototype)->Clone(pArg);
+	else		
+		pGameObject = dynamic_cast<CComponent*>(pPrototype)->Clone(pArg);
 
 	if (nullptr == pGameObject)
 		return nullptr;

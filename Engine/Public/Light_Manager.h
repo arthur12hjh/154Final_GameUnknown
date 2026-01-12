@@ -48,7 +48,8 @@ private:
 	CShader*						m_pShader[2] = { nullptr , nullptr };
 #endif
 	list<CLight*>					m_Lights;
-
+	//모든 씬에 대한 연산 + 그림자 차폐가 끝난 뒤 볼류메트릭 연산을 수행한다. 
+	list<CLight*>					m_VolumetricLights = {};
 	CLight*							m_pDirectional = { nullptr };
 public:
 #ifdef _DEBUG

@@ -58,6 +58,8 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 	m_tRootDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_RootDesc());
 	m_tLinkDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_JointDesc());
 
+	m_pModelCom->Set_PreTransformMatrix(XMMatrixScaling(0.032, 0.032, 0.032) * 
+		XMMatrixRotationY(XMConvertToRadians(270.f)));
 
 	return S_OK;
 }

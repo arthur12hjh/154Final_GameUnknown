@@ -15,6 +15,9 @@
 #include "StringHelper.h"
 #include "GameManager.h"
 
+#include "Prob_Interaction.h"
+#include "CanBox.h"
+
 CDebugCheatUI::CDebugCheatUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CGameObject(pDevice, pContext)
 {
@@ -188,6 +191,32 @@ void CDebugCheatUI::DrawObjectDebug()
         if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_Nayitba"),
             ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Monster"), &Desc)))
             return;
+    }
+    //캔 박스 스포너
+    if (ImGui::Button("Spawn Canbox Front"))
+    {
+        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        if (nullptr == pPlayer)
+            return;
+
+        _vector vPos = pPlayer->GetTransform()->Get_State(STATE::POSITION) + pPlayer->GetTransform()->Get_State(STATE::LOOK) * 5.f;
+
+        Safe_Release(pPlayer);
+
+
+        CProb_Interaction::PROB_INTERACTION_DESC Desc;
+
+        Desc.bIsApplyTransform = true;
+        Desc.vScale = { 1.f, 1.f, 1.f };
+        Desc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_CanBox");
+        Desc.iInteractionID = 5;
+        XMStoreFloat3(&Desc.vPosition, vPos);
+
+        CCanBox* pCanBox = static_cast<CCanBox*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_GameObject_CanBox"),
+            ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_CanBox"), &Desc));
+
+        pCanBox->GetTransform()->Set_Scale(XMVectorSet(1.25f, 1.25f, 1.25f, 0.f));
+        pCanBox->GetTransform()->Set_State(STATE::POSITION, vPos + XMVectorSet(0.f, 0.5f, 0.f, 0.f));
     }
 
 #endif // _DEBUG
