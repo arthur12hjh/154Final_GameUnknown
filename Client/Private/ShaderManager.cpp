@@ -128,7 +128,6 @@ void CShaderManager::Update(_float fTimeDelta)
         iter->Chase_Target();
     }
 
-
     if (true == m_isScarletPhase2LerpTriggerOn)
         Load_Scarlet_Phase2_ShaderSettings(fTimeDelta);
     
@@ -342,7 +341,7 @@ void CShaderManager::Load_Scarlet_ShaderSettings()
     map<_wstring, CCinematicObject*>* pCinematicObjects = CGameManager::GetInstance()->Get_CinematicObjectsMap();
     CTargetLight::TARGETLIGHT_DESC Desc{};
     Desc.tLightDesc.eType = LIGHT_TYPE::POINT;
-    Desc.tLightDesc.vDiffuse = _float4(0.08f, 0.08f, 0.06f, 1.f);
+    Desc.tLightDesc.vDiffuse = _float4(0.12f, 0.12f, 0.12f, 1.f);
     Desc.tLightDesc.vAmbient = _float4(0.1f, 0.1f, 0.1f, 1.f);
     Desc.tLightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
     Desc.tLightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
@@ -392,8 +391,8 @@ void CShaderManager::Load_TargetLights()
 
     CTargetLight::TARGETLIGHT_DESC Desc{};
     Desc.tLightDesc.eType = LIGHT_TYPE::POINT;
-    Desc.tLightDesc.vDiffuse = _float4(0.36f, 0.36f, 0.28f, 1.f);
-    Desc.tLightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
+    Desc.tLightDesc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 1.f);
+    Desc.tLightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
     Desc.tLightDesc.vSpecular = _float4(0.f, 0.f, 0.f, 0.f);
     Desc.tLightDesc.vPosition = _float4(20.f, 5.f, 20.f, 1.f);
     Desc.tLightDesc.fRange = 12.f;

@@ -199,7 +199,7 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     _float3 vRigidSize = RigidBodyDesc.vSize;
     RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.f, vRigidSize.y * 2.f, vRigidSize.z * 1.f);
     RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_7;
-    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT;
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -258,7 +258,7 @@ void CCanBox::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 
             EffectDesc.vPos = m_pTransformCom->Get_State(STATE::POSITION);
             EffectDesc.fRot = _float3(0, 0, 0);
-            EffectDesc.fSize = 0.4f;
+            EffectDesc.fSize = 0.24f;
             EffectDesc.fSpeed = 1.f;
             m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Box_Effect"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
         }

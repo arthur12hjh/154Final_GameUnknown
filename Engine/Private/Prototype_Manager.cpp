@@ -39,7 +39,7 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iLevelIndex, const _wstring& str
 /*
  - 뼈대 모델에 애니메이션과, 파츠 모델을 붙이는 프로토타입 함수
 */
-HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix)
+HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strPrototypeTag, const _char* pModelFilePath, const string& strSkeletalPath, vector<_wstring>& szPartPrototypeTagList, vector<string>& szPartModelFilePathList, _fmatrix PreTransformMatrix, vector<MODEL_TYPE>& szPartModelTypeList)
 {
 	// _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
 	_finddatai64_t  fd;
@@ -123,9 +123,13 @@ HRESULT CPrototype_Manager::Add_SkeletalPrototype(_uint iLevelIndex, ID3D11Devic
 	// 파츠 모델들을 생성하고, 블렌드인덱스와 본 인덱스를 뼈대 모델에 맞춰 매핑해준다.
 	for (size_t i = 0; i < szPartPrototypeTagList.size(); ++i)
 	{
+		MODEL_TYPE eType = MODEL_TYPE::PARTANIM;
+		if (!szPartModelTypeList.empty()
+			&& szPartModelTypeList.size() >= i)
+			eType = szPartModelTypeList[i];
 		// 모델에 스켈레톤 모델을 전달해줘 매핑할 수 있게 해준다.
 		if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, szPartPrototypeTagList[i],
-			CModel::Create(pDevice, pContext, MODEL_TYPE::PARTANIM, szPartModelFilePathList[i].c_str(), PreMatrix, pModel))))
+			CModel::Create(pDevice, pContext, eType, szPartModelFilePathList[i].c_str(), PreMatrix, pModel))))
 			return E_FAIL;
 
 	}
@@ -149,7 +153,8 @@ CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototype, _uint iLevelInd
 
 	if (PROTOTYPE::GAMEOBJECT == ePrototype)
 		pGameObject = dynamic_cast<CGameObject*>(pPrototype)->Clone(pArg);
-	else		pGameObject = dynamic_cast<CComponent*>(pPrototype)->Clone(pArg);
+	else		
+		pGameObject = dynamic_cast<CComponent*>(pPrototype)->Clone(pArg);
 
 	if (nullptr == pGameObject)
 		return nullptr;

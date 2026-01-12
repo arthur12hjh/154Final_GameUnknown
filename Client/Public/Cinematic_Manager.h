@@ -13,9 +13,13 @@ NS_BEGIN(Client)
 
 class CCinematicObject;
 class CCamera_Action;
+class CUIActionEvent;
 
 class CCinematicManager : public CBase
 {
+private:
+	enum class SCRIPT_ACTION{ BEGIN, PLAY, STOP, END };
+
 private:
 	CCinematicManager();
 	virtual ~CCinematicManager() = default;
@@ -60,6 +64,8 @@ private:
 
 	queue<_wstring>				m_CinematicCameraQueue;
 
+	CUIActionEvent*				m_pUIActionEvent{ nullptr };
+
 private:
 	void						Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 
@@ -67,6 +73,9 @@ private:
 	void						Active_CinematicCameraQueue();
 
 	HRESULT						Reset_Cinematic();
+	HRESULT						Reset_UI();
+
+	void						Script_Action(SCRIPT_ACTION eAction);
 
 public:
 	static CCinematicManager* Create();

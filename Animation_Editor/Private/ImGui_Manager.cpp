@@ -93,12 +93,17 @@ void CImGui_Manager::Update(_float fTimeDelta)
 
 	if (nullptr != m_pSelectedObject)
 	{
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
-			static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
-
 		if (m_iCurrentObjectIndex > 100)
 		{
 			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_MorphAnimation(fTimeDelta * m_fTimeRate * m_fTimeMultiply);
+
+			//static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
+			//	static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
+		}
+		else
+		{
+			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Play_Animation(fTimeDelta * m_fTimeRate * m_fTimeMultiply,
+				static_cast<CContainerObject*>(m_pSelectedObject)->GetTransform(), m_fRootMagnification);
 		}
 	}
 
@@ -531,11 +536,15 @@ void CImGui_Manager::Update_AnimationList()
 	if (m_iSelectedAnimationIndex != m_iBeforeAnimationIndex)
 	{
 		m_iBeforeAnimationIndex = m_iSelectedAnimationIndex;
-		static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex, true, 0.f);
 		Update_AnimNotifyList((*m_pAnimationList)[m_iSelectedAnimationIndex]);
 		if (m_iCurrentObjectIndex > 100)
 		{
 			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_MorphAnimationIndex(m_iSelectedAnimationIndex, true, 1.f);
+		}
+		else
+		{
+			static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Set_AnimationIndex(m_iSelectedAnimationIndex, true, 0.f);
+
 		}
 	}
 
@@ -697,7 +706,23 @@ void CImGui_Manager::Update_TimeLine()
 	
 	// 현재 키프레임이 타임라인의 x좌표 어디에 있는지 표시할 float값
 	//_float fSaturatedCurrentKeyFrameRatio = max(pAnimation->Get_AnimationKeyFrameIndex() / pAnimation->Get_Duration(), 0.f);
-	_float fSaturatedCurrentKeyFrameRatio = pAnimation->Get_SaturatedTrackPosition();
+	_float fSaturatedCurrentKeyFrameRatio = 0.f;
+	_float fMorphRatio = 0.f;
+	_float fMorphDuration = 0.f;
+	_float fMorphTrackPosition = 0.f;
+	CModel* pCurrentModel = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")));
+	if (m_iCurrentObjectIndex > 100)
+	{
+		fSaturatedCurrentKeyFrameRatio = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_CurrentMorphSaturatedTrackPosition();
+		fMorphRatio = fSaturatedCurrentKeyFrameRatio;
+		fMorphDuration = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_CurrentMorphDuration();
+		fMorphTrackPosition = static_cast<CModel*>(static_cast<CContainerObject*>(m_pSelectedObject)->Get_Component(TEXT("Part_Body"), TEXT("Com_Model")))->Get_fCurrentMorphTrackPosition();
+
+	}
+	else
+	{
+		fSaturatedCurrentKeyFrameRatio = pAnimation->Get_SaturatedTrackPosition();
+	}
 
 	fSaturatedCurrentKeyFrameRatio = min(fSaturatedCurrentKeyFrameRatio, 1.f);
 	_float fCurrentFramePosition = vCanvasLeftTop.x + fSaturatedCurrentKeyFrameRatio * vCanvasSize.x;
@@ -712,7 +737,7 @@ void CImGui_Manager::Update_TimeLine()
 	else if (pAnimation->Get_Duration() <= 100)
 		iFrameTick = 10;
 	else
-		iFrameTick = 20;
+		iFrameTick = max(pAnimation->Get_Duration() / 10, 20);
 	
 	// 138프레임일 경우, 20 키프레임 단위로 0-20-40-60-80-100-120-140 총 8개 그려야함.
 	_int iNumVerticalLines = (pAnimation->Get_Duration() + iFrameTick - 1) / iFrameTick;
@@ -743,8 +768,15 @@ void CImGui_Manager::Update_TimeLine()
 	pDrawList->AddCircle(ImVec2(fCurrentFramePosition, vCanvasLeftTop.y), 5.f, vCursorFrameColor);
 
 	// 현재 프레임 숫자 표시
-	_uint iCurrentFrame =
-		static_cast<_uint>(pAnimation->Get_SaturatedTrackPosition() * pAnimation->Get_Duration());
+	_uint iCurrentFrame = 0;
+	if (m_iCurrentObjectIndex > 100)
+	{
+		iCurrentFrame = static_cast<_uint>(fMorphRatio * fMorphDuration);
+	}
+	else
+	{
+		iCurrentFrame = static_cast<_uint>(pAnimation->Get_SaturatedTrackPosition()* pAnimation->Get_Duration());
+	}
 
 	char szCurFrameText[32];
 	sprintf_s(szCurFrameText, "Frame : %d", iCurrentFrame);
@@ -835,42 +867,66 @@ void CImGui_Manager::Update_TimeLine()
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_RIGHT))
 		{
 			if (pAnimation->Get_fTrackPosition() == pAnimation->Get_Duration() - 1)
+			{
 				pAnimation->Set_CurrentTrackPosition(0.f);
+			}
 			else if (pAnimation->Get_fTrackPosition() + 1 >= pAnimation->Get_Duration() - 1)
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			}
 			else
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() + 1);
+			}
 		}
 
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_LEFT))
 		{
 			if (pAnimation->Get_fTrackPosition() == 0.f)
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			}
 			else if (pAnimation->Get_fTrackPosition() - 1 <= 0.f)
+			{
 				pAnimation->Set_CurrentTrackPosition(0.f);
+			}
 			else
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() - 1);
+			}
 		}
 
 
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
 		{
 			if (pAnimation->Get_fTrackPosition() == pAnimation->Get_Duration() - 1)
+			{
 				pAnimation->Set_CurrentTrackPosition(0.f);
+			}
 			else if (pAnimation->Get_fTrackPosition() + 5 >= pAnimation->Get_Duration() - 1)
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			}
 			else
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() + 5);
+			}
 		}
 
 		if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
 		{
 			if (pAnimation->Get_fTrackPosition() == 0.f)
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_Duration() - 1);
+			}
 			else if (pAnimation->Get_fTrackPosition() - 5 <= 0.f)
+			{
 				pAnimation->Set_CurrentTrackPosition(0.f);
+			}
 			else
+			{
 				pAnimation->Set_CurrentTrackPosition(pAnimation->Get_fTrackPosition() - 5);
+			}
 		}
 
 
@@ -904,6 +960,8 @@ void CImGui_Manager::Update_TimeLine()
 			if (bIsCursorOnTrackPosition && (bIsNotifyClicked == FALSE))
 			{
 				pAnimation->Set_CurrentTrackPosition(fRatioX * pAnimation->Get_Duration());
+				if (m_iCurrentObjectIndex > 100)
+					pCurrentModel->Set_MorphTrackPosition(fRatioX * pAnimation->Get_Duration());
 			}
 		}
 		else if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
@@ -911,6 +969,8 @@ void CImGui_Manager::Update_TimeLine()
 			if (bIsCursorOnTrackPosition && (bIsNotifyClicked == FALSE))
 			{
 				pAnimation->Set_CurrentTrackPosition(fRatioX * pAnimation->Get_Duration());
+				if (m_iCurrentObjectIndex > 100)
+					pCurrentModel->Set_MorphTrackPosition(fRatioX * pAnimation->Get_Duration());
 			}
 		}
 

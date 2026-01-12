@@ -357,7 +357,13 @@ HRESULT CNotify::Notify_Active_SFX(const ANIM_NOTIFY& AnimNotify)
 
 HRESULT CNotify::Notify_Play_Sound(const ANIM_NOTIFY& AnimNotify)
 {
-	m_pCharacter->Play_Sound(AnimNotify);
+	if("" == AnimNotify.szNotifyArg02)
+		m_pCharacter->Play_Sound(AnimNotify);
+	else
+	{
+		_wstring szPlaySoundTag = wstring(AnimNotify.szNotifyArg02.begin(), AnimNotify.szNotifyArg02.end());
+		m_pGameInstance->Manager_PlaySound(szPlaySoundTag.c_str(), CHANNELID::EFFECT, AnimNotify.fNumData01, 1.f);
+	}
 	return S_OK;
 }
 
@@ -366,11 +372,16 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	_float4x4 PrePosMatrix = {};
 
 	m_pGameInstance->SetMainCamera(TEXT("ActionCamera"), &PrePosMatrix);
-	CCamera* pCamera = m_pGameInstance->GetMainCamera();
-
+	CCamera* pCamera = m_pGameInstance->GetCamrea(TEXT("ActionCamera"));
+	Safe_Release(pCamera);
 	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
 
-	Safe_Release(pCamera);
+
+	CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+	CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+		CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+		}, 4);
 
 	return S_OK;
 }

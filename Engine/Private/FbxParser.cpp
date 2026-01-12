@@ -53,16 +53,18 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		pModel->iRootNodeIndex = 0;
 		pModel->vNodes.push_back(RootNode);
 
-		// BINMODEL->BINNODE->vChildrendg
+
+
+		// vChildren
 		for (size_t i = 0; i < RootNode.iNumChildren; ++i)
 		{
 			pModel->vNodes[pModel->iRootNodeIndex].vChildrenIndex.push_back(Get_BinNodeIndex(pAIScene->mRootNode->mChildren[i], pModel));
 		}
 
-
 		for (size_t i = 0; i < pModel->iNumMeshes; ++i)
 		{
 			binMesh meshTmp;
+			aiMesh* pAIMesh = pAIScene->mMeshes[i];
 			meshTmp.iNumVertices = pAIScene->mMeshes[i]->mNumVertices;
 			meshTmp.iNumFaces = pAIScene->mMeshes[i]->mNumFaces;
 			meshTmp.iNumBones = pAIScene->mMeshes[i]->mNumBones;
@@ -77,8 +79,7 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 				meshTmp.vTextureCoords[0].push_back(_float2(pAIScene->mMeshes[i]->mTextureCoords[0][j].x, pAIScene->mMeshes[i]->mTextureCoords[0][j].y));
 			}
 
-			//vBones
-
+			//vBones		
 			for (size_t x = 0; x < pAIScene->mMeshes[i]->mNumBones; ++x)
 			{
 				binBone binBoneTmp;
@@ -139,17 +140,21 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 						aiVector3D vShapePosition = pAIScene->mMeshes[i]->mAnimMeshes[j]->mVertices[k];
 						aiVector3D vShapeNormal = pAIScene->mMeshes[i]->mAnimMeshes[j]->mNormals[k];
 
-						//bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.y - vBasePosition.y, vShapePosition.z - vBasePosition.z));
-						//bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.y - vBaseNormal.y, vShapeNormal.z - vBaseNormal.z));
+						bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.y - vBasePosition.y, vShapePosition.z - vBasePosition.z));
+						bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.y - vBaseNormal.y, vShapeNormal.z - vBaseNormal.z));
+						
+						//bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x, vShapePosition.y, vShapePosition.z));
+						//bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x, vShapeNormal.y, vShapeNormal.z));
 
-						bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.z - vBasePosition.z, vShapePosition.y - vBasePosition.y));
-						bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.z - vBaseNormal.z, vShapeNormal.y - vBaseNormal.y));
+						//bAnimMesh.vDeltaPositions.push_back(_float3(vShapePosition.x - vBasePosition.x, vShapePosition.z - vBasePosition.z, vShapePosition.y - vBasePosition.y));
+						//bAnimMesh.vDeltaNormals.push_back(_float3(vShapeNormal.x - vBaseNormal.x, vShapeNormal.z - vBaseNormal.z, vShapeNormal.y - vBaseNormal.y));
 					}
 
 					strcpy_s(bAnimMesh.szName, pAIScene->mMeshes[i]->mAnimMeshes[j]->mName.data);
 
 					meshTmp.vAnimMesh.push_back(bAnimMesh);
 				}
+
 			}
 
 
@@ -161,22 +166,63 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 		for (size_t i = 0; i < pModel->iNumMaterials; ++i)
 		{
 			binMaterial matTmp;
+
+			// [수정] 이름을 먼저 복사해야 sprintf_s에서 안전하게 사용할 수 있습니다.
+			aiString mName = pAIScene->mMaterials[i]->GetName();
+			if (mName.length > 0)
+				strcpy_s(matTmp.szName, mName.C_Str());
+			else
+				sprintf_s(matTmp.szName, "Material_%zu", i); // 이름이 없으면 기본 이름 부여
+
 			for (size_t j = 0; j < BINMATERIAL::TEXTURETYPE::END; ++j)
 			{
 				matTmp.vNumSRVs.push_back(pAIScene->mMaterials[i]->GetTextureCount(static_cast<aiTextureType>(j)));
 				matTmp.strTexturePaths[j].clear();
 				matTmp.strTexturePaths[j].reserve(matTmp.vNumSRVs[j]);
+
 				for (size_t k = 0; k < matTmp.vNumSRVs[j]; ++k)
 				{
 					aiString strTexturePath;
 					pAIScene->mMaterials[i]->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
 
-					matTmp.strTexturePaths[j].emplace_back(strTexturePath.data);
+					string sFinalPath = strTexturePath.data;
+
+					if (sFinalPath.size() > 0 && sFinalPath[0] == '*')
+					{
+						int iTextureIdx = atoi(&sFinalPath[1]);
+						if (iTextureIdx < (int)pAIScene->mNumTextures)
+						{
+							aiTexture* pAITexture = pAIScene->mTextures[iTextureIdx];
+
+							// 확장자 확인
+							string sExt = (pAITexture->achFormatHint[0] != '\0') ? pAITexture->achFormatHint : "png";
+
+							// [수정] 터지는 것을 방지하기 위해 string으로 안전하게 파일명 생성
+							string sNewFileName = string(matTmp.szName) + "_" + to_string(iTextureIdx) + "." + sExt;
+
+							char szDrive[MAX_PATH] = {}, szDir[MAX_PATH] = {};
+							_splitpath_s(pModelFilePath, szDrive, MAX_PATH, szDir, MAX_PATH, nullptr, 0, nullptr, 0);
+
+							string sSavePath = string(szDrive) + string(szDir) + sNewFileName;
+
+							if (_access(sSavePath.c_str(), 0) == -1)
+							{
+								FILE* pFile = nullptr;
+								fopen_s(&pFile, sSavePath.c_str(), "wb");
+								if (pFile)
+								{
+									// pcData를 저장할 때 mWidth(바이트 수)만큼 씁니다.
+									fwrite(pAITexture->pcData, 1, pAITexture->mWidth, pFile);
+									fclose(pFile);
+								}
+							}
+
+							sFinalPath = sNewFileName;
+						}
+					}
+					matTmp.strTexturePaths[j].emplace_back(sFinalPath);
 				}
-
 			}
-
-			strcpy_s(matTmp.szName, pAIScene->mMaterials[i]->GetName().C_Str());
 			pModel->vMaterials.push_back(matTmp);
 		}
 
@@ -282,7 +328,7 @@ HRESULT CFbxParser::ReadFbx(const _char* pModelFilePath, MODEL_TYPE eType, binMo
 
 					MorphAnimTmp.vMorphChannels.push_back(MorphChannelTmp);
 				}
-
+				
 				pModel->vMorphAnimations.push_back(MorphAnimTmp);
 			}
 		}

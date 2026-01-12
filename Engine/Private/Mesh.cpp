@@ -13,11 +13,11 @@ CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CMesh::CMesh(const CMesh& Prototype)
 	: CVIBuffer{ Prototype }
 	, m_iNumShapeKeys{ Prototype.m_iNumShapeKeys }
-	, m_pCombinedShapeKeyBuffer {Prototype.m_pCombinedShapeKeyBuffer }
-	, m_pCombinedShapeKeySRV {Prototype.m_pCombinedShapeKeySRV }
+	, m_pCombinedPositionsSRV{Prototype.m_pCombinedPositionsSRV }
+	, m_pCombinedNormalsSRV{Prototype.m_pCombinedNormalsSRV }
 {
-	Safe_AddRef(m_pCombinedShapeKeyBuffer);
-	Safe_AddRef(m_pCombinedShapeKeySRV);
+	Safe_AddRef(m_pCombinedPositionsSRV);
+	Safe_AddRef(m_pCombinedNormalsSRV);
 
 	m_ShapeKeys.reserve(Prototype.m_ShapeKeys.size());
 	for (auto& pShapeKey : Prototype.m_ShapeKeys)
@@ -41,33 +41,6 @@ void CMesh::Set_ShapeWeight(_uint iShapeKeyIndex, _float fWeight)
 	m_ShapeKeyWeights[iShapeKeyIndex] = fWeight;
 }
 
-void CMesh::Bind_ShapeWeight()
-{
-	_uint iNumVertices = (_uint)m_CombinedShapeKeyDeltaPositions.size();
-
-	m_CombinedShapeKeyDeltaPositions.resize(iNumVertices);
-	memset(m_CombinedShapeKeyDeltaPositions.data(), 0,
-		sizeof(_float3) * iNumVertices);
-
-	for (_uint i = 0; i < (_uint)m_ShapeKeys.size(); ++i)
-	{
-		float fWeight = m_ShapeKeyWeights[i];
-		// threshold. 내가 얘때문에 그냥 어휴
-		if (fabs(fWeight) < 1e-6f)
-			continue;
-
-		const vector<_float3>& vDeltaPositions = *m_ShapeKeys[i]->Get_DeltaPosition();
-		for (_uint j = 0; j < iNumVertices; ++j)
-			XMStoreFloat3(&m_CombinedShapeKeyDeltaPositions[j],
-				XMLoadFloat3(&m_CombinedShapeKeyDeltaPositions[j])
-				+ XMVectorSet(vDeltaPositions[j].x * fWeight,
-					vDeltaPositions[j].y * fWeight,
-					vDeltaPositions[j].z * fWeight, 0.f));
-	}
-
-	m_pContext->UpdateSubresource(m_pCombinedShapeKeyBuffer, 0, nullptr, m_CombinedShapeKeyDeltaPositions.data(), 0, 0);
-
-}
 
 HRESULT CMesh::Bind_ShapeKeys(CShader* pShader, const _char* pConstantName)
 {
@@ -76,7 +49,20 @@ HRESULT CMesh::Bind_ShapeKeys(CShader* pShader, const _char* pConstantName)
 
 	pShader->Bind_RawValue(pConstantName, m_ShapeKeyWeights.data(), sizeof(float) * (_uint)m_ShapeKeyWeights.size());*/
 
-	pShader->Bind_SRV("g_ShapeKeyDeltaPositionBuffer", m_pCombinedShapeKeySRV);
+	//pShader->Bind_SRV("g_ShapeKeyDeltaPositionBuffer", m_pCombinedShapeKeySRV);
+
+	if (m_pCombinedPositionsSRV == nullptr)
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_RawValue("g_iNumVertices",
+		&m_iNumVertices, sizeof(_uint))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_SRV("g_ShapeKeyDeltaPositionsBuffer", m_pCombinedPositionsSRV)))
+		return E_FAIL;
+	
+	if (FAILED(pShader->Bind_SRV("g_ShapeKeyDeltaNormalsBuffer", m_pCombinedNormalsSRV)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -88,8 +74,6 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 	m_iMaterialIndex = pBinMesh->iMaterialIndex;
 	m_iNumVertexBuffers = 1;
 	m_iNumVertices = pBinMesh->iNumVertices;
-
-
 	
 	m_iNumIndices = pBinMesh->iNumFaces * 3;
 	m_iIndexStride = 4;
@@ -141,34 +125,10 @@ HRESULT CMesh::Initialize_Prototype(MODEL_TYPE eType, const class CModel* pModel
 	
 	if (eType == MODEL_TYPE::FACIAL)
 	{
-		Ready_ShapeKeys(pModel, pBinMesh);
-
-		_uint iNumVertices = (_uint)m_ShapeKeys[0]->Get_DeltaPosition()->size();
-		m_CombinedShapeKeyDeltaPositions.resize(iNumVertices);
-		memset(m_CombinedShapeKeyDeltaPositions.data(), 0, sizeof(_float3) * iNumVertices);
-
-		D3D11_BUFFER_DESC TrialInitBufferDesc = {};
-
-		D3D11_SUBRESOURCE_DATA SubResource = {};
-
-		TrialInitBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		TrialInitBufferDesc.ByteWidth = sizeof(_float3) * iNumVertices;
-		TrialInitBufferDesc.StructureByteStride = sizeof(_float3);
-		TrialInitBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		TrialInitBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		SubResource.pSysMem = m_CombinedShapeKeyDeltaPositions.data();
-
-		if (FAILED(m_pDevice->CreateBuffer(&TrialInitBufferDesc, &SubResource, &m_pCombinedShapeKeyBuffer)))
+		if (FAILED(Ready_ShapeKeys(pModel, pBinMesh)))
 			return E_FAIL;
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc{};
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		SRVDesc.Buffer.FirstElement = 0;
-		SRVDesc.Buffer.NumElements = iNumVertices;
-		SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-
-		if (FAILED(m_pDevice->CreateShaderResourceView(m_pCombinedShapeKeyBuffer, &SRVDesc, &m_pCombinedShapeKeySRV)))
+		if (FAILED(Ready_CombinedShapeKeySRVs()))
 			return E_FAIL;
 
 		//Set_ShapeWeight(0, 0.f);
@@ -411,6 +371,103 @@ HRESULT CMesh::Ready_ShapeKeys(const class CModel* pModel, const binMesh* pBinMe
 	return S_OK;
 }
 
+HRESULT CMesh::Ready_ShapeKeyBuffers()
+{
+	D3D11_BUFFER_DESC ConstantBufferDesc = {};
+	ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ConstantBufferDesc.ByteWidth = sizeof(CB_MORPH);
+	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	return m_pDevice->CreateBuffer(&ConstantBufferDesc, nullptr, &m_pShapeKeyWeightsBuffer);
+}
+
+HRESULT CMesh::Ready_CombinedShapeKeySRVs()
+{
+	// 1. ShapeKey 수와 Vertex 수를 받아와 그 크기만큼의 vector<_float3>를 만든다. : ShapeKey[164] * vDeltaPosition[9124] * _float3
+	// 2. ShapeKey를 모두 순회하며 vector<_float3>의 vDeltaIndex + 9124 * ShapeKeyIndex 위치에 집어넣는다.
+	// 3. ID3D11Buffer* 로 만든다.
+	// 4. ID3D11ShaderResourceView* 로 만든다.
+	
+	vector<_float3> vCombinedDeltaPositions(m_iNumShapeKeys * m_iNumVertices);
+	vector<_float3> vCombinedDeltaNormals(m_iNumShapeKeys * m_iNumVertices);
+
+	for (_uint i = 0; i < m_iNumShapeKeys; ++i)
+	{
+		// CShapeKey* const& pShapeKey
+		const auto& pShapeKey = m_ShapeKeys[i];
+		const auto& vDeltaPositions = *pShapeKey->Get_DeltaPosition();
+		const auto& vDeltaNormals = *pShapeKey->Get_DeltaNormals();
+
+		if ((_uint)vDeltaPositions.size() != m_iNumVertices)
+			return E_FAIL;
+
+		for (_uint j = 0; j < vDeltaPositions.size(); ++j)
+		{
+			_uint iCombinedIndex = j + vDeltaPositions.size() * i;
+			vCombinedDeltaPositions[iCombinedIndex] = vDeltaPositions[j];
+			vCombinedDeltaNormals[iCombinedIndex] = vDeltaNormals[j];
+		}
+
+	}
+
+	ID3D11Buffer* pCombinedPositionsBuffer = nullptr;
+	ID3D11Buffer* pCombinedNormalsBuffer = nullptr;
+
+	D3D11_BUFFER_DESC CombinedPositionsBufferDesc = {};
+	CombinedPositionsBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	CombinedPositionsBufferDesc.ByteWidth = sizeof(_float3) * vCombinedDeltaPositions.size();
+	CombinedPositionsBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	CombinedPositionsBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	CombinedPositionsBufferDesc.StructureByteStride = sizeof(_float3);
+
+	D3D11_SUBRESOURCE_DATA CombinedPositionsSubResource{};
+	CombinedPositionsSubResource.pSysMem = vCombinedDeltaPositions.data();
+
+
+	if (FAILED(m_pDevice->CreateBuffer(&CombinedPositionsBufferDesc, &CombinedPositionsSubResource, &pCombinedPositionsBuffer)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC CombinedPositionsSRVDesc{};
+	CombinedPositionsSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	CombinedPositionsSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	CombinedPositionsSRVDesc.Buffer.FirstElement = 0;
+	CombinedPositionsSRVDesc.Buffer.NumElements = (_uint)vCombinedDeltaPositions.size();
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(pCombinedPositionsBuffer, &CombinedPositionsSRVDesc, &m_pCombinedPositionsSRV)))
+		return E_FAIL;
+
+	Safe_Release(pCombinedPositionsBuffer);
+
+	D3D11_BUFFER_DESC CombinedRotationsBufferDesc = {};
+	CombinedRotationsBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	CombinedRotationsBufferDesc.ByteWidth = sizeof(_float3) * vCombinedDeltaNormals.size();
+	CombinedRotationsBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	CombinedRotationsBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	CombinedRotationsBufferDesc.StructureByteStride = sizeof(_float3);
+
+	D3D11_SUBRESOURCE_DATA CombinedRotationsSubResource{};
+	CombinedRotationsSubResource.pSysMem = vCombinedDeltaNormals.data();
+
+
+	if (FAILED(m_pDevice->CreateBuffer(&CombinedRotationsBufferDesc, &CombinedRotationsSubResource, &pCombinedNormalsBuffer)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC CombinedNormalsSRVDesc{};
+	CombinedNormalsSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	CombinedNormalsSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	CombinedNormalsSRVDesc.Buffer.FirstElement = 0;
+	CombinedNormalsSRVDesc.Buffer.NumElements = (_uint)vCombinedDeltaNormals.size();
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(pCombinedNormalsBuffer, &CombinedNormalsSRVDesc, &m_pCombinedNormalsSRV)))
+		return E_FAIL;
+
+	Safe_Release(pCombinedNormalsBuffer);
+
+
+	return S_OK;
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const CModel* pModel, const binMesh* pBinMesh, _fmatrix PreTransformMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
@@ -451,7 +508,8 @@ void CMesh::Free()
 	if(false == m_isCloned)
 		Safe_Delete_Array(m_pIndices);
 
-	Safe_Release(m_pCombinedShapeKeyBuffer);
-	Safe_Release(m_pCombinedShapeKeySRV);
+	Safe_Release(m_pShapeKeyWeightsBuffer);
+	Safe_Release(m_pCombinedPositionsSRV);
+	Safe_Release(m_pCombinedNormalsSRV);
 
 }

@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "Cinematic_Manager.h"
 
 #include "GameInstance.h"
@@ -13,6 +13,10 @@
 #include "TriggerBox.h"
 
 #include "UIHUD.h"
+#include "UIBase.h"
+#include "UIScript.h"
+
+#include "UIActionEvent.h"
 
 CCinematicManager::CCinematicManager()
     : m_pGameInstance{ CGameInstance::GetInstance() }
@@ -22,13 +26,15 @@ CCinematicManager::CCinematicManager()
 
 HRESULT CCinematicManager::Initialize()
 {
-	m_pCinematicDatas = CGameManager::GetInstance()->Get_CinematicDataMap();
+    m_pCinematicDatas = CGameManager::GetInstance()->Get_CinematicDataMap();
 
     m_fCinematicTimer = 0.f;
     m_iCurrentCinematicNodeIndex = 0;
     m_iCurrentCinematicID = -1;
     m_bIsCinematicPlaying = false;
     m_bIsCinematicSkip = FALSE;
+
+    m_pUIActionEvent = CUIActionEvent::Create([&](void* pArg) {});
 
     return S_OK;
 }
@@ -65,17 +71,17 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         }
     }
 
-	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
+    for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
         pCinematicObjectPair.second->Priority_Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
 
-	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
+    for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
         pCinematicObjectPair.second->Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
 
-	for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
+    for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
     {
         pCinematicObjectPair.second->Late_Update(fTimeDelta * m_pGameInstance->GetGameSpeedfRatio());
     }
@@ -85,13 +91,30 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         Skip_Cinematic();
     }
 
+    /* Dear. ÎåÄÏû¨Ìõà
+        Script_Action(SCRIPT_ACTION::BEGIN); // Ïä§ÌÅ¨Î¶ΩÌä∏ ÏÇΩÏûÖ ÏûÖÎãàÎã§ Ìò∏Ï∂úÌïòÎ©¥ ÏïåÏïÑÏÑú Îì§Ïñ¥Í∞àÍ≤ÅÎãàÎã§ (ÌòÑÏû¨ ÏãúÎÑ§ÎßàÌã± Ïã§ÌñâÌïòÎ©¥ ÏïåÏïÑÏÑú Îì§Ïñ¥Í∞ÄÍ≥† ÏûàÏñ¥Ïöî)
+        Script_Action(SCRIPT_ACTION::PLAY); // Ïä§ÌÅ¨Î¶ΩÌä∏ Îã§Ïùå ÎåÄÏÇ¨ Ïû¨ÏÉù
+        Script_Action(SCRIPT_ACTION::STOP); // Ïä§ÌÅ¨Î¶ΩÌä∏ Î©àÏ∂îÍ∏∞(ÏïàÎ≥¥Ïù¥Í∏∞)
+        Script_Action(SCRIPT_ACTION::END); // Ïä§ÌÅ¨Î¶ΩÌä∏ Ìï¥Ï†ú (ÌòÑÏû¨ Ïä§ÌÇµ Ï†ÅÏö© ÎêòÍ≥† ÏûàÏäµÎãàÎã§)
+    */
+
+    // Ïä§ÌÅ¨Î¶ΩÌä∏ ÌÖåÏä§Ìä∏
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_N))
+    {
+        Script_Action(SCRIPT_ACTION::PLAY);
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
+    {
+        Script_Action(SCRIPT_ACTION::STOP);
+    }
+
     return S_OK;
 }
 
 HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> FinishedFunc)
-{   
-	auto iter = m_pCinematicDatas->find(iCinematicID);
-	if (iter == m_pCinematicDatas->end())
+{
+    auto iter = m_pCinematicDatas->find(iCinematicID);
+    if (iter == m_pCinematicDatas->end())
         return E_FAIL;
 
     m_fCinematicTimer = 0.f;
@@ -100,6 +123,31 @@ HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> F
     m_pCurrentCinematicDesc = &iter->second;
     m_FinishedCinematic = FinishedFunc;
     m_bIsCinematicPlaying = TRUE;
+
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return S_OK;
+    }
+
+    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
+
+    if (!pTriggerKey)
+        return S_OK;
+
+    pTriggerKey->SetVisibility(VISIBILITY::VISIBLE);
+
+    for (auto& pChild : *pTriggerKey->Get_Children())
+        pTriggerKey->Update_Children(pChild);
+
+
+    m_pGameInstance->Add_Event(TEXT("Cinematic_Skip"), m_pUIActionEvent);
+
+    Script_Action(SCRIPT_ACTION::BEGIN);
+
+    Safe_Release(pHUD);
 
     return S_OK;
 }
@@ -111,7 +159,7 @@ HRESULT CCinematicManager::Emplace_CinematicObject(CCinematicObject* pObject)
 
     m_CinematicObjectsMap.emplace(pObject->Get_ObjectTag(), pObject);
     Safe_AddRef(pObject);
-    
+
     return S_OK;
 }
 
@@ -123,10 +171,10 @@ HRESULT CCinematicManager::Emplace_ActionCamera(const _tchar* strCameraTag)
 
 HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePath)
 {
-    // [V] ∏’¿˙ Ω√≥◊∏∂∆Ω ø¿∫Í¡ß∆Æ∂˚ æ◊º« ƒ´∏ﬁ∂Û∏¶ π–æÓπˆ∏∞¥Ÿ.
-    // [V] πﬁæ∆ø¬ ∆ƒ¿œ∏Ìø° µ˚∂Û json ∆ƒ¿œ¿ª ¿–æÓø¬¥Ÿ.
-    // [V] Ω√≥◊∏∂∆Ω ø¿∫Í¡ß∆ÆøÕ æ◊º«ƒ´∏ﬁ∂Û∏¶ ª˝º∫ π◊ µÓ∑œ«—¥Ÿ.
-    // [V] mapø° ¡˝æÓ≥÷æÓ¡ÿ¥Ÿ.
+    // [V] Î®ºÏ†Ä ÏãúÎÑ§ÎßàÌã± Ïò§Î∏åÏ†ùÌä∏Îûë Ïï°ÏÖò Ïπ¥Î©îÎùºÎ•º Î∞ÄÏñ¥Î≤ÑÎ¶∞Îã§.
+    // [V] Î∞õÏïÑÏò® ÌååÏùºÎ™ÖÏóê Îî∞Îùº json ÌååÏùºÏùÑ ÏùΩÏñ¥Ïò®Îã§.
+    // [V] ÏãúÎÑ§ÎßàÌã± Ïò§Î∏åÏ†ùÌä∏ÏôÄ Ïï°ÏÖòÏπ¥Î©îÎùºÎ•º ÏÉùÏÑ± Î∞è Îì±Î°ùÌïúÎã§.
+    // [V] mapÏóê ÏßëÏñ¥ÎÑ£Ïñ¥Ï§ÄÎã§.
 
     for (auto& pCinematicObject : m_CinematicObjectsMap)
     {
@@ -136,7 +184,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
 
     for (auto& pActionCamera : m_ActionCameraMap)
     {
-     //   Safe_Release(pActionCamera.second);
+        //   Safe_Release(pActionCamera.second);
     }
     m_ActionCameraMap.clear();
 
@@ -154,7 +202,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
 
         if (static_cast<CINEMATICOBJECT_TYPE>(pLevelCinematicObject["eType"].get<_int>()) == CINEMATICOBJECT_TYPE::CINEMATICOBJECT)
         {
-            // Ω√≥◊∏∂∆Ω ø¿∫Í¡ß∆Æ¿œ ∞ÊøÏ, szObjectTag∏¶ PrototypeTag∑Œ ªÁøÎ
+            // ÏãúÎÑ§ÎßàÌã± Ïò§Î∏åÏ†ùÌä∏Ïùº Í≤ΩÏö∞, szObjectTagÎ•º PrototypeTagÎ°ú ÏÇ¨Ïö©
             CCinematicObject::CINEMATICOBJECT_DESC			CinematicModelDesc{};
             CinematicModelDesc.szObjectTag = strObjectName;
             CinematicModelDesc.fSpeedPerSec = 15.f;
@@ -183,7 +231,7 @@ HRESULT CCinematicManager::Load_Level_CinematicObjectData(const _char* szFilePat
         }
         else if (static_cast<CINEMATICOBJECT_TYPE>(pLevelCinematicObject["eType"].get<_int>()) == CINEMATICOBJECT_TYPE::ACTIONCAMERA)
         {
-            // æ◊º« ƒ´∏ﬁ∂Û¿œ ∞ÊøÏ, szObjectTag∏¶ ƒ´∏ﬁ∂Û ≈¬±◊∑Œ ªÁøÎ
+            // Ïï°ÏÖò Ïπ¥Î©îÎùºÏùº Í≤ΩÏö∞, szObjectTagÎ•º Ïπ¥Î©îÎùº ÌÉúÍ∑∏Î°ú ÏÇ¨Ïö©
             CCamera_Free::CAMERA_FREE_DESC			CameraDesc{};
             CameraDesc.fFov = XMConvertToRadians(60.0f);
             CameraDesc.fNear = 0.1f;
@@ -214,6 +262,12 @@ HRESULT CCinematicManager::Skip_Cinematic()
 {
     m_bIsCinematicSkip = TRUE;
 
+    _bool bActive = true;
+    UI_EVENT_ARG_DESC Arg{};
+    Arg.Type = UI_EVENT_ARG_DESC::BOOL;
+    Arg.pData = &bActive;
+    m_pUIActionEvent->Notify(&Arg);
+
     return S_OK;
 }
 
@@ -224,11 +278,14 @@ map<_wstring, CCinematicObject*>* CCinematicManager::Get_CinematicObjectsMap()
 
 HRESULT CCinematicManager::Reset_Cinematic()
 {
+    Reset_UI();
+
     m_bIsCinematicPlaying = FALSE;
     m_bIsCinematicSkip = FALSE;
     while (m_iCurrentCinematicNodeIndex < m_pCurrentCinematicDesc->CinematicNodeTrackList.size())
     {
-        Play_Node(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex]);
+        if (m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex].eState != CINEMATICNODE_STATE::PLAY_SOUND)
+            Play_Node(m_pCurrentCinematicDesc->CinematicNodeTrackList[m_iCurrentCinematicNodeIndex]);
         ++m_iCurrentCinematicNodeIndex;
     }
 
@@ -242,201 +299,290 @@ HRESULT CCinematicManager::Reset_Cinematic()
     return S_OK;
 }
 
+HRESULT CCinematicManager::Reset_UI()
+{
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return S_OK;
+    }
+
+    auto pTriggerKey = pHUD->Get_UIObject(TEXT("Layer_Cinematic"), TEXT("UI_SpaceKey"));
+
+    if (!pTriggerKey)
+        return S_OK;
+
+    pTriggerKey->SetVisibility(VISIBILITY::HIDDEN);
+
+    for (auto& pChild : *pTriggerKey->Get_Children())
+        pTriggerKey->Update_Children(pChild);
+
+    m_pGameInstance->Remove_Event(TEXT("Cinematic_Skip"));
+
+    Script_Action(SCRIPT_ACTION::END);
+
+    Safe_Release(pHUD);
+
+    return S_OK;
+}
+
+void CCinematicManager::Script_Action(SCRIPT_ACTION eAction)
+{
+    auto pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+    if (!pHUD)
+    {
+        Safe_Release(pHUD);
+        return;
+    }
+
+    CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
+
+    if (!pScript)
+        return;
+
+    switch (eAction)
+    {
+    case SCRIPT_ACTION::BEGIN:
+    {
+        pScript->Begin_Script(CGameManager::GetInstance()->Get_ScriptData(to_wstring(m_iCurrentCinematicID)));
+        break;
+    }
+    case SCRIPT_ACTION::PLAY:
+    {
+        pScript->Play_Next_Script();
+        break;
+    }
+    case SCRIPT_ACTION::STOP:
+    {
+        pScript->Stop_Script();
+        break;
+    }
+    case SCRIPT_ACTION::END:
+    {
+        pScript->End_Script();
+        break;
+    }
+    }
+
+    Safe_Release(pHUD);
+}
+
 void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 {
     _tchar szText[MAX_PATH];
     _wstring strObjectName;
     CTriggerBox::TRIGGER_BOX_DESC pTriggerBoxDesc = {};
     list<CGameObject*>* pObjectList = nullptr;
+    _float fVolume;
+    _TCHAR szSoundTag[MAX_PATH];
 
     switch (CinematicNodeDesc.eState)
     {
-        case CINEMATICNODE_STATE::ACTIVE_CINEOBJ:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            strObjectName = szText;
+    case CINEMATICNODE_STATE::ACTIVE_CINEOBJ:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        strObjectName = szText;
 
-            m_CinematicObjectsMap.find(strObjectName)->second->ActiveCinematicObject(CinematicNodeDesc);
-            break;
-        case CINEMATICNODE_STATE::PLAY_CINEOBJ:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            strObjectName = szText;
+        m_CinematicObjectsMap.find(strObjectName)->second->ActiveCinematicObject(CinematicNodeDesc);
+        break;
+    case CINEMATICNODE_STATE::PLAY_CINEOBJ:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        strObjectName = szText;
 
-            m_CinematicObjectsMap.find(strObjectName)->second->PlayCinematicObject(CinematicNodeDesc);
-            break;
-        case CINEMATICNODE_STATE::ACTIVE_CHARACTER:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
-            if (pObjectList != nullptr)
-            {
-                for (auto& pObject : *pObjectList)
-                {
-                    pObject->SetActive(TRUE);
-                }
-            }
-            break;
-        case CINEMATICNODE_STATE::ACTIVE_CAMERA:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            strObjectName = szText;
-
-			m_ActionCameraMap.find(strObjectName)->second->Initialize_CameraAnimationData(CinematicNodeDesc.iActiveIndex);
-            
-			Add_CinematicCameraQueue(strObjectName);
-
-            break;  
-        case CINEMATICNODE_STATE::DEACTIVE_CHARACTER:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-			pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
-            if (pObjectList != nullptr)
-            {
-                for (auto& pObject : *pObjectList)
-                {
-                    pObject->SetActive(FALSE);
-                }
-            }
-            break;
-        case CINEMATICNODE_STATE::DEACTIVE_CAMERA:
-            
-            break;
-        case CINEMATICNODE_STATE::FADE_IN:
+        m_CinematicObjectsMap.find(strObjectName)->second->PlayCinematicObject(CinematicNodeDesc);
+        break;
+    case CINEMATICNODE_STATE::ACTIVE_CHARACTER:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+        if (pObjectList != nullptr)
         {
-			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Intro"));
-            Safe_Release(pHUD);
-
-            break;
-        }
-        case CINEMATICNODE_STATE::FADE_OUT:
-        {
-			CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-            _float fDelay = (_float)CinematicNodeDesc.iActiveIndex;
-            static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Outro"), fDelay);
-            Safe_Release(pHUD);
-
-            break;
-        }
-        case CINEMATICNODE_STATE::PLAY_SOUND:
-
-            break;
-        case CINEMATICNODE_STATE::MOVE_CHARACTER:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
-            if (pObjectList != nullptr)
+            for (auto& pObject : *pObjectList)
             {
-                _int iObjectIndex = 0;
-                for (auto& pObject : *pObjectList)
+                pObject->SetActive(TRUE);
+            }
+        }
+        break;
+    case CINEMATICNODE_STATE::ACTIVE_CAMERA:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        strObjectName = szText;
+
+        m_ActionCameraMap.find(strObjectName)->second->Initialize_CameraAnimationData(CinematicNodeDesc.iActiveIndex);
+
+        Add_CinematicCameraQueue(strObjectName);
+
+        break;
+    case CINEMATICNODE_STATE::DEACTIVE_CHARACTER:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+        if (pObjectList != nullptr)
+        {
+            for (auto& pObject : *pObjectList)
+            {
+                pObject->SetActive(FALSE);
+            }
+        }
+        break;
+    case CINEMATICNODE_STATE::DEACTIVE_CAMERA:
+
+        break;
+    case CINEMATICNODE_STATE::FADE_IN:
+    {
+        Reset_UI();
+        CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+        static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Intro"));
+        Safe_Release(pHUD);
+
+        break;
+    }
+    case CINEMATICNODE_STATE::FADE_OUT:
+    {
+
+        CUIHUD* pHUD = static_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+        _float fDelay = (_float)CinematicNodeDesc.iActiveIndex;
+        static_cast<CUIHUD*>(pHUD)->Anim_Play(TEXT("Layer_Cinematic"), TEXT("Cinematic_Overlay"), TEXT("Cinema_Outro"), fDelay);
+        Safe_Release(pHUD);
+
+        break;
+    }
+    case CINEMATICNODE_STATE::PLAY_SOUND:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szSoundTag);
+        fVolume = (_float)CinematicNodeDesc.iActiveIndex / 10.f;
+        m_pGameInstance->Manager_PlaySound(szSoundTag, CHANNELID::EFFECT, fVolume);
+        break;
+    case CINEMATICNODE_STATE::MOVE_CHARACTER:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), szText);
+        if (pObjectList != nullptr)
+        {
+            _int iObjectIndex = 0;
+            for (auto& pObject : *pObjectList)
+            {
+                pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vPosition), 1.f));
+                static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(false);
+                static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
+
+                if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 0.f)
                 {
-					pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vPosition), 1.f));
-                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(false);
+                    pObject->GetTransform()->Rotation(
+                        CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.x,
+                        CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.y,
+                        CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.z);
+                }
+                else if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 1.f)
+                {
+                    _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation), 1.f);
+                    pObject->GetTransform()->LookAt(vLookAt);
+                }
+
+                ++iObjectIndex;
+
+                static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
+            }
+        }
+        break;
+    case CINEMATICNODE_STATE::MOVE_NPC:
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
+        pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), TEXT("Layer_Npc"));
+        if (pObjectList != nullptr)
+        {
+            for (auto& pObject : *pObjectList)
+            {
+                if (dynamic_cast<CNpc*>(pObject)->Get_NpcDesc()->iNpcID == CinematicNodeDesc.iActiveIndex)
+                {
+                    pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[0].vPosition), 1.f));
+
                     static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
 
-                    if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 0.f)
+                    if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 0.f)
                     {
                         pObject->GetTransform()->Rotation(
-                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.x,
-                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.y,
-                            CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.z);
+                            CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z);
                     }
-					else if (CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation.w == 1.f)
+                    else if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 1.f)
                     {
-                        _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[iObjectIndex].vRotation), 1.f);
+                        _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[0].vRotation), 1.f);
                         pObject->GetTransform()->LookAt(vLookAt);
                     }
-                    
-                    ++iObjectIndex;
 
-                    static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
                 }
             }
-            break;
-        case CINEMATICNODE_STATE::MOVE_NPC:
-            CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
-            pObjectList = m_pGameInstance->GetAllObejctToLayer(m_pGameInstance->GetCurrentLevelID(), TEXT("Layer_Npc"));
-            if (pObjectList != nullptr)
-            {
-                for (auto& pObject : *pObjectList)
-                {
-                    if (dynamic_cast<CNpc*>(pObject)->Get_NpcDesc()->iNpcID == CinematicNodeDesc.iActiveIndex)
-                    {
-                        pObject->GetTransform()->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CinematicNodeDesc.CinematicIndexDataList[0].vPosition), 1.f));
+        }
+        break;
+    case CINEMATICNODE_STATE::CREATE_TRIGGERBOX:
+        pTriggerBoxDesc.iTriggerCode = CinematicNodeDesc.iActiveIndex;
+        pTriggerBoxDesc.eColType = COLLIDER::OBB;
+        pTriggerBoxDesc.vScale = { CinematicNodeDesc.CinematicIndexDataList[0].vScale.x,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vScale.y,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vScale.z };
+        pTriggerBoxDesc.vRotation = { CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z };
+        pTriggerBoxDesc.vPosition = { CinematicNodeDesc.CinematicIndexDataList[0].vPosition.x,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vPosition.y,
+                            CinematicNodeDesc.CinematicIndexDataList[0].vPosition.z };
+        pTriggerBoxDesc.fDelayTime = -1.f;
 
-                        static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Position(pObject->GetTransform()->Get_State(STATE::POSITION));
+        if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+            ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Trigger"), &pTriggerBoxDesc)))
+        {
+            int a = 10;
+        }
 
-                        if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 0.f)
-                        {
-                            pObject->GetTransform()->Rotation(
-                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z);
-                        }
-                        else if (CinematicNodeDesc.CinematicIndexDataList[0].vRotation.w == 1.f)
-                        {
-                            _vector vLookAt = XMVectorSetW(XMLoadFloat4(&CinematicNodeDesc.CinematicIndexDataList[0].vRotation), 1.f);
-                            pObject->GetTransform()->LookAt(vLookAt);
-                        }
+        break;
+    case CINEMATICNODE_STATE::CREATE_TARGETLIGHT:
+        CGameManager::GetInstance()->Change_ShaderSetting(static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID()), CinematicNodeDesc.iActiveIndex);
+        break;
+        // 13Î≤à
+    case CINEMATICNODE_STATE::SET_CINEMATICLIGHT:
+        CGameManager::GetInstance()->Set_CinematicLights(CinematicNodeDesc.iActiveIndex);
+        break;
+        // 14Î≤à
+    case CINEMATICNODE_STATE::LOCKON_START:
+        CGameManager::GetInstance()->Force_Lockon(m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
+        break;
+        // 15Î≤à
+    case CINEMATICNODE_STATE::LOCKON_END:
+        CGameManager::GetInstance()->Force_LockOff();
+        break;
+        // 16Î≤à
+    case CINEMATICNODE_STATE::BAKE_VILLAGE_SHADOW:
+        m_pGameInstance->ADD_DelayFunction(TEXT("Bake_Shadow"), 1.f, [&]() {
+            /*Í∑∏Î¶ºÏûê ÏÑ∏ÌåÖÎèÑ Ïó¨Í∏∞ÏÑú Ìï¥Ï£ºÏûê. */
+            STATIC_SHADOW_DESC		StaticShadowDesc{};
+            StaticShadowDesc.fFar = 2000.f;
+            StaticShadowDesc.fNear = 0.1f;
+            StaticShadowDesc.vAt = _float4(913.586f, 105.541f, 1456.260f, 1.f);
 
-                    }
-                }
-            }
-            break;
-        case CINEMATICNODE_STATE::CREATE_TRIGGERBOX:
-            pTriggerBoxDesc.iTriggerCode = CinematicNodeDesc.iActiveIndex;
-            pTriggerBoxDesc.eColType = COLLIDER::OBB;
-            pTriggerBoxDesc.vScale = { CinematicNodeDesc.CinematicIndexDataList[0].vScale.x,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vScale.y,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vScale.z };
-            pTriggerBoxDesc.vRotation = { CinematicNodeDesc.CinematicIndexDataList[0].vRotation.x,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.y,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vRotation.z };
-            pTriggerBoxDesc.vPosition = { CinematicNodeDesc.CinematicIndexDataList[0].vPosition.x,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vPosition.y,
-                                CinematicNodeDesc.CinematicIndexDataList[0].vPosition.z };
-            pTriggerBoxDesc.fDelayTime = -1.f;
+            if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
+                return E_FAIL;
 
-            if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
-                ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Trigger"), &pTriggerBoxDesc)))
-            {
-                int a = 10;
-            }
-
-            break;
-        case CINEMATICNODE_STATE::CREATE_TARGETLIGHT:
-            CGameManager::GetInstance()->Change_ShaderSetting(static_cast<LEVEL>(m_pGameInstance->GetCurrentLevelID()), CinematicNodeDesc.iActiveIndex);
-            break;
-        // 13π¯
-        case CINEMATICNODE_STATE::SET_CINEMATICLIGHT:
-            CGameManager::GetInstance()->Set_CinematicLights(CinematicNodeDesc.iActiveIndex);
-            break;
-        // 14π¯
-        case CINEMATICNODE_STATE::LOCKON_START:
-            CGameManager::GetInstance()->Force_Lockon(m_pGameInstance->Get_TimeDelta(TEXT("GameLoopTime")));
-            break;
-        // 15π¯
-        case CINEMATICNODE_STATE::LOCKON_END:
-            CGameManager::GetInstance()->Force_LockOff();
-            break;
-        // 16π¯
-        case CINEMATICNODE_STATE::BAKE_VILLAGE_SHADOW:
-            m_pGameInstance->ADD_DelayFunction(TEXT("Bake_Shadow"), 1.f, [&](){
-                /*±◊∏≤¿⁄ ºº∆√µµ ø©±‚º≠ «ÿ¡÷¿⁄. */
-                STATIC_SHADOW_DESC		StaticShadowDesc{};
-                StaticShadowDesc.fFar = 2000.f;
-                StaticShadowDesc.fNear = 0.1f;
-                StaticShadowDesc.vAt = _float4(913.586f, 105.541f, 1456.260f, 1.f);
-
-                if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
-                    return E_FAIL;
-
-                m_pGameInstance->Bake_StaticShadow();
-                m_pGameInstance->Clear_StaticShadowObjects();
+            m_pGameInstance->Bake_StaticShadow();
+            m_pGameInstance->Clear_StaticShadowObjects();
             });
-            break;
+        break;
+        // 17Î≤à
+    case CINEMATICNODE_STATE::PLAY_BGM:
+        m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+        CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szSoundTag);
+        fVolume = (_float)CinematicNodeDesc.iActiveIndex / 10.f;
+        m_pGameInstance->Manager_PlayBGM(szSoundTag, fVolume);
+        break;
+        // 18Î≤à
+    case CINEMATICNODE_STATE::PLAY_BOSSBGM:
+        m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+        CGameManager::GetInstance()->Play_BossBGM(CinematicNodeDesc.iActiveIndex / 10, CinematicNodeDesc.iActiveIndex % 10);
+        break;
     }
 }
 
 void CCinematicManager::Add_CinematicCameraQueue(_wstring szText)
 {
-	m_CinematicCameraQueue.push(szText);
+    m_CinematicCameraQueue.push(szText);
 }
 
 void CCinematicManager::Active_CinematicCameraQueue()
@@ -445,12 +591,22 @@ void CCinematicManager::Active_CinematicCameraQueue()
         return;
 
     _float4x4 PrePosMatrix = {};
-    CCamera* pCamera = nullptr;
+    CCamera* pCamera = nullptr; 
 
     m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
     pCamera = m_pGameInstance->GetMainCamera();
-	m_CinematicCameraQueue.pop();
+    m_CinematicCameraQueue.pop();
     Safe_Release(pCamera);
+
+    //m_pGameInstance->ADD_FrameFinalFunction([&]() {
+    //    if (m_CinematicCameraQueue.empty())
+    //        return;
+
+    //    m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
+    //    pCamera = m_pGameInstance->GetMainCamera();
+    //    m_CinematicCameraQueue.pop();
+    //    Safe_Release(pCamera);
+    //}, 6);
 }
 
 CCinematicManager* CCinematicManager::Create()
@@ -483,4 +639,8 @@ void CCinematicManager::Free()
     m_ActionCameraMap.clear();
 
     Safe_Release(m_pGameInstance);
+
+    m_pGameInstance->Remove_Event(TEXT("Cinematic_Skip"));
+
+    Safe_Release(m_pUIActionEvent);
 }

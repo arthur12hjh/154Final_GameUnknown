@@ -173,8 +173,14 @@ void CBody_Player::Late_Update(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 
-	if(fDist < 100.f)
-		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+	if (fDist < 100.f)
+	{
+		CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pParent);
+		if (pPlayer)
+		{
+			m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+		}
+	}
 }
 
 HRESULT CBody_Player::Render()
@@ -300,8 +306,8 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-	OBBDesc.vSize = _float3(0.3f, 0.7f, 0.3f);
-	OBBDesc.vCenter = _float3(0.f, 0.15f, 0.f);
+	OBBDesc.vSize = _float3(0.3f, 2.f, 0.3f);
+	OBBDesc.vCenter = _float3(0.f, 0.8f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Collider_OBB"),

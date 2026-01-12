@@ -115,8 +115,9 @@ void CBullet_Scarlet::Late_Update(_float fTimeDelta)
 	}
 	else
 	{
-		//m_pEffect->Set_Dead(true);
 		Set_Dead(true);
+		if (nullptr != m_pEffect && BULLET_TYPE::PROJECTILE == m_eBulletType)
+			m_pEffect->End();
 	}
 }
 
@@ -207,8 +208,11 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 		DummySkill.eProPerty = m_pSkillData->eProPerty;
 		pDamageDesc.pSkillData = &DummySkill;
 	}
-	else
+	else {
 		Set_Dead(true);
+		if (nullptr != m_pEffect && BULLET_TYPE::PROJECTILE == m_eBulletType)
+			m_pEffect->End();
+	}
 
 	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
 	if (pCharacter) {
@@ -258,6 +262,4 @@ CGameObject* CBullet_Scarlet::Clone(void* pArg)
 void CBullet_Scarlet::Free()
 {
 	__super::Free();
-	if (nullptr != m_pEffect && BULLET_TYPE::PROJECTILE == m_eBulletType)
-		m_pEffect->End();
 }

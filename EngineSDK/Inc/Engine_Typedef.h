@@ -21,7 +21,7 @@ namespace Engine
 	typedef		wchar_t						_tchar;
 
 	typedef		float						_float;
-	typedef		double						_double;
+	typedef		float						_float;
 	typedef		wstring						_wstring;
 
 	typedef		XMINT2						_int2;

@@ -110,10 +110,10 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
-	{
-		CGameManager::GetInstance()->Play_Cinematic(126);
-	}
+	//if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_X))
+	//{
+	//	CGameManager::GetInstance()->Play_Cinematic(126);
+	//}
 
 	if (m_isOverlay && m_pHUD)
 	{
@@ -591,12 +591,25 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 		return E_FAIL;
 	
 	pTriggerBoxDesc.iTriggerCode = 123;
-	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 362.814f };
+	pTriggerBoxDesc.vPosition = { 684.761f, 31.453f, 383.506f };
 
 	//  도로롱 조우
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
+	
+	if (CGameManager::GetInstance()->GetLevelTransportIndex() == 2)
+	{
+		pTriggerBoxDesc.iTriggerCode = 127;
+		pTriggerBoxDesc.vPosition = { 812.065f, 98.135f, 1517.918f };
+		pTriggerBoxDesc.vScale = { 3.f, 3.f, 3.f };
+
+		//  도로롱 조우
+		if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &pTriggerBoxDesc)))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }

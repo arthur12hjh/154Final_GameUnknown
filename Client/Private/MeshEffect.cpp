@@ -107,9 +107,6 @@ void CMeshEffect::Update(_float fTimeDelta)
 		m_isDead = true;
 		return;
 	}
-	if (m_bisEnd) {
-		m_tData.fColor.w = Lerp(m_tData.fColor.w , 0.f, m_tData.fEndTime - m_fTime);
-	}
 }
 
 void CMeshEffect::Late_Update(_float fTimeDelta)
@@ -161,9 +158,10 @@ HRESULT CMeshEffect::Render_MotionBlur()
 	return S_OK;
 }
 
-void CMeshEffect::End(_int iTime)
+void CMeshEffect::End(_float fTime)
 {
-	m_tData.fEndTime = m_fTime + iTime;
+	if (0 >= m_tData.fEndTime || (0 < m_tData.fEndTime && m_tData.fEndTime >= m_fTime + fTime))
+		m_tData.fEndTime = m_fTime + fTime;
 	m_bisEnd = true;
 }
 

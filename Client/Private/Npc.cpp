@@ -64,8 +64,6 @@ HRESULT CNpc::Initialize(void* pArg)
 void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
-    if (5 == m_NpcDesc->iNpcID)
-        m_pDropCom->DropRewardItem();
 
     if (m_pGameManager->GetLevelTransportIndex() == 2 && m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && !m_isReturnDororong)
     {

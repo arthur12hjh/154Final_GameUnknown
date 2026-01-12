@@ -30,6 +30,12 @@ HRESULT CPlayer_GigasLinkAttackState::Initialize(void* pArg)
 
     m_pGameInstance->Active_RadialBlur(1.1f, 16, 0.66f);
 
+    CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+    CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+        CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+        }, 4);
+
     return S_OK;
 }
 

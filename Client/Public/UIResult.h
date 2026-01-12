@@ -65,6 +65,8 @@ private:
 	_float m_fGlowPower{ 15.f };
 	_float m_fScale{ 5.f };
 
+	_bool m_bActiveSpace{ false };
+
 private:
 	HRESULT Render_Text();
 

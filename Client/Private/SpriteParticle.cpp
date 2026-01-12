@@ -183,11 +183,12 @@ void CSpriteParticle::Play()
 	m_bisStop = false;
 }
 
-void CSpriteParticle::End()
+void CSpriteParticle::End(_float fTime)
 {
 	if (0 == m_fTime)
 		m_fTime = 0.1f;
-	m_tData.fEndTime = m_fTime;
+	if (0 >= m_tData.fEndTime || (0 < m_tData.fEndTime && m_tData.fEndTime >= m_fTime + fTime))
+		m_tData.fEndTime = m_fTime + fTime;
 }
 
 

@@ -67,6 +67,23 @@
                 "iActiveIndex": 0,
                 "szObjectTag": "Layer_Player"
             },
+            {
+          "eState": 9,
+          "fTrackPosition": 18.3,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player",
+          "CinematicIndexDataList": [
+            {
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Player",
+              "vPosition": [ 684.761, 31.453, 383.506 ],
+              "vRotation": [ 684.761, 31.453, 384.506, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
+            }
+          ]
+        },
 	{
                 "eState": 7,
                 "fTrackPosition": 18.4,

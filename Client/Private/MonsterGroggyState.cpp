@@ -29,6 +29,7 @@ void CMonsterGroggyState::Start(void* pArg, CState* pPreState)
     m_bIsFinished = false;
     m_szAnimationName = "Result_State_Groggy_S";
     pNaytiba->Set_Animation(m_szAnimationName.c_str(), false);
+    pNaytiba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
 }
 
 void CMonsterGroggyState::Update(_float fTimeDelta)
@@ -65,6 +66,7 @@ void CMonsterGroggyState::Update(_float fTimeDelta)
 void CMonsterGroggyState::End()
 {
     CNaytiba* pNaytiba = static_cast<CNaytiba*>(m_pOwner);
+    pNaytiba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::END);
     pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 }
 

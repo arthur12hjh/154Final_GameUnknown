@@ -12,7 +12,8 @@ private:
 
 public:
 	HRESULT Initialize(const class CModel* pModel, binMeshMorphChannel* pMorphChannel);
-	void Update_ShapeMorphing(class CModel* pModel, _float fCurrentTrackPosition);
+	void Update_ShapeMorphing(_float fCurrentTrackPosition, const MORPH_KEYFRAME*& pOutCurrent);
+
 
 	_char* Get_Name() { return m_szName; }
 	void Set_ShapeIndex(_uint iIndex) { m_iShapeIndex = iIndex; }
