@@ -58,6 +58,14 @@ HRESULT CMotionBlur::Initialize()
 
 HRESULT CMotionBlur::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strSceneRTTag, const _wstring& strReturnRTTag)
 {
+    if (false == m_isActive)
+    {
+        if (FAILED(m_pGameInstance->Clear_MRT(TEXT("MRT_MotionBlur"))))
+            return E_FAIL;
+
+        return S_OK;
+    }
+
     /* 블러 X 처리 */
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_MotionBlur"))))
         return E_FAIL;
