@@ -349,10 +349,7 @@ void CNpc::Npc_Action()
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     switch (m_eNpcState)
     {
@@ -465,14 +462,16 @@ void CNpc::Change_Camera()
     vPos.y += m_NpcDesc->vCamTargetViewPosOffset.y;
     vPos.z += m_NpcDesc->vCamTargetViewPosOffset.z;
 
-    _vector vPrevLook = m_pGameInstance->GetMainCamera()->GetTransform()->Get_State(STATE::LOOK);
+    auto pPlayerCam = m_pGameInstance->GetMainCamera();
+    _vector vPrevLook = pPlayerCam->GetTransform()->Get_State(STATE::LOOK);
 
-    auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
+    auto pPlayer = m_pGameManager->GetGameCharacter();
 
     if (!pPlayer)
         return;
 
     pPlayer->SetActive(false);
+    Safe_Release(pPlayerCam);
 
     m_pGameInstance->SetMainCamera(TEXT("NpcCamera"));
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
@@ -509,26 +508,19 @@ void CNpc::Change_Camera()
 void CNpc::Return_Camera()
 {
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
-
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
     if (!pPlayer)
-    {
-        Safe_Release(pPlayer);
         return;
-    }
 
     pPlayer->SetActive(true);
-
     Safe_Release(pPlayer);
 
     pNpcCamera->ReverseCameraAnimation();
+    Safe_Release(pNpcCamera);
 }
 
 CNpc* CNpc::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

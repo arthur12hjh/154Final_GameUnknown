@@ -290,8 +290,6 @@ HRESULT CCinematicManager::Reset_Cinematic()
     }
 
     m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
-    CCamera* pCamera = m_pGameInstance->GetMainCamera();
-    Safe_Release(pCamera);
 
     if (m_FinishedCinematic)
         m_FinishedCinematic();
