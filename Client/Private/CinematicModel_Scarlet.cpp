@@ -361,6 +361,7 @@ HRESULT CCinematicModel_Scarlet::Initialize_Cinematic_Scarlet_FirstMeet()
 	m_pBodyModelCom->Set_Animation("MV_Nikke_ScarletVolt_1stMeet_NA_961_01_05", FALSE, 2.f, 0.f, TRUE);
 	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(741.467f, 2.f, 646.534f, 1.f));
 	m_pTransformCom->LookAt(XMVectorSet(741.467f, 2.f, 636.534f, 1.f));
+	static_cast<CModel*>(static_cast<CCinematicPartFacial*>(Find_PartObject(TEXT("Part_Face")))->Find_Component(TEXT("Com_Model")))->Set_MorphAnimation("ScarletVolt_1stMeet_Scarlet_Curves", TRUE, 1.2f, 0.f, FALSE, -1.f, 26722.f);
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Weapon")))->SetActive(TRUE);
 	static_cast<CCinematicPartBody*>(Find_PartObject(TEXT("Part_Scabbard")))->SetActive(TRUE);
 
@@ -437,6 +438,26 @@ HRESULT CCinematicModel_Scarlet::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDe
 {
 	m_fMoveTime += fTimeDelta;
 	_bool isFinished = Play_Animation(fTimeDelta, m_pTransformCom, 1.f);
+
+
+	_float fCurrentMorphTrackPosition = m_pFacial->Get_fCurrentMorphTrackPosition();
+
+	if (fCurrentMorphTrackPosition >= 32340
+		&& fCurrentMorphTrackPosition < 46159)
+	{
+		m_pFacial->Set_MorphTrackPosition(46159);
+	}
+	else if (fCurrentMorphTrackPosition >= 56512
+		&& fCurrentMorphTrackPosition < 60213)
+	{
+		m_pFacial->Set_MorphTrackPosition(60213);
+	}
+	else if (fCurrentMorphTrackPosition >= 78650
+		&& fCurrentMorphTrackPosition < 79917)
+	{
+		m_pFacial->Set_MorphTrackPosition(79917);
+	}
+
 
 	if (isFinished)
 	{

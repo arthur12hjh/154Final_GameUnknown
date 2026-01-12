@@ -108,11 +108,11 @@ HRESULT CImGuiManager::ADD_ImGuiObject()
 #pragma endregion
 
 #pragma region CameraActionInserter
-	auto pCameraActionInserter = CCameraActionInserter::Create(m_pDevice, m_pContext);
-	if (nullptr == pCameraActionInserter)
-		return E_FAIL;
+	//auto pCameraActionInserter = CCameraActionInserter::Create(m_pDevice, m_pContext);
+	//if (nullptr == pCameraActionInserter)
+	//	return E_FAIL;
 
-	m_ImGuis.emplace(TEXT("ImGui_CameraActionInserter"), pCameraActionInserter);
+	//m_ImGuis.emplace(TEXT("ImGui_CameraActionInserter"), pCameraActionInserter);
 #pragma endregion
 
 #pragma region CameraActionInserter

@@ -23,6 +23,7 @@ public:
 	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
 
 	_float2 Calc_CamVelocity();
+	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
 
 #ifdef _DEBUG
 	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) override;
@@ -35,6 +36,7 @@ private:
 	_float m_fObjectBlurScale = { 1.45f };
 	_float m_fBias = { 0.8f };
 	_uint   m_iSampleCount = { 16 };
+	_bool  m_isActive = { true };
 public:
 	static CMotionBlur* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

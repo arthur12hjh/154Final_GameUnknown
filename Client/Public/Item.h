@@ -53,6 +53,7 @@ protected:
 	_bool							m_bIsLerpAnimation = { false };
 	_float2							m_fLerpTime = { 0.f, 1.f };
 	_bool							m_isHemiSphere = { false };
+	_float3							m_vParentLook = {};
 
 protected:
 	virtual HRESULT					Begin_OverlapCallBack() override;
