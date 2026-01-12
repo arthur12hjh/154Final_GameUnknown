@@ -82,9 +82,9 @@ HRESULT CCameraManager::SetMainCamera(const WCHAR* szCameraTag, _float4x4* pPreC
 
         CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
 
-        CGameInstance::GetInstance()->ADD_FrameFinalFunction(TEXT("MotionBlurOn"), [&]() {
+        CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
             CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
-        }, 3);
+        }, 2);
 
         if (nullptr != pPreCameraMatrix)
         {

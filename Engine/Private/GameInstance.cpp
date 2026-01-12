@@ -399,20 +399,20 @@ void CGameInstance::ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTim
 	m_pTimer_Manager->ADD_DelayFunction(szTimerName, fAfterTime, Function);
 }
 
-void CGameInstance::ADD_FrameFinalFunction(const WCHAR* szFunctionTag, function<void()> Function, _uint iFrame)
+void CGameInstance::ADD_FrameFinalFunction(function<void()> Function, _uint iFrame)
 {
-	m_FrameFinalFunctions.emplace(szFunctionTag, make_pair(Function, iFrame));
+	m_FrameFinalFunctions.push_back(make_pair(Function, iFrame));
 }
 
 void CGameInstance::Execute_FrameFinalFunctions()
 {
 	for (auto iter = m_FrameFinalFunctions.begin(); iter != m_FrameFinalFunctions.end();)
 	{
-		iter->second.second--;
+		iter->second--;
 
-		if (iter->second.second <= 0)
+		if (iter->second <= 0)
 		{
-			iter->second.first();
+			iter->first();
 			iter = m_FrameFinalFunctions.erase(iter);
 		}
 
