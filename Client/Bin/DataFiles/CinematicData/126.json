@@ -49,16 +49,34 @@
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 0.7,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_03_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 1.0,
           "iActiveIndex": 1202,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 3.197,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_03B_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 5.0,
           "iActiveIndex": 1203,
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 6.145,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_05_VO.wav"
         },
         {
           "eState": 3,
@@ -71,6 +89,12 @@
           "fTrackPosition": 13.0,
           "iActiveIndex": 1205,
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 13.89,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_06_VO.wav"
         },
         {
           "eState": 3,
@@ -97,6 +121,12 @@
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 23.96,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_07_VO.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 26.0,
           "iActiveIndex": 1210,
@@ -107,6 +137,12 @@
           "fTrackPosition": 30.0,
           "iActiveIndex": 1211,
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 30.478,
+          "iActiveIndex": 30,
+          "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_08_VO.wav"
         },
         {
           "eState": 3,
