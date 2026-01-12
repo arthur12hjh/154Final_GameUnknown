@@ -90,8 +90,12 @@ void CBullet_Rock::Late_Update(_float fTimeDelta)
 		m_pGameInstance->ADD_Collider(m_pColliderCom);
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
-	else
+	else {
 		Set_Dead(true);
+		if (nullptr != m_pEffect) {
+			m_pEffect->End();
+		}
+	}
 }
 
 HRESULT CBullet_Rock::Render()
@@ -256,8 +260,4 @@ CGameObject* CBullet_Rock::Clone(void* pArg)
 void CBullet_Rock::Free()
 {
 	__super::Free();
-	if (nullptr != m_pEffect) {
-		m_pEffect->End();
-	}
-	
 }
