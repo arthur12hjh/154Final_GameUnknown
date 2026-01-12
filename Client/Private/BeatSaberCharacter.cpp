@@ -323,6 +323,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				}
 
 
+				m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 				EffectDesc.fRotationPerSec = 1.f;
 				EffectDesc.fSpeedPerSec = 1.f;

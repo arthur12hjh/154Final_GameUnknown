@@ -591,7 +591,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Trigger(const _wstring& strLayerTag)
 		return E_FAIL;
 	
 	pTriggerBoxDesc.iTriggerCode = 123;
-	pTriggerBoxDesc.vPosition = { 678.401f, 35.450f, 362.814f };
+	pTriggerBoxDesc.vPosition = { 684.761f, 31.453f, 383.506f };
 
 	//  도로롱 조우
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
