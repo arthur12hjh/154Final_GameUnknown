@@ -591,12 +591,22 @@ void CCinematicManager::Active_CinematicCameraQueue()
         return;
 
     _float4x4 PrePosMatrix = {};
-    CCamera* pCamera = nullptr;
+    CCamera* pCamera = nullptr; 
 
     m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
     pCamera = m_pGameInstance->GetMainCamera();
     m_CinematicCameraQueue.pop();
     Safe_Release(pCamera);
+
+    //m_pGameInstance->ADD_FrameFinalFunction([&]() {
+    //    if (m_CinematicCameraQueue.empty())
+    //        return;
+
+    //    m_pGameInstance->SetMainCamera(m_CinematicCameraQueue.front().c_str(), &PrePosMatrix);
+    //    pCamera = m_pGameInstance->GetMainCamera();
+    //    m_CinematicCameraQueue.pop();
+    //    Safe_Release(pCamera);
+    //}, 6);
 }
 
 CCinematicManager* CCinematicManager::Create()

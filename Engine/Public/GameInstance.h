@@ -414,7 +414,7 @@ public:
 	void							ComputeLoopTime(GAMELOOP_TYPE eType);
 #endif
 	// 프레임의 맨 마지막에 무조건 호출후 방출 
-	void							ADD_FrameFinalFunction(const WCHAR* szFunctionTag, function<void()> Function, _uint iFrame);
+	void							ADD_FrameFinalFunction(function<void()> Function, _uint iFrame);
 	void							Execute_FrameFinalFunctions();
 
 private:
@@ -450,7 +450,7 @@ private:
 #pragma endregion
 
 #pragma region Reserved Function
-	map <_wstring, pair<function<void()>, _uint>> m_FrameFinalFunctions = {};
+	list<pair<function<void()>, _uint>> m_FrameFinalFunctions = {};
 #pragma endregion
 
 #pragma region Game System
