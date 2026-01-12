@@ -2,11 +2,11 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 1.0,
+                "fNumData01": 4.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 17,
+                "iNotifyKeyFrame": 16,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,

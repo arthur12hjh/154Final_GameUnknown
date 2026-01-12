@@ -263,7 +263,7 @@ HRESULT CNpc::Ready_Components()
             TEXT("Com_DropCom"), reinterpret_cast<CComponent**>(&m_pDropCom), &DropComDesc)))
             return E_FAIL;
 
-        m_pNpcEvent = CNpcEvent::Create([&](void* pArg) {});
+        m_pNpcEvent = CNpcEvent::Create(nullptr);
         m_pGameInstance->Add_Event(TEXT("Go_DororongSaber"), m_pNpcEvent);
     }
 
@@ -470,10 +470,7 @@ void CNpc::Change_Camera()
     auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
 
     if (!pPlayer)
-    {
-        Safe_Release(pPlayer);
         return;
-    }
 
     pPlayer->SetActive(false);
 
@@ -481,10 +478,7 @@ void CNpc::Change_Camera()
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 
     if (!pNpcCamera)
-    {
-        Safe_Release(pNpcCamera);
         return;
-    }
 
     pNpcCamera->SetTargetNpc(this);
     pNpcCamera->SetPrevLook(vPrevLook);
@@ -563,7 +557,9 @@ void CNpc::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pDropCom);
+    if(m_pDropCom)
+        Safe_Release(m_pDropCom);
+
     Safe_Release(m_pAIController);
     Safe_Release(m_pColliderCom);
     Safe_Release(m_pInteractionCom);

@@ -9,10 +9,8 @@
 #include "GameInstance.h"
 
 CCharacter::CCharacter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-	CEntity(pDevice, pContext),
-	m_pGameManager(CGameManager::GetInstance())
+	CEntity(pDevice, pContext)
 {
-	Safe_AddRef(m_pGameManager);
 }
 
 CCharacter::CCharacter(const CCharacter& Prototype) :

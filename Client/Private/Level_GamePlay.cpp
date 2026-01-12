@@ -52,8 +52,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 	//	return E_FAIL;
@@ -425,7 +425,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;*/
 	
-	/*Desc.iMonsterID = 3;
+	Desc.iMonsterID = 9;
 	{
 		for (_uint i = 0; i < 10; ++i)
 		{
@@ -434,7 +434,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 				return E_FAIL;
 		}
-	}*/
+	}
 
 	//Desc.iMonsterID = 3;
 	//{

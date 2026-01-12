@@ -51,7 +51,9 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     DEFAULT_DAMAGE_DESC Desc;
     Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
-    m_Desc->pLinkAttackTarget->Damaged(&Desc);
+
+    if(m_Desc->pLinkAttackTarget)
+        m_Desc->pLinkAttackTarget->Damaged(&Desc);
 
     // 플레이어의 애니메이션을 변경해준다.
     m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_S", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);

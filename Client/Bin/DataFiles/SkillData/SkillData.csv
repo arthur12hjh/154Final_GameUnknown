@@ -1,4 +1,4 @@
-¤·,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePulse Count,Dir,Skill Type  ,Properity
+¤¸,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePulse Count,Dir,Skill Type  ,Properity
 1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,0,1,0,11
 2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,0,4,3,139
 3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,0,1,0,11
@@ -75,9 +75,9 @@
 633,M_SunFlower_Spit,None,None,20,20,"1,1,2",1,0,4,0,11
 731,M_Antlion_PawAttack,None,None,21,7,"1,1,7",1,0,0,0,11
 732,M_AntlionC_SwingTriple,None,None,22,7,"1,1,7",3,0,0,0,11
-741,M_Tentacle_Summoned,None,None,22,14,"1,1,7",3,0,0,4,11
-742,M_Tentacle_Swing,None,None,22,14,"1,1,7",3,0,0,0,11
-743,M_Tentacle_Stamp,None,None,22,14,"1,1,7",3,0,0,0,11
+741,M_Tentacle_Summoned,None,None,22,11,"1,1,7",3,0,0,4,11
+742,M_Tentacle_Swing,None,None,22,11,"1,1,7",3,0,0,0,11
+743,M_Tentacle_Stamp,None,None,22,11,"1,1,7",3,0,0,0,11
 751,M_DroidTurret_Shot,None,None,22,30,"1,1,7",3,0,0,0,11
 752,M_DroidTurret_ShotDebuff,None,None,22,30,"1,1,7",3,0,0,0,11
 753,M_DroidTurret_ShotDozen,None,None,22,30,"1,1,7",3,0,0,0,11

@@ -7,10 +7,8 @@
 
 
 CProb_Interaction::CProb_Interaction(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
-    CActor(pDevice, pContext),
-    m_pGameManager(CGameManager::GetInstance())
+    CActor(pDevice, pContext)
 {
-    Safe_AddRef(m_pGameManager);
 }
 
 CProb_Interaction::CProb_Interaction(const CProb_Interaction& Prototype) :

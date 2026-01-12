@@ -311,6 +311,4 @@ CGameObject* CCamera_Npc::Clone(void* pArg)
 void CCamera_Npc::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pTargetNpc);
 }
