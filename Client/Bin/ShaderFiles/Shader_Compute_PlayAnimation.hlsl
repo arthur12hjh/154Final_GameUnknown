@@ -351,7 +351,7 @@ void LocalMatrices(uint3 gid : SV_GroupID,
         float4x4 matPrevLocal = PrevLocalMatrix[iBoneIndex].BoneLocalTransformMatrix;
 
         float3 vScaleLocal = ScaleLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
-        float4 vRotationLocal = RotationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
+        float4 vRotationLocal = RotationQuaternionLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
         float3 vTranslationLocal = TranslationLerp(matPrevLocal, matLocalSkin, g_fBlendRatio);
 
         float4x4 S = MakeScaleMatrix(float4(vScaleLocal, 1.f));

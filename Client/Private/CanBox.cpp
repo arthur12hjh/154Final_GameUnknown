@@ -199,7 +199,7 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
     _float3 vRigidSize = RigidBodyDesc.vSize;
     RigidBodyDesc.vSize = _float3(vRigidSize.x * 1.f, vRigidSize.y * 2.f, vRigidSize.z * 1.f);
     RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_7;
-    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT | PHYSX_DEFAULT;
+    RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_CCT;
 
     /* Com_RigidBody */
     if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

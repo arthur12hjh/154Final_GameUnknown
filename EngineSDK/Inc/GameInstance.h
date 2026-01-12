@@ -59,7 +59,6 @@ public:
 
 	// 특정 시간 이후에 호출
 	void					ADD_DelayFunction(const WCHAR* szTimerName, _float fAfterTime, function<void()> Function);
-
 #pragma endregion
 
 #pragma region LEVEL_MANAGER
@@ -129,6 +128,7 @@ public:
 	void				Clear_StaticShadowObjects();
 	void*				Get_Cascade_Desc();
 	HRESULT				Reserve_Deferred(class CReserveDeferred* pReserveDeferred);
+	void				Set_MoitonBlur_Active(_bool bFlag);
 
 #ifdef _DEBUG
 	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
@@ -413,6 +413,9 @@ public:
 	_float							GetLoopDurationTime(GAMELOOP_TYPE eType);
 	void							ComputeLoopTime(GAMELOOP_TYPE eType);
 #endif
+	// 프레임의 맨 마지막에 무조건 호출후 방출 
+	void							ADD_FrameFinalFunction(const WCHAR* szFunctionTag, function<void()> Function, _uint iFrame);
+	void							Execute_FrameFinalFunctions();
 
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
@@ -444,6 +447,10 @@ private:
 #pragma region Random Device
 	static	mt19937								m_RandomDevice;
 	static	uniform_real_distribution<_float>	m_distribution;
+#pragma endregion
+
+#pragma region Reserved Function
+	map <_wstring, pair<function<void()>, _uint>> m_FrameFinalFunctions = {};
 #pragma endregion
 
 #pragma region Game System

@@ -93,8 +93,12 @@ void CBullet_Droid::Update(_float fTimeDelta)
 		m_pTransformCom->LookAt(vTargetPoint);
 		
 		m_pTransformCom->Set_State(STATE::POSITION, vTargetPoint);
-		if (m_fArcingTime.x >= m_fArcingTime.y)
+		if (m_fArcingTime.x >= m_fArcingTime.y) {
 			Set_Dead(true);
+			if (nullptr != m_pEffect) {
+				m_pEffect->End();
+			}
+		}
 	}
 	break;
 	}
@@ -116,8 +120,10 @@ void CBullet_Droid::Late_Update(_float fTimeDelta)
 	}
 	else
 	{
-		//m_pEffect->Set_Dead(true);
 		Set_Dead(true);
+		if (nullptr != m_pEffect) {
+			m_pEffect->End();
+		}
 	}
 }
 
@@ -238,8 +244,10 @@ void CBullet_Droid::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGame
 
 	if (false == ReflectBullet(pHitActor))
 	{
-		//m_pEffect->Set_Dead(true);
 		Set_Dead(true);
+		if (nullptr != m_pEffect) {
+			m_pEffect->End();
+		}
 	}
 }
 
@@ -269,8 +277,5 @@ CGameObject* CBullet_Droid::Clone(void* pArg)
 
 void CBullet_Droid::Free()
 {
-	if (nullptr != m_pEffect) {
-		m_pEffect->End();
-	}
 	__super::Free();
 }

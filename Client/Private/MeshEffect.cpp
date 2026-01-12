@@ -160,7 +160,8 @@ HRESULT CMeshEffect::Render_MotionBlur()
 
 void CMeshEffect::End(_float fTime)
 {
-	m_tData.fEndTime = m_fTime + fTime;
+	if (0 >= m_tData.fEndTime || (0 < m_tData.fEndTime && m_tData.fEndTime >= m_fTime + fTime))
+		m_tData.fEndTime = m_fTime + fTime;
 	m_bisEnd = true;
 }
 

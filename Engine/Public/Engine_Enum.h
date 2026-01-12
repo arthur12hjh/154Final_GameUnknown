@@ -49,7 +49,7 @@ namespace Engine
 								  SENCE,
 								  INTERACTION,
 								  END };
-
+	//볼류메트릭 추가좀 하겟습니다
 	enum class LIGHT_TYPE		{ POINT=1, SPOT, DIRECTIONAL, VOLUMETRIC, END };
 
 	enum class MOUSEKEYSTATE	{ LBUTTON, RBUTTON, WBUTTON, XBUTTON };
