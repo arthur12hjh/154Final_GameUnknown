@@ -6,6 +6,7 @@
 #include "Nayitba.h" 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "PonyTail_Player.h"
 
 CPlayer_GigasLinkAttackState::CPlayer_GigasLinkAttackState()
     : CPlayerState{}
@@ -95,6 +96,13 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
 
     if (true == m_isFlagActivated)
         CombinedMatrix.r[3].m128_f32[1] = m_fStartY;
+
+    if (true == m_isStartFrame)
+    {
+        CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+        pPonytail->Teleport_JointChains(CombinedMatrix);
+        m_isStartFrame = false;
+    }
 
     m_Desc->pPlayerTransform->Set_WorldMatrix(CombinedMatrix);
 

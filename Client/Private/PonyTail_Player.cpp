@@ -59,7 +59,7 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 	m_tRootDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_RootDesc());
 	m_tLinkDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_JointDesc());
 
-	m_pModelCom->Set_PreTransformMatrix(XMMatrixScaling(0.035, 0.035, 0.035) * 
+	m_pModelCom->Set_PreTransformMatrix(XMMatrixScaling(0.06, 0.03, 0.06) * 
 		XMMatrixRotationY(XMConvertToRadians(270.f)));
 
 	return S_OK;
@@ -72,32 +72,6 @@ void CPonyTail_Player::Priority_Update(_float fTimeDelta)
 
 void CPonyTail_Player::Update(_float fTimeDelta)
 {
-	//typedef struct tagJointChainDesc {
-	//	_float fAngularDampimg;
-	//	_float fLinearDamping;
-	//	_float fMaxAngularVelocity;
-	//	_float fMaxDepenetrationVelocity;
-	//} JOINT_CHAIN_DESC;
-	//플래그 제어용 테스트 디버거. 곧 지울게요
-	//#ifdef _DEBUG
-	//	ImGui::Begin("PONYTAIL_DESC");
-	//
-	//	ImGui::DragFloat("Root Hair AngularDamping", &m_tRootDesc->fAngularDampimg, 0.3f, 0.1f, 10.f);
-	//	ImGui::DragFloat("Root Hair LinearDamping", &m_tRootDesc->fLinearDamping, 0.01f, 0.01f, 1.f);
-	//	//ImGui::DragFloat("Root Hair MaxAngularVelocity", &m_tRootDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
-	//	//ImGui::DragFloat("Root Hair DepenetrationVelocity", &m_tRootDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
-	//
-	//	ImGui::DragFloat("Link Hair AngularDamping", &m_tLinkDesc->fAngularDampimg, 0.01f, 0.f, 1.f);
-	//	ImGui::DragFloat("Link Hair LinearDamping", &m_tLinkDesc->fLinearDamping, 0.01f, 0.f, 1.f);
-	//	//ImGui::DragFloat("LinkLink Hair MaxAngularVelocity", &m_tLinkDesc->fMaxAngularVelocity, 0.01f, 0.f, 1.f);
-	//	//ImGui::DragFloat("Link Hair DepenetrationVelocity", &m_tLinkDesc->fMaxDepenetrationVelocity, 0.01f, 0.f, 1.f);
-	//
-	//
-	//	ImGui::End();
-	//	
-	//	
-	//	m_pJointChain->Update(fTimeDelta);
-	//#endif
 }
 
 void CPonyTail_Player::Late_Update(_float fTimeDelta)
@@ -221,6 +195,11 @@ HRESULT CPonyTail_Player::Render_MotionBlur()
 	}
 
 	return S_OK;
+}
+
+void CPonyTail_Player::Teleport_JointChains(_fmatrix WorldMatrix)
+{
+	m_pJointChain->Teleport_RigidBodies(XMLoadFloat4x4(m_pHairRootBone) * WorldMatrix);
 }
 
 HRESULT CPonyTail_Player::Ready_Components()
@@ -493,7 +472,7 @@ HRESULT CPonyTail_Player::Ready_HairRigidBodies()
 	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_3 | PHYSX_CUSTOM_2;
 	RigidBodyDesc.isSimulateSync = false;
 	RigidBodyDesc.isQuery = false;
-	RigidBodyDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 //##################### HEAD
 	const _float4x4* pBone = m_pBodyModelCom->Get_BoneMatrixPtr("Bip001-Head");
 	_matrix OwnerWorld = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr());
