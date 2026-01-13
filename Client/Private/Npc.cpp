@@ -70,10 +70,7 @@ void CNpc::Priority_Update(_float fTimeDelta)
         CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
         if (!pHUD)
-        {
-            Safe_Release(pHUD);
             return;
-        }
 
         if (pHUD->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro")))
         {
@@ -336,10 +333,7 @@ void CNpc::Npc_Action()
     CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
     if (!pHUD)
-    {
-        Safe_Release(pHUD);
         return;
-    }
 
     CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
 
@@ -462,9 +456,12 @@ void CNpc::Change_Camera()
     vPos.y += m_NpcDesc->vCamTargetViewPosOffset.y;
     vPos.z += m_NpcDesc->vCamTargetViewPosOffset.z;
 
-    auto pPlayerCam = m_pGameInstance->GetMainCamera();
-    _vector vPrevLook = pPlayerCam->GetTransform()->Get_State(STATE::LOOK);
+    auto pPlayerCamera = m_pGameInstance->GetMainCamera();
 
+    if (!pPlayerCamera)
+        return;
+
+    _vector vPrevLook = pPlayerCamera->GetTransform()->Get_State(STATE::LOOK);
     auto pPlayer = m_pGameManager->GetGameCharacter();
 
     if (!pPlayer)
@@ -502,6 +499,7 @@ void CNpc::Change_Camera()
         m_iScriptIdx = 1;
 
     Safe_Release(pPlayer);
+    Safe_Release(pPlayerCamera);
     Safe_Release(pNpcCamera);
 }
 
@@ -518,7 +516,7 @@ void CNpc::Return_Camera()
 
     pPlayer->SetActive(true);
     Safe_Release(pPlayer);
-
+    
     pNpcCamera->ReverseCameraAnimation();
     Safe_Release(pNpcCamera);
 }

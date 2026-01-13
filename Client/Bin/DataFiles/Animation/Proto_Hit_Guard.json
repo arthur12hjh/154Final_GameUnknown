@@ -2,7 +2,7 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 0.0,
+                "fNumData01": 1.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -26,7 +26,7 @@
                 "szNotifyTag": "Play_SFX",
                 "szSocketTag": "Transform",
                 "vNotifyPosition": [
-                    -0.05999999865889549,
+                    -0.06,
                     3.0,
                     0.0
                 ],

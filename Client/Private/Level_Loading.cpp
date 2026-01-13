@@ -64,16 +64,13 @@ void CLevel_Loading::Update(_float fTimeDelta)
 	if (true == m_pLoader->isFinished()
 		&& !m_bLevelTransitioning)
 	{
-		if (LEVEL::LOGO == m_eNextLevelID || LEVEL::BEATSABER_GAME == m_eNextLevelID)
+		if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
 		{
-			if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
-			{
-				static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
-				if (static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Get_UIBase_Desc().fAlpha <= 0.f)
-					static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"), TEXT("Loading_Complite"));
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("UI_Loading_Block"))->SetVisibility(VISIBILITY::HIDDEN);
+			if (static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Get_UIBase_Desc().fAlpha <= 0.f)
+				static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"), TEXT("Loading_Complite"));
 
-				static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Set_Alpha(1.f);
-			}
+			static_cast<CUIHUD*>(m_pHUD)->Get_UIObject(TEXT("Layer_Loading_BeatSaber"), TEXT("Loading_Complite"))->Set_Alpha(1.f);
 
 			if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE))
 			{

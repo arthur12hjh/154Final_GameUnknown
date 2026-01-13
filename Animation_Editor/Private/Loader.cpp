@@ -456,7 +456,7 @@ HRESULT CLoader::Loading_For_Player(void* pArg)
 	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
 
 	if (FAILED(m_pGameInstance->Add_SkeletalPrototype(ENUM_CLASS(LEVEL::EDITOR), m_pDevice, m_pContext,
-		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_20.binx",
+		szPlayerTag, "../Bin/Resources/Models/Character/PC/Eve/CH_P_EVE_Model/Eve_Body_OfficeStyle_WeightLimited_v01.binx",
 		szFrontPath, szPartPrototypeTagList, szPartModelFilePathList, PreMatrix, szPartModelTypeList)))
 		return E_FAIL;
 

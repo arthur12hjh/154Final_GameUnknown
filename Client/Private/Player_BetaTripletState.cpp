@@ -27,6 +27,7 @@ void CPlayer_BetaTripletState::Start(void* pArg, _float fBlendRatio)
     m_pPlayer->Set_Animation("P_Eve_Sword_SlotNormal_ChainStab", false, 2.5f);
     m_pPlayer->Set_ImpactForce(2.f);
     m_Desc->isSuperArmor = true;
+    
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
@@ -42,6 +43,9 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
         {
             m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.05f);
             m_isEffectActed = true;
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Combo.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact1_2.wav"), CHANNELID::EFFECT, 1.3f, 1.f);
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact3_1.wav"), CHANNELID::EFFECT, 1.3f, 1.f);
         }
     }
     if (0.185f <= fAnimationRatio && 0.205f > fAnimationRatio)
@@ -54,6 +58,8 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
         {
             m_pGameInstance->Active_RadialBlur(0.3f, 5, 0.15f);
             m_isEffectActed = true;
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact1_2.wav"), CHANNELID::EFFECT, 1.3f, 1.f);
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact3_1.wav"), CHANNELID::EFFECT, 1.3f, 1.f);
         }
     }
     if (0.245f <= fAnimationRatio && 0.265f > fAnimationRatio)
@@ -70,6 +76,8 @@ PLAYER_TRANSITION_DESC CPlayer_BetaTripletState::Update(_float fTimeDelta)
             //m_pGameInstance->Shake_Camera(0.2f, 0.2f);
             m_pGameInstance->Active_RadialBlur(0.5f, 5, 0.6f);
             m_isEffectActed = true;
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact2_2.wav"), CHANNELID::EFFECT, 1.7f, 1.f);
+            m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChainStab_Impact3_2.wav"), CHANNELID::EFFECT, 1.7f, 1.f);
         }
     }
 

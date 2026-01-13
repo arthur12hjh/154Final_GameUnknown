@@ -9,6 +9,7 @@
 
 #include "UIInstanceBuffer.h"
 #include "UIPopup.h"
+#include "UIShop.h"
 
 #include "InteractionBinder.h"
 
@@ -78,15 +79,22 @@ void CUIItemSlot::Update(_float fTimeDelta)
 				static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold -= m_ItemSlotDescs[m_iCurrentItemIdx].iPrice;
 				Apply_Item(pPlayer);
 			}
+			else
+			{
+				m_isPool = true;
+			}
 		}
 
 		Safe_Release(pPlayer);
 	}
 
-	if(!m_bCanBuy)
+	if(!m_bCanBuy || m_isPool)
 	{
 		m_fCoolTime += fTimeDelta;
 		
+		if (m_fCoolTime <= fTimeDelta)
+			m_pGameInstance->Manager_PlaySound(TEXT("BUY_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+
 		if (m_fCoolTime >= m_fBuyCoolTime)
 		{
 			m_fCoolTime = 0.f;
@@ -105,6 +113,7 @@ void CUIItemSlot::Update(_float fTimeDelta)
 			Arg2.pData = &m_fInteractionTime;
 			__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
 
+			m_isPool = false;
 			m_bCanBuy = true;
 		}
 	}
@@ -141,8 +150,11 @@ HRESULT CUIItemSlot::Render()
 	if (FAILED(ItemIcon_Render()))
 		return E_FAIL;
 
-	if (FAILED(Render_Text()))
-		return E_FAIL;
+	if (dynamic_cast<CUIShop*>(m_pParent)->Get_IsOpen())
+	{
+		if (FAILED(Render_Text()))
+			return E_FAIL;
+	}
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();
@@ -349,29 +361,6 @@ HRESULT CUIItemSlot::SetUp_ItemIcon()
 		inst.vUVAtlasSize = _float4{ 1.f, 1.f, vScale.x, vScale.y };
 		inst.vUVAtlasOffset = _float4{ 0.f, 0.f, vPos.x, vPos.y };
 
-		/*_float2 vUIPos = _float2{
-			m_tUIDesc.fX + m_tUIDesc.fOffsetX + (vUISize.x * fRatio * (i % ATLAS_COL)) - (fUIWidth * 0.5f),
-			m_tUIDesc.fY + m_tUIDesc.fOffsetY + (vUISize.y * fRatio * (i / ATLAS_COL)) - (fUIHeight * 0.5f)
-		};
-
-		BTN_STATE eBtnState = BTN_STATE::DEFAULT;
-
-		if (MouseEnter(vUIPos, vUISize))
-		{
-			eBtnState = BTN_STATE::HOVER;
-
-			UI_EVENT_ARG_DESC Arg{};
-			Arg.szActionTag = TEXT("Set_Texture_Index");
-			Arg.Type = UI_EVENT_ARG_DESC::INT;
-			Arg.pData = &i;
-			__super::Trigger_Event(TEXT("Set_Texture_Index"), &Arg);
-
-			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
-			{
-				eBtnState = BTN_STATE::CLICK;
-			}
-		}*/
-
 		inst.vAtlasIndex = _float4{ (_float)col, (_float)row, 0.f, 0.f };
 
 		m_ItemIconInstances.push_back(inst);
@@ -441,27 +430,6 @@ _bool CUIItemSlot::MouseEnter(_float2 vPos, _float2 vSize)
 
 void CUIItemSlot::MouseAction(_float fTimeDelta)
 {
-	/*if(m_eState == INTERACTION_STATE::END)
-		return;*/
-
-	/*if (0 > m_iCurrentItemIdx)
-	{
-		m_fInteractionTime = 0.f;
-		m_eState = INTERACTION_STATE::END;
-
-		UI_EVENT_ARG_DESC Arg{};
-		Arg.szActionTag = TEXT("ItemSlot_Event");
-		Arg.Type = UI_EVENT_ARG_DESC::INTERACTION_STATE;
-		Arg.pData = &m_eState;
-		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg);
-
-		UI_EVENT_ARG_DESC Arg2{};
-		Arg2.szActionTag = TEXT("ItemSlot_Event");
-		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
-		Arg2.pData = &m_fInteractionTime;
-		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
-	}*/
-
 	if (!m_bCanBuy || m_iCurrentItemIdx < 0)
 	{
 		m_fInteractionTime = 0.f;
@@ -498,10 +466,18 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		m_eState = INTERACTION_STATE::LOCK;
 
 		if (!m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+		{
+			if (m_fInteractionTime <= 0.f)
+				m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+
 			m_fInteractionTime += fTimeDelta;
+		}
+
 
 		if (m_fInteractionTime >= 0.5f)
+		{
 			m_eState = INTERACTION_STATE::CONTACT;
+		}
 
 		UI_EVENT_ARG_DESC Arg{};
 		Arg.szActionTag = TEXT("ItemSlot_Event");
@@ -513,7 +489,7 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		Arg2.szActionTag = TEXT("ItemSlot_Event");
 		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
 		Arg2.pData = &m_fInteractionTime;
-		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);		
 	}
 
 	if (m_eState == INTERACTION_STATE::CONTACT)
@@ -527,6 +503,8 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
 		Arg2.pData = &m_fInteractionTime;
 		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+
+		// m_pGameInstance->Manager_PlaySound(TEXT("UI_Interaction_Success_MainHUD.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	}
 
 	m_iPrevItemIdx = m_iCurrentItemIdx;
@@ -542,21 +520,30 @@ void CUIItemSlot::Apply_Item(CPlayer* pPlayer)
 		pPlayer->Get_Desc()->iMaxPotions += 1;
 		pPlayer->Get_Desc()->iCurrentPotions = pPlayer->Get_Desc()->iMaxPotions;
 		if (pPlayer->Get_Desc()->iMaxPotions >= 9)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("CANT_BUY_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
+		}
 	}
 	if (m_ItemSlotDescs[m_iCurrentItemIdx].iID == 1) // 최대 체력
 	{
 		pPlayer->Get_Desc()->iMaxHealth += 10;
 		pPlayer->Get_Desc()->iCurrentHealth = pPlayer->Get_Desc()->iMaxHealth;
 		if (pPlayer->Get_Desc()->iMaxHealth >= 350)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("CANT_BUY_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
+		}
 	}
 	if (m_ItemSlotDescs[m_iCurrentItemIdx].iID == 2) // 베타 포인트
 	{
 		pPlayer->Get_Desc()->iMaxBetaEnergy += 4;
 		pPlayer->Get_Desc()->iCurrentBetaEnergy = pPlayer->Get_Desc()->iMaxBetaEnergy;
 		if (pPlayer->Get_Desc()->iMaxBetaEnergy >= 40)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("CANT_BUY_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut = true;
+		}
 	}
 }
 
@@ -568,12 +555,17 @@ HRESULT CUIItemSlot::Render_Text()
 	{
 		szText = m_ItemSlotDescs[m_iCurrentItemIdx].szItemTag + TEXT("의 가격은 ") + to_wstring(m_ItemSlotDescs[m_iCurrentItemIdx].iPrice) + TEXT("G입니다.\n") + m_ItemSlotDescs[m_iCurrentItemIdx].szScript;
 
-		if(m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+		if (m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
+		{
 			szText = TEXT("더 이상 구매가 불가능합니다.");
+		}
 	}
 
 	if (!m_bCanBuy)
 		szText = TEXT("구매를 완료했습니다.");
+
+	if (m_isPool)
+		szText = TEXT("소지금이 부족합니다.");
 
 	_float2 fTextSize = m_pGameInstance->Get_Text_Size(TEXT("KoPub"), szText.c_str(), true, 0.8f);
 
@@ -582,11 +574,13 @@ HRESULT CUIItemSlot::Render_Text()
 		711.f,
 	};
 
+	_float pParentAlpha = dynamic_cast<CUIShop*>(m_pParent)->Get_UIBase_Desc().fAlpha;
+
 	_vector vColor = XMVectorSet(
-		1.f,
-		1.f,
-		1.f,
-		1.f
+		1.f * pParentAlpha,
+		1.f * pParentAlpha,
+		1.f * pParentAlpha,
+		1.f * pParentAlpha
 	);
 
 	m_pGameInstance->Render_Text(TEXT("KoPub"), szText.c_str(),

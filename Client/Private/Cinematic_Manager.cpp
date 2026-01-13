@@ -549,7 +549,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         break;
         // 16번
     case CINEMATICNODE_STATE::BAKE_VILLAGE_SHADOW:
-        m_pGameInstance->ADD_DelayFunction(TEXT("Bake_Shadow"), 1.f, [&]() {
+        m_pGameInstance->ADD_DelayFunction(TEXT("Bake_Shadow"), 0.8f, [&]() {
             /*그림자 세팅도 여기서 해주자. */
             STATIC_SHADOW_DESC		StaticShadowDesc{};
             StaticShadowDesc.fFar = 2000.f;
@@ -560,7 +560,6 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 return E_FAIL;
 
             m_pGameInstance->Bake_StaticShadow();
-            m_pGameInstance->Clear_StaticShadowObjects();
             });
         break;
         // 17번

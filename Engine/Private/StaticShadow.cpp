@@ -125,9 +125,7 @@ void CStaticShadow::Clear_StaticShadowObjects()
 	for (auto& pRenderObject : m_StaticShadowObjects)
 	{
 		if (nullptr != pRenderObject)
-			pRenderObject->Render_Shadow();
-
-		Safe_Release(pRenderObject);
+			Safe_Release(pRenderObject);
 	}
 
 	m_StaticShadowObjects.clear();

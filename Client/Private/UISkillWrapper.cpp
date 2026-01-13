@@ -156,6 +156,7 @@ void CUISkillWrapper::Late_Update(_float fTimeDelta)
 				Arg.Type = UI_EVENT_ARG_DESC::BOOL;
 				Arg.pData = &bActive;
 				__super::Trigger_Event(TEXT("SkillWrapperActive"), &Arg);
+				m_pGameInstance->Manager_PlaySound(TEXT("SKILL_ACTIVE_ON.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 
 				break;
 			}

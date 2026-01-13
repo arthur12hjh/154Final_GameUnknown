@@ -228,9 +228,9 @@ HRESULT CBeatSaberCharacter::ADD_Components()
 void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 {
 	_bool bIsMove = { false };
+	DIRECTION dir = m_CharacterDesc.eDirection;
 	if (DIRECTION::END != m_CharacterDesc.eDirection)
 		m_CharacterDesc.eDirection = DIRECTION::END;
-
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A)) // 3
 	{
 		m_CharacterDesc.eDirection = DIRECTION::RIGHT;
@@ -266,7 +266,11 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 		m_CharacterDesc.eDirection = DIRECTION::LEFT_BACK;
 		bIsMove = true;
 	}
-
+	
+	if (dir != m_CharacterDesc.eDirection) {
+		m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_redy.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_tada.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+	}
 	if(bIsMove)
 		m_pFsm->Change_State(TEXT("Move"));
 	else
@@ -322,8 +326,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					bIsSuccess = true;
 				}
 
-
-				m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+				m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 				CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 				EffectDesc.fRotationPerSec = 1.f;
 				EffectDesc.fSpeedPerSec = 1.f;
@@ -334,8 +337,9 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				EffectDesc.fRot = _float3(0, 0, 0);
 				EffectDesc.fSize = m_pGameInstance->Random(0.3f, 0.5f);
 				EffectDesc.fSpeed = 1.5f;
-				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.1f);
+				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.05f);
 				_float fRand = m_pGameInstance->Random(0.f, 4.f);
+				m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Pang.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				if (3.f < fRand) {
 					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Firecracker"),
 						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
@@ -358,6 +362,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					_float3 fDir;
 					XMStoreFloat3(&fDir, -m_pTransformCom->Get_State(STATE::LOOK));
 					EffectDesc.pDir = &fDir;
+					m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Fire.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 					if (5 == m_CharacterDesc.iComboCnt) {
 						EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 9 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
 						m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Good"),
@@ -406,22 +411,100 @@ void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameOb
 {
 	if (false == pHitActor->isDead())
 	{
-		m_CharacterDesc.iGameLife--;
-		m_CharacterDesc.iComboCnt = 0;
-		m_CharacterDesc.iAccuracy = 0;
-		m_pEffect[0]->Play();
-		m_pEffect[1]->Play();
-		m_pEffect[2]->Stop();
-		m_pEffect[3]->Stop();
-		m_pEffect[4]->Stop();
-		m_pEffect[5]->Stop();
-		
-		
-		if (0 >= m_CharacterDesc.iGameLife)
-		{
-			// 게임 실패
-			// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+			m_CharacterDesc.iScore += 100;
+			m_CharacterDesc.iComboCnt++;
+			m_CharacterDesc.iAccuracy = 3;
+		m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+		EffectDesc.pRootMatrix = nullptr;
+		EffectDesc.pWorldMatrix = nullptr;
+
+		EffectDesc.vPos = -m_pTransformCom->Get_State(STATE::LOOK) * m_pGameInstance->Random(7.f, 10.f) + m_pTransformCom->Get_State(STATE::RIGHT) * m_pGameInstance->Random(-7.f, 7.f) + m_pTransformCom->Get_State(STATE::UP) * m_pGameInstance->Random(9.f, 13.f);
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = m_pGameInstance->Random(0.3f, 0.5f);
+		EffectDesc.fSpeed = 1.5f;
+		m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.05f);
+		_float fRand = m_pGameInstance->Random(0.f, 4.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Pang.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		if (3.f < fRand) {
+			m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Firecracker"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 		}
+		else if (2.f < fRand) {
+			m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Bikini"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+		}
+		else if (1.f < fRand) {
+			m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Pain"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+		}
+		else {
+			m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Gosu"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+		}
+		if (0 == m_CharacterDesc.iComboCnt % 5) {
+			EffectDesc.fSpeed = 1.f;
+			EffectDesc.fSize = 0.04f;
+			_float3 fDir;
+			XMStoreFloat3(&fDir, -m_pTransformCom->Get_State(STATE::LOOK));
+			EffectDesc.pDir = &fDir;
+			m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Fire.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+			if (5 == m_CharacterDesc.iComboCnt) {
+				EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 9 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
+				m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Good"),
+					ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+			}
+			else {
+				EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 8 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
+				m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Perfect"),
+					ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
+			}
+		}
+		if (15 < m_CharacterDesc.iComboCnt) {
+			m_pEffect[0]->Stop();
+			m_pEffect[1]->Stop();
+			m_pEffect[2]->Stop();
+			m_pEffect[3]->Stop();
+			m_pEffect[4]->Play();
+			m_pEffect[5]->Play();
+		}
+		else if (5 < m_CharacterDesc.iComboCnt) {
+			m_pEffect[0]->Stop();
+			m_pEffect[1]->Stop();
+			m_pEffect[2]->Play();
+			m_pEffect[3]->Play();
+			m_pEffect[4]->Stop();
+			m_pEffect[5]->Stop();
+		}
+		else if (0 < m_CharacterDesc.iComboCnt) {
+			m_pEffect[0]->Play();
+			m_pEffect[1]->Play();
+			m_pEffect[2]->Stop();
+			m_pEffect[3]->Stop();
+			m_pEffect[4]->Stop();
+			m_pEffect[5]->Stop();
+		}
+
+
+
+		//m_CharacterDesc.iGameLife--;
+		//m_CharacterDesc.iComboCnt = 0;
+		//m_CharacterDesc.iAccuracy = 0;
+		//m_pEffect[0]->Play();
+		//m_pEffect[1]->Play();
+		//m_pEffect[2]->Stop();
+		//m_pEffect[3]->Stop();
+		//m_pEffect[4]->Stop();
+		//m_pEffect[5]->Stop();
+		//
+		//
+		//if (0 >= m_CharacterDesc.iGameLife)
+		//{
+		//	// 게임 실패
+		//	// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
+		//}
 		pHitActor->Set_Dead(true);
 	}
 }
