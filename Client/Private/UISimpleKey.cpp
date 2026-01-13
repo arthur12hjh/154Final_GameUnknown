@@ -80,8 +80,9 @@ void CUISimpleKey::Update(_float fTimeDelta)
 		if(m_pTargetInteractionCom->GetOwner())
 			m_pTargetOwner = m_pTargetInteractionCom->GetOwner();
 
-		if(m_pTargetOwner != m_pParent)
+		if (m_pTargetOwner != m_pParent)
 			m_pInterDesc = *const_cast<INTERACTION_DATA*>(m_pTargetInteractionCom->Get_InterDesc());
+		
 
 		if (m_pTargetOwner && m_pTargetInteractionCom->Get_InterDesc())
 		{
@@ -192,7 +193,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 			{
 				break;
 			}
-			//case INTERACTION_STATE::ACTIVE: // 의자 때문에 임시
 			case INTERACTION_STATE::CONTACT:
 			{
 				auto AnimTag = m_tUIDesc.m_AnimTags.find(TEXT("Hide_Key"));
@@ -211,7 +211,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 			case INTERACTION_STATE::END:
 			{
 				m_pTargetInteractionCom = nullptr;
-				//m_pTargetOwner = nullptr;
 			}
 			}
 

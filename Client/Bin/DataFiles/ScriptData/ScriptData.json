@@ -96,7 +96,7 @@
         },
         "NpcD1G-g2r": {
             "szAnimTag": "Default",
-            "bCanControl": true,
+            "bCanControl": false,
             "vInitOffset": [
                 0.0,
                 350.0
@@ -119,7 +119,7 @@
         },
         "NpcD1G-g2r2": {
             "szAnimTag": "Default",
-            "bCanControl": true,
+            "bCanControl": false,
             "vInitOffset": [
                 0.0,
                 350.0
@@ -145,7 +145,7 @@
         },
         "NpcDororong": {
             "szAnimTag": "Default",
-            "bCanControl": true,
+            "bCanControl": false,
             "vInitOffset": [
                 0.0,
                 350.0
@@ -162,7 +162,7 @@
         },
         "NpcDororong2": {
             "szAnimTag": "Default",
-            "bCanControl": true,
+            "bCanControl": false,
             "vInitOffset": [
                 0.0,
                 350.0
@@ -177,6 +177,131 @@
                 },
                 {
                     "szText": "도로로.. 도로..\n(다음에.. 또와..)"
+                }
+            ]
+        },
+        "126": {
+            "szAnimTag": "CutScene",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "낭자, 반갑네"
+                },
+                {
+                    "szText": "나는 홍련이라고 하네."
+                },
+                {
+                    "szText": "어쨌든 어딘지도 모를 데 떨어져서 처음 만난 사람이 검사라니, 퍽 반갑네."
+                },
+                {
+                    "szText": "그걸 어떻게 알았냐고? 낭자 머리에 그거, 그 비녀. 보아하니 검이잖나."
+                },
+                {
+                    "szText": "비녀가 검이라니 특이하네만 검은 검이지."
+                },
+                {
+                    "szText": "검사끼린 통하는게 있다고 보는데, 어떤가? 이것도 인연이니 조금 도와주면 기쁘겠네."
+                }
+            ]
+        },
+        "141": {
+            "szAnimTag": "CutScene",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "꽃 속에 술 한 병 놓고"
+                },
+                {
+                    "szText": "벗 없이 혼자 술잔 드네"
+                },
+                {
+                    "szText": "잔 들어 밝은 달 맞이하니,"
+                },
+                {
+                    "szText": "달과 나와 그림자 셋이 되었네.."
+                },
+                {
+                    "szText": "그리고 이제 친구가 와 주었으니 월하독작이 아니라, 대작이 되겠구만."
+                },
+                {
+                    "szText": "곧 또 보게 될 것 같다고"
+                },
+                {
+                    "szText": "아름다운 곳이지 않나?"
+                },
+                {
+                    "szText": "신세진 것도 있겠다, 이 달 아래서"
+                },
+                {
+                    "szText": "한 수 가르침을 청하고 싶네만"
+                },
+                {
+                    "szText": "낭자 생각은 어떤가?"
+                }
+            ]
+        },
+        "142": {
+            "szAnimTag": "CutScene",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "낭자, 대단하구만."
+                },
+                {
+                    "szText": "진심으로 가겠네."
+                },
+                {
+                    "szText": "천지만물을 벤다는 건"
+                },
+                {
+                    "szText": "이런것일세"
+                }
+            ]
+        },
+        "143": {
+            "szAnimTag": "CutScene",
+            "bCanControl": false,
+            "vInitOffset": [
+                0.0,
+                350.0
+            ],
+            "szSpeaker": "홍련",
+            "Scripts": [
+                {
+                    "szText": "낭자, 여기까지 하세"
+                },
+                {
+                    "szText": "대단하네, 좋은 수련이 되었어."
+                },
+                {
+                    "szText": "이제 정말 가야겠네."
+                },
+                {
+                    "szText": "다음 번에 만나면, 그땐 같이 한 잔 하면 좋을텐데"
+                },
+                {
+                    "szText": "달빛과 바람을 안주 삼아, 말일세."
+                },
+                {
+                    "szText": "어디보자, 낭자네에선 이렇게 인사한다고 들었는데."
+                },
+                {
+                    "szText": "당신의 기억이 이어지기를.."
                 }
             ]
         }

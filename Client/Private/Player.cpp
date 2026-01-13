@@ -26,6 +26,7 @@
 #include "Player_Parts.h"
 #include "PlayerState.h"
 #include "Prob_Interaction.h"
+#include "Camera.h"
  
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCharacter {pDevice, pContext}
@@ -118,7 +119,49 @@ void CPlayer::Play_Sound(const ANIM_NOTIFY& NotifyReference)
 	}
 	else if ("Just_Evade" == NotifyReference.szNotifyArg01)
 	{
-		m_pGameInstance->Manager_PlaySound(TEXT("EVE_BackStab1_Common_Sound.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		//m_pGameInstance->Manager_PlaySound(TEXT("EVE_BackStab1_Common_Sound.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		if(0 == NotifyReference.iNumData01)
+			m_pGameInstance->Manager_PlaySound(TEXT("PC_Evade_S_1.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("PC_Evade_S_2.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+		
+	}
+	else if ("WEAPON_OUT" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_SwordAura_1.wav"), CHANNELID::EFFECT, 0.8f, 1.f);
+	}
+	else if ("WEAPON_IN" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("P_Eve_PT_Crowd1_Shot.wav"), CHANNELID::EFFECT, 0.4f, 1.f);
+	}
+	else if ("SLASH" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_JuestEvade_whoosh.wav"), CHANNELID::EFFECT, 0.3f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("PC_skill_JustEvade_LightAttack_1.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+
+		_float fRandom = m_pGameInstance->Random(0.f, 4.f);
+		if (3 < fRandom) {
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceAttackWeak01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		}
+		else if (2 < fRandom) {
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceAttackWeak02.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		}
+		else if (1 < fRandom) {
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceAttackWeak03.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		}
+		else {
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceAttackWeak05.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		}
+	}
+	else if ("CHAINSTAB" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceAttackStrong01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if ("BOXKICK" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("Object_Box_Unlock.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_SE_MetalBox_01.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_MoveBackAttack_Kick.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	}
 }
 
@@ -586,7 +629,7 @@ HRESULT CPlayer::Ready_PlayerDesc()
 
 	m_PlayerDesc.ePlayerMode		= PLAYER_MODE::IDLE;
 
-	m_PlayerDesc.iOwnGold			= 5000;
+	m_PlayerDesc.iOwnGold			= 0;
 
 	return S_OK;
 }
@@ -672,6 +715,13 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
 	{
+		// 메인 카메라가 플레이어 카메라일 때만 상호작용 가능하게
+		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
+
+		if (!m_pGameInstance->IsMainCamera(pCamera))
+			return;
+		Safe_Release(pCamera);
+
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
@@ -717,6 +767,7 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
+				m_pGameInstance->Manager_PlaySound(TEXT("GET_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
@@ -784,7 +835,7 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			EffectDesc.fSize = 9.f;
 			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
 				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-			
+			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
@@ -889,6 +940,15 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 					pNayitba->Damaged(&DamageDesc);
 				}
 
+				if (pNayitba->GetMonsterID() == 8) {
+					m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_3.wav"), CHANNELID::EFFECT, 2.f);
+				}
+				else {
+					m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_2.wav"), CHANNELID::EFFECT, 2.f);
+				}
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_Main_5_fx_1.wav"), CHANNELID::EFFECT, 2.f);
+				m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_FX.wav"), CHANNELID::EFFECT, 2.f);
+
 				//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 			}
 			// 가드만 성공
@@ -900,6 +960,14 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 				Desc.pArg = &HitDesc;
 
 				m_pFSM->Handle_Transition(Desc);
+
+				auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
+				if (pNayitba->GetMonsterID() == 8) {
+					m_pGameInstance->Manager_PlaySound(TEXT("PC_Guard_Mid_1.wav"), CHANNELID::EFFECT, 3.f);
+				}
+				else {
+					m_pGameInstance->Manager_PlaySound(TEXT("PC_Guard_Mid02_1.wav"), CHANNELID::EFFECT, 3.f);
+				}
 			}
 
 			else if (false == m_PlayerDesc.isSuperArmor)
@@ -1130,7 +1198,8 @@ CGameObject* CPlayer::Clone(void* pArg)
 
 void CPlayer::Free()
 {
-	m_pGameManager->Bind_GameCharacter(nullptr);
+	if(m_pGameManager)
+		m_pGameManager->Bind_GameCharacter(nullptr);
 
 	__super::Free();
 

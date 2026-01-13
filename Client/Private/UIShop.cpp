@@ -229,6 +229,8 @@ void CUIShop::Open_Shop()
 	
 	m_isOpen = true;
 	m_isClosing = false;
+
+	m_pGameInstance->Manager_PlaySound(TEXT("POPUP_OPEN.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 }
 
 void CUIShop::Close_Shop()
@@ -265,6 +267,8 @@ void CUIShop::Close_Shop()
 	Safe_Release(pHUD);
 
 	m_isClosing = true;
+
+	m_pGameInstance->Manager_PlaySound(TEXT("POPUP_CLOSE.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 }
 
 CUIShop* CUIShop::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

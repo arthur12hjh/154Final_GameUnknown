@@ -34,6 +34,8 @@ CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CLevel_GamePlay::Initialize()
 {
+	CGameManager::GetInstance()->Add_DesertVisitCount();
+
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 
@@ -52,8 +54,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Sky(TEXT("Layer_Sky"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
 	//	return E_FAIL;
@@ -63,9 +65,9 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert4.bin");
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
-	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
+	//Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	Load_Sound_Trigger_Box_Objects("../../Map_Editor/Bin/DataFiles/Desert_SoundTriggerBox.bin");
 	
 	auto pGameManager = CGameManager::GetInstance();
@@ -214,13 +216,27 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Ready_CascadeShadow_Light(CascadeShadowDesc)))
 		return E_FAIL;
 
-	STATIC_SHADOW_DESC		StaticShadowDesc{};
-	StaticShadowDesc.fFar = 2000.f;
-	StaticShadowDesc.fNear = 0.1f;
-	StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
-		return E_FAIL;
+	if (1 == CGameManager::GetInstance()->Get_DesertVisitCount())
+	{
+		STATIC_SHADOW_DESC		StaticShadowDesc{};
+		StaticShadowDesc.fFar = 2000.f;
+		StaticShadowDesc.fNear = 0.1f;
+		StaticShadowDesc.vAt = _float4(400.f, 300.f, 0.f, 1.f);
+
+		if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
+			return E_FAIL;
+	}
+	else if (2 == CGameManager::GetInstance()->Get_DesertVisitCount())
+	{
+		STATIC_SHADOW_DESC		StaticShadowDesc{};
+		StaticShadowDesc.fFar = 2000.f;
+		StaticShadowDesc.fNear = 0.1f;
+		StaticShadowDesc.vAt = _float4(913.586f, 105.541f, 1456.260f, 1.f);
+
+		if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -425,7 +441,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 		return E_FAIL;*/
 	
-	/*Desc.iMonsterID = 3;
+	Desc.iMonsterID = 9;
 	{
 		for (_uint i = 0; i < 10; ++i)
 		{
@@ -434,7 +450,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _wstring& strLayerTag)
 				ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &Desc)))
 				return E_FAIL;
 		}
-	}*/
+	}
 
 	//Desc.iMonsterID = 3;
 	//{

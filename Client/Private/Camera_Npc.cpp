@@ -39,87 +39,6 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 	if (false == m_pGameInstance->IsMainCamera(this))
 		return;
 
-	//m_fMouseSensor = 0.1f;
-	//if (m_pGameInstance->IsMainCamera(this) && m_pTargetNpc)
-	//{
-	//	if (m_fAccTime <= m_fLerpTime && !m_isLerpEnd)
-	//	{
-	//		m_fAccTime += fTimeDelta;
-	//		_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
-	//		_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
-	//
-	//		_float fRatio = m_fAccTime / m_fLerpTime;
-	//		fRatio = Clamp(fRatio, 0.f, 1.f);
-	//
-	//		if (m_isReverse)
-	//			fRatio = 1.f - fRatio;
-	//
-	//		_vector vPosition = XMVectorLerp(StartMat.r[3], EndMat.r[3], fRatio);
-	//		_vector vPivot = (m_pTargetNpc->Get_Position() + EndMat.r[3]) * 0.5f;
-	//
-	//		/*_vector vDir = XMVector3Normalize(EndMat.r[3] - StartMat.r[3]);
-	//
-	//		vDir = XMVectorSetY(vDir, 0.f);
-	//		vDir = XMVector3Normalize(vDir);*/
-	//
-	//		_vector vLookPos = vLookPos = XMLoadFloat4(&m_fTargetLookPos) +
-	//							XMVectorLerp(StartMat.r[2], EndMat.r[2], fRatio);;
-	//
-	//		_vector vRight =
-	//			XMVector3Normalize(
-	//				XMVector3Cross(
-	//					XMVectorSet(0.f, 1.f, 0.f, 0.f),
-	//					vDir
-	//				)
-	//			);
-	//
-	//		_vector vNPCLook = m_pTargetNpc->GetTransform()->Get_State(STATE::LOOK);
-	//		vNPCLook = XMVectorSetY(vNPCLook, 0.f);
-	//		vNPCLook = XMVector3Normalize(vNPCLook);
-	//
-	//		_vector vNPCRight =
-	//			XMVector3Normalize(
-	//				XMVector3Cross(
-	//					XMVectorSet(0.f, 1.f, 0.f, 0.f),
-	//					vNPCLook
-	//				)
-	//			);
-	//
-	//		_vector vToCam =
-	//			XMVector3Normalize(StartMat.r[3] - XMLoadFloat4(&m_fTargetLookPos));
-	//
-	//		// 좌 / 우 판별
-	//		_float side =
-	//			XMVectorGetX(
-	//				XMVector3Dot(vNPCRight, vToCam)
-	//			);
-	//
-	//		_float sideSign = (side >= 0.f) ? -1.f : 1.f;
-	//
-	//		// 4. 원호 오프셋 (부호 적용)
-	//		_float arc = sinf(fRatio * XM_PI) * m_fTargetRadius * sideSign;
-	//
-	//		XMVECTOR vFinalPos =
-	//			vPosition + vRight * arc;
-	//
-	//		m_pTransformCom->Chase_Lerp(vFinalPos + vDir, fTimeDelta, m_fTargetRadius);
-	//		
-	//		if (m_isReverse)
-	//		{
-	//			if (1.f - fRatio >= 0.5f)
-	//				m_pTransformCom->Change_Look(XMVectorLerp(m_pTransformCom->Get_State(STATE::LOOK) + vDir, m_vPrevLook, 1.f - fRatio));
-	//			else
-	//				m_pTransformCom->LookAt(vLookPos);
-	//		}
-	//		else
-	//			m_pTransformCom->LookAt(vLookPos);
-	//
-	//		__super::Bind_Matrices(fTimeDelta);
-	//	}
-	//	else
-	//		m_isLerpEnd = true;
-	//}
-	
 	if (m_pGameInstance->IsMainCamera(this) && m_pTargetNpc)
 	{
 		if (m_fAccTime <= m_fLerpTime && !m_isLerpEnd)
@@ -206,9 +125,13 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 
 		m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
 
-		m_pGameInstance->GetMainCamera()->GetTransform()->LookAt(XMLoadFloat4(&m_fTargetLookPos));
+		auto pMainCamera = m_pGameInstance->GetMainCamera();
+
+		pMainCamera->GetTransform()->LookAt(XMLoadFloat4(&m_fTargetLookPos));
 
 		m_pTargetNpc = nullptr;
+
+		Safe_Release(pMainCamera);
 
 		XMStoreFloat4x4(&m_fStartLerpMatrix, XMMatrixIdentity());
 		XMStoreFloat4x4(&m_fEndLerpMatrix, XMMatrixIdentity());
@@ -311,6 +234,4 @@ CGameObject* CCamera_Npc::Clone(void* pArg)
 void CCamera_Npc::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pTargetNpc);
 }

@@ -8,6 +8,7 @@
 #include "UIGetterQueue.h"
 #include "GameManager.h"
 #include "Player.h"
+#include "TrailEffect.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -125,6 +126,8 @@ void CItem::Late_Update(_float fTimeDelta)
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta * 0.5f, true);
 }
 
 HRESULT CItem::Render()
@@ -193,7 +196,10 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
 				if (pPlayer)
+				{
 					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+					m_pGameInstance->Manager_PlaySound(TEXT("SE_ItemGet_BoxInteraction_foley.wav"), CHANNELID::EFFECT, 5.f);
+				}
 
 				Safe_Release(pPlayer);
 
@@ -265,7 +271,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.5f, Com_Size.y * 0.5f, Com_Size.z * 0.5f);
 	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT | PHYSX_CUSTOM_6;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),
@@ -289,6 +295,15 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
 	}
+
+
+	CTrailEffect::TRAIL_DATA Traildesc{};
+	Traildesc.vHigh = _float4(0.03f, 0.f, 0.f, 0.f);
+	Traildesc.vLow = _float4(-0.03f, 0.f, 0.f, 0.f);
+	Traildesc.bisLine = false;
+	Traildesc.bisLong = false;
+
+	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Item_Trail"), &Traildesc));
 
 	return S_OK;
 }
@@ -331,4 +346,5 @@ void CItem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pTrail);
 }

@@ -37,6 +37,7 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+
 	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(pDesc->iInteractionID));
 	m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
@@ -57,6 +58,8 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Get_Costume_Puzzle_Unlock"), m_pUnlockEvent);
 
+	m_pTransformCom->Set_Scale(2.5f, 2.5f, 2.5f);
+
 	return S_OK;
 }
 
@@ -66,10 +69,17 @@ void CSciFi_Door::Priority_Update(_float fTimeDelta)
 
 void CSciFi_Door::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
+	//m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_1.wav"), CHANNELID::EFFECT);
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 5.f))
 	{
 		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
+			if (m_eCurState == SCIFI_DOOR_STATE::CLOSE && !m_bIsSound)
+			{
+				m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_2.wav"), CHANNELID::EFFECT, 20.f);
+				m_bIsSound = true;
+			}
+
 			if (m_pModelCom->Play_Animation(fTimeDelta))
 			{
 				switch (m_eCurState)
@@ -91,6 +101,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 				}
 
 				m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+				m_bIsSound = false;
 			}
 		}
 		else if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && (!m_bUnlocked || !m_bCanlock))
@@ -98,10 +109,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			if (!pHUD)
-			{
-				Safe_Release(pHUD);
 				return;
-			}
 
 			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
 				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close"))
@@ -312,6 +320,8 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 			if (!pScript)
 				return;
 
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_Interaction_ATLDoorSwitch_Fail2.mp3"), CHANNELID::EFFECT, 5.f);
+			
 			pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("DoorInteractionScript")));
 		}
 		Safe_Release(pHUD);

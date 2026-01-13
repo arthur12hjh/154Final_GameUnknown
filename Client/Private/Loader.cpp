@@ -403,7 +403,7 @@ HRESULT CLoader::Loading()
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Shop(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_UI_For_Popup(pArg); });
 
-			m_strMessage = TEXT("Loading Character");
+			m_strMessage = TEXT("Loading Desert");
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_Scarlet(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Player(pArg); });
 			m_pGameInstance->Add_ThreadjobList([&](void* pArg) { Loading_For_GamePlay_Npc(pArg); });
@@ -620,9 +620,9 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 
 	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Eve_Head_v01.binx");
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair_MS.binx");
-	//잠깐바꿔놓음
-	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_short.binx");
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_HR_EVE/Eve_Hair.binx");
+	//잠깐바꿔놓음 fbx로 쓸게요 당분간
+	szPartModelFilePathList.push_back("../Bin/Resources/Models/Character/PC/Eve/CH_PonyTail_EVE/Eve_PonyTail_short.fbx");
 
 
 	szPartModelTypeList.push_back(MODEL_TYPE::PARTANIM);
@@ -1254,7 +1254,7 @@ HRESULT CLoader::Loading_For_GamePlay_Mesh(void* pArg)
 	Desc->pAddObejct.push_back(pProtoDesc);
 
 	/* For.Prototype_Component_Model_Tentacle */
-	PreTransformMatrix = XMMatrixScaling(0.028f, 0.028f, 0.028f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
+	PreTransformMatrix = XMMatrixScaling(0.056f, 0.056f, 0.056f) * XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Tentacle");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::ANIM, "../Bin/Resources/Models/Monster/Tentacle/Tentacle.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)
@@ -1955,6 +1955,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_TrailEffect_Monster_Slash */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Monster_Slash");
 	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Monster_Slash.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_TrailEffect_Monster_Slash */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_TrailEffect_Item_Trail");
+	PrototypeDesc.pPrototype = CTrailEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/TrailEffect/Item_Trail.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 	//Desc->OnCompleted(this_thread::get_id());
@@ -4938,7 +4943,7 @@ HRESULT CLoader::Loading_For_Desert_Deco_Container_Col(void* pArg)
 	pProtoDesc.iLevelID = ENUM_CLASS(LEVEL::LEVEL_PROB);
 
 	/* For.Prototype_Component_Model_Base_1A */
-	_matrix PreTransformMatrix = PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
+	_matrix PreTransformMatrix = XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 	pProtoDesc.szPrototypeName = TEXT("Prototype_Component_Model_Base_1A_COL");
 	pProtoDesc.pPrototype = CModel::Create(m_pDevice, m_pContext, MODEL_TYPE::NONANIM, "../../Map_Editor/Bin/Resources/Maps/Desert/Deco/Camp/Base_1A.binx", PreTransformMatrix);
 	if (nullptr == pProtoDesc.pPrototype)

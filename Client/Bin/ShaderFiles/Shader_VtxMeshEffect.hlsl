@@ -1226,7 +1226,7 @@ PS_NONBLEND_OUT PS_WHITE(PS_IN In)
     
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     float threshold = hole[index] / 32.0;
-    if (0 >= g_vColor.a * saturate(g_fTime) * (1 - In.vTexcoord.y) - threshold || (0 < g_fEndTime && 0 >= g_vColor.a * (1 - In.vTexcoord.y) * saturate(g_fEndTime - g_fTime) - threshold))
+    if (0 >= g_vColor.a * saturate(pow(g_fTime * (1 - In.vTexcoord.y), 3)) - threshold || (0 < g_fEndTime && 0 >= g_vColor.a * (1 - In.vTexcoord.y) * saturate(g_fEndTime - g_fTime) - threshold))
         discard;
     Out.vDiffuse = g_vColor * 6;
     Out.vNormal = float4(normalize(In.vNormal) * 0.5f + 0.5f, 1.f);

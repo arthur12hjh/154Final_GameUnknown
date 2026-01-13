@@ -85,6 +85,7 @@ void CUIBetaFX::Update(_float fTimeDelta)
 			m_tUIDesc.m_tUIShaderDesc.fGlowIntensity += (fTimeDelta);
 		else if (m_isActive && m_tUIDesc.m_tUIShaderDesc.fGlowIntensity > 1.f)
 		{
+			m_pGameInstance->Manager_PlaySound(TEXT("BETA_CHARGED.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
 			m_tUIDesc.fAlpha = 0.f;
 			m_iPrevGroup = m_iCurrentGroup;
 		}

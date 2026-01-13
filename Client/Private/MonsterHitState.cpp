@@ -29,6 +29,21 @@ void CMonsterHitState::Start(void* pArg, CState* pPreState)
     string   szAnimationName = "Result_Hit_Stand_Light";
     auto pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 
+    _uint iMonsterID = pEntity->GetMonsterID();
+    _float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+    if (2 == iMonsterID)
+        Hit_BeholderSound(fRandomIndex);
+    else if (3 == iMonsterID)
+        Hit_TentacleSound(fRandomIndex);
+    else if (4 == iMonsterID || 5 == iMonsterID)
+        Hit_StatueSound(fRandomIndex, iMonsterID);
+    else if (7 == iMonsterID)
+        Hit_AntlionSound(fRandomIndex);
+    else if (9 == iMonsterID)
+        Hit_TentacleSound(fRandomIndex);
+    else if (10 == iMonsterID)
+        Hit_TurretSound(fRandomIndex);
+
     auto pSkillData = static_cast<const CHARACTER_SKILL_DESC*>(pDesc->pSkillData);
     // 이거 공격한 대상이랑 외적으로 하든 내적으로하든 앞뒤 판단해서 
     // 이름 더해주자
@@ -130,6 +145,72 @@ void CMonsterHitState::End()
     m_bIsFinished = false;
     m_bIsGroggy = false;
     m_iSectionIndex = 0;
+}
+
+void CMonsterHitState::Hit_BeholderSound(_float fRandomIndex)
+{
+    if (33 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Dmg_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else if (66 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Dmg_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Dmg_3.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterHitState::Hit_StatueSound(_float fRandomIndex, _uint iID)
+{
+    if (4 == iID)
+    {
+        if (33 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_S_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+        else if (66 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_S_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+        else
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_S_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    }
+    else
+    {
+        if (33 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_L_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+        else if (66 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_L_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+        else
+            m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Dmg_L_4.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    }
+}
+
+void CMonsterHitState::Hit_BanacleSound(_float fRandomIndex)
+{
+    if (50 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_dmg_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_dmg_4.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterHitState::Hit_TentacleSound(_float fRandomIndex)
+{
+    if (33 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else if (66 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_3.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else
+        m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_4.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterHitState::Hit_AntlionSound(_float fRandomIndex)
+{
+    if (50 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain02.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+}
+
+void CMonsterHitState::Hit_TurretSound(_float fRandomIndex)
+{
+    if (50 >= fRandomIndex)
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Droid_vo_Down_1.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+    else
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Droid_vo_Down_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 }
 
 CMonsterHitState* CMonsterHitState::Create(void* pArg)

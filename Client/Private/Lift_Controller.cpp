@@ -79,6 +79,7 @@ void CLift_Controller::Update(_float fTimeDelta)
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pInteractionCom->Update_Com(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
+	//m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 3.f);
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
@@ -86,6 +87,16 @@ void CLift_Controller::Update(_float fTimeDelta)
 	{
 		if (!m_pLiftPlatform->GetPlatformMove())
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+
+		if (!m_bIsSound)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 1.f);
+			m_bIsSound = true;
+		}
+	}
+	else
+	{
+		m_bIsSound = false;
 	}
 }
 
@@ -298,8 +309,10 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
+
 			m_pModelCom->Set_AnimationIndex(1, false);
 			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
+			
 			m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
 		}
 	}
@@ -312,6 +325,8 @@ void CLift_Controller::ResetAction(_bool bIsForce)
 	{
 		if (m_pModelCom->IsAnimationFinished())
 			bIsAction = true;
+
+
 	}
 
 	if (bIsAction || bIsForce)

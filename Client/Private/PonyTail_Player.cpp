@@ -10,6 +10,7 @@
 
 #include "Player.h"
 #include "StringHelper.h"
+#include "Texture.h" 
 
 CPonyTail_Player::CPonyTail_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPlayer_Parts{ pDevice, pContext }
@@ -58,7 +59,7 @@ HRESULT CPonyTail_Player::Initialize(void* pArg)
 	m_tRootDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_RootDesc());
 	m_tLinkDesc = static_cast<JOINT_CHAIN_DESC*>(m_pJointChain->Get_JointDesc());
 
-	m_pModelCom->Set_PreTransformMatrix(XMMatrixScaling(0.032, 0.032, 0.032) * 
+	m_pModelCom->Set_PreTransformMatrix(XMMatrixScaling(0.035, 0.035, 0.035) * 
 		XMMatrixRotationY(XMConvertToRadians(270.f)));
 
 	return S_OK;
@@ -249,6 +250,11 @@ HRESULT CPonyTail_Player::Ready_Components()
 
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_MotionTrail"),
 		TEXT("Com_MotionTrail"), reinterpret_cast<CComponent**>(&m_pMotionTrail), &MotionTrailCom)))
+		return E_FAIL;
+
+	/* Com_Ponytail_Mask */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Ponytail_Mask"),
+		TEXT("Eve_Ponytail_Mask"), reinterpret_cast<CComponent**>(&m_pPonytailMaskTextureCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -524,7 +530,6 @@ HRESULT CPonyTail_Player::Ready_HairRigidBodies()
 	//pRigidBody->Set_CCD(true);
 	i++;
 
-
 	return S_OK;
 }
 
@@ -546,6 +551,8 @@ HRESULT CPonyTail_Player::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
+	//if (FAILED(m_pPonytailMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_OpacityTexture", 0)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -641,4 +648,6 @@ void CPonyTail_Player::Free()
 	for (auto& RigidBody : m_HairRigidBodies)
 		Safe_Release(RigidBody.second);
 	m_HairRigidBodies.clear();
+
+	Safe_Release(m_pPonytailMaskTextureCom);
 }

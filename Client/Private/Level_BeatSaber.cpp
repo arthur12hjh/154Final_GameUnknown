@@ -400,7 +400,8 @@ FMOD_RESULT CLevel_BeatSaber::Finished_GameBGM(FMOD_CHANNELCONTROL* channelcontr
 {
     if(m_pGameInstance)
     {
-        m_pGameInstance->Manager_StopAll();
+        m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+        //m_pGameInstance->Manager_StopAll();
     }
 
     return FMOD_RESULT::FMOD_OK;

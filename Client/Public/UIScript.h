@@ -29,28 +29,36 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void Begin_Script(const SCRIPT_DESC* Scripts) {
+	void Begin_Script(const SCRIPT_DESC* Scripts)
+	{
+		if (!Scripts)
+		{
+			End_Script();
+			return;
+		}
+
 		m_pScriptDesc = Scripts;
 		m_bHasScript = true;
-		m_isFinish = false;
 		m_tUIDesc.fAlpha = 1.f;
 		m_iScriptIdx = 0;
+		m_iPrevScriptIdx = m_iScriptIdx;
+		m_fTimeAcc = 0.f;
 		m_eVisibility = VISIBILITY::VISIBLE;
 	}
 
 	void End_Script() {
 		m_pScriptDesc = nullptr;
 		m_bHasScript = false;
-		m_isFinish = true;
 		m_tUIDesc.fAlpha = 0.f;
 		m_iScriptIdx = 0;
+		m_iPrevScriptIdx = m_iScriptIdx;
+		m_fTimeAcc = 0.f;
 		m_eVisibility = VISIBILITY::HIDDEN;
 	}
 
-	_bool IsFinish() { return m_isFinish; }
-
 	_bool Get_Has_Script_Desc() const { return m_bHasScript; }
 	void Play_Next_Script();
+	void Stop_Script();
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -63,8 +71,8 @@ private:
 
 	_float m_fTimeAcc{ 0.f };
 	_uint m_iScriptIdx = 0;
+	_uint m_iPrevScriptIdx = 0;
 	_bool m_bHasScript = false;
-	_bool m_isFinish = false;
 
 	SCRIPT_ANIM_DESC m_tScriptAnimDesc{};
 
@@ -72,6 +80,7 @@ private:
 	HRESULT RenderSpeaker();
 	HRESULT RenderScript();
 	void DefaultAnim(_float fTimeDelta);
+	void CutSceneAnim(_float fTimeDelta);
 	void LoadingAnim(_float fTimeDelta);
 	void ScriptControl();
 

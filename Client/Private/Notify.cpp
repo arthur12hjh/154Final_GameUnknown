@@ -372,11 +372,16 @@ HRESULT CNotify::Notify_Play_Cinematic(const ANIM_NOTIFY& AnimNotify)
 	_float4x4 PrePosMatrix = {};
 
 	m_pGameInstance->SetMainCamera(TEXT("ActionCamera"), &PrePosMatrix);
-	CCamera* pCamera = m_pGameInstance->GetMainCamera();
-
+	CCamera* pCamera = m_pGameInstance->GetCamrea(TEXT("ActionCamera"));
+	Safe_Release(pCamera);
 	dynamic_cast<CCamera_Action*>(pCamera)->Initialize_CameraAnimationData(AnimNotify.iNumData01);
 
-	Safe_Release(pCamera);
+
+	CGameInstance::GetInstance()->Set_MoitonBlur_Active(false);
+
+	CGameInstance::GetInstance()->ADD_FrameFinalFunction([&]() {
+		CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
+		}, 4);
 
 	return S_OK;
 }

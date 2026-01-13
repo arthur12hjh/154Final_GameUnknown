@@ -71,6 +71,8 @@ HRESULT CLevel_Scarlet::Initialize()
 	auto pGameManager = CGameManager::GetInstance();
 	pGameManager->Change_ShaderSetting(LEVEL::SCARLET, 0);
 
+	m_pGameInstance->Clear_StaticShadowObjects();
+
 	return S_OK;
 }
 
@@ -139,8 +141,6 @@ HRESULT CLevel_Scarlet::Ready_Lights()
 
 	if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
 		return E_FAIL;
-
-	m_pGameInstance->Clear_StaticShadowObjects();
 
 	return S_OK;
 }
@@ -328,6 +328,9 @@ HRESULT CLevel_Scarlet::Ready_Layer_UI(const _wstring& strLayerTag)
 		return E_FAIL;
 
 	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Cinematic"))))
+		return E_FAIL;
+
+	if (FAILED(pUIHUD->Load_Data(TEXT("Layer_Script"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -590,13 +593,7 @@ CLevel_Scarlet* CLevel_Scarlet::Create(ID3D11Device* pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-
-
-
-
 void CLevel_Scarlet::Free()
 {
 	__super::Free();
-
-
 }

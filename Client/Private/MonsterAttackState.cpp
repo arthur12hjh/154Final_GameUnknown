@@ -31,6 +31,7 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 	m_AttackCompletedFunc = pDesc->AttackCompletedFunc;
 	m_pTarget = pDesc->pTarget;
 
+	Play_AttackSound();
 	_bool bIsRandomAttack = true;
 	if (AI_TYPE::PASSIVE == m_StaticMonsterData->eAI_Type)
 	{
@@ -567,7 +568,6 @@ void CMonsterAttackState::TentaclePattern(_float fTimeDelta)
 		if (0.5f >= fAnimPlayRatio)
 		{
 			m_fMoveAnimMaxRatio = 0.5f;
-			m_fPlayRatio = 1.f;
 			bMoveAction = true;
 		}
 	}
@@ -676,6 +676,34 @@ _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
 
 	_vector vDir = XMVector3Normalize(vTargetPos - vTempPos);
 	return vOwnerPos + XMVectorLerp(vLook, vDir, fRatio * fSpeed);
+}
+
+void CMonsterAttackState::Play_AttackSound()
+{
+}
+
+void CMonsterAttackState::Play_TentacleSound()
+{
+}
+
+void CMonsterAttackState::Play_BeholderSound()
+{
+}
+
+void CMonsterAttackState::Play_AntlionSound()
+{
+}
+
+void CMonsterAttackState::Play_DroidTurretSound()
+{
+}
+
+void CMonsterAttackState::Play_BanacleSound()
+{
+}
+
+void CMonsterAttackState::Play_StatueSound(_uint iMonsterID)
+{
 }
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)
