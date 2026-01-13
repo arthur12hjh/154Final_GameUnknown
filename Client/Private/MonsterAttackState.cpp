@@ -680,30 +680,80 @@ _vector CMonsterAttackState::LerpRotation(_float fRatio, _float fSpeed)
 
 void CMonsterAttackState::Play_AttackSound()
 {
+	_uint iMonsterID = m_StaticMonsterData->iMonsetID;
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (2 == iMonsterID)
+		Play_BeholderSound(fRandomIndex);
+	else if (3 == iMonsterID)
+		Play_BanacleSound(fRandomIndex);
+	else if (4 == iMonsterID || 5 == iMonsterID)
+		Play_StatueSound(fRandomIndex);
+	else if (7 == iMonsterID)
+		Play_AntlionSound(fRandomIndex);
+	else if (9 == iMonsterID)
+		Play_TentacleSound(fRandomIndex);
+
 }
 
-void CMonsterAttackState::Play_TentacleSound()
+void CMonsterAttackState::Play_TentacleSound(_float fRandomIndex)
 {
+	if (33 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else if (66 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Tentacle_Grunt_4.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 }
 
-void CMonsterAttackState::Play_BeholderSound()
+void CMonsterAttackState::Play_BeholderSound(_float fRandomIndex)
 {
+	if (33 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Atk_S_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else if (66 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Atk_S_2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Beholder_V_Atk_S_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 }
 
-void CMonsterAttackState::Play_AntlionSound()
+void CMonsterAttackState::Play_AntlionSound(_float fRandomIndex)
 {
+	if (50 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Antlion_Growl.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_M_Antlion_Growl2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 }
 
-void CMonsterAttackState::Play_DroidTurretSound()
+void CMonsterAttackState::Play_BanacleSound(_float fRandomIndex)
 {
+	if (33 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_atk_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else if (66 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_atk_2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Barnacle_vo_atk_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 }
 
-void CMonsterAttackState::Play_BanacleSound()
+void CMonsterAttackState::Play_StatueSound(_float fRandomIndex)
 {
-}
-
-void CMonsterAttackState::Play_StatueSound(_uint iMonsterID)
-{
+	_uint iMonsterID = m_StaticMonsterData->iMonsetID;
+	if (4 == iMonsterID)
+	{
+		if (33 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_S_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else if (66 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_S_2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_S_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if (5 == iMonsterID)
+	{
+		if (33 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_M_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else if (66 >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_M_2.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("Mon_Statue_Voice_Atk_M_3.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
 }
 
 CMonsterAttackState* CMonsterAttackState::Create(void* pArg)

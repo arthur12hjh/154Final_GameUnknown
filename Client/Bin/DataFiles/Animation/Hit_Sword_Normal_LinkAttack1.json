@@ -2,11 +2,11 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 0.6000000238418579,
-                "fNumData02": 0.30000001192092896,
+                "fNumData01": 2.0,
+                "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 259,
+                "iNotifyKeyFrame": 18,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -15,15 +15,15 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "mon_GorillaB_voice_dmg_M_1.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
-                "szNotifyTag": "Camera_Shake",
+                "szNotifyTag": "Play_Sound",
                 "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,
@@ -42,12 +42,12 @@
                 ]
             },
             {
-                "fNumData01": 1.100000023841858,
-                "fNumData02": 0.6600000262260437,
-                "fNumData03": 0.6600000262260437,
+                "fNumData01": 2.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 258,
-                "iNumData01": 16,
+                "iNotifyKeyFrame": 60,
+                "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -55,15 +55,15 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "mon_GorillaB_voice_dmg_M_3.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
                 "szNotifyArg06": "",
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
-                "szNotifyTag": "Play_Blur",
+                "szNotifyTag": "Play_Sound",
                 "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,
@@ -79,6 +79,207 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            },
+             {
+                "fNumData01": 3.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 206,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "Mon_Elite_Bodyfall_Default_2.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 4.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 110,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "mon_GorillaB_voice_dmg_L_1.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+
+                "fNumData01": 5.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 167,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "mon_GorillaB_voice_dmg_L_3.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 2.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 204,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "mon_gorillaB_skill_Bodyroll_1.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 1.2,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 204,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "Prototype_Component_Effect_Gorilla_Jump_Attack",
+                "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_SFX",
+                "szSocketTag": "Transform",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.8,
+                    0.8,
+                    0.8
                 ]
             }
         ],

@@ -41,15 +41,18 @@ void CUIButton::Update(_float fTimeDelta)
 {
 	__super::Update(fTimeDelta);
 
-	if (MouseEnter())
+	if (m_eBtnState != BTN_STATE::CLICK)
 	{
-		m_eBtnState = BTN_STATE::HOVER;
+		if (MouseEnter())
+		{
+			m_eBtnState = BTN_STATE::HOVER;
 
-		if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
-			m_eBtnState = BTN_STATE::CLICK;
+			if (m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
+				m_eBtnState = BTN_STATE::CLICK;
+		}
+		else
+			m_eBtnState = BTN_STATE::DEFAULT;
 	}
-	else
-		m_eBtnState = BTN_STATE::DEFAULT;
 }
 
 void CUIButton::Late_Update(_float fTimeDelta)
@@ -72,7 +75,7 @@ void CUIButton::Late_Update(_float fTimeDelta)
 			__super::Trigger_Event(TEXT("Click"), &Arg);
 
 			m_pGameInstance->Manager_PlaySound(TEXT("LOGO_BTN_CLICK.wav"), CHANNELID::EFFECT, 1.f, 1.f);
-			m_eBtnState = BTN_STATE::HOVER;
+			//m_eBtnState = BTN_STATE::HOVER;
 			break;
 		}
 		case CUIButton::BTN_STATE::DEFAULT:

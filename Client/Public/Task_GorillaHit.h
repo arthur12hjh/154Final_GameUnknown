@@ -35,6 +35,7 @@ private:
 private:
 	void								Refresh_HitMotion();
 	void								Damaged_Attack(const Character_Skill_Desc* pData, _vector vDir);
+	void								Play_HitSound(_uint iHitIndex);
 
 public:
 	static	CTask_GorillaHit*			Create(CBehaviorTree* pOwnerTree);

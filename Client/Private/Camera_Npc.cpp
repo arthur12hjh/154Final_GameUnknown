@@ -53,12 +53,12 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 			_matrix StartMat = XMLoadFloat4x4(&m_fStartLerpMatrix);
 			_matrix EndMat = XMLoadFloat4x4(&m_fEndLerpMatrix);
 
-			// Pivot (NPC ¡ê EndPos Áß°£)
+			// Pivot (NPC ï¿½ï¿½ EndPos ï¿½ß°ï¿½)
 			_vector vNpcPos = m_pTargetNpc->Get_Position();
 			_vector vEndPos = EndMat.r[3];
 			_vector vPivot = XMVectorLerp(vNpcPos, vEndPos, 0.5f);
 
-			// Start ÆÄ¶ó¹ÌÅÍ ÃßÃâ
+			// Start ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			_vector vStartToCam = StartMat.r[3] - vPivot;
 
 			_float startAngle = atan2f(
@@ -72,7 +72,7 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 			_float startHeight =
 				XMVectorGetY(vStartToCam);
 
-			// End ÆÄ¶ó¹ÌÅÍ ÃßÃâ
+			// End ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			_vector vEndToCam = EndMat.r[3] - vPivot;
 
 			_float endAngle = atan2f(
@@ -86,7 +86,7 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 			_float endHeight =
 				XMVectorGetY(vEndToCam);
 
-			// °¢µµ º¸°£ (ÃÖ´Ü È¸Àü)
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ö´ï¿½ È¸ï¿½ï¿½)
 			_float deltaAngle = endAngle - startAngle;
 			if (deltaAngle > XM_PI)  deltaAngle -= XM_2PI;
 			if (deltaAngle < -XM_PI) deltaAngle += XM_2PI;
@@ -95,7 +95,7 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 			_float radius = Lerp(startRadius, endRadius, t);
 			_float height = Lerp(startHeight, endHeight, t);
 
-			// ÃÖÁ¾ À§Ä¡ (¿øÈ£)
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ (ï¿½ï¿½È£)
 			_vector vFinalPos =
 				vPivot +
 				XMVectorSet(
@@ -107,7 +107,7 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 
 			m_pTransformCom->Set_State(STATE::POSITION, vFinalPos);
 
-			// LookAt (¿¬Ãâ¿ë: Pivot Áß½É)
+			// LookAt (ï¿½ï¿½ï¿½ï¿½ï¿½: Pivot ï¿½ß½ï¿½)
 			m_pTransformCom->LookAt(XMLoadFloat4(&m_fTargetLookPos));
 
 			__super::Bind_Matrices(fTimeDelta);
@@ -124,9 +124,7 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 		m_isReverse = false;
 
 		m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
-
 		auto pMainCamera = m_pGameInstance->GetMainCamera();
-
 		pMainCamera->GetTransform()->LookAt(XMLoadFloat4(&m_fTargetLookPos));
 
 		m_pTargetNpc = nullptr;
@@ -145,7 +143,7 @@ void CCamera_Npc::Update(_float fTimeDelta)
 	//_matrix WorldMat = XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr());
 	//m_pColliderCom->UpdateColiision(WorldMat);
 
-	//Ä«¸Þ¶ó ½¦ÀÌÅ·À» À§ÇØ¼­ ºÎ¸ð Update È£Ãâ. 
+	//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Î¸ï¿½ Update È£ï¿½ï¿½. 
 	//__super::Update(fTimeDelta);
 }
 

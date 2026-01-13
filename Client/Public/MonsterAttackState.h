@@ -71,12 +71,12 @@ private :
 	void										Play_AttackSound();
 
 #pragma region ATK_SOUND
-	void										Play_TentacleSound();
-	void										Play_BeholderSound();
-	void										Play_AntlionSound();
-	void										Play_DroidTurretSound();
-	void										Play_BanacleSound();
-	void										Play_StatueSound(_uint iMonsterID);
+	void										Play_TentacleSound(_float fRandomIndex);
+	void										Play_BeholderSound(_float fRandomIndex);
+	void										Play_AntlionSound(_float fRandomIndex);
+	void										Play_DroidTurretSound(_float fRandomIndex);
+	void										Play_BanacleSound(_float fRandomIndex);
+	void										Play_StatueSound(_float fRandomIndex);
 #pragma endregion
 
 

@@ -78,6 +78,9 @@ void CNpc::Priority_Update(_float fTimeDelta)
 
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
             auto pPlayer = m_pGameManager->GetGameCharacter();
+            
+            if (!pPlayer)
+                return;
 
             m_pInteractionCom->Action_InteractionEvent(fTimeDelta, pPlayer);
 
@@ -97,7 +100,15 @@ void CNpc::Update(_float fTimeDelta)
 
     if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
     {
-        if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
+        if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+        {
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+            m_pInteractionCom->Set_Duration(0.f);
+
+            Change_Camera();
+            m_eNpcState = NPC_STATE::MEAT;
+        }
+        else if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
         {
             Npc_Action();
         }
@@ -313,14 +324,14 @@ void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
         }
     }
-    else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+    /*else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
     {
         m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
         m_pInteractionCom->Set_Duration(0.f);
         
         Change_Camera();
         m_eNpcState = NPC_STATE::MEAT;
-    }
+    }*/
 }
 
 void CNpc::End_Interaction()
@@ -462,8 +473,7 @@ void CNpc::Change_Camera()
         return;
 
     _vector vPrevLook = pPlayerCamera->GetTransform()->Get_State(STATE::LOOK);
-
-    auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
+    auto pPlayer = m_pGameManager->GetGameCharacter();
 
     if (!pPlayer)
         return;
@@ -506,7 +516,6 @@ void CNpc::Change_Camera()
 void CNpc::Return_Camera()
 {
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
-
     if (!pNpcCamera)
         return;
 
@@ -516,11 +525,9 @@ void CNpc::Return_Camera()
         return;
 
     pPlayer->SetActive(true);
-
     Safe_Release(pPlayer);
     
     pNpcCamera->ReverseCameraAnimation();
-
     Safe_Release(pNpcCamera);
 }
 

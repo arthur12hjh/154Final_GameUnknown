@@ -312,6 +312,12 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
         if (m_pInteractionCom->IsInteractionEnable())
         {
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+            if (m_pInteractionCom->Get_InterDesc()->eType != INTERACTION_TYPE::VENDING_MACINE
+                && m_pInteractionCom->Get_InterDesc()->eType != INTERACTION_TYPE::CORPSE)
+            {
+                Excute_CallBack(fTimeDelta, pActionObject);
+                return;
+            }
         }
     }
     else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
@@ -324,25 +330,9 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
             CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             if (!pHUD)
-            {
-                Safe_Release(pHUD);
                 return;
-            }
 
             pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
-            /*if (m_bHasHint)
-            {
-                pHUD->Open_Popup(TEXT("UI_CostumePuzzleHintPopup"));
-            }
-            else
-            {
-                 CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
-
-                if (!pScript)
-                    return;
-
-                pScript->Begin_Script(m_pGameManager->Get_ScriptData(TEXT("CorpseInteractionScript")));
-            }*/
             Safe_Release(pHUD);
         }
         else if (m_pInteractionCom->Get_InterDesc()->eType == INTERACTION_TYPE::VENDING_MACINE) // 자판기 상호작용 처리
@@ -350,10 +340,7 @@ void CStaticInteraction::Excute_CallBack(_float fTimeDelta, CGameObject* pAction
             CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
             if (!pHUD)
-            {
-                Safe_Release(pHUD);
                 return;
-            }
 
             pHUD->Open_Popup(TEXT("UI_Map_Selector_Popup"));
 
