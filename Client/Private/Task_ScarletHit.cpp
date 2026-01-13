@@ -101,10 +101,40 @@ void CTask_ScarletHit::Refresh_HitMotion()
 
 	auto pSkill_Data = static_cast<const CHARACTER_SKILL_DESC *>(m_pHit_Data->pSkillData);
 	Damaged_Attack(pSkill_Data, vDir);
-
 	
 	m_pBlackBoard->SetAttackData(nullptr);
 	m_pBlackBoard->SetHitData(nullptr);
+}
+
+void CTask_ScarletHit::Play_Sound(SKILL_TYPE eSkillType)
+{
+	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+	if (SKILL_TYPE::MIMESIS_SKILL >= eSkillType || SKILL_TYPE::SECOND_PHASE_SKILL == eSkillType)
+	{
+		if (20.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_S_1_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (40.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_S_2_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (60.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_S_3_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (80.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_S_4_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_S_5_VO.wav"), CHANNELID::EFFECT, 3.f);
+	}
+	else if (SKILL_TYPE::BLINK_SKILL >= eSkillType)
+	{
+		if (20.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_M_1_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (40.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_M_2_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (60.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_M_3_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else if (80.f >= fRandomIndex)
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_M_4_VO.wav"), CHANNELID::EFFECT, 3.f);
+		else
+			m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_Dmg_M_5_VO.wav"), CHANNELID::EFFECT, 3.f);
+	}
 }
 
 void CTask_ScarletHit::Hit_Reaction(_float fTimeDelta)
@@ -163,7 +193,15 @@ void CTask_ScarletHit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector
 		{
 			XMStoreFloat3(&m_vImpactDir, XMVectorZero());
 			m_fImpactForce = 0.f;
-			m_szAnimationName = pData->szHitAnimationName;
+
+			if (SKILL_PROPERTY::EXCUTION & pData->eProPerty)
+			{
+				m_szAnimationName = m_pBlackBoard->GetBossDefaultInfo()->szAnimationName;
+				m_szAnimationName += "_";
+				m_szAnimationName += pData->szHitAnimationName;
+			}
+			else
+				m_szAnimationName = pData->szHitAnimationName;
 		}
 		else
 		{
@@ -175,6 +213,7 @@ void CTask_ScarletHit::Damaged_Attack(const CHARACTER_SKILL_DESC* pData, _vector
 		}
 	}
 
+	Play_Sound(m_pSkill_Data->eSkillType);
 	if (m_pBlackBoard->bIsExcution())
 		m_pOwner->Set_Animation(m_szAnimationName.c_str(), false, 1.f, 0.12f);
 	else

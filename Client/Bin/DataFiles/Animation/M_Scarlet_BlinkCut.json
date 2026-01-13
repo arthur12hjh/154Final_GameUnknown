@@ -682,7 +682,7 @@
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 2.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -722,7 +722,7 @@
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 2.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -762,7 +762,7 @@
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 6.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -775,8 +775,8 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "EFFECT",
-                "szNotifyArg02": "M_Scarlet_Skill_Signal.wav",
+                "szNotifyArg01": "VOICE",
+                "szNotifyArg02": "vo_Scarlet_Atk_S_7_VO.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",

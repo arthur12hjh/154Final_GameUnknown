@@ -259,8 +259,14 @@
     <Filter Include="02.GameObjects\Maps\Dororong_Saber\Dororong_Box">
       <UniqueIdentifier>{01260953-ea8b-4d68-9124-f523f3560f7c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Maps\Desert\SoundBox">
+    <Filter Include="02.GameObjects\Maps\Desert\TriggerBox">
       <UniqueIdentifier>{a87adf56-1ab3-48c5-8c9a-24ffb9cd5926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\TriggerBox\Sound">
+      <UniqueIdentifier>{304e6e00-430e-4249-b738-a5156d1f4e83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\TriggerBox\Camera">
+      <UniqueIdentifier>{6cef0537-369e-4562-8a15-7b13d00d355a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -612,7 +618,10 @@
       <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SoundTriggerBox.h">
-      <Filter>02.GameObjects\Maps\Desert\SoundBox</Filter>
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraTriggerBox.h">
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -948,7 +957,10 @@
       <Filter>02.GameObjects\Maps\Dororong_Saber\Dororong_Box</Filter>
     </ClCompile>
     <ClCompile Include="..\private\SoundTriggerBox.cpp">
-      <Filter>02.GameObjects\Maps\Desert\SoundBox</Filter>
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CameraTriggerBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

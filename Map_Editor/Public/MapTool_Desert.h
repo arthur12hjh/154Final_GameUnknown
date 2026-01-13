@@ -72,6 +72,12 @@ public:
 		GROUND_SOUND_TYPE	eType = GROUND_SOUND_TYPE::END;
 	}SAVED_SOUND_TRIGGER_BOX_INFO;
 
+	typedef struct SavedCameraTriggerBoxInfo
+	{
+		_float4x4			worldMatrix;
+		CAMERA_TYPE			eType = CAMERA_TYPE::END;
+	}SAVED_CAMERA_TRIGGER_BOX_INFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -110,6 +116,7 @@ public:
 	HRESULT Save_Npcs_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Dororong_Saber_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 	HRESULT Save_Sound_Trigger_Box_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
+	HRESULT Save_Camera_Trigger_Box_By_Layer(ofstream& ofs, const _tchar* pLayerTag);
 
 
 	HRESULT Load_Map_Objects(const _char* szFilePath);
@@ -126,6 +133,7 @@ public:
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	HRESULT Load_Dororong_Saber_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	
 	void Delete_All_Before_Load(const _tchar* pLayerTag);
 

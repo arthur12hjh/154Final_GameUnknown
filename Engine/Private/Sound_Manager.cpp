@@ -133,7 +133,6 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	FMOD::Channel* pBGMChannel = nullptr;
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &pBGMChannel);
 
-	pBGMChannel->setMode(FMOD_LOOP_NORMAL);
 	pBGMChannel->setVolume(fVolume);
 	m_pChannelVolume[CHANNELID::BGM] = fVolume;
 
@@ -142,6 +141,7 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	m_pChannelArr[CHANNELID::BGM].push_back(pBGMChannel);
 	if (INFINITE != iLoopCount)
 	{
+		pBGMChannel->setMode(FMOD_LOOP_OFF);
 		pBGMChannel->setLoopCount(iLoopCount);
 		if (pFinishedCallBack)
 		{
@@ -149,44 +149,42 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 			pBGMChannel->setUserData((void*)m_ChannelEndCallBacks[CHANNELID::BGM].back());
 		}
 	}
+	else
+		pBGMChannel->setMode(FMOD_LOOP_NORMAL);
 }
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
-	_bool bIsChannelPlaying;
-	auto pBGMChannel = m_pChannelArr[eID];
-
 	_uint iIndex = 0;
 	for (auto& iter : m_pChannelArr[eID])
 	{
-		iter->isPlaying(&bIsChannelPlaying);
 		iter->stop();
-
 		Safe_Delete(m_ChannelEndCallBacks[eID][iIndex]);
 		iIndex++;
 	}
 
 	m_ChannelEndCallBacks[eID].clear();
 	m_pChannelArr[eID].clear();
+
+	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_StopAll()
 {
-	_bool bIsChannelPlaying;
 	for (int i = 0; i < CHANNELID::END; ++i)
 	{
 		_uint iIndex = 0;
 		for (auto& iter : m_pChannelArr[i])
 		{
-			iter->isPlaying(&bIsChannelPlaying);
 			iter->stop();
-
 			Safe_Delete(m_ChannelEndCallBacks[i][iIndex]);
 			iIndex++;
 		}
 		m_ChannelEndCallBacks[i].clear();
 		m_pChannelArr[i].clear();
 	}
+
+	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
@@ -336,22 +334,21 @@ void CSound_Manager::LoadSoundFile()
 void CSound_Manager::Remove_EndSound()
 {
 	_bool IsPlay = { false };
+	FMOD_MODE IsMode = FMOD_LOOP_NORMAL;
 	for (_uint i = 0; i < CHANNELID::END; ++i)
 	{
 		_uint iIndex = {};
 		for (auto iter = m_pChannelArr[i].begin(); iter != m_pChannelArr[i].end();)
 		{
+			(*iter)->getMode(&IsMode);
 			(*iter)->isPlaying(&IsPlay);
-			if (!IsPlay)
+			if (!IsPlay && !(IsMode & FMOD_LOOP_NORMAL))
 			{
 				auto Funciter = m_ChannelEndCallBacks[i].begin() + iIndex;
 
 				Safe_Delete(*Funciter);
 				m_ChannelEndCallBacks[i].erase(Funciter);
 				iter = m_pChannelArr[i].erase(iter);
-				
-				if(0 <iIndex)
-					iIndex--;
 			}
 			else
 			{
