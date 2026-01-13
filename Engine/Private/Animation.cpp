@@ -71,15 +71,16 @@ _bool CAnimation::Update_TransformationMatrices(const vector<class CBone*>& Bone
 _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool isLoop, _float fTimeDelta, _float fEndTrackPosition)
 {
 	/* 내 애니메이션의 현재 재생위치. */
-	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
+	m_fCurrentTrackPosition += (double)m_fTickPerSecond * (double)fTimeDelta;
 	// m_fCurrentTrackPosition
 	// 
-	if (m_fCurrentTrackPosition >= m_fDuration
-		|| (fEndTrackPosition != -1.f && m_fCurrentTrackPosition >= fEndTrackPosition))
+	if (m_fCurrentTrackPosition >= (double)m_fDuration
+		|| (fEndTrackPosition != -1.f && m_fCurrentTrackPosition >= (double)fEndTrackPosition))
 	{
 		if (true == isLoop)
 		{
-			m_fCurrentTrackPosition = m_fCurrentTrackPosition - m_fDuration;
+			m_fCurrentTrackPosition = fmod(m_fCurrentTrackPosition, (double)m_fDuration);
+
 			for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
 				iKeyFrameIndex = 0;
 
@@ -87,7 +88,7 @@ _int CAnimation::Update_TrackPosition(const vector<class CBone*>& Bones, _bool i
 		}
 		else
 		{
-			m_fCurrentTrackPosition -= m_fTickPerSecond * fTimeDelta; // 마지막 프레임 고정
+			m_fCurrentTrackPosition -= (double)m_fTickPerSecond * (double)fTimeDelta; // 마지막 프레임 고정
 			return iFLAG_ANIMATION_FINISH;
 		}
 	}
@@ -166,7 +167,7 @@ HRESULT CAnimation::Swap_AnimationChannel(_uint iSrc, _uint iDst)
 
 void CAnimation::Reset()
 {
-	m_fCurrentTrackPosition = 0.f;
+	m_fCurrentTrackPosition = 0.0;
 
 	for (auto& iKeyFrameIndex : m_CurrentKeyFrameIndices)
 		iKeyFrameIndex = 0;

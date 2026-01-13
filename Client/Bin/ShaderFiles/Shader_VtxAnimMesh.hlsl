@@ -54,30 +54,28 @@ VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
     
-    float fWeightSum = (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z + In.vBlendWeight.w);
-    
-    float fWeightX = 1;
-    float fWeightY = 0;
-    float fWeightZ = 0;
-    float fWeightW = 0;
-    
-    if (fWeightSum > 1e-6f)
+    In.vBlendWeight = (In.vBlendWeight < 0.05f) ? 0.0f : In.vBlendWeight;
+
+    float fWeightSum = In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z + In.vBlendWeight.w;
+    if (fWeightSum > 1e-4f)
     {
-        fWeightX = In.vBlendWeight.x / fWeightSum;
-        fWeightY = In.vBlendWeight.y / fWeightSum;
-        fWeightZ = In.vBlendWeight.z / fWeightSum;
-        fWeightW = In.vBlendWeight.w / fWeightSum;
+        In.vBlendWeight /= fWeightSum;
     }
+    else
+    {
+        In.vBlendWeight = float4(1, 0, 0, 0);
+    }
+    
           
     float4x4 MatrixX = mul(g_OffsetMatrices[In.vBlendIndex.x], g_BoneMatrixBuffer[In.vBlendIndex.x].BoneCombinedTransformMatrix);
     float4x4 MatrixY = mul(g_OffsetMatrices[In.vBlendIndex.y], g_BoneMatrixBuffer[In.vBlendIndex.y].BoneCombinedTransformMatrix);
     float4x4 MatrixZ = mul(g_OffsetMatrices[In.vBlendIndex.z], g_BoneMatrixBuffer[In.vBlendIndex.z].BoneCombinedTransformMatrix);
     float4x4 MatrixW = mul(g_OffsetMatrices[In.vBlendIndex.w], g_BoneMatrixBuffer[In.vBlendIndex.w].BoneCombinedTransformMatrix);
     
-    matrix BoneMatrix = MatrixX * fWeightX  +
-                        MatrixY * fWeightY +
-                        MatrixZ * fWeightZ +
-                        MatrixW * fWeightW;
+    matrix BoneMatrix = MatrixX * In.vBlendWeight.x +
+                        MatrixY * In.vBlendWeight.y +
+                        MatrixZ * In.vBlendWeight.z +
+                        MatrixW * In.vBlendWeight.w;
     
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     float3 vSkinnedNormal = mul(float4(In.vNormal, 0.f), BoneMatrix).xyz;

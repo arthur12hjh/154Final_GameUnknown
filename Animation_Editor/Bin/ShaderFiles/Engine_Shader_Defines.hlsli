@@ -10,6 +10,13 @@ struct BoneTransformMatrix
     row_major float4x4 BoneCombinedTransformMatrix;
 };
 
+SamplerComparisonState ShadowSampler
+{
+    Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT; // PCF «ŸΩ…
+    AddressU = Clamp;
+    AddressV = Clamp;
+    ComparisonFunc = LESS_EQUAL;
+};
 
 sampler AnisoTropy_BLUR_Sampler = sampler_state // π”∏ ¿Ã ¿÷æÓæﬂ ¿«πÃ∞° ¿÷¿Ω
 {

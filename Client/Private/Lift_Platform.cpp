@@ -48,7 +48,7 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 
 		if (!m_bIsSound)
 		{
-			m_pGameInstance->Manager_PlaySound(TEXT("SE_PlatformBot_Loop_1.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_PlatformBot_Loop_1.wav"), CHANNELID::EFFECT, 3.f);
 			m_bIsSound = true;
 		}
 	}
@@ -57,7 +57,7 @@ void CLift_Platform::Priority_Update(_float fTimeDelta)
 		if(m_bIsSound)
 		{ 
 			m_bIsSound = false;
-			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 1.f);
 		}
 	}
 		
