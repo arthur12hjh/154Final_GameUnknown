@@ -18,7 +18,7 @@ class CUIActionEvent;
 class CCinematicManager : public CBase
 {
 private:
-	enum class SCRIPT_ACTION{ BEGIN, PLAY, STOP, END };
+	enum class SCRIPT_ACTION{ BEGIN, PLAY, STOP, SHOW, HIDE, END };
 
 private:
 	CCinematicManager();

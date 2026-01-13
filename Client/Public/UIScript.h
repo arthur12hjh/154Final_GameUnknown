@@ -39,6 +39,7 @@ public:
 
 		m_pScriptDesc = Scripts;
 		m_bHasScript = true;
+		m_bShow = true;
 		m_tUIDesc.fAlpha = 1.f;
 		m_iScriptIdx = 0;
 		m_iPrevScriptIdx = m_iScriptIdx;
@@ -49,6 +50,7 @@ public:
 	void End_Script() {
 		m_pScriptDesc = nullptr;
 		m_bHasScript = false;
+		m_bShow = false;
 		m_tUIDesc.fAlpha = 0.f;
 		m_iScriptIdx = 0;
 		m_iPrevScriptIdx = m_iScriptIdx;
@@ -59,6 +61,8 @@ public:
 	_bool Get_Has_Script_Desc() const { return m_bHasScript; }
 	void Play_Next_Script();
 	void Stop_Script();
+	void Set_Show_Script(_bool bShow) { m_bShow = bShow; }
+	const _bool Get_Show_Script() { return m_bShow; }
 
 protected:
 	virtual HRESULT Ready_Components() override;
@@ -73,6 +77,7 @@ private:
 	_uint m_iScriptIdx = 0;
 	_uint m_iPrevScriptIdx = 0;
 	_bool m_bHasScript = false;
+	_bool m_bShow = true;
 
 	SCRIPT_ANIM_DESC m_tScriptAnimDesc{};
 
