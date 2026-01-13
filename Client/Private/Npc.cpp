@@ -462,8 +462,7 @@ void CNpc::Change_Camera()
         return;
 
     _vector vPrevLook = pPlayerCamera->GetTransform()->Get_State(STATE::LOOK);
-
-    auto pPlayer = static_cast<CPlayer*>(m_pGameManager->GetGameCharacter());
+    auto pPlayer = m_pGameManager->GetGameCharacter();
 
     if (!pPlayer)
         return;
@@ -506,7 +505,6 @@ void CNpc::Change_Camera()
 void CNpc::Return_Camera()
 {
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
-
     if (!pNpcCamera)
         return;
 
@@ -516,11 +514,9 @@ void CNpc::Return_Camera()
         return;
 
     pPlayer->SetActive(true);
-
     Safe_Release(pPlayer);
     
     pNpcCamera->ReverseCameraAnimation();
-
     Safe_Release(pNpcCamera);
 }
 

@@ -99,7 +99,7 @@ void CLevel_Scarlet::Update(_float fTimeDelta)
 HRESULT CLevel_Scarlet::Render()
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("Áý¿¡°¡°í½ÍÀº ·¹º§ÀÔ´Ï´Ù"));
+	SetWindowText(g_hWnd, TEXT("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½"));
 #else
 	SetWindowText(g_hWnd, m_pGameInstance->GetFrameText());
 #endif // _DEBUG
@@ -109,12 +109,12 @@ HRESULT CLevel_Scarlet::Render()
 
 void CLevel_Scarlet::FontRender()
 {
-	SetWindowText(g_hWnd, TEXT("¾²·¹µå Ç® µ¿ÀÛ"));
+	SetWindowText(g_hWnd, TEXT("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç® ï¿½ï¿½ï¿½ï¿½"));
 }
 
 HRESULT CLevel_Scarlet::Ready_Lights()
 {
-	/* ¾îÂ÷ÇÇ ¼ÎÀÌ´õ ¸Å´ÏÀú¿¡¼­ ¼¼ÆÃÇØÁÜ*/
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	LIGHT_DESC			LightDesc{};
 
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
@@ -237,7 +237,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Sky(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag)))
 		return E_FAIL;
 
-	/* ´ÞÀº ·¹ÀÌ¾î ºÐ¸®ÇØ¾ßµË´Ï´Ù */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Ð¸ï¿½ï¿½Ø¾ßµË´Ï´ï¿½ */
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Moon"),
 		ENUM_CLASS(LEVEL::SCARLET), TEXT("Layer_Moon"))))
 		return E_FAIL;
@@ -258,6 +258,8 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &Desc)))
 		return E_FAIL;
 
+	auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+	pPlayer->SetGroundSoundType(GROUND_SOUND_TYPE::GRASS);
 	return S_OK;
 }
 
@@ -348,7 +350,7 @@ HRESULT CLevel_Scarlet::Ready_Layer_Trigger(const _wstring& strLayerTag)
 	pTriggerBoxDesc.vPosition = { 263.371f, 11.581f, 175.926f };
 	pTriggerBoxDesc.fDelayTime = -1.f;
 
-	//  ½Ã³×¸¶Æ½¿ë Æ®¸®°Å
+	//  ï¿½Ã³×¸ï¿½Æ½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½
 	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_GameObject_TriggerBox"),
 		ENUM_CLASS(LEVEL::SCARLET), strLayerTag, &pTriggerBoxDesc)))
 		return E_FAIL;
