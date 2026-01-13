@@ -15,8 +15,8 @@ class CTrailEffect : public CGameObject
 {
 public:
     typedef struct tagTrailData : public CWaveTrail::WAVETRAILHIGHLOW {
-        _bool bisLine;
-        _bool bisLong;
+        _bool bisLine = false;
+        _bool bisLong = false;
     }TRAIL_DATA;
 private:
     CTrailEffect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
