@@ -74,37 +74,9 @@ void CSciFi_Door::Update(_float fTimeDelta)
 	{
 		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
-			if (m_eCurState == SCIFI_DOOR_STATE::CLOSE && !m_bIsSound)
-			{
-				m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_2.wav"), CHANNELID::EFFECT, 20.f);
-				m_bIsSound = true;
-			}
-
-			if (m_pModelCom->Play_Animation(fTimeDelta))
-			{
-				switch (m_eCurState)
-				{
-				case SCIFI_DOOR_STATE::OPEN:
-				{
-					m_pModelCom->Set_AnimationIndex(0, false);
-					m_eCurState = SCIFI_DOOR_STATE::CLOSE;
-					m_pRigidBody->Set_Simulation(true);
-				}
-				break;
-				case SCIFI_DOOR_STATE::CLOSE:
-				{
-					m_pModelCom->Set_AnimationIndex(1, false);
-					m_eCurState = SCIFI_DOOR_STATE::OPEN;
-					m_pRigidBody->Set_Simulation(false);
-				}
-				break;
-				}
-
-				m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
-				m_bIsSound = false;
-			}
+			m_bPlayDoorAction = true;
 		}
-		else if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && (!m_bUnlocked || !m_bCanlock))
+		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && (!m_bUnlocked || !m_bCanlock))
 		{
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
@@ -139,6 +111,41 @@ void CSciFi_Door::Update(_float fTimeDelta)
 		}
 	}
 
+	if (m_bPlayDoorAction && m_bUnlocked && m_bCanlock)
+	{
+		if (m_eCurState == SCIFI_DOOR_STATE::CLOSE && !m_bIsSound)
+		{
+			m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_2.wav"), CHANNELID::EFFECT, 20.f);
+			m_bIsSound = true;
+		}
+
+		if (m_pModelCom->Play_Animation(fTimeDelta))
+		{
+			switch (m_eCurState)
+			{
+			case SCIFI_DOOR_STATE::OPEN:
+			{
+				m_pModelCom->Set_AnimationIndex(0, false);
+				m_eCurState = SCIFI_DOOR_STATE::CLOSE;
+				m_pRigidBody->Set_Simulation(true);
+			}
+			break;
+			case SCIFI_DOOR_STATE::CLOSE:
+			{
+				m_pModelCom->Set_AnimationIndex(1, false);
+				m_eCurState = SCIFI_DOOR_STATE::OPEN;
+				m_pRigidBody->Set_Simulation(false);
+			}
+			break;
+			}
+
+			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+			m_bIsSound = false;
+		}
+
+		if (m_pModelCom->IsAnimationFinished())
+			m_bPlayDoorAction = false;
+	}
 }
 
 void CSciFi_Door::Late_Update(_float fTimeDelta)
