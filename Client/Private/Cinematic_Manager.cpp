@@ -17,6 +17,8 @@
 #include "UIScript.h"
 
 #include "UIActionEvent.h"
+#include "PonyTail_Player.h"
+#include "Player.h"
 
 CCinematicManager::CCinematicManager()
     : m_pGameInstance{ CGameInstance::GetInstance() }
@@ -498,6 +500,13 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 ++iObjectIndex;
 
                 static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
+
+                if (szText == TEXT("Layer_Player"))
+                {
+                    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_PonyTail")));
+                 
+                    pPonytail->Teleport_JointChains(XMLoadFloat4x4(pObject->GetTransform()->Get_WorldMatrixPtr()));
+                }
             }
         }
         break;

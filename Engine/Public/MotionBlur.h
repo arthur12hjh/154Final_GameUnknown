@@ -23,7 +23,7 @@ public:
 	virtual HRESULT Bind_RenderTarget(class CShader* pShader, const _char* pConstantName) override;
 
 	_float2 Calc_CamVelocity();
-	void Set_Active(_bool bFlag) { m_isActive = bFlag; }
+	void Set_Active(_bool bFlag);
 
 #ifdef _DEBUG
 	virtual HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY) override;

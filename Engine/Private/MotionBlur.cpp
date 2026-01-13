@@ -154,6 +154,17 @@ _float2 CMotionBlur::Calc_CamVelocity()
     return fVelocity;
 }
 
+void CMotionBlur::Set_Active(_bool bFlag)
+{
+    m_isActive = bFlag;
+
+    if (false == m_isActive)
+    {
+        if (FAILED(m_pGameInstance->Clear_MRT(TEXT("MRT_MotionBlur"))))
+            return;
+    }
+}
+
 #ifdef _DEBUG
 
 HRESULT CMotionBlur::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)

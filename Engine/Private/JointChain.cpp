@@ -136,80 +136,55 @@ HRESULT CJointChain::Add_Joint(CRigidBody* pRigidBody)
     m_RigidBodies.push_back(pRigidBody);
     Safe_AddRef(pRigidBody);
 
-    m_Joints.push_back(pJoint); // m_Joints 컨테이너 타입 확인 필요!
+    m_Joints.push_back(pJoint); 
     m_iNumJoints = (_uint)m_RigidBodies.size();
 
     return S_OK;
 }
 
-/*
-HRESULT CJointChain::Add_Joint_Local(CRigidBody* pParent, CRigidBody* pChild, const PxTransform& tLocalPose)
+void CJointChain::Teleport_RigidBodies(_fmatrix WorldMatrix)
 {
-    if (nullptr == pChild)
-        return E_FAIL;
+    if (nullptr == m_pRoot)
+        return;
 
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setSolverIterationCounts(24, 8);
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setAngularDamping(0.9f);
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setLinearDamping(0.09f);
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setMaxAngularVelocity(15.f);
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setMaxDepenetrationVelocity(2.0f);
-    static_cast<PxRigidDynamic*>(pChild->Get_PxRigidBody())->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+    //  텔포 전 루트 포즈
+    PxTransform rootPrev = m_pRoot->Get_PxTransform();
+    PxVec3      vPrevRootPos = rootPrev.p;
 
-    if (nullptr == pParent)
-        return E_FAIL;
+    _float4x4 newRootM;
+    XMStoreFloat4x4(&newRootM, WorldMatrix);
 
-    PxRigidActor* pParentActor = pParent->Get_PxRigidBody();
-    PxRigidActor* pChildActor  = pChild->Get_PxRigidBody();
-    if (!pParentActor || !pChildActor)
-        return E_FAIL;
+    PxVec3 vNewRootPos(newRootM._41, newRootM._42, newRootM._43);
+    PxVec3 vDeltaPos = vNewRootPos - vPrevRootPos;
 
-    PxD6Joint* pJoint = PxD6JointCreate(
-        *m_pGameInstance->Get_PxPhysics(),
-        pParentActor, tLocalPose,
-        pChildActor,  PxTransform(PxIdentity));
+    // 루트도 위치만 새 위치로 해주고 회전은 그대로 유지
+    _matrix matRotation = XMMatrixRotationQuaternion(XMVectorSet(rootPrev.q.x, rootPrev.q.y, rootPrev.q.z, rootPrev.q.w));
+    _matrix matPosition = XMMatrixTranslation(vNewRootPos.x, vNewRootPos.y, vNewRootPos.z);
+    _matrix matResult = matRotation * matPosition;
 
-    if (!pJoint)
-        return E_FAIL;
+    m_pRoot->Update_PxTransform(matResult, true);
 
-    pJoint->setMotion(PxD6Axis::eX, PxD6Motion::eLOCKED);
-    pJoint->setMotion(PxD6Axis::eY, PxD6Motion::eLOCKED);
-    pJoint->setMotion(PxD6Axis::eZ, PxD6Motion::eLOCKED);
+    // 기존 월드 포즈에서 위치만 delta 만큼 이동, 회전은 그대로
+    for (CRigidBody* pBody : m_RigidBodies)
+    {
+        if (nullptr == pBody)
+            continue;
 
-    pJoint->setMotion(PxD6Axis::eTWIST, PxD6Motion::eLIMITED);
-    pJoint->setTwistLimit(PxJointAngularLimitPair(-PxPi / 18.f, PxPi / 18.f));
+        if (pBody == m_pRoot)
+            continue;
 
-    pJoint->setMotion(PxD6Axis::eSWING1, PxD6Motion::eLIMITED);
-    pJoint->setMotion(PxD6Axis::eSWING2, PxD6Motion::eLIMITED);
+        PxTransform vPrePosition = pBody->Get_PxTransform();
+        PxVec3 vNewPosition = vPrePosition.p + vDeltaPos;
 
-    PxJointLimitCone ConeLimit(PxPi / 6.f, PxPi / 6.f);
-    ConeLimit.restitution     = 0.f;
-    ConeLimit.bounceThreshold = 0.f;
-    ConeLimit.stiffness       = 0.f;
-    ConeLimit.damping         = 0.f;
-    pJoint->setSwingLimit(ConeLimit);
+        _matrix Mrot = XMMatrixRotationQuaternion(
+            XMVectorSet(vPrePosition.q.x, vPrePosition.q.y, vPrePosition.q.z, vPrePosition.q.w)
+        );
+        _matrix Mpos = XMMatrixTranslation(vNewPosition.x, vNewPosition.y, vNewPosition.z);
+        _matrix Mnew = Mrot * Mpos;
 
-    pJoint->setDrive(PxD6Drive::eSLERP,
-        PxD6JointDrive(60.f, 10.f, 20.f, true));
-
-    pJoint->setDrivePosition(PxTransform(PxIdentity));
-    pJoint->setDriveVelocity(PxVec3(0.f), PxVec3(0.f));
-
-    pJoint->setConstraintFlag(PxConstraintFlag::eCOLLISION_ENABLED, false);
-
-    pJoint->setInvMassScale0(0.5f);
-    pJoint->setInvInertiaScale0(0.5f);
-    pJoint->setInvMassScale1(1.0f);
-    pJoint->setInvInertiaScale1(1.0f);
-
-    m_RigidBodies.push_back(pChild);
-    Safe_AddRef(pChild);
-
-    m_Joints.push_back(pJoint);
-    m_iNumJoints = (_uint)m_RigidBodies.size();
-
-    return S_OK;
+        pBody->Update_PxTransform(Mnew, true);
+    }
 }
-*/
 
 void CJointChain::Update(_float fTimeDelta)
 {
@@ -243,9 +218,9 @@ void CJointChain::Set_RootJoint()
 void CJointChain::Set_ChildJoint(CRigidBody* pRigidBody)
 {
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setSolverIterationCounts(24, 8); // posIters/velIters (일단 강하게)
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setAngularDamping(1.8f);
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setLinearDamping(0.15f);
-    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxAngularVelocity(13.f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setAngularDamping(1.5f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setLinearDamping(0.1f);
+    static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxAngularVelocity(15.f);
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxDepenetrationVelocity(FLT_MAX); // 충돌 보정 폭주 억제
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setMaxLinearVelocity(25.f); // 충돌 보정 이후 가속 방지
     static_cast<PxRigidDynamic*>(pRigidBody->Get_PxRigidBody())->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
