@@ -90,7 +90,7 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 		if (!m_bIsSound)
 		{
-			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Obj_LiftLever_Pull.wav"), CHANNELID::EFFECT, 1.f);
 			m_bIsSound = true;
 		}
 	}

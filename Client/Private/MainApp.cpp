@@ -70,7 +70,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_ClientDeferred()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::GAMEPLAY)))
+	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;		
 
 
