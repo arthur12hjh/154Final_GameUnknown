@@ -6,7 +6,7 @@
 #include "Nayitba.h" 
 #include "GameInstance.h"
 #include "GameManager.h"
-
+#include "PonyTail_Player.h"
 
 CPlayer_ScarletPhase2tLinkAttackState::CPlayer_ScarletPhase2tLinkAttackState()
     : CPlayerState{}
@@ -61,6 +61,13 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTim
         SocketMatrix.r[i] = XMVector3Normalize(SocketMatrix.r[i]);
 
     _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
+
+    if (true == m_isStartFrame)
+    {
+        CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+        pPonytail->Teleport_JointChains(CombinedMatrix);
+        m_isStartFrame = false;
+    }
 
     //45 이상부턴 본 안따라가게 처리.
     if ((5 >= m_pPlayer->Get_iTrackPosition()))

@@ -295,7 +295,7 @@ void CPlayer::Update(_float fTimeDelta)
 
 	m_pGameManager->Lockon(fTimeDelta);
 
-	Update_TestLogic(fTimeDelta);
+	Update_PlayerStatus(fTimeDelta);
 
 	//링크 어택이 가장 최우선 판정으로 들어간다.
 	Update_LinkAttack(fTimeDelta);
@@ -419,19 +419,19 @@ _int CPlayer::GetSkillDataID()
 	return m_iSkillID;
 }
 
-void CPlayer::Update_TestLogic(_float fTimeDelta)
+void CPlayer::Update_PlayerStatus(_float fTimeDelta)
 {
-	m_fTestTimer += fTimeDelta;
+	m_fBetASkillTimer += fTimeDelta;
 	m_fShieldTimer += fTimeDelta;
 
-	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy && m_fTestTimer >= 2.0)
+	if (m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy && m_fBetASkillTimer >= 6.0)
 	//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentBetaEnergy++;
-		m_fTestTimer = 0.f;
+		m_fBetASkillTimer = 0.f;
 	}
 
-	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield && m_fShieldTimer >= 10.0f)
+	if (m_PlayerDesc.iCurrentShield < m_PlayerDesc.iMaxShield && m_fShieldTimer >= 4.0f)
 		//if (m_fTestTimer >= 5.f && m_PlayerDesc.iCurrentBetaEnergy < m_PlayerDesc.iMaxBetaEnergy)
 	{
 		m_PlayerDesc.iCurrentShield += 4;
@@ -739,7 +739,8 @@ void CPlayer::Update_BetaSkill(_float fTimeDelta)
 //인터랙션 관련 처리 (키입력)
 void CPlayer::Update_Interaction(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F))
+	// ?
+	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_F) || m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F))
 	{
 		// 메인 카메라가 플레이어 카메라일 때만 상호작용 가능하게
 		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));

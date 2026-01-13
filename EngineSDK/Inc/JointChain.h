@@ -28,6 +28,8 @@ public:
 		return m_Joints[iIdx];
 	}
 
+	void Teleport_RigidBodies(_fmatrix WorldMatrix);
+
 public:
 	void Update(_float fTimeDelta);
 
