@@ -143,6 +143,8 @@ public:
 	void											Play_BossBGM(_uint iBossID, _uint iBossPhase);
 	void											Play_LevelBGM();
 	void											Release_GameMgr();
+	void											Add_DesertVisitCount() { m_iDesertVisitCount++; }
+	_uint											Get_DesertVisitCount() { return m_iDesertVisitCount; }
 
 private :
 	ID3D11Device*									m_pDevice = { nullptr };
@@ -168,6 +170,7 @@ private :
 	pair<SAVE_LEVEL_PLAYERDATA, _bool>				m_pSavePlayerDesc = {};
 	MINIGAME_REWARD									m_MiniGameReward = {};
 #pragma endregion
+	_uint											m_iDesertVisitCount = { 0 };
 
 private :
 	HRESULT											Setting_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
