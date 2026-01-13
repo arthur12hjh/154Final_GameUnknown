@@ -745,18 +745,20 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		auto pCamera = m_pGameInstance->GetCamrea(TEXT("PlayerCamera"));
 
 		if (!m_pGameInstance->IsMainCamera(pCamera))
+		{
+			Safe_Release(pCamera);
 			return;
+		}
+
 		Safe_Release(pCamera);
 
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
 
-		//CProb_Interaction* pInteractionObject = static_cast<CProb_Interaction*>(pInteractionCom->GetOwner());
-
 		const INTERACTION_DATA* pInteractionData = pInteractionCom->Get_InterDesc();
 		INTERACTION_STATE InteractionState = pInteractionCom->Get_InterState();
-
+		
 		PLAYER_TRANSITION_DESC Desc;
 		Desc.isChangeMode = true;
 		Desc.eMode = PLAYER_MODE::IDLE;
@@ -765,8 +767,13 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		switch (InteractionState)
 		{
 		case INTERACTION_STATE::DEFAULT:
+		{
+			if (pInteractionCom->Get_Duration() <= 0.f && pInteractionData->fInteractionTime > 0.f)
+				m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT2, 1.f, 1.f);
+
 			pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 			break;
+		}
 		case INTERACTION_STATE::CONTACT:
 		{
 			switch (pInteractionData->eType)
@@ -793,7 +800,6 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 			}
 			case INTERACTION_TYPE::ITEM:
 			{
-				m_pGameInstance->Manager_PlaySound(TEXT("GET_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 				pInteractionCom->Action_InteractionEvent(fTimeDelta, this);
 				break;
 			}
@@ -828,6 +834,9 @@ void CPlayer::Update_Interaction(_float fTimeDelta)
 		auto pInteractionCom = dynamic_cast<CInteractionBinder*>(m_pGameInstance->GetNearInteraction());
 		if (nullptr == pInteractionCom)
 			return;
+
+		if(pInteractionCom->Get_InterState() < INTERACTION_STATE::CONTACT)
+			m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
 
 		if (0.f < pInteractionCom->Get_InterDesc()->fInteractionTime)
 			pInteractionCom->Reset_Interaction();
