@@ -196,7 +196,10 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
 				if (pPlayer)
+				{
 					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+					m_pGameInstance->Manager_PlaySound(TEXT("SE_ItemGet_BoxInteraction_foley.wav"), CHANNELID::EFFECT, 5.f);
+				}
 
 				Safe_Release(pPlayer);
 
@@ -268,7 +271,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.5f, Com_Size.y * 0.5f, Com_Size.z * 0.5f);
 	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT | PHYSX_CUSTOM_6;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

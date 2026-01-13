@@ -56,6 +56,14 @@ void CCanBox::Update(_float fTimeDelta)
     {
         if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState())
         {
+            if (!m_bIsSound)
+            {
+                // 이 소리가 맘에안들면 Obj_SupplyBox04_Open_2이것도 있음
+                // 이 소리가 맘에안들면 Object_ItemBox01_UW이것도 있음
+                m_pGameInstance->Manager_PlaySound(TEXT("Obj_SupplyBox04_Open_2.wav"), CHANNELID::EFFECT, 10.f);
+                m_bIsSound = true;
+            }
+
             if (m_pModelCom->Play_Animation(fTimeDelta))
             {
                 m_pDropCom->ItemDrop(3);
@@ -81,6 +89,7 @@ void CCanBox::Update(_float fTimeDelta)
             }
 
             m_pModelCom->Play_Animation(0.f);
+			m_bIsSound = false;
         }
     }
 }

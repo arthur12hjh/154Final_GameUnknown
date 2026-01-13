@@ -91,6 +91,9 @@ private:
 	_float2												m_fRimLightTime = {};
 	RIMLIGHT_DESC										m_MonsterLimLightDesc = {};
 
+
+	class CTexture*										m_pScarletORSSTextureCom = { nullptr };
+
 private:
 	HRESULT												Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc);
 	HRESULT												Bind_ShaderResources();

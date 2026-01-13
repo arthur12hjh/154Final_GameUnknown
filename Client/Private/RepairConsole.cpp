@@ -56,7 +56,7 @@ void CRepairConsole::Update(_float fTimeDelta)
 		m_ePrevState = m_eCurState;
 	}
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
 
 	//m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 }
