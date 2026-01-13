@@ -64,6 +64,7 @@ private:
 	_float						m_fBuyCoolTime{ 1.f };
 
 	_bool						m_bCanBuy{ true };
+	_bool						m_isPool{ false };
 
 private:
 	HRESULT SetUp_ItemSlot(_float fTimeDelta);

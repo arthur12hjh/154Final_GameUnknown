@@ -37,6 +37,7 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 	if (FAILED(Ready_Col(pDesc->szVIBuffer_PrototypeName)))
 		return E_FAIL;
 
+
 	m_pInteractionCom->Set_InterDesc(m_pGameManager->Find_InteractionData(pDesc->iInteractionID));
 	m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 	m_eCurState = SCIFI_DOOR_STATE::CLOSE;
@@ -56,6 +57,8 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 		m_bUnlocked = *static_cast<_bool*>(Desc.pData);
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Get_Costume_Puzzle_Unlock"), m_pUnlockEvent);
+
+	m_pTransformCom->Set_Scale(2.5f, 2.5f, 2.5f);
 
 	return S_OK;
 }
@@ -106,10 +109,7 @@ void CSciFi_Door::Update(_float fTimeDelta)
 			CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 			if (!pHUD)
-			{
-				Safe_Release(pHUD);
 				return;
-			}
 
 			if (!pHUD->Check_isOpenPopup(TEXT("UI_CostumePuzzlePopup"))
 				&& pHUD->Get_UIObject(TEXT("Layer_Popup"), TEXT("UI_CostumePuzzlePopup"))->IsAnimFinished(TEXT("Popup_Close"))

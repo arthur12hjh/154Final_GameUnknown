@@ -8,6 +8,7 @@
 #include "UIGetterQueue.h"
 #include "GameManager.h"
 #include "Player.h"
+#include "TrailEffect.h"
 
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
 	CProb_Interaction(pDevice, pContext)
@@ -125,6 +126,8 @@ void CItem::Late_Update(_float fTimeDelta)
 
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	}
+
+	m_pTrail->Update_Trail(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()), fTimeDelta * 0.5f, true);
 }
 
 HRESULT CItem::Render()
@@ -293,6 +296,15 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
 	}
 
+
+	CTrailEffect::TRAIL_DATA Traildesc{};
+	Traildesc.vHigh = _float4(0.03f, 0.f, 0.f, 0.f);
+	Traildesc.vLow = _float4(-0.03f, 0.f, 0.f, 0.f);
+	Traildesc.bisLine = false;
+	Traildesc.bisLong = false;
+
+	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Item_Trail"), &Traildesc));
+
 	return S_OK;
 }
 
@@ -334,4 +346,5 @@ void CItem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pTrail);
 }

@@ -23,6 +23,24 @@ void CPlayer_HitState::Start(void* pArg, _float fBlendRatio)
 {
 	m_pGameManager->Set_Active_ReserveDeferred(TEXT("Damage"), true);
 
+
+	m_pGameInstance->Manager_PlaySound(TEXT("Damage_Noise.wav"), CHANNELID::EFFECT, 0.9f, 1.f);
+	_float fRandom = m_pGameInstance->Random(0.f, 5.f);
+	if (4 < fRandom) {
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceGethitWeak01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if (3 < fRandom) {
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceGethitWeak02.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if (2 < fRandom) {
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceGetHitWeak03.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if (1 < fRandom) {
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceGetHitWeak04.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else {
+		m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_VoiceGetHitWeak05.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
 	m_eState = PLAYER_STATE::HIT;
 
 	m_Desc->isLookFixed = true;

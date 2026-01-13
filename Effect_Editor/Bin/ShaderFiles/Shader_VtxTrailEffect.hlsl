@@ -85,8 +85,6 @@ PS_NONLIGHT_OUT PS_SPECTRUM(PS_IN In)
     PS_NONLIGHT_OUT Out;
     
     float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
-    float2 DiffuseTexcoord = float2((In.vTexcoord.x + g_fDiffuseUV.x + g_fTime * g_fDiffuseUVSpeed.x) * g_fDiffuseUVSize.x, (In.vTexcoord.y + g_fDiffuseUV.y + g_fTime * g_fDiffuseUVSpeed.y) * g_fDiffuseUVSize.y);
-    float2 DissolveTexcoord = float2((In.vTexcoord.x + g_fDissolveUV.x + g_fTime * g_fDissolveUVSpeed.x) * g_fDissolveUVSize.x, (In.vTexcoord.y + g_fDissolveUV.y + g_fTime * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
     Out.vDiffuse = g_vColor;
     if (0 >= (1 - abs(MaskTexcoord.x)) * (1 - abs(1 - MaskTexcoord.y * 2)))
         discard;
@@ -372,6 +370,20 @@ PS_NONLIGHT_OUT PS_X_BLUR(PS_IN In)
     return Out;
 }
 
+
+PS_NONLIGHT_OUT PS_SPECTRUM_BLOOM(PS_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    float2 MaskTexcoord = float2((1 - (In.vTexcoord.x + g_fMaskUV.x + g_fTime * g_fMaskUVSpeed.x)) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + g_fTime * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    Out.vDiffuse = g_vColor;
+    if (0 >= (1 - abs(MaskTexcoord.x)) * (1 - abs(1 - MaskTexcoord.y * 2)))
+        discard;
+    Out.vDiffuse.a *= 1 - MaskTexcoord.x;
+    Out.vDiffuse.rgb *= Out.vDiffuse.a;
+    Out.vDiffuse.a = 1;
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     // idx 0
@@ -513,5 +525,25 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_X_BLUR();
+    }
+    // idx 14
+    pass Spectrum_Glow
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SPECTRUM();
+    }
+    // idx 15
+    pass Spectrum_Glow_Bloom
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SPECTRUM_BLOOM();
     }
 }

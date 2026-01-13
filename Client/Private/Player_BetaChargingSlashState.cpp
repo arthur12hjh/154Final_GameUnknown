@@ -51,11 +51,16 @@ PLAYER_TRANSITION_DESC CPlayer_BetaChargingSlashState::Update(_float fTimeDelta)
         // 플레이어의 충격량.
         m_pPlayer->Set_ImpactForce(10.f * fAnimationRatio);
         m_pPlayer->Set_Animation("P_Eve_Sword_Beta_ChargeSlash1_Ex", false, 3.f);
-        m_pGameInstance->Active_RadialBlur(1.f, 10.f, 0.6f);
-        m_pGameInstance->Shake_Camera(0.7f, 1.f);
+        m_pGameInstance->Active_RadialBlur(1.f, 10.f, 0.8f);
+        m_pGameInstance->Shake_Camera(0.7f, 1.2f);
 
         m_isLoopCharge = false;
         m_isAttack = true;
+
+
+        m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChargeSlash.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+        m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_ChargeWhoosh_1.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+        m_pGameInstance->Manager_PlaySound(TEXT("VoiceTest_EVE_AttackStrong_02.wav"), CHANNELID::EFFECT, 10.f, 1.f);
     }
      
     if (true == m_isAttack && 

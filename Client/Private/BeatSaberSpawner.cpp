@@ -98,7 +98,7 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
         _float fNoteTimePerBPM = 60.f / (iBPM * 2.f);
 
         m_fTimeAcc = 0.f;
-        m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f;
+        m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f /*+ (fNoteTimePerBPM * 4.f)*/;
         m_fSongTime = -m_fNoteToValiTime;
         m_fSongLength = fSongTime;
         m_fDelay = fDelay;
