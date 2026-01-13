@@ -402,7 +402,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 		}
 
 		if (bIsSuccess)
-			pHitActor->Set_Dead(true);
+			m_pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("BeatSaber_Note"), pHitActor);
 	}
 
 }
@@ -505,7 +505,7 @@ void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameOb
 		//	// 게임 실패
 		//	// 여기서 UI처리 후 UI 단에서 원래 레벨로 전환
 		//}
-		pHitActor->Set_Dead(true);
+		m_pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("BeatSaber_Note"), pHitActor);
 	}
 }
 

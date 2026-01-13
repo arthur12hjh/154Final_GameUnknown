@@ -26,7 +26,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 1.f;
+	m_fMaxDelayTime = 0.9f;
 	return S_OK;
 }
 
@@ -68,8 +68,6 @@ CBehaviorNode::NODE_STATE CTask_ScarletAttack::Update(_float fTimeDelta)
 	else
 	{
 		ActionAmount(fTimeDelta);
-		if (42 == m_pBlackBoard->GetAttackData()->iSkillID)
-			m_fAnimationSpeed = 1.2f;
 	}
 
 	bIsTaskFinished = Finished_Animation(fTimeDelta);
@@ -90,9 +88,12 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 {
 	// 여기서 특정 스킬 행동 초기화해야하면 하자
 	CancelSkillData();
-	m_fAnimationSpeed = 2.2f;
+	
 	if (m_TimeLineDatas.empty())
+	{
+		m_fAnimationSpeed = 2.2f;
 		return;
+	}
 
 	auto& pDesc = m_TimeLineDatas.front();
 	_float	fAnimationRatio = m_pOwner->Get_AnimationRatio();
@@ -106,7 +107,7 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 		pDesc = m_TimeLineDatas.front();
 	}
 
-	if (pDesc.BeginTime <= fAnimationRatio &&  fAnimationRatio <= pDesc.EndTime)
+	if (pDesc.BeginTime <= fAnimationRatio &&  fAnimationRatio < pDesc.EndTime)
 	{
 		if (false == pDesc.bIsEnter)
 		{
@@ -178,7 +179,6 @@ void CTask_ScarletAttack::ActionAmount(_float fTimeDelta)
 			m_fAnimationSpeed = pDesc.fAnimationSpeed;
 			pDesc.bIsEnter = true;
 		}
-	
 		AttackLerpMove(fTimeDelta);
 	}
 }
@@ -201,7 +201,7 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	//m_pSkillData.push(m_pGameManager->Find_SkillData(21));
+	//m_pSkillData.push(m_pGameManager->Find_SkillData(55));
 	//SelectAttackData();
 
 	//EntranceAttack();
@@ -933,13 +933,23 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 #pragma region LINK BREAK CHANCE ATTACK
 	{
 		Desc.BeginTime = 0.28f;
-		Desc.EndTime = 0.35f;
+		Desc.EndTime = 0.34f;
 		Desc.fRange = -5.f;
 		Desc.fSpeed = 5.f;
-		Desc.fAnimationSpeed = 2.5f;
+		Desc.fAnimationSpeed = 2.2f;
 
 		Desc.eDirection = DIRECTION::FRONT;
 		Desc.bIsTarget = true;
+
+		m_TimeLineDatas.emplace(Desc);
+		Desc.BeginTime = 0.34f;
+		Desc.EndTime = 0.7f;
+		Desc.fRange = 0.f;
+		Desc.fSpeed = 5.f;
+		Desc.fAnimationSpeed = 1.4f;
+
+		Desc.eDirection = DIRECTION::FRONT;
+		Desc.bIsTarget = false;
 		m_TimeLineDatas.emplace(Desc);
 	}
 	break;
@@ -1023,7 +1033,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 		Desc.fAnimationSpeed = 2.5f;
 
 		Desc.eDirection = DIRECTION::FRONT;
-		Desc.bIsTarget = false;
+		Desc.bIsTarget = true;
 		m_TimeLineDatas.emplace(Desc);
 	}
 	break;
@@ -1258,7 +1268,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 _bool CTask_ScarletAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
 	m_pBlackBoard->ClearAttackTimer();
-	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(1.5f, m_fMaxDelayTime));
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(0.7f, m_fMaxDelayTime));
 	return true;
 }
 

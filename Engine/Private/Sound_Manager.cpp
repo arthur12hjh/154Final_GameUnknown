@@ -133,7 +133,6 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	FMOD::Channel* pBGMChannel = nullptr;
 	m_pSystem->playSound(iter->second, nullptr, FALSE, &pBGMChannel);
 
-	pBGMChannel->setMode(FMOD_LOOP_NORMAL);
 	pBGMChannel->setVolume(fVolume);
 	m_pChannelVolume[CHANNELID::BGM] = fVolume;
 
@@ -142,6 +141,7 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	m_pChannelArr[CHANNELID::BGM].push_back(pBGMChannel);
 	if (INFINITE != iLoopCount)
 	{
+		pBGMChannel->setMode(FMOD_LOOP_OFF);
 		pBGMChannel->setLoopCount(iLoopCount);
 		if (pFinishedCallBack)
 		{
@@ -149,6 +149,8 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 			pBGMChannel->setUserData((void*)m_ChannelEndCallBacks[CHANNELID::BGM].back());
 		}
 	}
+	else
+		pBGMChannel->setMode(FMOD_LOOP_NORMAL);
 }
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
@@ -349,9 +351,6 @@ void CSound_Manager::Remove_EndSound()
 				Safe_Delete(*Funciter);
 				m_ChannelEndCallBacks[i].erase(Funciter);
 				iter = m_pChannelArr[i].erase(iter);
-				
-				if(0 <iIndex)
-					iIndex--;
 			}
 			else
 			{

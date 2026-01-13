@@ -45,6 +45,8 @@ public:
 	void							OverlapTime(_float fDeltaTime);
 	_float							GetOverlapTime() { return m_OverlapTime; }
 
+	void							Initialize_Note(const NOTE_DESC& Desc);
+
 private :
 	CModel*							m_pModelCom = {nullptr};
 	CCollider*						m_pColliderCom = { nullptr };
