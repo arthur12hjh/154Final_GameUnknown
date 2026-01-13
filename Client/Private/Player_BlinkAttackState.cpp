@@ -60,6 +60,24 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
 
     m_pGameInstance->SetGameSpeed(m_fLerp);
 
+
+    if (0.8f < fAnimationRatio)
+    {
+        // 움직이려고 하면 캔슬해서 걷기
+        if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
+        {
+            m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+            if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+                m_tNextState.eNextState = PLAYER_STATE::EVADE;
+        }
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+            m_tNextState.eNextState = PLAYER_STATE::PARRY;
+    }
+
     if (true == isAnimFinished)
     {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
@@ -71,6 +89,7 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
 
 _float CPlayer_BlinkAttackState::End()
 {
+    CGameInstance::GetInstance()->Active_DoF(false, 0.f);
     m_Desc->pPlayerController->Set_CCTCollision(true);
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->isInvincible = false;

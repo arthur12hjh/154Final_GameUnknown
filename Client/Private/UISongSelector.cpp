@@ -106,7 +106,7 @@ void CUISongSelector::Update(_float fTimeDelta)
 		__super::Trigger_Event(TEXT("EnterKey_Event"), &Arg);
 	}
 
-	if (m_fEnterKeyPressedTime >= 2.f)
+	if (m_fEnterKeyPressedTime >= 1.f)
 	{
 		m_bActiveEnter = true;
 		UI_EVENT_ARG_DESC Arg2{};
@@ -151,7 +151,7 @@ void CUISongSelector::Update(_float fTimeDelta)
 		Arg.pData = &m_fEscKeyPressedTime;
 		__super::Trigger_Event(TEXT("EscKey_Event"), &Arg);
 	}
-	if (m_fEscKeyPressedTime >= 2.f)
+	if (m_fEscKeyPressedTime >= 1.f)
 	{
 		m_bActiveEsc = true;
 		UI_EVENT_ARG_DESC Arg2{};

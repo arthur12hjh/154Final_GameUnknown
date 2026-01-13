@@ -71,11 +71,29 @@ PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
     if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.3f < fAnimationRatio)
         m_pGameInstance->SetGameSpeed(1.f);
 
+    if (REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.8f < fAnimationRatio)
+    {
+        // 움직이려고 하면 캔슬해서 걷기
+        if ((m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||
+            m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_D)))
+        {
+            m_tNextState.eNextState = PLAYER_STATE::WALK;
+
+            if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_LSHIFT))
+                m_tNextState.eNextState = PLAYER_STATE::EVADE;
+        }
+        if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_E))
+            m_tNextState.eNextState = PLAYER_STATE::PARRY;
+    }
+
     return m_tNextState;
 }
 
 _float CPlayer_RepulseState::End()
 {
+    CGameInstance::GetInstance()->Active_DoF(false, 0.f);
     m_pGameInstance->SetGameSpeed(1.f);
     m_Desc->isInvincible = false;
     m_Desc->isLockChangable = true;
