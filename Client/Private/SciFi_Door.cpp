@@ -58,7 +58,7 @@ HRESULT CSciFi_Door::Initialize(void* pArg)
 		});
 	m_pGameInstance->Bind_Observer(TEXT("Get_Costume_Puzzle_Unlock"), m_pUnlockEvent);
 
-	m_pTransformCom->Set_Scale(2.5f, 2.5f, 2.5f);
+	//m_pTransformCom->Set_Scale(2.5f, 2.5f, 2.5f);
 
 	return S_OK;
 }
@@ -70,7 +70,7 @@ void CSciFi_Door::Priority_Update(_float fTimeDelta)
 void CSciFi_Door::Update(_float fTimeDelta)
 {
 	//m_pGameInstance->Manager_PlaySound(TEXT("MV_Xion01_PODFirstLanding_Main_door_1.wav"), CHANNELID::EFFECT);
-	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 5.f))
+	if (m_pGameInstance->isIn_DistanceFrustum(m_pTransformCom->Get_State(STATE::POSITION), 150.f))
 	{
 		if (INTERACTION_STATE::ACTIVE == m_pInteractionCom->Get_InterState() && m_bUnlocked && m_bCanlock)
 		{
@@ -145,7 +145,7 @@ void CSciFi_Door::Late_Update(_float fTimeDelta)
 {
 	if (m_pGameInstance->isIn_WorldFrustum(m_pCullingCollider))
 	{
-		if (INTERACTION_STATE::ACTIVE > m_pInteractionCom->Get_InterState())
+		if (INTERACTION_STATE::ACTIVE >= m_pInteractionCom->Get_InterState())
 			m_pInteractionCom->Update_Com(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 #ifdef _DEBUG
 		m_pGameInstance->Add_DebugComponent(m_pCullingCollider);
@@ -282,6 +282,24 @@ HRESULT CSciFi_Door::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CSciFi_Door::Begin_OverlapCallBack()
+{
+	if (FAILED(__super::Begin_OverlapCallBack()))
+		return E_FAIL;
+
+	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+	if (!pHUD)
+		return E_FAIL;
+
+	if (dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")))->Get_Has_Script_Desc())
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+
+	Safe_Release(pHUD);
+
+	return S_OK;
+}
+
 void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	// 여기서 플레이어 상태 처리 및 Lock 상태 관리
@@ -293,6 +311,8 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		if (m_pInteractionCom->IsInteractionEnable())
 		{
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+			//Excute_CallBack(fTimeDelta, pActionObject);
+			//return;
 		}
 	}
 	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())

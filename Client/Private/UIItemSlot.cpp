@@ -459,6 +459,8 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
 		Arg2.pData = &m_fInteractionTime;
 		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
+
+		m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
 	}
 	else if ((m_eState == INTERACTION_STATE::DEFAULT || m_eState == INTERACTION_STATE::LOCK)
 		&& m_pGameInstance->KeyPressed(KEY_INPUT::MOUSE, 1))
@@ -468,7 +470,7 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		if (!m_ItemSlotDescs[m_iCurrentItemIdx].bSoldOut)
 		{
 			if (m_fInteractionTime <= 0.f)
-				m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+				m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT2, 1.f, 1.f);
 
 			m_fInteractionTime += fTimeDelta;
 		}
@@ -503,8 +505,6 @@ void CUIItemSlot::MouseAction(_float fTimeDelta)
 		Arg2.Type = UI_EVENT_ARG_DESC::FLOAT;
 		Arg2.pData = &m_fInteractionTime;
 		__super::Trigger_Event(TEXT("ItemSlot_Event"), &Arg2);
-
-		// m_pGameInstance->Manager_PlaySound(TEXT("UI_Interaction_Success_MainHUD.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	}
 
 	m_iPrevItemIdx = m_iCurrentItemIdx;
