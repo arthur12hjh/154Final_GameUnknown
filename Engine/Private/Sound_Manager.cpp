@@ -338,13 +338,16 @@ void CSound_Manager::LoadSoundFile()
 void CSound_Manager::Remove_EndSound()
 {
 	_bool IsPlay = { false };
+	FMOD_MODE IsMode = FMOD_LOOP_NORMAL;
 	for (_uint i = 0; i < CHANNELID::END; ++i)
 	{
 		_uint iIndex = {};
 		for (auto iter = m_pChannelArr[i].begin(); iter != m_pChannelArr[i].end();)
 		{
+
+			(*iter)->getMode(&IsMode);
 			(*iter)->isPlaying(&IsPlay);
-			if (!IsPlay)
+			if (!IsPlay && (FMOD_LOOP_OFF == IsMode || FMOD_DEFAULT == IsMode))
 			{
 				auto Funciter = m_ChannelEndCallBacks[i].begin() + iIndex;
 
