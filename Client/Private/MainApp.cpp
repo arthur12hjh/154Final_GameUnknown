@@ -292,6 +292,16 @@ HRESULT CMainApp::Ready_Prototypes()
 		CTestEveHead::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_ScarletBody_ORSS*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_ScarletBody_ORSS"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Etc/CH_P_EVE_BB_V03_TypeA_ORSS.png"), 1))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Eve_Ponytail_Mask */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Ponytail_Mask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Etc/PonyTail_Alpha.dds"), 1))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

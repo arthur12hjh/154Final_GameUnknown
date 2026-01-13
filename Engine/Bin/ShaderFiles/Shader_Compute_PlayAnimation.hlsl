@@ -36,6 +36,8 @@ float4x4 MakeTranslationMatrix(float4 vTranslation)
 // 회전행렬
 float4x4 MakeRotationMatrix(float4 vRotation)
 {
+    vRotation = normalize(vRotation);
+    
     float fX = vRotation.x;
     float fY = vRotation.y;
     float fZ = vRotation.z;
@@ -190,8 +192,8 @@ float4x4 ComputeLocalMatrix(uint iBoneIndex, float fTime)
     float3 vScale0 = InputKeyFrame[iCurrentIndex].vScale;
     float3 vScale1 = InputKeyFrame[iNextIndex].vScale;
 
-    float4 vRotation0 = InputKeyFrame[iCurrentIndex].vRotation;
-    float4 vRotation1 = InputKeyFrame[iNextIndex].vRotation;
+    float4 vRotation0 = normalize(InputKeyFrame[iCurrentIndex].vRotation);
+    float4 vRotation1 = normalize(InputKeyFrame[iNextIndex].vRotation);
 
     float3 vTranslation0 = InputKeyFrame[iCurrentIndex].vTranslation;
     float3 vTranslation1 = InputKeyFrame[iNextIndex].vTranslation;

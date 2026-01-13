@@ -21,7 +21,7 @@ void CPlayer_BattleEvadeState::Start(void* pArg, _float fBlendRatio)
 	/* 방향 */
 	/* 1. 아무것도 안눌렀으면 백스텝 */
 	/* 2. 방향키 하나라도 눌렀으면 그 방향으로 스텝. (이동 로직이랑 똑같이 카메라 look 기준으로)*/
-	m_pGameInstance->Manager_PlaySound(TEXT("SE_Downer_Evade_00.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	m_pGameInstance->Manager_PlaySound(TEXT("PC_Evade_S_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	if (false == (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W) ||
 		//m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S) ||
 		m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A) ||

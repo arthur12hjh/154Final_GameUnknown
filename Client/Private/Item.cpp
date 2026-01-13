@@ -99,6 +99,41 @@ void CItem::Update(_float fTimeDelta)
 	m_pCullingCollider->UpdateColiision(WorldMat);
 	m_pRigidBody->Update_PxTransform(WorldMat);
 
+	if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+	{
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
+		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		Set_Dead(true);
+
+		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+		if (pHUD)
+		{
+			CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
+			if (pGetterQueue)
+			{
+				WCHAR pText[MAX_PATH] = {};
+				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
+				pGetterQueue->Insert_Queue(pText);
+
+				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+				if (pPlayer)
+				{
+					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+					m_pGameInstance->Manager_PlaySound(TEXT("SE_ItemGet_BoxInteraction_foley.wav"), CHANNELID::EFFECT, 5.f);
+				}
+
+				Safe_Release(pPlayer);
+
+				if (nullptr != m_pEffect) {
+					m_pEffect->End(true, 1);
+				}
+			}
+		}
+		Safe_Release(pHUD);
+	}
+
 	// ui 애니메이션 끝나고 나오게
 	//if (m_eInterState == INTERACTION_STATE::ACTIVE)
 	//{
@@ -179,16 +214,25 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		if (m_pInteractionCom->IsInteractionEnable())
 		{
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+			//Excute_CallBack(fTimeDelta, pActionObject);
+			//return;
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+	/*else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
 	{
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
+		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
+		Set_Dead(true);
+
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 		if (pHUD)
 		{
 			CUIGetterQueue* pGetterQueue{ dynamic_cast<CUIGetterQueue*>(pHUD->Get_UIObject(TEXT("Layer_Combat_Info"), TEXT("UI_GetterQueue"))) };
 			if (pGetterQueue)
 			{
+				m_pGameInstance->Manager_PlaySound(TEXT("GET_ITEM.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+
 				WCHAR pText[MAX_PATH] = {};
 				wsprintf(pText, TEXT(" %d G"), (_int)m_fAmount);
 				pGetterQueue->Insert_Queue(pText);
@@ -209,12 +253,7 @@ void CItem::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 			}
 		}
 		Safe_Release(pHUD);
-
-		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
-		m_pInteractionCom->Set_Duration(0.f);
-		m_pGameInstance->Remove_Interaction(m_pInteractionCom);
-		Set_Dead(true);
-	}
+	}*/
 }
 
 HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
@@ -271,7 +310,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.5f, Com_Size.y * 0.5f, Com_Size.z * 0.5f);
 	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
-	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT;
+	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT | PHYSX_CUSTOM_6;
 	RigidBodyDesc.isQuery = false;
 	/* Com_RigidBody */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_RigidBody"),

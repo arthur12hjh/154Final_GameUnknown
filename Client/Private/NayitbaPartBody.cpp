@@ -11,6 +11,7 @@
 #include "Nayitba.h"
 
 #include "GameInstance.h"
+#include "CinematicModel_Scarlet.h"
 
 CNayitbaPartBody::CNayitbaPartBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -187,16 +188,19 @@ void CNayitbaPartBody::Late_Update(_float fTimeDelta)
         _float fCamDist = XMVectorGetX(
             XMVector3Length(vPosition - XMLoadFloat4(m_pGameInstance->Get_CamPosition())));
 
-        if (fCamDist < 200.f)
+        if (false == m_isDeadEffect)
         {
-            CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
-            if (Naytiba)
+            if (fCamDist < 200.f)
             {
-                if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
-                    m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
-            }
+                CNaytiba* Naytiba = dynamic_cast<CNaytiba*>(m_pParent);
+                if (Naytiba)
+                {
+                    if (NAYTIBA_TYPE::ELITE <= Naytiba->GetStaticMonsterData()->eNaytiba_Type)
+                        m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+                }
 
-            m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+                m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+            }
         }
     }
   
@@ -234,9 +238,19 @@ HRESULT CNayitbaPartBody::Render()
             m_pRimLight->Bind_RimLightShaderResources(m_pShaderCom, "g_vRimLightColor", "g_fRimLightPower", "g_fRimLightStrength", "g_vCamPosition");
         }
 
+        auto pNaytiba = dynamic_cast<CNaytiba*>(m_pParent);
+        auto pCinematicScarlet = dynamic_cast<CCinematicModel_Scarlet*>(m_pParent);
+
         if (m_bIsChangeBodyColor)
         {
             if (FAILED(m_pShaderCom->Begin(8)))
+                return E_FAIL;
+        }
+        else if (((nullptr != pNaytiba && 8 == pNaytiba->GetMonsterID())  || (nullptr != pCinematicScarlet)) &&
+            strcmp(m_pModelCom->Get_MaterialName(m_pModelCom->Get_Mesh_MaterialIndex(i)), "MI_CH_M_NA_961_Skin") == 0)
+        {
+            // ½ºÄ®·¿ÀÇ ¸öÅëÀº orss·Î ±×¸°´Ù.
+            if (FAILED(m_pShaderCom->Begin(6)))
                 return E_FAIL;
         }
         else
@@ -609,7 +623,14 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
         return E_FAIL;
 
     auto pNaytiba = dynamic_cast<CNaytiba*>(m_pParent);
+    auto pCinematicScarlet = dynamic_cast<CCinematicModel_Scarlet*>(m_pParent);
 
+    if ((nullptr != pNaytiba && 8 == pNaytiba->GetMonsterID()) || nullptr != pCinematicScarlet)
+    {
+        if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_ScarletBody_ORSS"),
+            TEXT("ScarletORSS"), reinterpret_cast<CComponent**>(&m_pScarletORSSTextureCom))))
+            return E_FAIL;
+    }
     if (pNaytiba)
     {
         if (10 == pNaytiba->GetMonsterID())
@@ -631,6 +652,7 @@ HRESULT CNayitbaPartBody::Ready_Components(const NAYITBA_PART_BODY_DESC& pDesc)
             m_pColliderCom->BindBeginOverlapEvent([&](_float3 vHitPoint, _float3 vHitDir, CGameObject* pHitActor) { Begin_Event(vHitPoint, vHitDir, pHitActor); });
             m_pColliderSocket = m_pModelCom->Get_BoneMatrixPtr("GunBarrel_Back");
         }
+
     }
     
 
@@ -683,6 +705,16 @@ HRESULT CNayitbaPartBody::Bind_ShaderResources()
 
     if (FAILED(m_pShaderCom->Bind_RawValue("g_fDeadTime", &m_fDeadTime, sizeof(_float))))
         return E_FAIL;
+
+    auto pNaytiba = dynamic_cast<CNaytiba*>(m_pParent);
+    auto pCinematicScarlet = dynamic_cast<CCinematicModel_Scarlet*>(m_pParent);
+
+    if ((nullptr != pNaytiba && 8 == pNaytiba->GetMonsterID()) || 
+        nullptr != pCinematicScarlet)
+    {
+        if (FAILED(m_pScarletORSSTextureCom->Bind_ShaderResource(m_pShaderCom, "g_ORSSTexture", 0)))
+            return E_FAIL;
+    }
 
     return S_OK;
 }
@@ -768,4 +800,5 @@ void CNayitbaPartBody::Free()
 
     Safe_Release(m_pRimLight);
     Safe_Release(m_pTexture);
+    Safe_Release(m_pScarletORSSTextureCom);
 }
