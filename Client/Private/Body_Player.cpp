@@ -306,7 +306,7 @@ HRESULT CBody_Player::Ready_Components()
 		return E_FAIL;
 
 	COBBCollider::OBB_COLLIDER_DESC		OBBDesc{};
-	OBBDesc.vSize = _float3(0.3f, 2.f, 0.3f);
+	OBBDesc.vSize = _float3(0.45f, 2.f, 0.45f);
 	OBBDesc.vCenter = _float3(0.f, 0.8f, 0.f);
 	OBBDesc.vAngles = _float3(0.f, 0.f, 0.f);
 
@@ -629,7 +629,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_4;
 	RigidBodyDesc.isSimulateSync = false;
 	RigidBodyDesc.isQuery = false;
-	RigidBodyDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 
 	//##################### R-Thigh
 	CRigidBody* pRigidBody = { nullptr };
@@ -679,7 +679,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 
 	pRigidBody->Set_AngularDamping(0.01f);
 	pRigidBody->Set_LinearDamping(0.06f);
-	pRigidBody->Set_LocalPos(_float3(0.f, 0.f, 0.1f));
+	pRigidBody->Set_LocalPos(_float3(0.f, 0.f, 0.08f));
 
 	m_ThighRigidBodies.push_back(make_pair(pBone, pRigidBody));
 	m_pGameInstance->Add_RigidBody_ToPhysx(this, pRigidBody);
@@ -700,7 +700,7 @@ HRESULT CBody_Player::Ready_UpperRigidBodies()
 	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_2 | PHYSX_CUSTOM_3;
 	RigidBodyDesc.isSimulateSync = false;
 	RigidBodyDesc.isQuery = false;
-	RigidBodyDesc.vMaterial = _float3(0.2f, 0.2f, 0.f);
+	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
 
 	for (_uint i = 0; i < 2; ++i)
 	{

@@ -17,6 +17,8 @@
 #include "UIScript.h"
 
 #include "UIActionEvent.h"
+#include "PonyTail_Player.h"
+#include "Player.h"
 
 CCinematicManager::CCinematicManager()
     : m_pGameInstance{ CGameInstance::GetInstance() }
@@ -95,6 +97,8 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
         Script_Action(SCRIPT_ACTION::BEGIN); // 스크립트 삽입 입니다 호출하면 알아서 들어갈겁니다 (현재 시네마틱 실행하면 알아서 들어가고 있어요)
         Script_Action(SCRIPT_ACTION::PLAY); // 스크립트 다음 대사 재생
         Script_Action(SCRIPT_ACTION::STOP); // 스크립트 멈추기(안보이기)
+        Script_Action(SCRIPT_ACTION::SHOW); // 스크립트 보이기(기본값)
+        Script_Action(SCRIPT_ACTION::HIDE); // 스크립트 숨기기
         Script_Action(SCRIPT_ACTION::END); // 스크립트 해제 (현재 스킵 적용 되고 있습니다)
     */
 
@@ -106,6 +110,14 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
     {
         Script_Action(SCRIPT_ACTION::STOP);
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K))
+    {
+        Script_Action(SCRIPT_ACTION::SHOW);
+    }
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+    {
+        Script_Action(SCRIPT_ACTION::HIDE);
     }
 
     return S_OK;
@@ -358,6 +370,16 @@ void CCinematicManager::Script_Action(SCRIPT_ACTION eAction)
         pScript->Stop_Script();
         break;
     }
+    case SCRIPT_ACTION::SHOW:
+    {
+        pScript->Set_Show_Script(true);
+        break;
+    }
+    case SCRIPT_ACTION::HIDE:
+    {
+        pScript->Set_Show_Script(false);
+        break;
+    }
     case SCRIPT_ACTION::END:
     {
         pScript->End_Script();
@@ -478,6 +500,13 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 ++iObjectIndex;
 
                 static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
+
+                if (szText == TEXT("Layer_Player"))
+                {
+                    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_PonyTail")));
+                 
+                    pPonytail->Teleport_JointChains(XMLoadFloat4x4(pObject->GetTransform()->Get_WorldMatrixPtr()));
+                }
             }
         }
         break;
