@@ -89,16 +89,21 @@ void CLift_Controller::Update(_float fTimeDelta)
 		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
 		m_pInteractionCom->Set_Duration(0.f);
 
-		if (m_bIsControllLift)
-		{
-			if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
-				m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
-			else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
-				m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
-		}
+		//if (m_bIsControllLift)
+		//{
+		//	//if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+		//	//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+		//	//else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+		//	//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+		//}
 
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
+			//if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+			//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+			//else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+			//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+
 			m_pModelCom->Set_AnimationIndex(1, false);
 			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
 

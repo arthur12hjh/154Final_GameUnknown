@@ -137,7 +137,7 @@ HRESULT CUITriggerKey::Bind_ShaderResources()
 			return E_FAIL;
 	}
 
-	_float fRatio = m_fInteractionTime / 2.f;
+	_float fRatio = m_fInteractionTime / 1.f;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fCoolAmount", &fRatio, sizeof(_float))))
 		return E_FAIL;

@@ -53,6 +53,9 @@ HRESULT CUIShield::Initialize(void* pArg)
 
 	Safe_Release(pCharactor);
 	
+	m_fTargetFill = static_cast<_float>(*m_iCurrentShield) / static_cast<_float>(*m_iMaxShield);
+	m_fCurrentFill = m_fTargetFill;
+
 	return S_OK;
 }
 
