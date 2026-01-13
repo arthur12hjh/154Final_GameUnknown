@@ -1201,6 +1201,9 @@
     <Filter Include="02.GameObjects\CinematicModel\CinematicPartFacial">
       <UniqueIdentifier>{8d39c806-5120-43c2-bade-f5244a4dc109}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TriggerBox\Camera">
+      <UniqueIdentifier>{1e10ac0f-d776-4bf8-ba6b-5c672a3fa102}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2299,6 +2302,9 @@
     <ClInclude Include="..\Public\CinematicPartFacial.h">
       <Filter>02.GameObjects\CinematicModel\CinematicPartFacial</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CameraTriggerBox.h">
+      <Filter>02.GameObjects\TriggerBox\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3360,6 +3366,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CinematicPartFacial.cpp">
       <Filter>02.GameObjects\CinematicModel\CinematicPartFacial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CameraTriggerBox.cpp">
+      <Filter>02.GameObjects\TriggerBox\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

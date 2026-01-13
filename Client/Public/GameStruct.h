@@ -695,14 +695,7 @@ namespace Client
 
 	enum class GROUND_SOUND_TYPE
 	{
-		SAND,
-		GRASS,
-		IRON,
-		BRIDGE,
-		CONCRETE,
-		ROCK,
-		CONTAINER,
-		END
+		SAND, GRASS, IRON, BRIDGE, CONCRETE, ROCK, CONTAINER, END
 	};
 
 	enum class BGM_SOUND_STATE
@@ -710,6 +703,11 @@ namespace Client
 		INTRO,
 		LOOP,
 		END,
+	};
+
+	enum class CAMERA_TYPE
+	{
+		CONTAINER, END
 	};
 
 	typedef struct	Field_Bgm_Desc

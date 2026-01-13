@@ -33,9 +33,11 @@ public:
 	virtual		HRESULT			Render() override;
 
 	void		Set_Distance(_float fDistance) { m_fDistance = fDistance; }
+	void		Set_TargetDistance(_float fDistance) { m_fTargetDistance = fDistance; }
 
 	void		Set_Pivot(_vector vPivot);
 	void		Reset_Pivot() { m_vPivot = { 1.5f, 4.f, 0.f }; }
+
 
 
 private:
@@ -60,6 +62,9 @@ private:
 	_float						m_fDistance = { 10.f };
 	_float3						m_vPivot = { 1.5f, 4.f, 0.f };
 	_bool						m_bIsPositionInitialized = { FALSE };
+
+	// 컨테이너 안에 들어갔을때
+	_float						m_fTargetDistance = { 7.f };
 
 private:
 	void						Transition_Camera(_float fTimeDelta);

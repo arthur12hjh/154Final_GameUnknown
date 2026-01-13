@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\CinematicPartBody.h" />
     <ClInclude Include="..\Public\CinematicPartFacial.h" />
     <ClInclude Include="..\Public\Coin_Player.h" />
+    <ClInclude Include="..\public\CameraTriggerBox.h" />
     <ClInclude Include="..\public\DisplayBox.h" />
     <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Level_BeatSaber.h" />
@@ -529,6 +530,7 @@
     <ClCompile Include="..\Private\CinematicPartBody.cpp" />
     <ClCompile Include="..\Private\CinematicPartFacial.cpp" />
     <ClCompile Include="..\Private\Coin_Player.cpp" />
+    <ClCompile Include="..\private\CameraTriggerBox.cpp" />
     <ClCompile Include="..\private\DisplayBox.cpp" />
     <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Level_BeatSaber.cpp" />
