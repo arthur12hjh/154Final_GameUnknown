@@ -38,6 +38,9 @@ void CInteractionBinder::Finished_Interaction()
 
 _bool CInteractionBinder::IsInteractionEnable()
 {
+    /*if (m_fInteractionDuration <= 0.f && m_InteractionDesc->fInteractionTime > 0.f)
+        m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT2, 1.f, 1.f);*/
+
     return m_fInteractionDuration >= m_InteractionDesc->fInteractionTime ? true : false;
 }
 

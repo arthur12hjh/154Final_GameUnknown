@@ -62,6 +62,8 @@ HRESULT CProb_Interaction::Begin_OverlapCallBack()
 
 HRESULT CProb_Interaction::End_OverlapCallBack()
 {
+    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+    m_pInteractionCom->Reset_Interaction();
     m_pGameInstance->Remove_Interaction(m_pInteractionCom);
 
     return S_OK;
