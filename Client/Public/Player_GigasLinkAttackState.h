@@ -24,6 +24,7 @@ private:
 
 	const _float4x4* m_pSocketMatrix = { nullptr };
 	const _float4x4* m_pParentTransformMatrix = { nullptr };
+	_bool			 m_isStartFrame = { true };
 
 	_float   m_fStartY = { 0.f };
 	_bool    m_isFlagActivated = { false };

@@ -76,6 +76,9 @@ void CUISongSelector::Update(_float fTimeDelta)
 	// ENTER 입력
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_RETURN) && !m_bActiveEnter)
 	{
+		//if (m_fEnterKeyPressedTime <= 0.f)
+		//	m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		
 		m_fEnterKeyPressedTime += fTimeDelta;
 
 		UI_EVENT_ARG_DESC Arg{};
@@ -103,7 +106,7 @@ void CUISongSelector::Update(_float fTimeDelta)
 		__super::Trigger_Event(TEXT("EnterKey_Event"), &Arg);
 	}
 
-	if (m_fEnterKeyPressedTime >= 2.f)
+	if (m_fEnterKeyPressedTime >= 1.f)
 	{
 		m_bActiveEnter = true;
 		UI_EVENT_ARG_DESC Arg2{};
@@ -119,6 +122,9 @@ void CUISongSelector::Update(_float fTimeDelta)
 	// ESC 입력
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_ESCAPE) && !m_bActiveEsc)
 	{
+		//if (m_fEscKeyPressedTime <= 0.f)
+		//	m_pGameInstance->Manager_PlaySound(TEXT("UI_GaugeFX.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		
 		m_fEscKeyPressedTime += fTimeDelta;
 
 		UI_EVENT_ARG_DESC Arg{};
@@ -145,7 +151,7 @@ void CUISongSelector::Update(_float fTimeDelta)
 		Arg.pData = &m_fEscKeyPressedTime;
 		__super::Trigger_Event(TEXT("EscKey_Event"), &Arg);
 	}
-	if (m_fEscKeyPressedTime >= 2.f)
+	if (m_fEscKeyPressedTime >= 1.f)
 	{
 		m_bActiveEsc = true;
 		UI_EVENT_ARG_DESC Arg2{};
@@ -480,6 +486,7 @@ void CUISongSelector::Update_SongIndex(_float fTimeDelta)
 {
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_DOWN))
 	{
+		m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 		m_iCurrentIndex = (m_iCurrentIndex + 1) % m_SongDescs.size();
 
 		UI_EVENT_ARG_DESC Arg{};
@@ -493,6 +500,7 @@ void CUISongSelector::Update_SongIndex(_float fTimeDelta)
 	}
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_UP))
 	{
+		m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 		m_iCurrentIndex = (m_iCurrentIndex - 1 + m_SongDescs.size()) % m_SongDescs.size();
 		
 		UI_EVENT_ARG_DESC Arg{};

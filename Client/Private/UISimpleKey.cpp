@@ -63,10 +63,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 	if (!pHUD)
-	{
-		Safe_Release(pHUD);
 		return;
-	}
 
 	CUIBase* pUIText = pHUD->Get_UIObject(m_tUIDesc.szLayerTag, TEXT("Interaction_Text"));
 
@@ -82,7 +79,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 
 		if (m_pTargetOwner != m_pParent)
 			m_pInterDesc = *const_cast<INTERACTION_DATA*>(m_pTargetInteractionCom->Get_InterDesc());
-		
 
 		if (m_pTargetOwner && m_pTargetInteractionCom->Get_InterDesc())
 		{
@@ -91,13 +87,6 @@ void CUISimpleKey::Update(_float fTimeDelta)
 			if (m_pTargetInteractionCom->Get_InterDesc())
 				vPivot = m_pInterDesc.vUIPivot;
 
-			/*XMStoreFloat3(&m_vNewPivot,
-				XMVectorSet(
-					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][0] + vPivot.x,
-					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][1] + vPivot.y,
-					m_pTargetOwner->GetTransform()->Get_WorldMatrixPtr()->m[4][2] + vPivot.z,
-					1.f
-				));*/
 			if (dynamic_cast<CLift_Controller*>(m_pTargetOwner)
 				&& dynamic_cast<CLift_Controller*>(m_pTargetOwner)->Get_CombinedMatrix()
 				&& dynamic_cast<CLift_Controller*>(m_pTargetOwner)->Get_LiftPlatformPosition())

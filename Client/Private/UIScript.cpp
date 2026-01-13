@@ -77,14 +77,17 @@ HRESULT CUIScript::Render()
 
 	__super::Render();
 
-	if (m_pScriptDesc->szSpeaker != TEXT(""))
+	if (m_bShow)
 	{
-		if (FAILED(RenderSpeaker()))
+		if (m_pScriptDesc->szSpeaker != TEXT(""))
+		{
+			if (FAILED(RenderSpeaker()))
+				return E_FAIL;
+		}
+
+		if (FAILED(RenderScript()))
 			return E_FAIL;
 	}
-
-	if (FAILED(RenderScript()))
-		return E_FAIL;
 
 #ifdef _DEBUG
 	__super::Render_Debug_Rect();

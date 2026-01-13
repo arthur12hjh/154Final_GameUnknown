@@ -571,7 +571,7 @@ void CShaderManager::Set_CinematicLights(_uint iFlag)
         
         if (false == m_isScarletPhase2)
         {
-            m_pDirectionalLightDesc->vDiffuse = _float4(0.32f, 0.32f, 0.32f, 1.f);
+            m_pDirectionalLightDesc->vDiffuse = _float4(0.28f, 0.28f, 0.28f, 1.f);
         }
         else if (true == m_isScarletPhase2)
         {

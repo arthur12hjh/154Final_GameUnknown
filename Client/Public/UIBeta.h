@@ -43,8 +43,8 @@ private:
 	CVIBuffer_Rect* m_pVIGlowBufferCom = { nullptr };
 	CTexture* m_pFXTexture{ nullptr };
 
-	_float m_fCurrentFill = 0.5f;   // 현재 값
-	_float m_fTargetFill = 0.5f;    // 목표값
+	_float m_fCurrentFill = 0.f;   // 현재 값
+	_float m_fTargetFill = 0.f;    // 목표값
 	_float m_fSpeed = 5.0f;         // 빠르게 감소시킬지
 
 	_int m_iPrevGroupFilled = -1;

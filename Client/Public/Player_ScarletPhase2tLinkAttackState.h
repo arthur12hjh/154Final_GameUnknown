@@ -21,6 +21,7 @@ public:
 private:
 	const _float4x4* m_pSocketMatrix = { nullptr };
 	const _float4x4* m_pParentTransformMatrix = { nullptr };
+	_bool			 m_isStartFrame = { true };
 
 public:
 	static	CPlayer_ScarletPhase2tLinkAttackState* Create(void* pArg);

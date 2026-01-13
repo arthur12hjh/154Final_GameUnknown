@@ -337,6 +337,25 @@ PS_OUT PS_MAIN_TREE(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_XION_WALL(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord * 5.f);
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord * 5.f, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord * 5.f);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 { 
     // idx 0
@@ -440,5 +459,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_BLOSSOM();
         GeometryShader = compile gs_5_0 GS_BLOSSOM();
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    // idx 10
+    pass XION_WALL
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_BLOSSOM();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_XION_WALL();
     }
 }

@@ -49,6 +49,7 @@ private:
 	HRESULT						Ready_Col(const _tchar* pComponentTag);
 	HRESULT						Bind_ShaderResources();
 
+	virtual HRESULT				Begin_OverlapCallBack() override;
 	virtual void				Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject) override;
 
 public:

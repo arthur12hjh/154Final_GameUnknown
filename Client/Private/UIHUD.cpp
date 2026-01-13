@@ -58,7 +58,7 @@ void CUIHUD::Update(_float fTimeDelta)
 			if (Interactions[i])
 			{
 				_float3 newPos{};
-				_float3 vPivot{ 0.f, 0.f, 0.f };
+				_float3 vPivot{};
 
 				CInteractionBinder* pInteraction = dynamic_cast<CInteractionBinder*>(Interactions[i]);
 				CGameObject* pOwner = pInteraction->GetOwner();

@@ -83,7 +83,34 @@ void CLift_Controller::Update(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation(fTimeDelta);
 	ResetAction();
-	if (m_pLiftPlatform && m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
+
+	if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+	{
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+		m_pInteractionCom->Set_Duration(0.f);
+
+		//if (m_bIsControllLift)
+		//{
+		//	//if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+		//	//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+		//	//else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+		//	//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+		//}
+
+		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
+		{
+			//if (LIFT_CONTROLL_STATE::LIFT_UP == m_eControllState)
+			//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_DOWN;
+			//else if (LIFT_CONTROLL_STATE::LIFT_DOWN == m_eControllState)
+			//	m_eControllState = LIFT_CONTROLL_STATE::LIFT_UP;
+
+			m_pModelCom->Set_AnimationIndex(1, false);
+			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
+
+			m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
+		}
+	}
+	else if (m_pLiftPlatform && m_pInteractionCom->Get_InterState() == INTERACTION_STATE::ACTIVE)
 	{
 		if (!m_pLiftPlatform->GetPlatformMove())
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
@@ -294,7 +321,7 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 			m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
 		}
 	}
-	else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
+	/*else if (INTERACTION_STATE::CONTACT == m_pInteractionCom->Get_InterState())
 	{
 		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
 		m_pInteractionCom->Set_Duration(0.f);
@@ -309,13 +336,12 @@ void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionOb
 
 		if (m_pLiftPlatform->SetPlatformMove(CLift_Platform::LIFT_PLATFORM_STATE(ENUM_CLASS(m_eControllState))))
 		{
-
 			m_pModelCom->Set_AnimationIndex(1, false);
 			m_eCurState = LIFT_ANIM_STATE::LIFT_ANIM_PULL;
 			
 			m_pModelCom->Set_AnimationIndex(ENUM_CLASS(m_eCurState), false);
 		}
-	}
+	}*/
 }
 
 void CLift_Controller::ResetAction(_bool bIsForce)
@@ -325,8 +351,6 @@ void CLift_Controller::ResetAction(_bool bIsForce)
 	{
 		if (m_pModelCom->IsAnimationFinished())
 			bIsAction = true;
-
-
 	}
 
 	if (bIsAction || bIsForce)
