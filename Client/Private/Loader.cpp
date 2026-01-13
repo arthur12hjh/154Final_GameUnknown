@@ -201,6 +201,7 @@
 #include "DisplayBox.h"
 #include "Shutter.h"
 #include "SoundTriggerBox.h"
+#include "CameraTriggerBox.h"
 #pragma endregion
 
 #pragma region Dororong_Saber
@@ -8490,6 +8491,13 @@ HRESULT CLoader::Loading_For_GamePlay_Npc(void* pArg)
 	/* For.Prototype_GameObject_SoundTriggerBox */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_SoundTriggerBox");
 	pProtoDesc.pPrototype = CSoundTriggerBox::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_CameraTriggerBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CameraTriggerBox");
+	pProtoDesc.pPrototype = CCameraTriggerBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

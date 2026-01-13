@@ -119,7 +119,10 @@ void CItem::Update(_float fTimeDelta)
 				auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 
 				if (pPlayer)
+				{
 					static_cast<CPlayer*>(pPlayer)->Get_Desc()->iOwnGold += (_int)m_fAmount;
+					m_pGameInstance->Manager_PlaySound(TEXT("SE_ItemGet_BoxInteraction_foley.wav"), CHANNELID::EFFECT, 5.f);
+				}
 
 				Safe_Release(pPlayer);
 

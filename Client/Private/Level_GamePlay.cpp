@@ -20,6 +20,7 @@
 #include "ChangeLevelEvent.h"
 #include "TeleportEvent.h"
 #include "SoundTriggerBox.h"
+#include "CameraTriggerBox.h"
 
 #include "SpriteParticle.h"
 
@@ -65,7 +66,7 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert4.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
 	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	Load_Sound_Trigger_Box_Objects("../../Map_Editor/Bin/DataFiles/Desert_SoundTriggerBox.bin");
@@ -695,6 +696,7 @@ HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
+	if (FAILED(Load_Camera_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_CameraTriggerBox"), TEXT("Layer_CameraTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 
@@ -981,6 +983,37 @@ HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _t
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		Desc.eSoundBoxType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_CAMERA_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_CAMERA_TRIGGER_BOX_INFO));
+
+		CCameraTriggerBox::CAMERA_TRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.eCameraType = info.eType;
 
 		_vector vScale = {};
 		_vector vRotation = {};
