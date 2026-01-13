@@ -2,11 +2,11 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 0.0,
+                "fNumData01": 1.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 29,
+                "iNotifyKeyFrame": 23,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -16,7 +16,7 @@
                 "iNumData07": 0,
                 "iNumData08": 0,
                 "szNotifyArg01": "RUN",
-                "szNotifyArg02": "",
+                "szNotifyArg02": "SE_Gigas_BodyMovement_footstep_01.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
@@ -42,12 +42,12 @@
                 ]
             },
             {
-                "fNumData01": 0.0,
+                "fNumData01": 0.5,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 47,
-                "iNumData01": 1,
+                "iNotifyKeyFrame": 43,
+                "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
                 "iNumData04": 0,
@@ -56,7 +56,47 @@
                 "iNumData07": 0,
                 "iNumData08": 0,
                 "szNotifyArg01": "RUN",
-                "szNotifyArg02": "",
+                "szNotifyArg02": "SE_Gigas_BodyMovement_footstep_02.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            {
+                "fNumData01": 1.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 50,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "RUN",
+                "szNotifyArg02": "SE_Gigas_BodyMovement_footstep_01.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",

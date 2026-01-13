@@ -106,6 +106,8 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	pGameManager->Change_ShaderSetting(LEVEL::GAMEPLAY, 0);
 
+	g_bIsMouseLock = true;
+
 	return S_OK;
 }
 
