@@ -268,14 +268,8 @@ void CBeatSaberCharacter::Key_Input(_float fTimeDelta)
 	}
 	
 	if (dir != m_CharacterDesc.eDirection) {
-
-		_float fRandom = m_pGameInstance->Random(0.f, 2.f);
-		if (1 < fRandom) {
-			m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_redy.wav"), CHANNELID::EFFECT, 2.f, 1.f);
-		}
-		else {
-			m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_tada.wav"), CHANNELID::EFFECT, 2.f, 1.f);
-		}
+		m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_redy.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("MV_Nikke_Dororong_1stMeet_tada.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 	}
 	if(bIsMove)
 		m_pFsm->Change_State(TEXT("Move"));

@@ -163,6 +163,28 @@ void CPlayer::Play_Sound(const ANIM_NOTIFY& NotifyReference)
 		m_pGameInstance->Manager_PlaySound(TEXT("EVE_SE_MetalBox_01.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		m_pGameInstance->Manager_PlaySound(TEXT("PC_Skill_MoveBackAttack_Kick.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	}
+	else if ("ATTACK_BLOOD" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("DED_BetaNative_finish_Eve_Attack2.wav"), CHANNELID::EFFECT, 0.8f, 1.f);
+	}
+	else if ("GRINDER" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("ME05_GrinderDeath_sfx_oneshot.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+	}
+	else if ("BLOOD" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("M_SawShark_skill_Blood_L.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	}
+	else if ("BLOOD_JUMP" == NotifyReference.szNotifyArg01)
+	{
+		m_pGameInstance->Manager_PlaySound(TEXT("DED_BetaNative_finish_Eve_Attack5.wav"), CHANNELID::EFFECT, 0.8f, 1.f);
+	}
+	else if ("BLOOD_END" == NotifyReference.szNotifyArg01)
+	{
+		//m_pGameInstance->Manager_PlaySound(TEXT("M_WeaponMaster_BloodSwish.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+		m_pGameInstance->Manager_PlaySound(TEXT("DED_BetaNative_finish_Eve_Attack4.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+		
+	}
 }
 
 void CPlayer::Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef)
