@@ -46,12 +46,15 @@ HRESULT CUIBeta::Initialize(void* pArg)
 		
 		m_iMaxCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iMaxBetaEnergy);
 		m_iCurrentCount = const_cast<LONGLONG*>(&pGaraPlayer->Get_Desc()->iCurrentBetaEnergy);
-		
+
 		Safe_Release(pGaraPlayer);
 	}
 #endif // DEBUG
 
 	Safe_Release(pCharactor);
+
+	m_fTargetFill = static_cast<_float>(*m_iCurrentCount) / static_cast<_float>(*m_iMaxCount);
+	m_fCurrentFill = m_fTargetFill;
 
 	return S_OK;
 }

@@ -53,6 +53,10 @@ HRESULT CUIHPBar::Initialize(void* pArg)
 
 	Safe_Release(pCharactor);
 
+	m_iCellCount = (*m_iMaxHp * 0.1f);
+	m_fTargetFill = static_cast<_float>(*m_iCurrentHp) / static_cast<_float>(*m_iMaxHp);
+	m_fCurrentFill = m_fTargetFill;
+
 	return S_OK;
 }
 

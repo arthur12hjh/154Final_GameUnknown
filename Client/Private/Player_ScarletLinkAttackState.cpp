@@ -6,6 +6,7 @@
 #include "Nayitba.h" 
 #include "GameInstance.h"
 #include "GameManager.h"
+#include "PonyTail_Player.h"
 
 CPlayer_ScarletLinkAttackState::CPlayer_ScarletLinkAttackState()
 	: CPlayerState{}
@@ -61,6 +62,12 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
 
     _matrix CombinedMatrix = XMMatrixRotationZ(XMConvertToRadians(270.f)) * XMMatrixRotationX(XMConvertToRadians(180.f)) * SocketMatrix * XMLoadFloat4x4(m_pParentTransformMatrix);
 
+    if (true == m_isStartFrame)
+    {
+        CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+        pPonytail->Teleport_JointChains(CombinedMatrix);
+        m_isStartFrame = false;
+    }
 
     //240 프레임 이상은 본 안따라가게 처리?
     if (!(240 <= m_pPlayer->Get_iTrackPosition()))
