@@ -468,7 +468,6 @@ void CNpc::Change_Camera()
         return;
 
     pPlayer->SetActive(false);
-    Safe_Release(pPlayerCam);
 
     m_pGameInstance->SetMainCamera(TEXT("NpcCamera"));
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());

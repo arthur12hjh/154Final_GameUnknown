@@ -135,7 +135,6 @@ void CCamera_Npc::Priority_Update(_float fTimeDelta)
 		XMStoreFloat4x4(&m_fEndLerpMatrix, XMMatrixIdentity());
 		m_fTargetRadius = 0.f;
 		m_fTargetLookPos = _float4(0.f, 0.f, 0.f, 0.f);
-		Safe_Release(pPlayerCam);
 	}
 }
 
