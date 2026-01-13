@@ -26,7 +26,7 @@ public:
 	_uint Get_TrackPosition() { return (_uint)m_fCurrentTrackPosition; }
 	_float	Get_fTrackPosition() { return m_fCurrentTrackPosition; }
 	_float Get_SaturatedTrackPosition() {
-		return max(m_fCurrentTrackPosition / m_fDuration, 0.f);
+		return max(m_fCurrentTrackPosition / (double)m_fDuration, 0.f);
 	}	
 	_float Get_TickPerSecond() { return m_fTickPerSecond; }
 
@@ -64,7 +64,7 @@ public:
 
 private:
 	_char						m_szName[MAX_PATH] = {};
-	_float						m_fCurrentTrackPosition = {};
+	double						m_fCurrentTrackPosition = {};
 	/* 애니메이션 재생을 위한 전체 길이 */
 	_float						m_fDuration = {};
 	/* 초당 얼마나 재생되어야하는지 : 재생 속도 */
