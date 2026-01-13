@@ -600,7 +600,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         break;
         // 18번
     case CINEMATICNODE_STATE::PLAY_BOSSBGM:
-        m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+        //m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
         CGameManager::GetInstance()->Play_BossBGM(CinematicNodeDesc.iActiveIndex / 10, CinematicNodeDesc.iActiveIndex % 10);
         break;
     }

@@ -155,40 +155,36 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 
 void CSound_Manager::Manager_StopSound(CHANNELID eID)
 {
-	_bool bIsChannelPlaying;
-	auto pBGMChannel = m_pChannelArr[eID];
-
 	_uint iIndex = 0;
 	for (auto& iter : m_pChannelArr[eID])
 	{
-		iter->isPlaying(&bIsChannelPlaying);
 		iter->stop();
-
 		Safe_Delete(m_ChannelEndCallBacks[eID][iIndex]);
 		iIndex++;
 	}
 
 	m_ChannelEndCallBacks[eID].clear();
 	m_pChannelArr[eID].clear();
+
+	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_StopAll()
 {
-	_bool bIsChannelPlaying;
 	for (int i = 0; i < CHANNELID::END; ++i)
 	{
 		_uint iIndex = 0;
 		for (auto& iter : m_pChannelArr[i])
 		{
-			iter->isPlaying(&bIsChannelPlaying);
 			iter->stop();
-
 			Safe_Delete(m_ChannelEndCallBacks[i][iIndex]);
 			iIndex++;
 		}
 		m_ChannelEndCallBacks[i].clear();
 		m_pChannelArr[i].clear();
 	}
+
+	m_pSystem->update();
 }
 
 void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
@@ -344,10 +340,9 @@ void CSound_Manager::Remove_EndSound()
 		_uint iIndex = {};
 		for (auto iter = m_pChannelArr[i].begin(); iter != m_pChannelArr[i].end();)
 		{
-
 			(*iter)->getMode(&IsMode);
 			(*iter)->isPlaying(&IsPlay);
-			if (!IsPlay && (FMOD_LOOP_OFF == IsMode || FMOD_DEFAULT == IsMode))
+			if (!IsPlay && !(IsMode & FMOD_LOOP_NORMAL))
 			{
 				auto Funciter = m_ChannelEndCallBacks[i].begin() + iIndex;
 
