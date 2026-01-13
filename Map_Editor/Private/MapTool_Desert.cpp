@@ -17,6 +17,7 @@
 #include "Dororong_Saber.h"
 #include "SpawnBox.h"
 #include "SoundTriggerBox.h"
+#include "CameraTriggerBox.h"
 
 CMapTool_Desert::CMapTool_Desert()
 {
@@ -117,6 +118,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				CSpawnBox::MONSTER_DESC MonsterDesc = {};
 				CNpc::NPC_DESC NpcDesc = {};
 				CSoundTriggerBox::SOUNDTRIGGER_BOX_DESC SoundDesc = {};
+				CCameraTriggerBox::CAMERA_TRIGGER_BOX_DESC CameraDesc = {};
 
 				switch (m_eCurrentObject)
 				{
@@ -727,9 +729,8 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1H");
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1I:
-					protoTag = TEXT("Prototype_GameObject_Interaction_NonAnim"); layerTag = TEXT("Layer_Interaction");
-					pInteractionDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1I");
-					pInteractionDesc.iInteractionID = 2;
+					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
+					pDesc.pComponentTag = TEXT("Prototype_Component_Model_Camp_1I");
 					break;
 				case DESESRT_RUIN_OBJECT::CAMP_1J:
 					protoTag = TEXT("Prototype_GameObject_Deco"); layerTag = TEXT("Layer_Deco");
@@ -1974,7 +1975,7 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 					break;
 #pragma endregion
 
-#pragma region SOUNDBOX
+#pragma region TriggerBOX
 				case DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS:
 					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
 					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::GRASS;
@@ -2002,6 +2003,11 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 				case DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER:
 					protoTag = TEXT("Prototype_GameObject_SoundTriggerBox"); layerTag = TEXT("Layer_SoundTriggerBox");
 					SoundDesc.eSoundBoxType = GROUND_SOUND_TYPE::CONTAINER;
+					break;
+
+				case DESESRT_RUIN_OBJECT::CAMERA_BOX_CONTAINER:
+					protoTag = TEXT("Prototype_GameObject_CameraTriggerBox"); layerTag = TEXT("Layer_CameraTriggerBox");
+					CameraDesc.eCameraType = CAMERA_TYPE::CONTAINER;
 					break;
 #pragma endregion
 
@@ -2044,6 +2050,10 @@ void CMapTool_Desert::Update(_float fTimeDelta)
 						|| m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_ROCK || m_eCurrentObject == DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER)
 				{
 					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &SoundDesc);
+				}
+				else if (m_eCurrentObject == DESESRT_RUIN_OBJECT::CAMERA_BOX_CONTAINER)
+				{
+					hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag, ENUM_CLASS(LEVEL::DESERT), layerTag, &CameraDesc);
 				}
 				else if (pInteractionDesc.iInteractionID == 0)
 				{
@@ -3670,7 +3680,7 @@ HRESULT CMapTool_Desert::Render()
 				else if (nSelectedCamp == 18)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMP_1I;
-					m_CurrentLayerName = TEXT("Layer_Interaction");
+					m_CurrentLayerName = TEXT("Layer_Deco");
 				}
 			}
 		}
@@ -4637,52 +4647,64 @@ HRESULT CMapTool_Desert::Render()
 	else if (m_eCurrentMap == DESERT_THEME::SOUND_BOX)
 	{
 		ImGui::Text("Sound Trigger Box Objects");
-		_int nSelectedModel = -1;
+		_int nSelectedSound = -1;
+		_int nSelectedCamera = -1;
 
-		const _char* modelNames[] = { "Grass", "Sand", "Iron", "Bridge", "Concrete", "Rock", "Container"};
+		const _char* soundNames[] = { "Grass", "Sand", "Iron", "Bridge", "Concrete", "Rock", "Container"};
+		const _char* cameraNames[] = { "Container"};
 
-		if (ImGui::CollapsingHeader("Models"))
+		if (ImGui::CollapsingHeader("Sounds"))
 		{
-			if (ImGui::ListBox("##Models", &nSelectedModel, modelNames, IM_ARRAYSIZE(modelNames), 7))
+			if (ImGui::ListBox("##Sounds", &nSelectedSound, soundNames, IM_ARRAYSIZE(soundNames), 7))
 			{
-				if (nSelectedModel == 0)
+				if (nSelectedSound == 0)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_GRASS;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 1)
+				else if (nSelectedSound == 1)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_SAND;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 2)
+				else if (nSelectedSound == 2)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_IRON;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 3)
+				else if (nSelectedSound == 3)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_BRIDGE;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 4)
+				else if (nSelectedSound == 4)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_CONCRETE;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 5)
+				else if (nSelectedSound == 5)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_ROCK;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
-				else if (nSelectedModel == 6)
+				else if (nSelectedSound == 6)
 				{
 					m_eCurrentObject = DESESRT_RUIN_OBJECT::SOUND_BOX_CONTAINER;
 					m_CurrentLayerName = TEXT("Layer_SoundTriggerBox");
 				}
 			}
 		}
-
+		if (ImGui::CollapsingHeader("Cameras"))
+		{
+			if (ImGui::ListBox("##Cameras", &nSelectedCamera, cameraNames, IM_ARRAYSIZE(cameraNames), 7))
+			{
+				if (nSelectedCamera == 0)
+				{
+					m_eCurrentObject = DESESRT_RUIN_OBJECT::CAMERA_BOX_CONTAINER;
+					m_CurrentLayerName = TEXT("Layer_CameraTriggerBox");
+				}
+			}
+		}
 	}
 	// 삭제 버튼
 #pragma region Delete_Object
@@ -5212,6 +5234,7 @@ HRESULT CMapTool_Desert::Save_Sound_Trigger_Box_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Save_Sound_Trigger_Box_By_Layer(ofs, TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
+	if (FAILED(Save_Camera_Trigger_Box_By_Layer(ofs, TEXT("Layer_CameraTriggerBox")))) return E_FAIL;
 
 	ofs.close();
 
@@ -5498,6 +5521,37 @@ HRESULT CMapTool_Desert::Save_Sound_Trigger_Box_By_Layer(ofstream& ofs, const _t
 	return S_OK;
 }
 
+HRESULT CMapTool_Desert::Save_Camera_Trigger_Box_By_Layer(ofstream& ofs, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObj = m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::DESERT), pLayerTag);
+	_uint iNumObjs = (pObj) ? (_uint)pObj->size() : 0;
+
+	ofs.write(reinterpret_cast<const char*>(&iNumObjs), sizeof(_uint));
+
+	if (pObj)
+	{
+		for (auto pObject : *pObj)
+		{
+			CCameraTriggerBox* pCameraTBox = dynamic_cast<CCameraTriggerBox*>(pObject);
+			CTransform* pTransform = dynamic_cast<CTransform*>(pObject->Find_Component(TEXT("Com_Transform")));
+
+			if (pTransform && (pCameraTBox))
+			{
+				SAVED_CAMERA_TRIGGER_BOX_INFO info;
+				const _float4x4* pWorldMatrixFloat4x4 = pTransform->Get_WorldMatrixPtr();
+				_matrix WorldMatrix = XMLoadFloat4x4(pWorldMatrixFloat4x4);
+				XMStoreFloat4x4(&info.worldMatrix, WorldMatrix);
+
+				info.eType = pCameraTBox->Get_CameraType();
+
+				ofs.write(reinterpret_cast<const char*>(&info), sizeof(SAVED_CAMERA_TRIGGER_BOX_INFO));
+			}
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CMapTool_Desert::Load_Map_Objects(const _char* szFilePath)
 {
 	std::ifstream ifs(szFilePath, std::ios::binary);
@@ -5579,6 +5633,7 @@ HRESULT CMapTool_Desert::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
 	}
 
 	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
+	if (FAILED(Load_Camera_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_CameraTriggerBox"), TEXT("Layer_CameraTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 
@@ -5886,6 +5941,37 @@ HRESULT CMapTool_Desert::Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _t
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		Desc.eSoundBoxType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::DESERT), protoTag,
+			ENUM_CLASS(LEVEL::DESERT), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMapTool_Desert::Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_CAMERA_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_CAMERA_TRIGGER_BOX_INFO));
+
+		CCameraTriggerBox::CAMERA_TRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
+		Desc.eCameraType = info.eType;
 
 		_vector vScale = {};
 		_vector vRotation = {};

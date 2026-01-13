@@ -613,6 +613,9 @@ void CDeco::SetCullingCollider(_uint iObjectID)
     case 138: // Trash_17A
         pCullingCollider->SetCollision({ 0.f, 1.4f, 0.f }, {}, { 4.f, 2.f, 4.f });
         break;
+    case 139: // Camp_1I
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.f, 1.f, 1.f });
+        break;
     }
 }
 
