@@ -86,7 +86,7 @@ void CTask_CutScene::FinishedCutScene()
 		if (1 == m_pNaytiba->GetMonsterID())
 			m_pNaytiba->Excution();
 		else
-			m_pNaytiba->Set_Dead(true);
+			m_pNaytiba->Excution(false);
 
 		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::DEAD);
 		CGameManager::GetInstance()->Play_LevelBGM();

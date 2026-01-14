@@ -9,6 +9,8 @@ void CSound_Manager::Initialize()
 	m_pSystem->init(32, FMOD_INIT_NORMAL, NULL);
 
 	LoadSoundFile();
+
+	m_bIsLerpBGMVolume = true;
 	m_pSystem->setDriver(0);
 }
 
@@ -16,6 +18,7 @@ CSound_Manager* CSound_Manager::Create()
 {
 	CSound_Manager* pInstance = new CSound_Manager();
 	pInstance->Initialize();
+
 	return pInstance;
 }
 
@@ -23,7 +26,6 @@ void CSound_Manager::Free()
 {
 	for (auto& Mypair : m_mapSound)
 	{
-		delete[] Mypair.first;
 		Mypair.second->release();
 	}
 	m_mapSound.clear();
@@ -35,9 +37,9 @@ void CSound_Manager::Free()
 
 		m_ChannelEndCallBacks[i].clear();
 	}
-	
-	m_pSystem->release();
+
 	m_pSystem->close();
+	m_pSystem->release();
 }
 
 // 함수 호출규약 STDCALL 형식 호출한 녀석이 책임진다는
@@ -80,13 +82,11 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 
 void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	map<TCHAR*, FMOD::Sound*>::iterator iter;
-
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
-	iter = find_if(m_mapSound.begin(), m_mapSound.end(),
+	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(),
 		[&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())
@@ -123,7 +123,7 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
 	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())
@@ -187,11 +187,18 @@ void CSound_Manager::Manager_StopAll()
 	m_pSystem->update();
 }
 
-void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
+void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume, _bool bIsLerp)
 {
-	for (auto& iter : m_pChannelArr[eID])
-		iter->setVolume(fVolume);
-	
+	_bool bIsLerpSound = false;
+	if(CHANNELID::BGM == eID)
+		bIsLerpSound = m_bIsLerpBGMVolume = bIsLerp;
+
+	if (!bIsLerpSound)
+	{
+		for (auto& iter : m_pChannelArr[eID])
+			iter->setVolume(fVolume);
+	}
+
 	m_pChannelVolume[eID] = fVolume;
 }
 
@@ -199,7 +206,6 @@ void CSound_Manager::Tick(_float fTimeDelta)
 {
 	_bool IsPlay = { false };
 	
-
 	for (_uint i = 0; i < CHANNELID::END; ++i)
 	{
 		size_t iChannelSize = m_pChannelArr[i].size();
@@ -219,13 +225,23 @@ void CSound_Manager::Tick(_float fTimeDelta)
 
 		if (!IsPlay)
 		{
-			fRatio = Lerp<_float>(fRatio, m_pChannelVolume[CHANNELID::BGM], fTimeDelta);
-			iter->setVolume(fRatio);
+			if (m_bIsLerpBGMVolume)
+			{
+				fRatio = Lerp<_float>(fRatio, m_pChannelVolume[CHANNELID::BGM], fTimeDelta);
+				iter->setVolume(fRatio);
+			}
+			else
+				iter->setVolume(m_pChannelVolume[CHANNELID::BGM]);
 		}
 		else
 		{
-			fRatio = Lerp<_float>(fRatio, m_fBGMMinVolume, fTimeDelta * 5.f);
-			iter->setVolume(fRatio);
+			if (m_bIsLerpBGMVolume)
+			{
+				fRatio = Lerp<_float>(fRatio, m_fBGMMinVolume, fTimeDelta * 5.f);
+				iter->setVolume(fRatio);
+			}
+			else
+				iter->setVolume(m_fBGMMinVolume);
 		}
 	}
 
@@ -237,7 +253,7 @@ _uint CSound_Manager::Get_BGMLength(const TCHAR* pSoundKey)
 {
 	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())
@@ -322,6 +338,7 @@ void CSound_Manager::LoadSoundFile()
 			MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pSoundKey, iLength);
 
 			m_mapSound.emplace(pSoundKey, pSound);
+			delete[] pSoundKey;
 		}
 		//_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
 		iResult = _findnext64(handle, &fd);

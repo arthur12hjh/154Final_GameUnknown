@@ -784,7 +784,7 @@ void CUIBase::Free()
 	{
 		for (auto& Event : EventHandle.second)
 		{
-			m_pGameInstance->Remove_Event(EventHandle.first.c_str());
+			//m_pGameInstance->Remove_Event(EventHandle.first.c_str());
 			Safe_Release(Event); 
 		}
 		EventHandle.second.clear();

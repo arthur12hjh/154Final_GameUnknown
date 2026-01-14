@@ -54,7 +54,7 @@ public:
 	virtual void							Attack_Interaction(void* pArg = nullptr);
 
 	_uint									GetMonsterID();
-	void									Excution();
+	void									Excution(_bool bIsPlayAnim = true);
 	CGameObject*							GetTarget();
 	
 	void									SetVelocity(_bool bIsFlag, _float fVelocity);
