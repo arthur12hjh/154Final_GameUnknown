@@ -8,6 +8,12 @@
           "szObjectTag": ""
         },
         {
+          "eState": 19,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 1,
           "fTrackPosition": 0.0,
           "iActiveIndex": 21,
@@ -56,6 +62,12 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter02"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 6.49,
+          "iActiveIndex": 2,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 6.5,
           "iActiveIndex": 30,
@@ -68,10 +80,22 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter03"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 8.5,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 13.5,
           "iActiveIndex": 1414,
           "szObjectTag": "ActionCamera_ScarletBattleEnter04"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 16.35,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -84,6 +108,12 @@
           "fTrackPosition": 18.0,
           "iActiveIndex": 1415,
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 20.35,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -122,16 +152,34 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter09"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 51.22,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 51.23,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_03_VO.wav"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 53.43,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 53.44,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_04_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 56.43,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 2,

@@ -45,6 +45,7 @@ public:
 	virtual		HRESULT			Render() override;
 
 	void		Initialize_CameraAnimationData(_uint iCameraAnimationIndex = -1);
+	void		Update_Camera();
 
 private:
 	class CGameManager*					m_pGameManager = { nullptr };

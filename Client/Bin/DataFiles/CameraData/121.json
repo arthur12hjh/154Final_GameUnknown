@@ -190,7 +190,7 @@
         "iCameraAnimationID": 121,
         "szCameraAnimationName": "P_Eve_Sword_Normal_LinkAttack1_Scarlet",
         "vBaseBonePosition": [
--2.0, -2.0, -1.0
+3.0, -10.0, -10.0
         ],
         "vBaseBoneRotation": [
             90.0,
@@ -198,9 +198,9 @@
             0.0
         ],
         "vBaseCameraPivot": [
-            0.0,
-            2.0,
-            0.0
+                    0.0,
+                    4.0,
+                    1.0
         ]
     }
 ]

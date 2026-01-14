@@ -113,6 +113,8 @@ void CNote::Initialize_Note(const NOTE_DESC& Desc)
     SettingNoteDirection(ENUM_CLASS(Desc.eDirection));
     _vector vDir = XMVector3Normalize(XMLoadFloat3(&Desc.vTargetPoint) - m_pTransformCom->Get_State(STATE::POSITION));
     XMStoreFloat3(&m_vTargetDir, vDir);
+
+    m_pModelCom->Play_Animation(0.f);
 }
 
 HRESULT CNote::Ready_Components()

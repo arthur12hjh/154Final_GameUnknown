@@ -2,6 +2,12 @@
     {
       "CinematicNodeTrackList": [
         {
+          "eState": 19,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 7,
           "fTrackPosition": 0.0,
           "iActiveIndex": 0,
@@ -55,16 +61,34 @@
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_03_VO.wav"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 0.7,
+          "iActiveIndex": 2,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 1.0,
           "iActiveIndex": 1202,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 2.7,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 3.197,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_03B_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 3.197,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -79,10 +103,22 @@
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_05_VO.wav"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 6.145,
+          "iActiveIndex": 10,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 8.0,
           "iActiveIndex": 1204,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 12.145,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -95,6 +131,12 @@
           "fTrackPosition": 13.89,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_06_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 13.89,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -127,6 +169,12 @@
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_07_VO.wav"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 23.96,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 26.0,
           "iActiveIndex": 1210,
@@ -139,10 +187,22 @@
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 29.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 30.478,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_ScarletVolt_1stMeet_08_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 30.478,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -155,6 +215,12 @@
           "fTrackPosition": 37.0,
           "iActiveIndex": 1213,
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 40.89,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 6,
