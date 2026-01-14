@@ -121,11 +121,11 @@ void CUIOwnGold::Late_Update(_float fTimeDelta)
 				m_bShow = false;
 			}
 		}
-		/*else
+		else
 		{
 			m_fTimeAcc = 0.f;
 			m_vTransOffset = _float2(0.f, 0.f);
-		}*/
+		}
 	}
 }
 

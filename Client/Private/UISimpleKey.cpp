@@ -57,7 +57,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	else
 		m_eInterState = pNearInterCom ? pNearInterCom->Get_InterState() : INTERACTION_STATE::END;
 
-	if(m_eInterState != INTERACTION_STATE::CONTACT)
+	if (m_eInterState != INTERACTION_STATE::CONTACT)
 		m_pTargetInteractionCom = pNearInterCom;
 
 	CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
@@ -74,7 +74,7 @@ void CUISimpleKey::Update(_float fTimeDelta)
 	
 	if (m_pTargetInteractionCom)
 	{
-		if(m_pTargetInteractionCom->GetOwner())
+		if (m_pTargetInteractionCom->GetOwner())
 			m_pTargetOwner = m_pTargetInteractionCom->GetOwner();
 
 		if (m_pTargetOwner != m_pParent)
