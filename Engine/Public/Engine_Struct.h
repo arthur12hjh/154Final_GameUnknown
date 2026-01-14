@@ -588,6 +588,7 @@ namespace Engine
 		float* fBiasMin;
 		float* fBiasMax;
 		float* fIntensity;
+		bool*  isActive;
 	} SSAO_DESC;
 
 	typedef struct tagMotionBlurInfo {

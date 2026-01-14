@@ -550,6 +550,7 @@ void CNayitbaPartBody::Play_DeadEffect()
 
 void CNayitbaPartBody::Stop_All_Effect()
 {
+    m_bIsEnableCollider = false;
     for (auto Effect : m_pEffects)
     {
         Effect.first->Stop();

@@ -213,6 +213,10 @@ HRESULT CLevel_BeatSaber::Ready_Lights()
     *pFogDesc->fFogPowerMin = { 2.f };
     *pFogDesc->fFogPowerMax = { 2.f };
 
+
+    SSAO_DESC* pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
+    *pSSAODesc->isActive = false; 
+
     return S_OK;
 }
 

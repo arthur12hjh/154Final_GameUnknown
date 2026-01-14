@@ -22,6 +22,10 @@ private:
 	const _float4x4* m_pSocketMatrix = { nullptr };
 	const _float4x4* m_pParentTransformMatrix = { nullptr };
 	_bool			 m_isStartFrame = { true };
+	_uint			 m_iSoundCount = 0;
+
+private:
+	void Play_Sound(_float fAnimRatio);
 
 public:
 	static	CPlayer_ScarletLinkAttackState* Create(void* pArg);

@@ -36,6 +36,8 @@ HRESULT CPlayer_ScarletPhase2tLinkAttackState::Initialize(void* pArg)
 
     m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
 
+    m_Desc->isLinkAttackAvailable = false;
+
     return S_OK;
 }
 
@@ -58,7 +60,8 @@ void CPlayer_ScarletPhase2tLinkAttackState::Start(void* pArg, _float fBlendRatio
 PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTimeDelta)
 {
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
-
+    _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
+    
     _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
     for (size_t i = 0; i < 3; i++)
@@ -98,6 +101,8 @@ _float CPlayer_ScarletPhase2tLinkAttackState::End()
     m_Desc->pPlayerController->Set_Active(true);
 
     m_Desc->isUsingScarletLink2 = false; 
+    m_Desc->isLinkAttackAvailable = true;
+
 	return m_fNextBlendRatio;
 }
 

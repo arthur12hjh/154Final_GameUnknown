@@ -44,6 +44,7 @@ HRESULT CLinkAttackTester::Initialize(void* pArg)
 	m_pBodyModelCom->Set_Animation("M_Scarlet_BattleIdle01", TRUE, 1.f, 0.12f);
 
 	m_pPlayer = m_pGameManager->GetGameCharacter();
+	Safe_Release(m_pPlayer);
 
 	CGameManager::GetInstance()->Set_LinkAttackTester(this);
 

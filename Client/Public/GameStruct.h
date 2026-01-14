@@ -236,7 +236,7 @@ namespace Client
 		// All Property : 31
 		// Parry & Eavde : 3
 		PARRYABLE = 0b00000001, // 1  <- 패링가능
-		EVADEABLE = 0b00000010, // 2  <- 회피 가능
+		ONLAY_EVADE = 0b00000010, // 2  <- 회피 가능
 		BLINKABLE = 0b00000100, // 4  <- 블링크 가능
 		SUPERARMOR = 0b00001000, // 8  <- 슈퍼아머
 		EXCUTION = 0b00010000, // 16 <- 처형
@@ -324,7 +324,6 @@ namespace Client
 		float				fAttackRange;
 		float				fLerpRatio;
 		_float3				fColliderExtents;
-
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
