@@ -1,22 +1,22 @@
 ¤¸,Anim Name,Hit Reaction Anim,Attach Bone,Damage,Range,Hit Box Size,Combo,RePulse Count,Dir,Skill Type  ,Properity
-1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,0,1,0,11
+1,M_Gorilla_S22_RightAttack,None,None,10,7,"4,3,7",1,0,1,0,9
 2,M_Gorilla_S12_Crush,None,None,11,2,"9,8,9",1,0,4,3,139
-3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,0,1,0,11
-4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,3,2,11
-5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,0,1,2,11
-6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,0,1,2,11
-7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,0,5,11
-8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,0,5,11
-9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,0,11
+3,M_Gorilla_S13_RightSwing,None,None,12,7,"4,3,4",2,0,1,0,9
+4,M_Gorilla_S14_LeftBlowCombo,None,None,13,7,"4,3,7",3,0,3,2,9
+5,M_Gorilla_S15_FowardMoveBlow,None,None,14,7,"4,3,7",3,0,1,2,9
+6,M_Gorilla_S07_ZigzagMoveAttack,None,None,15,7,"4,3,7",2,0,1,2,9
+7,M_Gorilla_S01_ShortMoveLeft,None,None,0,12,"4,3,4",0,0,0,5,9
+8,M_Gorilla_S02_ShortMoveRight,None,None,0,12,"4,3,4",0,0,0,5,9
+9,M_Gorilla_S03_StraightAttack,None,None,18,7,"4,3,7",1,0,0,0,9
 10,M_Gorilla_S06_BlowMoveBack,None,None,18,7,"4,3,7",1,0,4,3,10
-11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,0,1,2,11
+11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,18,7,"4,3,4",4,0,1,2,9
 12,M_Gorilla_S10_SawSpinAttack,None,None,18,2,"9,8,9",1,0,4,4,138
-13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,0,5,3,11
+13,M_Gorilla_S18_BloodExplosion,None,None,18,30,"2,2,2",0,0,5,3,9
 14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,5,136
 20,M_Scarlet_AirDashCut,None,None,20,15,"1, 1, 2",0,0,1,4,137
-21,M_Scarlet_SwingApproach,None,None,20,15,"1, 1, 2",4,0,1,0,14
+21,M_Scarlet_SwingApproach,None,None,20,15,"1, 1, 2",4,0,1,0,9
 22,M_Scarlet_SwingCombo1,None,None,20,15,"1, 1, 2",0,0,1,3,8
-23,M_Scarlet_SwingCombo2,None,None,20,15,"1, 1, 2",5,0,1,0,14
+23,M_Scarlet_SwingCombo2,None,None,20,15,"1, 1, 2",5,0,1,0,9
 24,M_Scarlet_Swing,None,None,20,15,"1, 1, 2",0,0,1,0,9
 25,M_Scarlet_SwingFast,None,None,20,15,"1, 1, 2",0,0,1,0,9
 26,M_Scarlet_SwingTriple,None,None,20,15,"1, 1, 2",3,0,1,0,9
@@ -24,7 +24,7 @@
 28,M_Scarlet_MoveBackShot2,None,None,20,15,"1, 1, 2",3,0,1,0,9
 29,M_Scarlet_JumpStampSlash,None,None,20,15,"1, 1, 2",0,0,1,0,9
 30,M_Scarlet_KickStamp,None,None,20,15,"1, 1, 2",0,0,1,0,9
-31,M_Scarlet_ParryRangeDash,None,None,20,15,"1, 1, 2",0,0,1,0,14
+31,M_Scarlet_ParryRangeDash,None,None,20,15,"1, 1, 2",0,0,1,0,9
 32,M_Scarlet_BackDashSpaceCut,None,None,20,15,"1, 1, 2",5,0,1,0,9
 33,M_Scarlet_BlinkCut,None,None,20,15,"1, 1, 2",0,0,1,0,9
 34,M_Scarlet_PhaseChange1L_Attack1,None,None,20,15,"1, 1, 2",0,0,1,4,9
@@ -51,36 +51,36 @@
 55,M_Scarlet_AreaSlash2,None,None,20,10,"2, 5, 10",5,2,1,0,9
 56,M_Scarlet_PhaseChange1S,None,None,0,0,"2, 5, 11",6,3,2,4,136
 57,M_Scarlet_PhaseChange1E_ShieldZeroSucess,None,None,0,0,"2, 5, 11",6,3,2,4,9
-511,M_Beholder_SwingDouble,None,None,0,12,"1,1,7",2,0,4,0,11
-512,M_Beholder_Swing,None,None,12,12,"1,1,7",1,0,4,0,1
-513,M_Beholder_SpinSwing,None,None,13,12,"1,1,7",1,0,4,0,8
-521,M_StatueA_Grab,None,None,14,15,"1,1,2",1,0,4,1,11
-522,M_StatueA_Slash,None,None,15,6,"1,1,2",1,0,4,0,1
+511,M_Beholder_SwingDouble,None,None,0,12,"1,1,7",2,0,4,0,9
+512,M_Beholder_Swing,None,None,12,12,"1,1,7",1,0,4,0,9
+513,M_Beholder_SpinSwing,None,None,13,12,"1,1,7",1,0,4,0,9
+521,M_StatueA_Grab,None,None,14,15,"1,1,2",1,0,4,1,9
+522,M_StatueA_Slash,None,None,15,6,"1,1,2",1,0,4,0,9
 523,M_StatueA_RushSlash,None,None,15,15,"1,1,2",1,0,4,0,9
 524,M_StatueA_SlashDouble,None,None,15,10,"1,1,2",2,0,4,0,9
 525,M_StatueA_StanbyToAttack_01,None,None,15,7,"1,1,2",1,0,4,4,9
 526,M_StatueA_GrabSuccess,Hit_StatueA_Grab,SC_LinkTarget,15,0,"1,1,2",1,0,4,0,9
-531,M_StatueB_GroundExplosion,None,None,14,10,"1,1,2",1,0,4,0,11
-532,M_StatueB_Slash,None,None,15,6,"1,1,2",1,0,4,0,1
+531,M_StatueB_GroundExplosion,None,None,14,10,"1,1,2",1,0,4,0,9
+532,M_StatueB_Slash,None,None,15,6,"1,1,2",1,0,4,0,9
 533,M_StatueB_RushSlash,None,None,15,15,"1,1,2",1,0,4,0,9
 534,M_StatueB_SlashDouble,None,None,16,6,"1,1,2",2,0,4,0,9
 535,M_StatueB_SlashTriple,None,None,17,6,"1,1,2",3,0,4,0,9
 536,M_StatueB_StanbyToAttack_01,None,None,18,7,"1,1,2",1,0,4,4,9
-541,M_BarnacleA_PunchAttack,None,None,15,7,"1,1,2",1,0,4,0,1
-542,M_BarnacleA_TraceAttack,None,None,15,7,"1,1,2",1,0,4,0,10
+541,M_BarnacleA_PunchAttack,None,None,15,7,"1,1,2",1,0,4,0,9
+542,M_BarnacleA_TraceAttack,None,None,15,7,"1,1,2",1,0,4,0,9
 543,M_BarnacleA_ComboAttack,None,None,16,7,"1,1,2",3,0,4,0,9
 544,M_BarnacleA_Shield,None,None,17,10,"1,1,2",0,0,4,0,32
-631,M_SunFlower_Swing,None,None,18,7,"1,1,3",1,0,4,0,11
-632,M_SunFlower_SwingChain,None,None,19,7,"1,1,3",4,0,4,0,11
-633,M_SunFlower_Spit,None,None,20,20,"1,1,2",1,0,4,0,11
-731,M_Antlion_PawAttack,None,None,21,7,"1,1,7",1,0,0,0,11
-732,M_AntlionC_SwingTriple,None,None,22,7,"1,1,7",3,0,0,0,11
-741,M_Tentacle_Summoned,None,None,22,11,"1,1,7",3,0,0,4,11
-742,M_Tentacle_Swing,None,None,22,11,"1,1,7",3,0,0,0,11
-743,M_Tentacle_Stamp,None,None,22,11,"1,1,7",3,0,0,0,11
-751,M_DroidTurret_Shot,None,None,22,30,"1,1,7",3,0,0,0,11
+631,M_SunFlower_Swing,None,None,18,7,"1,1,3",1,0,4,0,9
+632,M_SunFlower_SwingChain,None,None,19,7,"1,1,3",4,0,4,0,9
+633,M_SunFlower_Spit,None,None,20,20,"1,1,2",1,0,4,0,9
+731,M_Antlion_PawAttack,None,None,21,7,"1,1,7",1,0,0,0,9
+732,M_AntlionC_SwingTriple,None,None,22,7,"1,1,7",3,0,0,0,9
+741,M_Tentacle_Summoned,None,None,22,11,"1,1,7",3,0,0,4,9
+742,M_Tentacle_Swing,None,None,22,11,"1,1,7",3,0,0,0,9
+743,M_Tentacle_Stamp,None,None,22,11,"1,1,7",3,0,0,0,9
+751,M_DroidTurret_Shot,None,None,22,30,"1,1,7",3,0,0,0,9
 752,M_DroidTurret_ShotDebuff,None,None,22,30,"1,1,7",3,0,0,0,10
-753,M_DroidTurret_ShotDozen,None,None,22,30,"1,1,7",3,0,0,0,11
+753,M_DroidTurret_ShotDozen,None,None,22,30,"1,1,7",3,0,0,0,9
 754,M_DroidTurret_Laser,None,None,22,30,"1,1,7",3,0,0,0,10
 1000,Player_Light_Attack_Root1,None,None,30,3,"2,2,2",0,0,0,0,0
 1001,Player_Light_Attack_Root2,None,None,15,3,"2,2,2",0,0,1,0,0
