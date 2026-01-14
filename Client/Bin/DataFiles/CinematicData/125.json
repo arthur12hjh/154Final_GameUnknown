@@ -8,6 +8,12 @@
                 "szObjectTag": ""
             },
         {
+          "eState": 8,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_DED03_BetaNative_Finish_01_V_Eve_220502.wav"
+        },
+        {
           "eState": 17,
           "fTrackPosition": 0.0,
           "iActiveIndex": 30,
@@ -43,6 +49,108 @@
                 "iActiveIndex": 1121,
                 "szObjectTag": "ActionCamera_GigasMeetPlayer01"
             },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.1,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Foley2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Foley3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 2.4,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Attack2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 2.4,
+          "iActiveIndex": 50,
+          "szObjectTag": "SE_Alphacore_Loop.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 2.4,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Gigas_Dmg1.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 6.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Attack4.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 6.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Gigas_Dmg2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 7.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Foley2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 8.5,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_BassDive1.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 8.5,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Gigas_Growl.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 11.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Attack3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 14.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Attack5.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 14.2,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Gigas_Die.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 16.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Bodyfall.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 16.6,
+          "iActiveIndex": 20,
+          "szObjectTag": "DED_BetaNative_finish_Eve_RockDebris.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 16.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Gigas_Bodyfall.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 25.2,
+          "iActiveIndex": 30,
+          "szObjectTag": "DED_BetaNative_finish_Eve_Foley5.wav"
+        },
             {
                 "eState": 6,
                 "fTrackPosition": 26.399999618530273,

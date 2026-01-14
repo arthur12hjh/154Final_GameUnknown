@@ -38,16 +38,52 @@
           "szObjectTag": "ActionCamera_GigasMeetPlayer01"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Quest_Sub_033_Gorilla_1.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "vo_eve_cinematic_breath_07_VO.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 2.4,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Quest_Sub_033_Gorilla_2.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 3.5999999046325684,
           "iActiveIndex": 1113,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 3.6,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Quest_Sub_033_Gorilla_3.wav"
+        },
+        {
           "eState": 1,
           "fTrackPosition": 4.451000213623047,
           "iActiveIndex": 0,
           "szObjectTag": "Prototype_GameObject_CinematicModel_Gorilla"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 5.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Quest_Sub_033_Gorilla_5.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 12.10,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Quest_Sub_033_Gorilla_10.wav"
         },
         {
           "eState": 2,
