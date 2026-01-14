@@ -100,7 +100,7 @@ HRESULT CBody_Dororong::Render()
 		if (FAILED(m_pModelCom->Bind_BoneSRV(i, m_pShaderCom, "g_BoneMatrixBuffer")))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(9)))
+		if (FAILED(m_pShaderCom->Begin(11)))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Render(i)))

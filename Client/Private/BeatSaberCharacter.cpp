@@ -77,7 +77,8 @@ void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
 	if (m_bIsActive == TRUE)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+		//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 	__super::Late_Update(fTimeDelta);
@@ -339,7 +340,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				EffectDesc.fSpeed = 1.5f;
 				m_pGameInstance->Active_RadialBlur(0.1f, 5, 0.05f);
 				_float fRand = m_pGameInstance->Random(0.f, 4.f);
-				m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Pang.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
+				m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Pang.wav"), CHANNELID::EFFECT, 0.35f, 1.f);
 				if (3.f < fRand) {
 					m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Firecracker"),
 						ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
@@ -362,7 +363,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					_float3 fDir;
 					XMStoreFloat3(&fDir, -m_pTransformCom->Get_State(STATE::LOOK));
 					EffectDesc.pDir = &fDir;
-					m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Fire.wav"), CHANNELID::EFFECT, 0.4f, 1.f);
+					m_pGameInstance->Manager_PlaySound(TEXT("Dororong_Fire.wav"), CHANNELID::EFFECT, 0.3f, 1.f);
 					if (5 == m_CharacterDesc.iComboCnt) {
 						EffectDesc.vPos = m_pTransformCom->Get_State(STATE::UP) * 9 + m_pTransformCom->Get_State(STATE::LOOK) * 2;
 						m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Dororong_Good"),

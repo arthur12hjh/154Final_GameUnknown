@@ -286,6 +286,10 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     float4 vMask = g_EmissiveTexture.SampleLevel(DefaultSampler, vCenterUV, 0);
 
     float fWeight = saturate(vMask.r * 2.f);
+    
+    float3 vAvgPos = (InTri[0].vWorldPos.xyz + InTri[1].vWorldPos.xyz + InTri[2].vWorldPos.xyz) / 3.f;
+    float fBranchOffset = (vAvgPos.x + vAvgPos.z) * 0.3f;
+    
     float fCenterY = (InTri[0].vPosition.y + InTri[1].vPosition.y + InTri[2].vPosition.y) / 3.f;
     
     float fHeightFactor = saturate(fCenterY * 0.4f);
@@ -294,7 +298,8 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     
     if (fWeight > 0.001f)
     {
-        fWave = sin(g_fTime + fCenterY) * 0.5f * fWeight * fHeightFactor;
+        //fWave = sin(g_fTime + fCenterY) * 0.5f * fWeight * fHeightFactor;
+        fWave = sin(g_fTime * 2.f + fBranchOffset) * 0.7f * fWeight * fHeightFactor;
     }
     
     matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -305,9 +310,9 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
         
         float4 vWorldPos = InTri[i].vPosition;
         
-        vWorldPos.x += fWave;
-        vWorldPos.z += fWave;
-        vWorldPos.z += fWave * 0.4f;
+        vWorldPos.x += fWave * 0.5f;
+        vWorldPos.z += fWave * 0.2f;
+        vWorldPos.y += fWave;
         
         Out.vPosition = mul(vWorldPos, matVP);
         
@@ -325,6 +330,31 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
 
 }
 
+PS_OUT PS_CINEMATIC_REED(PS_IN In)
+{
+    PS_OUT Out;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    vector vNoramlTexture = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
+    float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
+    float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
+    
+    Out.vDiffuse = float4(vMtrlDiffuse.xyz, 1.f);
+    //노말의 크기를 줄여서 세팅함. -> SSAO가 너무 강하게 들어가서
+    //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal, 0.1f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+
+}
 technique11 Tech
 {
     //잔디
@@ -368,4 +398,15 @@ technique11 Tech
         GeometryShader = compile gs_5_0 GS_BAMBOO();
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
+    pass Cinematic_Reed
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_REED();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_CINEMATIC_REED();
+    }
+
 }

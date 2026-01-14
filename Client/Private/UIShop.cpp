@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "UIHUD.h"
 
+#include "GameManager.h"
+
 CUIShop::CUIShop(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIBase{ pDevice, pContext }
 {
@@ -68,6 +70,9 @@ void CUIShop::Late_Update(_float fTimeDelta)
 
 		m_isOpen = false;
 		m_isClosing = false;
+
+		m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+		m_pGameManager->Play_LevelBGM();
 	}
 
 	if (!m_isOpen)
@@ -231,6 +236,8 @@ void CUIShop::Open_Shop()
 	m_isClosing = false;
 
 	m_pGameInstance->Manager_PlaySound(TEXT("POPUP_OPEN.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+	m_pGameInstance->Manager_PlaySound(TEXT("BGM_NIKKE_EVENT.wav"), CHANNELID::BGM, 3.f, 1.f);
 }
 
 void CUIShop::Close_Shop()

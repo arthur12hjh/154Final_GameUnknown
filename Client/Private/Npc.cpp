@@ -65,33 +65,37 @@ void CNpc::Priority_Update(_float fTimeDelta)
 {
     __super::Priority_Update(fTimeDelta);
 
-    if (m_pGameManager->GetLevelTransportIndex() == 2 && m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) && !m_isReturnDororong)
+    if (m_pGameManager->GetLevelTransportIndex() == 2 && !m_isReturnDororong)
     {
-        CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
-
-        if (!pHUD)
-            return;
-
-        if (pHUD->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro")))
-        {
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG))
             m_isReturnDororong = true;
 
-            m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
-            auto pPlayer = m_pGameManager->GetGameCharacter();
-            
-            if (!pPlayer)
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
+        {
+            CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
+
+            if (!pHUD)
                 return;
 
-            m_pInteractionCom->Action_InteractionEvent(fTimeDelta, pPlayer);
+            if (pHUD->Check_AnimFinish(TEXT("Layer_Combat"), TEXT("GamePlay_Overlay"), TEXT("Intro")))
+            {
+                m_isReturnDororong = true;
+                m_pInteractionCom->Set_InterState(INTERACTION_STATE::CONTACT);
+                auto pPlayer = m_pGameManager->GetGameCharacter();
+            
+                if (!pPlayer)
+                    return;
 
-            Safe_Release(pPlayer);
+                m_pInteractionCom->Action_InteractionEvent(fTimeDelta, pPlayer);
+
+                Safe_Release(pPlayer);
+            }
+            Safe_Release(pHUD);
         }
-        Safe_Release(pHUD);
     }
 
     m_pCCT->Update_PrePxPosition(m_pTransformCom);
     m_pAIController->Priority_Update(fTimeDelta);
-
 }
 
 void CNpc::Update(_float fTimeDelta)
@@ -305,10 +309,6 @@ void CNpc::Begin_Interaction()
 {
     if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
         m_pGameInstance->ADD_Interaction(m_pInteractionCom);
-
-    //// END�� �� �ٽ� �� ���̰�
-    //if (m_pInteractionCom->Get_InterState() != INTERACTION_STATE::END)
-    //    m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
 }
 
 void CNpc::Excute_Interaction(_float fTimeDelta, CGameObject* pActionObject)
@@ -374,14 +374,17 @@ void CNpc::Npc_Action()
         if (!pScript->Get_Has_Script_Desc())
         {
             if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET))
+            {
+                m_pGameManager->EnableTransport(1);
                 m_eNpcState = NPC_STATE::BYE;
+            }
 
             if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG))
             {
                 if (m_iScriptIdx == 0)
                     m_eNpcState = NPC_STATE::ACTION_BEGIN;
                 else if(m_iScriptIdx > 0)
-                    m_eNpcState = NPC_STATE::BYE;
+                    m_eNpcState = NPC_STATE::ACTION_END;
             }
 
             if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ���� npc || // ���η� npc
@@ -426,9 +429,16 @@ void CNpc::Npc_Action()
     {
         if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DIG))
         {
-            if (m_iScriptIdx == 0)
+            if (m_iScriptIdx == 0 && !m_isReturnDororong)
             {
-                ++m_iScriptIdx;
+                m_iScriptIdx = 1;
+                pScript->End_Script();
+                pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[m_iScriptIdx]));
+                m_eNpcState = NPC_STATE::TALK;
+            }
+            else if (m_iScriptIdx == 0 && m_isReturnDororong)
+            {
+                m_iScriptIdx = 2;
                 pScript->End_Script();
                 pScript->Begin_Script(m_pGameManager->Get_ScriptData(m_NpcDesc->szScriptTags[m_iScriptIdx]));
                 m_eNpcState = NPC_STATE::TALK;
@@ -440,14 +450,20 @@ void CNpc::Npc_Action()
     }
     case NPC_STATE::BYE:
     {
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG)) // ���η� npc
-        {
-            m_pDropCom->DropRewardItem();
-        }
-
         Return_Camera();
         m_eNpcState = NPC_STATE::IDLE;
-        m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
+        {
+            m_pDropCom->DropRewardItem();
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
+        }
+        else if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET))
+        {
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
+        }
+        else
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::DEFAULT);
+
         break;
     }
     }
@@ -479,7 +495,7 @@ void CNpc::Change_Camera()
         return;
 
     pPlayer->SetActive(false);
-
+     
     m_pGameInstance->SetMainCamera(TEXT("NpcCamera"));
     auto pNpcCamera = dynamic_cast<CCamera_Npc*>(m_pGameInstance->GetMainCamera());
 

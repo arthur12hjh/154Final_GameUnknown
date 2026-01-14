@@ -65,7 +65,7 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
             if (!pDororong)
                 return;
 
-            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= m_iNoteCount)
+            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= (m_iNoteCount - 1))
                 pDororong->Set_FullCombo(true);
 
             m_bIsPlay = false;
@@ -140,7 +140,7 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.vRotation = { 0.f, XMConvertToRadians(220.f), 0.f, 0.f };
 
     XMStoreFloat3(&NoteDesc.vPosition, m_pTransformCom->Get_State(STATE::POSITION));
-    XMStoreFloat3(& NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
+    XMStoreFloat3(&NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
     
     NoteDesc.fNoteSpeed = 30.f;
     NoteDesc.NoteType = NoteData.NoteType;

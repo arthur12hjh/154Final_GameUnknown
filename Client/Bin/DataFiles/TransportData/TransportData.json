@@ -3,9 +3,9 @@
         "0": {
             "szAreaName": "황무지",
             "vPoint": {
-                "x": 10.0,
-                "y": 10.0,
-                "z": 10.0
+                "x": 190.0,
+                "y": 55.0,
+                "z": 233.0
             },
             "bEnable": true,
             "eTargetLevel": 3

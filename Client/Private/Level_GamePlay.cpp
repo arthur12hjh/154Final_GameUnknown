@@ -58,8 +58,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_NPC(TEXT("Layer_Npc"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
@@ -114,6 +114,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	*pFogDesc->fFogPowerMax = { 1.f }; 
 
 	g_bIsMouseLock = true;
+
+	SSAO_DESC* pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
+	*pSSAODesc->isActive = true;
 
 	return S_OK;
 }
