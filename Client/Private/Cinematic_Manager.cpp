@@ -501,7 +501,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
 
                 static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
 
-                if (szText == TEXT("Layer_Player"))
+                if (_wstring(szText) == TEXT("Layer_Player"))
                 {
                     CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_PonyTail")));
                  

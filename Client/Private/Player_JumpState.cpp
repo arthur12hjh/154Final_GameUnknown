@@ -36,10 +36,10 @@ PLAYER_TRANSITION_DESC CPlayer_JumpState::Update(_float fTimeDelta)
 	_bool isAnimFinished = m_pPlayer->Play_Animation(fTimeDelta);
 
 	if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_W))
-		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.6f * m_fScaleFactor);
+		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.9f * m_fScaleFactor);
 
 	else if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_S))
-		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.6f * m_fScaleFactor);
+		m_Desc->pPlayerTransform->Go_Straight(fTimeDelta * 0.9f * m_fScaleFactor);
 
 
 	if (false == m_Desc->pPlayerController->Get_Gravity())

@@ -34,6 +34,8 @@ HRESULT CPlayer_ScarletLinkAttackState::Initialize(void* pArg)
         CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
         }, 4);
 
+    m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+
     return S_OK;
 }
 
