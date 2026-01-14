@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "GameInstance.h"
 
+#include "PonyTail_Player.h"
+
 CPlayer_SupplyBoxInteractionState::CPlayer_SupplyBoxInteractionState(void* pArg)
     : CPlayerState{}
 {
@@ -30,6 +32,9 @@ void CPlayer_SupplyBoxInteractionState::Start(void* pArg, _float fBlendRatio)
     // 타겟의 위치 + 타겟의 룩 * 3 방향으로 방향 세팅
     m_pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVector3Normalize(XMVectorSetY(vTargetLook, 0.f)) * 3.5f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
     m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetLook, 0.f) * 3.5f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
+
+    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+    pPonytail->Teleport_JointChains(XMLoadFloat4x4(m_Desc->pPlayerTransform->Get_WorldMatrixPtr()));
 }
 
 PLAYER_TRANSITION_DESC CPlayer_SupplyBoxInteractionState::Update(_float fTimeDelta)

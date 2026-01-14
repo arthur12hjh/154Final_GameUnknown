@@ -55,7 +55,6 @@ HRESULT CItem::Initialize(void* pArg)
 	//XMStoreFloat3(&m_CurvePoins[1], vCenterLeftPoint);
 	//XMStoreFloat3(&m_CurvePoins[0], vOwnerPos);
 
-
 	CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
 	EffectDesc.fRotationPerSec = 1.f;
 	EffectDesc.fSpeedPerSec = 1.f;
@@ -307,7 +306,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
 	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.5f, Com_Size.y * 0.5f, Com_Size.z * 0.5f);
+	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.22f, Com_Size.y * 0.22f, Com_Size.z * 0.22f);
 	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT | PHYSX_CUSTOM_6;

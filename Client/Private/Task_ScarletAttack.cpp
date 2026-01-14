@@ -26,7 +26,7 @@ HRESULT CTask_ScarletAttack::Initialize_Prototype(CBehaviorTree* pOwnerTree)
 	m_pGameManager = CGameManager::GetInstance();
 	Safe_AddRef(m_pGameManager);
 
-	m_fMaxDelayTime = 0.9f;
+	m_fMaxDelayTime = 0.7f;
 	return S_OK;
 }
 
@@ -194,6 +194,7 @@ void CTask_ScarletAttack::SelectAttackData()
 	SelectAttackMoveData(pSkillData->iSkillID);
 	m_pBlackBoard->SetAttackData(pSkillData);
 
+	m_iPreAttackID = pSkillData->iSkillID;
 	pSkillData->eProPerty & SKILL_PROPERTY::SUPERARMOR ? m_pBlackBoard->SetSuperAmor(true) : m_pBlackBoard->SetSuperAmor(false);
 	m_pOwner->Set_Animation(pSkillData->szAnimationName, false, 1.f, 0.f, true);
 }
@@ -270,7 +271,8 @@ void CTask_ScarletAttack::NormalAttackPattern()
 			bIsSelectAttack = false;
 		break;
 	}
-	
+
+	bIsSelectAttack = Check_LastAttack(pSkill_Data->iSkillID);
 	if (bIsSelectAttack)
 	{
 		m_pSkillData.push(pSkill_Data);
@@ -366,8 +368,13 @@ void CTask_ScarletAttack::SecondPhaseAttack()
 	_float iRandom = m_pGameInstance->Random(0.f, 100.f);
 	if (20 > iRandom)
 	{
-		m_pSkillData.push(m_pGameManager->Find_SkillData(38)); // Blink Shot1
-		m_pSkillData.push(m_pGameManager->Find_SkillData(39)); // Blink Shot2
+		if (Check_LastAttack(39))
+		{
+			m_pSkillData.push(m_pGameManager->Find_SkillData(38)); // Blink Shot1
+			m_pSkillData.push(m_pGameManager->Find_SkillData(39)); // Blink Shot2
+		}
+		else
+			SecondPhaseAttack();
 	}
 	else if (55 > iRandom)
 	{
@@ -1268,7 +1275,7 @@ void CTask_ScarletAttack::SelectAttackMoveData(_uint iID)
 _bool CTask_ScarletAttack::Compute_AttackCoolTime(_bool bIsForce)
 {
 	m_pBlackBoard->ClearAttackTimer();
-	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(0.7f, m_fMaxDelayTime));
+	m_pBlackBoard->SetAttackDelay(m_pGameInstance->Random(0.5f, m_fMaxDelayTime));
 	return true;
 }
 
@@ -1347,6 +1354,21 @@ void CTask_ScarletAttack::AttackLerpMove(_float fTimeDelta)
 	if (fDistance <= 3.5f)
 		return;
 	m_pOwner->GetTransform()->Set_State(STATE::POSITION, vLerpPos);
+}
+
+_bool CTask_ScarletAttack::Check_LastAttack(_uint iSelectAttackID)
+{
+	switch (iSelectAttackID)
+	{
+	case 39: case 28: case 24:
+	{
+		if (iSelectAttackID == m_iPreAttackID)
+			return false;
+	}
+	break;
+	}
+
+	return true;
 }
 
 void CTask_ScarletAttack::LookAtPoint(_float fTimeDelta)

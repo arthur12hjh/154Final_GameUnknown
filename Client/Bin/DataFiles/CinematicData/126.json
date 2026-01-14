@@ -73,6 +73,12 @@
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 2.45,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
           "eState": 19,
           "fTrackPosition": 2.7,
           "iActiveIndex": 1,
@@ -89,6 +95,24 @@
           "fTrackPosition": 3.197,
           "iActiveIndex": 12,
           "szObjectTag": ""
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 3.3,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 4.07,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 4.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
         },
         {
           "eState": 3,
@@ -109,16 +133,46 @@
           "szObjectTag": ""
         },
         {
+          "eState": 8,
+          "fTrackPosition": 6.16,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Cloth_Dress_1.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 8.0,
           "iActiveIndex": 1204,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 9.9,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 10.8,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 11.99,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
           "eState": 19,
           "fTrackPosition": 12.145,
           "iActiveIndex": 1,
           "szObjectTag": ""
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 12.85,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
         },
         {
           "eState": 3,
@@ -143,6 +197,18 @@
           "fTrackPosition": 16.0,
           "iActiveIndex": 1206,
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 16.86,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Cloth_Dress_1.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 18.13,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
         },
         {
           "eState": 3,
@@ -181,16 +247,46 @@
           "szObjectTag": "ActionCamera_GigasMeetGigas02"
         },
         {
-          "eState": 3,
-          "fTrackPosition": 30.0,
-          "iActiveIndex": 1211,
-          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
+          "eState": 8,
+          "fTrackPosition": 26.04,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Metalic.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 26.04,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Cloth_S_2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 27.4,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Footstep_Sand_Run_3.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 28.72,
+          "iActiveIndex": 30,
+          "szObjectTag": "PC_Sword_toScabbard.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 28.72,
+          "iActiveIndex": 30,
+          "szObjectTag": "EVE_Movement_Cloth_06.wav"
         },
         {
           "eState": 19,
           "fTrackPosition": 29.0,
           "iActiveIndex": 1,
           "szObjectTag": ""
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 30.0,
+          "iActiveIndex": 1211,
+          "szObjectTag": "ActionCamera_GigasMeetPlayer01"
         },
         {
           "eState": 8,
@@ -203,6 +299,12 @@
           "fTrackPosition": 30.478,
           "iActiveIndex": 12,
           "szObjectTag": ""
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 31.67,
+          "iActiveIndex": 30,
+          "szObjectTag": "EVE_Movement_Cloth_05.wav"
         },
         {
           "eState": 3,
