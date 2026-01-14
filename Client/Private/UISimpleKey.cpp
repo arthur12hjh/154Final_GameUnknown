@@ -346,6 +346,4 @@ void CUISimpleKey::Free()
 
 	Safe_Release(m_pVIBaseBufferCom);
 	Safe_Release(m_pHoldGaugeTextureCom);
-	Safe_Release(m_pTargetInteractionCom);
-	Safe_Release(m_pTargetOwner);
 }

@@ -91,7 +91,9 @@ void CTask_Groggy::ChangeGroggyState(GROGGY_STATE eState)
     }
         break;
     case CTask_Groggy::GROGGY_STATE::END:
-        m_szAnimation = "Result_State_Groggy_E";
+        //m_szAnimation = m_pOwner->GetStaticMonsterData()->szAnimationName;
+        //m_szAnimation += "_Result_State_Groggy_E";
+        m_szAnimation = "_Result_State_Groggy_E";
         m_pOwner->Set_Animation(m_szAnimation.c_str(), false);
         break;
     }

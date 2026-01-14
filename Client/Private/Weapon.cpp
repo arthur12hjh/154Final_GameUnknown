@@ -567,19 +567,24 @@ void CWeapon::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameObject
 		pDamageDesc.pSkillData = m_pGameManager->Find_SkillData(iSkillID);
 		pNaytiba->Damaged(&pDamageDesc);
 
-		//CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
-		//EffectDesc.fRotationPerSec = 1.f;
-		//EffectDesc.fSpeedPerSec = 1.f;
-		//
-		//EffectDesc.pRootMatrix = &m_CombinedWorldMatrix;
-		//EffectDesc.vPos = XMVectorSet(0, 3.f, 0, 1);
-		//EffectDesc.fRot = _float3(0, 0, 0);
-		//EffectDesc.fSize = 0.15f;
-		//_float3 dir = { m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_31, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_32, m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW)->_33};
-		//XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&dir)));
-		//EffectDesc.pDir = &dir;
-		//CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Blood"),
-		//	ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+		CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+		EffectDesc.fRotationPerSec = 1.f;
+		EffectDesc.fSpeedPerSec = 1.f;
+		_vector vPos = XMVector3Normalize(pHitActor->GetTransform()->Get_State(STATE::POSITION) - XMLoadFloat3(&vHitPoint));
+		vPos = XMVectorSetY(vPos, 0);
+		EffectDesc.vPos = XMLoadFloat3(&vHitPoint) + vPos * 2;
+		EffectDesc.fRot = _float3(0, 0, 0);
+		EffectDesc.fSize = 0.25f;
+		EffectDesc.fSpeed = 1.f;
+		_float3 fDir{};
+		XMStoreFloat3(&fDir, XMLoadFloat4x4(&m_CombinedWorldMatrix).r[0]);
+		EffectDesc.pDir = &fDir;
+		CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Eve_Hit"),
+			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+
+		m_pGameInstance->Manager_PlaySound(TEXT("CPS_hit_Punch_01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+		m_pGameInstance->Active_RadialBlur(0.2f, 5, 0.18f);
+		m_pGameInstance->Shake_Camera(0.2f, 0.2f);
 	}
 }
 
