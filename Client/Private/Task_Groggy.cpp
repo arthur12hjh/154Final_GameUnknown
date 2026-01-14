@@ -74,9 +74,21 @@ void CTask_Groggy::ChangeGroggyState(GROGGY_STATE eState)
         m_pOwner->Set_Animation(m_szAnimation.c_str(), false);
         break;
     case CTask_Groggy::GROGGY_STATE::LOOP:
+    {
         Play_Loop_GorggySound();
         m_szAnimation = "Result_State_Groggy_L";
+        CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+        switch (ePhase)
+        {
+        case CBossBlackBoard::BOSS_PAHSE::FIRST:
+            m_pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+            break;
+        case CBossBlackBoard::BOSS_PAHSE::SECOND:
+            m_pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK);
+            break;
+        }
         m_pOwner->Set_Animation(m_szAnimation.c_str(), true);
+    }
         break;
     case CTask_Groggy::GROGGY_STATE::END:
         m_szAnimation = "Result_State_Groggy_E";
