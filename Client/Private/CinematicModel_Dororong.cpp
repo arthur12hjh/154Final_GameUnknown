@@ -87,6 +87,7 @@ HRESULT CCinematicModel_Dororong::Initialize(void* pArg)
 	if (FAILED(Ready_PartObjects()))
 		return E_FAIL;
 
+
 	//m_pColliderCom->SetOwner(this);
 	m_vRotationQuaternion = _float3(741.8724f, 3.0678f, 596.6966f);
 
@@ -224,6 +225,7 @@ HRESULT CCinematicModel_Dororong::Ready_PartObjects()
 		return E_FAIL;
 
 	Import_ModelPtr();
+	m_pNotifyCom->Set_ModelCom(m_pBodyModelCom);
 
 	return S_OK;
 }
