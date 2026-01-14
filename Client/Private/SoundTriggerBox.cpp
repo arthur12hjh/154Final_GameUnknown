@@ -39,10 +39,10 @@ void CSoundTriggerBox::Priority_Update(_float fTimeDelta)
 
 void CSoundTriggerBox::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
 	{
 		m_bIsRender = !m_bIsRender;
-	}
+	}*/
 }
 
 void CSoundTriggerBox::Late_Update(_float fTimeDelta)
@@ -59,7 +59,7 @@ void CSoundTriggerBox::Late_Update(_float fTimeDelta)
 
 HRESULT CSoundTriggerBox::Render()
 {
-	if (m_bIsRender == true)
+	/*if (m_bIsRender == true)
 	{
 		if (m_eGroundSoundType == GROUND_SOUND_TYPE::IRON)
 		{
@@ -87,7 +87,7 @@ HRESULT CSoundTriggerBox::Render()
 			pObbCollider->Render_Face(_float4(1.f, 1.f, 0.f, 1.f));
 		}
 
-	}
+	}*/
 
     return S_OK;
 }
