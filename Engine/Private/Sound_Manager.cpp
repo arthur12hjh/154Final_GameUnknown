@@ -338,6 +338,7 @@ void CSound_Manager::LoadSoundFile()
 			MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pSoundKey, iLength);
 
 			m_mapSound.emplace(pSoundKey, pSound);
+			delete[] pSoundKey;
 		}
 		//_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 더이상 없다면 -1을 리턴
 		iResult = _findnext64(handle, &fd);
