@@ -95,7 +95,7 @@ HRESULT CBossController::Damage(void* pArg)
         }
         else
         {
-            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK);
+           
             m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::THESHOLD);
         }
     }
@@ -125,17 +125,6 @@ HRESULT CBossController::Damage(void* pArg)
                     {
                         bIsHitAble = false;
                         m_pBlackBoard->EnterGroggy();
-
-                        CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
-                        switch (ePhase)
-                        {
-                        case CBossBlackBoard::BOSS_PAHSE::FIRST:
-                            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
-                            break;
-                        case CBossBlackBoard::BOSS_PAHSE::SECOND:
-                            pNayitba->SetThesholdAction(NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK);
-                            break;
-                        }
                     }
                 }
                 else

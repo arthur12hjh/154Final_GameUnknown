@@ -242,8 +242,8 @@
                 ]
             },
             {
-                "fNumData01": 0.3,
-                "fNumData02": 0.2,
+                "fNumData01": 0.30000001192092896,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 14,
@@ -282,8 +282,8 @@
                 ]
             },
             {
-                "fNumData01": 0.3,
-                "fNumData02": 0.2,
+                "fNumData01": 0.30000001192092896,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 14,
@@ -362,8 +362,8 @@
                 ]
             },
             {
-                "fNumData01": 0.4,
-                "fNumData02": 0.2,
+                "fNumData01": 0.4000000059604645,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 32,
@@ -402,7 +402,7 @@
                 ]
             },
             {
-                "fNumData01": 0.4,
+                "fNumData01": 0.4000000059604645,
                 "fNumData02": 0.5,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -522,8 +522,8 @@
                 ]
             },
             {
-                "fNumData01": 0.7,
-                "fNumData02": 0.3,
+                "fNumData01": 0.699999988079071,
+                "fNumData02": 0.30000001192092896,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 56,
@@ -562,8 +562,8 @@
                 ]
             },
             {
-                "fNumData01": 0.7,
-                "fNumData02": 0.3,
+                "fNumData01": 0.699999988079071,
+                "fNumData02": 0.30000001192092896,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 56,

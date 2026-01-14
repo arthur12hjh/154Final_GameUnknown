@@ -37,7 +37,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID, _bool bIsResetProtoTypes)
 	if (LEVEL::BEATSABER_GAME == m_eNextLevelID)
 	{
 		m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-		m_pGameInstance->Manager_PlayBGM(TEXT("100-MEGALOVANIA.wav"), 2.f);
+		m_pGameInstance->Manager_PlayBGM(TEXT("02-Start-Menu.wav"), 2.f);
 	}
 
 	/* 다음 레벨에 대한 자원을 로드하여 준비해둔다. */

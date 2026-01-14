@@ -29,6 +29,7 @@ CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
         return NODE_STATE::FAIL;
 
     auto pHitData = m_pBlackBoard->GetHitData();
+
     if (pHitData)
     {
         const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pHitData->pSkillData);
@@ -40,6 +41,8 @@ CBehaviorNode::NODE_STATE CTask_Theshold::Update(_float fTimeDelta)
                 m_pBlackBoard->SetHitData(pHitData);
                 return NODE_STATE::FAIL;
             }
+            else
+                m_pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::EXECUTION_ATTACK);
         }
     }
 
