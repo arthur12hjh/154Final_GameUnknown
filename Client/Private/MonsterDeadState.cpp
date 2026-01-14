@@ -227,7 +227,7 @@ void CMonsterDeadState::Hit_AntlionSound(_float fRandomIndex)
 
 void CMonsterDeadState::Hit_TurretSound(_float fRandomIndex)
 {
-	m_pGameInstance->Manager_PlaySound(TEXT("M_Droid_vo_dead_2.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+	m_pGameInstance->Manager_PlaySound(TEXT("M_Droid_vo_dead_2.wav"), CHANNELID::EFFECT, 10.f, 1.f);
 }
 
 CMonsterDeadState* CMonsterDeadState::Create(void* pArg)

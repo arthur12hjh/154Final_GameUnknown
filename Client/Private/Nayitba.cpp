@@ -1499,6 +1499,8 @@ void CNaytiba::Play_HitSound()
 	_float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
 	if (4 == m_iMonsterID || 5 == m_iMonsterID)
 		Play_HitStatueSound(fRandomIndex);
+	else if (10 == m_iMonsterID)
+		Play_HitDroidSound(fRandomIndex);
 	else
 	{
 		if(50 > fRandomIndex)
@@ -1518,7 +1520,16 @@ void CNaytiba::Play_HitStatueSound(_float fRandomIndex)
 		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact03.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 	else
 		m_pGameInstance->Manager_PlaySound(TEXT("CPS_Monster_Statue_Impact04.wav"), CHANNELID::EFFECT, 1.f, 1.f);
-		
+}
+
+void CNaytiba::Play_HitDroidSound(_float fRandomIndex)
+{
+	if (33 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Env_Hit_Metal_03.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else if (66 >= fRandomIndex)
+		m_pGameInstance->Manager_PlaySound(TEXT("Env_Hit_Metal_02.wav"), CHANNELID::EFFECT, 3.f, 1.f);
+	else
+		m_pGameInstance->Manager_PlaySound(TEXT("Env_Hit_Metal_01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 
 }
 
