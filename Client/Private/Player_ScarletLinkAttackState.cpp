@@ -36,6 +36,9 @@ HRESULT CPlayer_ScarletLinkAttackState::Initialize(void* pArg)
 
     m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
 
+
+    m_Desc->isLinkAttackAvailable = false;
+
     return S_OK;
 }
 
@@ -96,6 +99,7 @@ _float CPlayer_ScarletLinkAttackState::End()
     m_Desc->isSuperArmor = false;
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->pLinkAttackTarget = nullptr;
+    m_Desc->isLinkAttackAvailable = true;
 
     return m_fNextBlendRatio;
 }
