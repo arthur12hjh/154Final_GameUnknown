@@ -64,6 +64,11 @@ public:
 		CAMERA_TYPE			eType = CAMERA_TYPE::END;
 	}SAVED_CAMERA_TRIGGER_BOX_INFO;
 
+	typedef struct SavedMusicTriggerBoxInfo
+	{
+		_float4x4			worldMatrix;
+	}SAVED_MUSIC_TRIGGER_BOX_INFO;
+
 	typedef struct tagModelInstanceLoadDesc
 	{
 		_uint iNumInstance = 0;
@@ -110,6 +115,7 @@ private:
 	HRESULT Load_Instancing_By_Layer(ifstream& ifs, const _tchar* pLayerTag);
 	HRESULT Load_Sound_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 	HRESULT Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
+	HRESULT Load_Music_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag);
 
 	HRESULT Load_Level_CinematicObjectData(const _char* szFilePath);
 	HRESULT Load_Light_Data();

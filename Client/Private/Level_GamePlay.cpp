@@ -21,6 +21,7 @@
 #include "TeleportEvent.h"
 #include "SoundTriggerBox.h"
 #include "CameraTriggerBox.h"
+#include "MusicTriggerBox.h"
 
 #include "SpriteParticle.h"
 
@@ -707,6 +708,7 @@ HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
 
 	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
 	if (FAILED(Load_Camera_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_CameraTriggerBox"), TEXT("Layer_CameraTriggerBox")))) return E_FAIL;
+	if (FAILED(Load_Music_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_MusicTriggerBox"), TEXT("Layer_MusicTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 
@@ -1024,6 +1026,36 @@ HRESULT CLevel_GamePlay::Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		Desc.eCameraType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Music_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_MUSIC_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_MUSIC_TRIGGER_BOX_INFO));
+
+		CMusicTriggerBox::MUSIC_TRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
 
 		_vector vScale = {};
 		_vector vRotation = {};
