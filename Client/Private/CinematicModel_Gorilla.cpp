@@ -121,7 +121,9 @@ void CCinematicModel_Gorilla::Update(_float fTimeDelta)
 void CCinematicModel_Gorilla::Late_Update(_float fTimeDelta)
 {
 	if (m_bIsActive == FALSE)
+	{
 		return;
+	}
 
 	m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);

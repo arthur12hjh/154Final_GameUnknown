@@ -21,13 +21,15 @@ Texture2D g_SSSAOTexture;
 matrix g_LightViewMatrix[CASCADE_LEVEL];
 matrix g_LightProjMatrix[CASCADE_LEVEL];
 
+float g_fFar;
+
 //림라이트용 변수
 vector g_vCamPosition;
 float g_fRimLightPower;
 float g_fRimLightStrength;
 float4 g_vRimLightColor;
 
-/* 메시다 ㅇ영향을 주는 뼈들의 집합*/
+/* 메시당 영향을 주는 뼈들의 집합*/
 matrix g_OffsetMatrices[512];
 
 StructuredBuffer<BoneTransformMatrix> g_BoneMatrixBuffer : register(t16);

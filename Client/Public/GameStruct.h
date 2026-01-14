@@ -518,6 +518,7 @@ namespace Client
 		BAKE_VILLAGE_SHADOW,	// 16,
 		PLAY_BGM,				// 17,
 		PLAY_BOSSBGM,			// 18,
+		CONTROL_DIALOGUE,		// 19,  0 : 아무것도 안함, 1 : Hide, 2 : Show | 00 : 아무것도 안함, 10 : 다음 대사 재생, 20 : 엔딩
 		END };
 
 	typedef struct Cinematic_Index_Desc
