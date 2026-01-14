@@ -230,9 +230,6 @@ void CRenderer::Update(_float fTimeDelta)
 		m_isBloom = !m_isBloom;
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F6))
 		m_isFog = !m_isFog;
-	// SSAO Åä±Û.
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
-		m_isSSAO = !m_isSSAO;
 
 	m_pRadialBlur->Update(fTimeDelta);
 	m_pDepthofField->Update(fTimeDelta);
@@ -834,9 +831,6 @@ void CRenderer::Render_Combined()
 		return;
 	if (FAILED(m_pStaticShadow->Bind_RenderTarget(m_pShader, "g_StaticShadowTexture")))
 		return;
-
-	if (false == m_isSSAO)
-		m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"));
 
 	if (FAILED(m_pSSAO->Bind_RenderTarget(m_pShader, "g_SSAOTexture")))
 		return;

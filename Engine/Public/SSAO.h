@@ -45,6 +45,7 @@ public:
 
 private:
 	SSAO_DESC m_Desc = {};
+	_bool   m_isActive = { true };
 	_float3 m_vRandomNoise[16] = {};
 	//0.2 ~ 1.5
 	_float m_fRadiusMin = { 0.173f }, m_fRadiusMax = { 0.141f };
