@@ -26,7 +26,6 @@ void CSound_Manager::Free()
 {
 	for (auto& Mypair : m_mapSound)
 	{
-		delete[] Mypair.first;
 		Mypair.second->release();
 	}
 	m_mapSound.clear();
@@ -39,8 +38,8 @@ void CSound_Manager::Free()
 		m_ChannelEndCallBacks[i].clear();
 	}
 
-	m_pSystem->release();
 	m_pSystem->close();
+	m_pSystem->release();
 }
 
 // 함수 호출규약 STDCALL 형식 호출한 녀석이 책임진다는
@@ -83,13 +82,11 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 
 void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	map<TCHAR*, FMOD::Sound*>::iterator iter;
-
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
-	iter = find_if(m_mapSound.begin(), m_mapSound.end(),
+	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(),
 		[&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())
@@ -126,7 +123,7 @@ void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uin
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
 	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())
@@ -256,7 +253,7 @@ _uint CSound_Manager::Get_BGMLength(const TCHAR* pSoundKey)
 {
 	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
 		{
-			return !lstrcmp(pSoundKey, iter.first);
+			return pSoundKey == iter.first.c_str() ? true : false;
 		});
 
 	if (iter == m_mapSound.end())

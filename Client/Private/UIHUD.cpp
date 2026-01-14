@@ -42,6 +42,8 @@ HRESULT CUIHUD::Initialize()
 	m_pGameInstance = CGameInstance::GetInstance();
 	m_pGameManager = CGameManager::GetInstance();
 	
+	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pGameManager);
 	m_pUIAnimMgr->Load_Anim_Files();
 
 	return S_OK;
@@ -1348,5 +1350,6 @@ void CUIHUD::Free()
 
 	Safe_Release(m_pUIAnimMgr);
 	Safe_Release(m_pGameManager);
+	Safe_Release(m_pGameInstance);
 }
 

@@ -34,7 +34,7 @@ public:
 	void	Get_BGMMinVolume(_float	fBGMMinVolume);
 private:
 	// 사운드 리소스 정보를 갖는 객체 
-	map<TCHAR*, FMOD::Sound*>	m_mapSound;
+	map<const _wstring, FMOD::Sound*>	m_mapSound;
 
 	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체 
 	vector<FMOD::Channel*>			m_pChannelArr[CHANNELID::END];

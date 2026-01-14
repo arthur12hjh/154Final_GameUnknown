@@ -1483,8 +1483,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);
 	Safe_Release(m_pInput_Device);
-	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPhysx_Manager);
+	Safe_Release(m_pGraphic_Device);
 }
 
 void CGameInstance::Free()
