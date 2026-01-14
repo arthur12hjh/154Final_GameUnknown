@@ -156,11 +156,13 @@ PLAYER_TRANSITION_DESC CPlayer_BattleWalkState::Update(_float fTimeDelta)
     {
         m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
         m_isRunStart = false;
+        m_isEvading = false;
     }
-    else if (true == m_isLanding && ((8 / 20.f) <= fAnimationRatio) && false == m_isTurning)
+    else if (true == m_isLanding && fAnimationRatio > 0.7f && false == m_isTurning)
     {
-        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f);
+        m_pPlayer->Set_Animation("Proto_Battle_Run", true, 1.2f, 0.12f, false, -1.f, 4.f / 20.f, true, true);
         m_isRunStart = false;
+        m_isLanding = false;
     }
 
     // Turn 트리거 (입력 있을 때만 트리거)

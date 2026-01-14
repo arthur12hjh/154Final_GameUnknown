@@ -60,7 +60,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), matWVP)).xyz;
     /* Out.vPosition.xy => 시야각에 있는 점들을 90에 맞춰준다 */ 
     /* Out.vPosition.z => n~f사이에 있는 점들의 z를 0 ~ f로 바꿔준다. */  
-    Out.vPosition.z -= 0.00001f;
+    Out.vPosition.z -= 0.0001f;
     Out.vTexcoord = In.vTexcoord;    
     Out.vProjPos = Out.vPosition;
     return Out;
@@ -264,7 +264,7 @@ PS_OUT PS_RAIL(PS_IN In)
     Out.vColor.a = 1.0f;
 
     Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vDepth = float4((In.vProjPos.z / In.vProjPos.w) - 0.0001f, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vORM = float4(0.f, 0.f, 0.f, 0.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
     //Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);

@@ -20,7 +20,6 @@ public :
 		_uint2			vStopFrame = {};
 	}FINISHED_DELAY_DESC;
 
-
 protected:
 	CTask_ScarletAttack();
 	virtual ~CTask_ScarletAttack() = default;
@@ -39,6 +38,8 @@ private:
 	queue<MOTION_TIME_DESC>				m_TimeLineDatas = {};
 
 	CGameObject*						m_pTarget = { nullptr };
+	_uint								m_iPreAttackID = {};
+
 	_float								m_fMaxDelayTime = {};
 	_float								m_fMoveAnimMaxRatio = {};
 	_float3								m_fAttackMovePoint = {};
@@ -79,11 +80,11 @@ private:
 	_bool								Finished_Animation(_float fTimeDelta);
 
 	void								AttackLerpMove(_float fTimeDelta);
+	_bool								Check_LastAttack(_uint iSelectAttackID);
 
 	void								LookAtPoint(_float fTimeDelta);
 	void								ResetAttackTask(_bool bIsCoolTime = true);
 	void								Clear_ScarletAttackTask();
-
 
 public:
 	static	CTask_ScarletAttack*		Create(CBehaviorTree* pOwnerTree);

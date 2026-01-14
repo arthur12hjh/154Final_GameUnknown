@@ -260,6 +260,8 @@ HRESULT CLevel_Scarlet::Ready_Layer_Player(const _wstring& strLayerTag)
 
 	auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
 	pPlayer->SetGroundSoundType(GROUND_SOUND_TYPE::GRASS);
+	Safe_Release(pPlayer);
+
 	return S_OK;
 }
 
