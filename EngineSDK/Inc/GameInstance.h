@@ -264,7 +264,7 @@ public:
 	void			Manager_StopAll();
 
 	//	특정 채널의 사운드볼륨을 바꾸는 기능
-	void			Manager_SetChannelVolume(CHANNELID eID, float fVolume);
+	void			Manager_SetChannelVolume(CHANNELID eID, float fVolume, _bool bIsLerp = true);
 
 
 	_uint			Get_BGMLength(const TCHAR* pSoundKey);

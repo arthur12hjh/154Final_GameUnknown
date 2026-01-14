@@ -9,6 +9,8 @@ void CSound_Manager::Initialize()
 	m_pSystem->init(32, FMOD_INIT_NORMAL, NULL);
 
 	LoadSoundFile();
+
+	m_bIsLerpBGMVolume = true;
 	m_pSystem->setDriver(0);
 }
 
@@ -16,6 +18,7 @@ CSound_Manager* CSound_Manager::Create()
 {
 	CSound_Manager* pInstance = new CSound_Manager();
 	pInstance->Initialize();
+
 	return pInstance;
 }
 
@@ -35,7 +38,7 @@ void CSound_Manager::Free()
 
 		m_ChannelEndCallBacks[i].clear();
 	}
-	
+
 	m_pSystem->release();
 	m_pSystem->close();
 }
@@ -187,11 +190,18 @@ void CSound_Manager::Manager_StopAll()
 	m_pSystem->update();
 }
 
-void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
+void CSound_Manager::Manager_SetChannelVolume(CHANNELID eID, float fVolume, _bool bIsLerp)
 {
-	for (auto& iter : m_pChannelArr[eID])
-		iter->setVolume(fVolume);
-	
+	_bool bIsLerpSound = false;
+	if(CHANNELID::BGM == eID)
+		bIsLerpSound = m_bIsLerpBGMVolume = bIsLerp;
+
+	if (!bIsLerpSound)
+	{
+		for (auto& iter : m_pChannelArr[eID])
+			iter->setVolume(fVolume);
+	}
+
 	m_pChannelVolume[eID] = fVolume;
 }
 
@@ -199,7 +209,6 @@ void CSound_Manager::Tick(_float fTimeDelta)
 {
 	_bool IsPlay = { false };
 	
-
 	for (_uint i = 0; i < CHANNELID::END; ++i)
 	{
 		size_t iChannelSize = m_pChannelArr[i].size();
@@ -219,13 +228,23 @@ void CSound_Manager::Tick(_float fTimeDelta)
 
 		if (!IsPlay)
 		{
-			fRatio = Lerp<_float>(fRatio, m_pChannelVolume[CHANNELID::BGM], fTimeDelta);
-			iter->setVolume(fRatio);
+			if (m_bIsLerpBGMVolume)
+			{
+				fRatio = Lerp<_float>(fRatio, m_pChannelVolume[CHANNELID::BGM], fTimeDelta);
+				iter->setVolume(fRatio);
+			}
+			else
+				iter->setVolume(m_pChannelVolume[CHANNELID::BGM]);
 		}
 		else
 		{
-			fRatio = Lerp<_float>(fRatio, m_fBGMMinVolume, fTimeDelta * 5.f);
-			iter->setVolume(fRatio);
+			if (m_bIsLerpBGMVolume)
+			{
+				fRatio = Lerp<_float>(fRatio, m_fBGMMinVolume, fTimeDelta * 5.f);
+				iter->setVolume(fRatio);
+			}
+			else
+				iter->setVolume(m_fBGMMinVolume);
 		}
 	}
 

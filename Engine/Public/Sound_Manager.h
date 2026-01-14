@@ -23,7 +23,7 @@ public:
 	void Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack);
 	void Manager_StopSound(CHANNELID eID);
 	void Manager_StopAll();
-	void Manager_SetChannelVolume(CHANNELID eID, float fVolume);
+	void Manager_SetChannelVolume(CHANNELID eID, float fVolume, _bool bIsLerp);
 
 	void	Tick(_float fTimeDelta);
 	_uint	Get_BGMLength(const TCHAR* pSoundKey);
@@ -41,6 +41,7 @@ private:
 	vector<SOUND_CALLBACK_DESC*>	m_ChannelEndCallBacks[CHANNELID::END];
 
 	_float							m_pChannelVolume[CHANNELID::END];
+	_bool							m_bIsLerpBGMVolume;
 	_float							m_fBGMMinVolume = { 2.f };
 
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
