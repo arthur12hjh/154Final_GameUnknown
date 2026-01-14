@@ -683,7 +683,7 @@ HRESULT CNaytiba::ADD_Components()
 		return E_FAIL;
 
 #pragma region DropItem Setting
-	m_pDropCom->ADD_DropItem(make_pair( 1, 100.f ), 300);
+	m_pDropCom->ADD_DropItem(make_pair( 1, 100.f ), 40.f, 60.f);
 #pragma endregion
 
 	WCHAR	ControllerProtoType[MAX_PATH] = {};

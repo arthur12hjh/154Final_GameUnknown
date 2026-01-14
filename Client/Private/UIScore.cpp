@@ -56,15 +56,15 @@ void CUIScore::Update(_float fTimeDelta)
 	m_iScore = pDororong->GetBeatSaberCharacterDesc().iScore;
 	Safe_Release(pDororong);
 
-	if (m_iScore < 100)
+	if (m_iScore < 1000)
 		m_iRank = 0;
-	else if (m_iScore >= 100 && m_iScore < 199)
+	else if (m_iScore >= 1000 && m_iScore < 2500)
 		m_iRank = 1;
-	else if (m_iScore >= 200 && m_iScore < 299)
+	else if (m_iScore >= 2500 && m_iScore < 5000)
 		m_iRank = 2;
-	else if (m_iScore >= 300 && m_iScore < 399)
+	else if (m_iScore >= 5000 && m_iScore < 7500)
 		m_iRank = 3;
-	else if (m_iScore >= 400)
+	else if (m_iScore >= 7500)
 		m_iRank = 4;
 
 	if(m_iRank != m_iPrevRank)

@@ -162,9 +162,9 @@ HRESULT CCanBox::ADD_Components(const PROB_INTERACTION_DESC& Desc)
         return E_FAIL;
 
 #pragma region DropItem Setting
-    m_pDropCom->ADD_DropItem(make_pair(1, 30.f), 1);
-    m_pDropCom->ADD_DropItem(make_pair(2, 30.f), 1);
-    m_pDropCom->ADD_DropItem(make_pair(3, 10.f), 1);
+    m_pDropCom->ADD_DropItem(make_pair(1, 30.f), 90.f, 110.f);
+    m_pDropCom->ADD_DropItem(make_pair(2, 30.f), 90.f, 110.f);
+    m_pDropCom->ADD_DropItem(make_pair(3, 10.f), 90.f, 110.f);
 
 #pragma endregion
     /* Com_Interaction */
