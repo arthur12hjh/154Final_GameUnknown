@@ -41,10 +41,10 @@ void CCameraTriggerBox::Priority_Update(_float fTimeDelta)
 
 void CCameraTriggerBox::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_L))
 	{
 		m_bIsRender = !m_bIsRender;
-	}
+	}*/
 }
 
 void CCameraTriggerBox::Late_Update(_float fTimeDelta)
@@ -61,11 +61,11 @@ void CCameraTriggerBox::Late_Update(_float fTimeDelta)
 
 HRESULT CCameraTriggerBox::Render()
 {
-	if (m_bIsRender == true)
+	/*if (m_bIsRender == true)
 	{
 		COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pColliderCom);
 		pObbCollider->Render_Face(_float4(1.f, 1.f, 0.f, 0.f));
-	}
+	}*/
 
 	return S_OK;
 }

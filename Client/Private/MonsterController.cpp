@@ -131,7 +131,7 @@ HRESULT CMonsterController::Damage(void* pDesc)
 
 			if (SKILL_PROPERTY::PARRY & pDamageSKillDesc->eProPerty)
 			{
-				AttackCompleted(1.5f);
+				AttackCompleted(1.3f);
 				if (0 >= m_pOwnerData->iCurrentStamina)
 				{
 					// 여기서 그로기 타임 주고 설정

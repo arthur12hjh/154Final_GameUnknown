@@ -46,7 +46,7 @@ void CRail::Update(_float fTimeDelta)
         m_bIsColorArr[0] = true;
         m_bIsIdx0 = true;
         m_fTimeArr[0] = 0.f;
-        m_fColorWeightArr[0] = 0.f; // ���� ó������ �ٽ� �������� �ϰ� �ʹٸ� �ּ� ����
+        m_fColorWeightArr[0] = 0.f;
     }
     if (m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_J) || m_pGameInstance->KeyPressed(KEY_INPUT::KEYBOARD, DIK_A))
     {

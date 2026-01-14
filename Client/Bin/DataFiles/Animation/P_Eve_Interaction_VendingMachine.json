@@ -2,11 +2,11 @@
     {
         "AnimationNotifies": [
             {
-                "fNumData01": 3.0,
+                "fNumData01": 30.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 15,
+                "iNotifyKeyFrame": 7,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -15,8 +15,8 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "EFFECT",
-                "szNotifyArg02": "N_Scarlet_Find_Cloth_08.wav",
+                "szNotifyArg01": "",
+                "szNotifyArg02": "Obj_Drop_Coin_1.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
@@ -42,51 +42,11 @@
                 ]
             },
             {
-                "fNumData01": 3.0,
+                "fNumData01": 5.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 15,
-                "iNumData01": 3,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "EFFECT",
-                "szNotifyArg02": "M_Scarlet_Skill_Reed_move_s_2.wav",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Play_Sound",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 3.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 47,
+                "iNotifyKeyFrame": 63,
                 "iNumData01": 0,
                 "iNumData02": 0,
                 "iNumData03": 0,
@@ -95,8 +55,8 @@
                 "iNumData06": 0,
                 "iNumData07": 0,
                 "iNumData08": 0,
-                "szNotifyArg01": "EFFECT",
-                "szNotifyArg02": "M_Scarlet_Skill_Jump_Impact_2.wav",
+                "szNotifyArg01": "",
+                "szNotifyArg02": "EVE_SE_Insert_Coin.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
@@ -122,6 +82,6 @@
                 ]
             }
         ],
-        "szAnimationTag": "M_Scarlet_MoveBack"
+        "szAnimationTag": "P_Eve_Interaction_VendingMachine"
     }
 ]

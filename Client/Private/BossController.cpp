@@ -137,14 +137,16 @@ HRESULT CBossController::Damage(void* pArg)
             {
                 if (SKILL_TYPE::BLINK_SKILL > pDamageSKillDesc->eSkillType)
                 {
-                    if (m_pBlackBoard->IsSuperAmor())
+                    if (false == pNayitba->bIsParryHitReaction())
                     {
-                        if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                        if (m_pBlackBoard->IsSuperAmor())
                         {
-                            bIsHitAble = false;
+                            if (SKILL_TYPE::BETA_SKILL != pDamageSKillDesc->eSkillType)
+                            {
+                                bIsHitAble = false;
+                            }
                         }
                     }
-
                     if (SKILL_TYPE::BETA_SKILL == pDamageSKillDesc->eSkillType)
                     {
                         if (SKILL_PROPERTY::IGNORE_GUARDBREAK & pAttackData->eProPerty)
