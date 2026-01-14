@@ -82,7 +82,7 @@ HRESULT CStaticShadow::Bind_Shader_Resource(CShader* pShader, const _char* pCons
 HRESULT CStaticShadow::Add_RenderObject(CGameObject* pRenderObject)
 {
 	m_StaticShadowObjects.push_back(pRenderObject);
-	Safe_AddRef(pRenderObject);
+	//Safe_AddRef(pRenderObject);
 
 	return S_OK;
 }
@@ -103,10 +103,8 @@ HRESULT CStaticShadow::Render(CVIBuffer_Rect* pVIBuffer)
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render_Shadow();
-
-		//Safe_Release(pRenderObject);
 	}
-	//m_StaticShadowObjects.clear();
+	m_StaticShadowObjects.clear();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
@@ -122,12 +120,6 @@ HRESULT CStaticShadow::Render(CVIBuffer_Rect* pVIBuffer)
 
 void CStaticShadow::Clear_StaticShadowObjects()
 {
-	for (auto& pRenderObject : m_StaticShadowObjects)
-	{
-		if (nullptr != pRenderObject)
-			Safe_Release(pRenderObject);
-	}
-
 	m_StaticShadowObjects.clear();
 }
 
