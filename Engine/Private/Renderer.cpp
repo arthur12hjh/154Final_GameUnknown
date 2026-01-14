@@ -1179,15 +1179,15 @@ void CRenderer::Render_Debug()
 	//	return;
 	//if (FAILED(m_pMotionBlur->Render_Debug(m_pVIBuffer, m_pShader)))
 	//	return;
-	if (FAILED(m_pStaticShadow->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
-	if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
-		return;
+	//if (FAILED(m_pStaticShadow->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
+	//if (FAILED(m_pSSAO->Render_Debug(m_pVIBuffer, m_pShader)))
+	//	return;
 
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
-		return;
-	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_ShadowBlurX"), m_pShader, m_pVIBuffer)))
-		return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Velocity"), m_pShader, m_pVIBuffer)))
+	//	return;
+	//if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_ShadowBlurX"), m_pShader, m_pVIBuffer)))
+	//	return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Scene"), m_pShader, m_pVIBuffer)))
 		return;
 	if (FAILED(m_pGameInstance->Render_RT_Debug(TEXT("MRT_Distortion"), m_pShader, m_pVIBuffer)))
