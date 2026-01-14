@@ -157,6 +157,7 @@ private :
 #pragma region HIT SOUND
 	void									Play_HitSound();
 	void									Play_HitStatueSound(_float fRandomIndex);
+	void									Play_HitDroidSound(_float fRandomIndex);
 #pragma endregion
 
 	_bool									Compare_SFX_Name(const string& szSFXName);
