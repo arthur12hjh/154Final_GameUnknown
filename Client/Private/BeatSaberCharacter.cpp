@@ -298,7 +298,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 				_float fLength = XMVectorGetX(XMVector3Length(vObjectPosition - vPosition));
 				_float fLengthRatio = fLength / m_BoxSizeZ;
 				// ���⼭ Ÿ�� �Ǻ��ؼ� üũ
-				if (1.f > fLength)
+				/*if (1.f > fLength)
 				{
 					m_CharacterDesc.iScore += 100;
 					m_CharacterDesc.iComboCnt++;
@@ -324,7 +324,12 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 					m_CharacterDesc.iComboCnt = 0;
 					m_CharacterDesc.iAccuracy = 0;
 					bIsSuccess = true;
-				}
+				}*/
+
+				m_CharacterDesc.iScore += 100;
+				m_CharacterDesc.iComboCnt++;
+				m_CharacterDesc.iAccuracy = 3;
+				bIsSuccess = true;
 
 				m_pGameInstance->Manager_PlaySound(TEXT("tamp.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 				CEffect::EFFECT_TRANSFORM_DESC EffectDesc;

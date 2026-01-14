@@ -286,6 +286,10 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     float4 vMask = g_EmissiveTexture.SampleLevel(DefaultSampler, vCenterUV, 0);
 
     float fWeight = saturate(vMask.r * 2.f);
+    
+    float3 vAvgPos = (InTri[0].vWorldPos.xyz + InTri[1].vWorldPos.xyz + InTri[2].vWorldPos.xyz) / 3.f;
+    float fBranchOffset = (vAvgPos.x + vAvgPos.z) * 0.3f;
+    
     float fCenterY = (InTri[0].vPosition.y + InTri[1].vPosition.y + InTri[2].vPosition.y) / 3.f;
     
     float fHeightFactor = saturate(fCenterY * 0.4f);
@@ -294,7 +298,8 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
     
     if (fWeight > 0.001f)
     {
-        fWave = sin(g_fTime + fCenterY) * 0.5f * fWeight * fHeightFactor;
+        //fWave = sin(g_fTime + fCenterY) * 0.5f * fWeight * fHeightFactor;
+        fWave = sin(g_fTime * 2.f + fBranchOffset) * 0.7f * fWeight * fHeightFactor;
     }
     
     matrix matVP = mul(g_ViewMatrix, g_ProjMatrix);
@@ -305,9 +310,9 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
         
         float4 vWorldPos = InTri[i].vPosition;
         
-        vWorldPos.x += fWave;
-        vWorldPos.z += fWave;
-        vWorldPos.z += fWave * 0.4f;
+        vWorldPos.x += fWave * 0.5f;
+        vWorldPos.z += fWave * 0.2f;
+        vWorldPos.y += fWave;
         
         Out.vPosition = mul(vWorldPos, matVP);
         

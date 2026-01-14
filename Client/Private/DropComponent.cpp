@@ -63,7 +63,7 @@ void CDropComponent::DropRewardItem()
     }
 }
 
-HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount)
+HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float fMinAmount, _float fMaxAmount)
 {
     auto iter = find_if(m_DoprItemList.begin(), m_DoprItemList.end(), [&](const auto& src)
         {
@@ -73,7 +73,7 @@ HRESULT CDropComponent::ADD_DropItem(const pair<_uint, _float>& ItemData, _float
     if (iter == m_DoprItemList.end())
     {
         m_DoprItemList.push_back(ItemData);
-        m_AmountItemList.push_back(fAmount);
+        m_AmountItemList.push_back(_float2(fMinAmount, fMaxAmount));
 
         m_fTotalWeight += ItemData.second;
         m_iNumItemCount++;
@@ -99,7 +99,7 @@ void CDropComponent::CalculationItemDrop()
         {
             DROP_RESULT_DESC ResultDesc = {};
             ResultDesc.iDropItemID = m_DoprItemList[i].first;
-            ResultDesc.iAmountVal = (_int)m_pGameInstance->Random(1, m_AmountItemList[i]);
+            ResultDesc.iAmountVal = (_int)m_pGameInstance->Random(m_AmountItemList[i].x, m_AmountItemList[i].y);
 
             m_DropResultList.push_back(move(ResultDesc));
             return;

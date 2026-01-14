@@ -157,6 +157,15 @@ HRESULT CUIScript::RenderSpeaker()
 			COLOR_PATTERN_DORORONG.w * fAlpha
 		);
 	}
+	if (m_pScriptDesc->szSpeaker == TEXT("D1G-g2r"))
+	{
+		vColor = XMVectorSet(
+			COLOR_PATTERN_D1G.x * fAlpha,
+			COLOR_PATTERN_D1G.y * fAlpha,
+			COLOR_PATTERN_D1G.z * fAlpha,
+			COLOR_PATTERN_D1G.w * fAlpha
+		);
+	}
 
 	_vector vShadowColor = XMVectorSet(
 		0.f * fAlpha,
