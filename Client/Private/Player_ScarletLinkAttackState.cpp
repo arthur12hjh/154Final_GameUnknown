@@ -36,6 +36,9 @@ HRESULT CPlayer_ScarletLinkAttackState::Initialize(void* pArg)
 
     m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
 
+
+    m_Desc->isLinkAttackAvailable = false;
+
     return S_OK;
 }
 
@@ -56,6 +59,9 @@ void CPlayer_ScarletLinkAttackState::Start(void* pArg, _float fBlendRatio)
 PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
 {
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
+    _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
+
+    Play_Sound(fAnimationRatio);
 
     _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
@@ -96,8 +102,54 @@ _float CPlayer_ScarletLinkAttackState::End()
     m_Desc->isSuperArmor = false;
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->pLinkAttackTarget = nullptr;
+    m_Desc->isLinkAttackAvailable = true;
 
     return m_fNextBlendRatio;
+}
+
+void CPlayer_ScarletLinkAttackState::Play_Sound(_float fAnimRatio)
+{
+    switch (m_iSoundCount)
+    {
+    case 0:
+        if (fAnimRatio >= 0.069f)
+        {
+            m_pGameInstance->Manager_PlaySound(TEXT("sfx_low_hit1_01_MONO.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_iSoundCount++;
+        }
+        break;
+    case 1:
+        if (fAnimRatio >= 0.220f)
+        {
+            m_pGameInstance->Manager_PlaySound(TEXT("Hit_sword_nomarl_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_iSoundCount++;
+        }
+        break;
+    case 2:
+        if (fAnimRatio >= 0.318f)
+        {
+            m_pGameInstance->Manager_PlaySound(TEXT("Hit_sword_nomarl_04.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_iSoundCount++;
+        }
+        break;
+    case 3:
+        if (fAnimRatio >= 0.481f)
+        {
+            m_pGameInstance->Manager_PlaySound(TEXT("Hit_sword_nomarl_03.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_iSoundCount++;
+        }
+        break;
+    case 4:
+        if (fAnimRatio >= 0.742f)
+        {
+            m_pGameInstance->Manager_PlaySound(TEXT("M_Warp_fx.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_iSoundCount++;
+        }
+
+        break;
+    default:
+        break;
+    }
 }
 
 CPlayer_ScarletLinkAttackState* CPlayer_ScarletLinkAttackState::Create(void* pArg)

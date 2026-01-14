@@ -14,7 +14,8 @@ void* CSSAO::Get_Desc()
     m_Desc.fIntensity = &m_fIntensity;
     m_Desc.fRadiusMax = &m_fRadiusMax;
     m_Desc.fRadiusMin = &m_fRadiusMin;
-
+    m_Desc.isActive = &m_isActive;
+   
     return &m_Desc;
 }
 
@@ -61,6 +62,22 @@ HRESULT CSSAO::Initialize()
 
 HRESULT CSSAO::Render(CVIBuffer_Rect* pVIBuffer, const _wstring& strDepthRTTag, const _wstring& strNormalRTTag, const _wstring& strReturnRTTag)
 {
+#ifdef _DEBUG
+    if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_F9))
+        m_isActive = !m_isActive;
+#endif
+
+    if (false == m_isActive)
+    {
+        if (FAILED(m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO"))))
+            return E_FAIL;
+
+        if (FAILED(m_pGameInstance->Clear_MRT(TEXT("MRT_SSAO_BlurY"))))
+            return E_FAIL;
+
+        return S_OK;
+    }
+
     /* SSAO »Ì¾Æ³»¿À°í. */
     if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SSAO"))))
         return E_FAIL;

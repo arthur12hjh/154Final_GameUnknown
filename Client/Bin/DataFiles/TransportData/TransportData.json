@@ -17,7 +17,7 @@
                 "y": 5.0,
                 "z": 118.837
             },
-            "bEnable": false,
+            "bEnable": true,
             "eTargetLevel": 4
         },
         "2": {

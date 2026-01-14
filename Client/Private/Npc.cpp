@@ -452,10 +452,13 @@ void CNpc::Npc_Action()
     {
         Return_Camera();
         m_eNpcState = NPC_STATE::IDLE;
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) || m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET)) // ���η� npc
+        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
         {
-            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
-                m_pDropCom->DropRewardItem();
+            m_pDropCom->DropRewardItem();
+            m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
+        }
+        else if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET))
+        {
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
         }
         else

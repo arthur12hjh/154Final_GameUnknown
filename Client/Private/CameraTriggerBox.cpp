@@ -109,7 +109,7 @@ void CCameraTriggerBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 	{
 		if (m_pCamera)
 		{
-			m_pCamera->Set_Distance(7.f);
+			m_pCamera->Set_Distance(6.f);
 		}
 	}
 

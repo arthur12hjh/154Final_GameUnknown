@@ -2,6 +2,7 @@
 #include "Reed.h"
 
 #include "GameInstance.h"
+#include "GameManager.h"
 #include "Terrain.h"
 
 CReed::CReed(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
@@ -95,8 +96,17 @@ HRESULT CReed::Render()
 		if (FAILED(m_pModelCom->Bind_MatrialTexture(m_pShaderCom, i, "g_ORMTexture", aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Begin(2)))
-			return E_FAIL;
+		//2번은 평소 가려지는 상태
+		if (false == CGameManager::GetInstance()->Is_CinematicPlaying())
+		{
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Begin(4)))
+				return E_FAIL;
+		}
 
 		if (FAILED(m_pModelCom->Render(i)))
 			return E_FAIL;
