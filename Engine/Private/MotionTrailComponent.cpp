@@ -178,7 +178,7 @@ HRESULT CMotionTrailComponent::Bind_ShaderResource()
 {
 	auto pMainCam = m_pGameInstance->GetMainCamera();
 	if (nullptr == pMainCam)
-		return;
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumBone", &m_iNumBones, sizeof(_int))))
 		return E_FAIL;
