@@ -457,10 +457,8 @@ void CNpc::Npc_Action()
             m_pDropCom->DropRewardItem();
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
         }
-        if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG) || m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET)) // ���η� npc
+        else if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::SCARLET))
         {
-            if (m_NpcDesc->iNpcID == ENUM_CLASS(NPC_ID::DORORONG))
-                m_pDropCom->DropRewardItem();
             m_pInteractionCom->Set_InterState(INTERACTION_STATE::END);
         }
         else
