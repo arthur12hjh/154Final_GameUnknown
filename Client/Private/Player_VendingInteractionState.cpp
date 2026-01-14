@@ -88,6 +88,9 @@ _float CPlayer_VendingInteractionState::End()
 {
     m_Desc->isCoinVisible = false;
     m_Desc->isInteracting = false;
+
+    //m_pInteractionCom->Action_InteractionEvent(m_pGameInstance->Get_TimeDelta(TEXT("GameLoop")), m_pPlayer);
+
     return m_fNextBlendRatio;
 }
 

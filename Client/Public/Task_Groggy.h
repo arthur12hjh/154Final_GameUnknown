@@ -29,6 +29,8 @@ private:
 
 private :
 	void								ChangeGroggyState(GROGGY_STATE eState);
+	void								Play_Start_GorggySound();
+	void								Play_Loop_GorggySound();
 
 public:
 	static	CTask_Groggy*				Create(CBehaviorTree* pOwnerTree);

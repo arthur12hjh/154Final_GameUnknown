@@ -30,15 +30,15 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 	// 플레이어랑 재생한다.
 
 	// 나중에 컷씬 데이터로 수정 하고 컷씬의 종료 이벤트를 받아서
-	// 컷씬의 종료를 판단하겠습니다.
+	// 컷씬의 종료를 판단하겠습니다.	
 	// 
 	// 이거 그냥 그런가보다 하시면 됩니다.
 	CScarletBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
 	_uint iCurrentPhaseIndex = ENUM_CLASS(ePhase);
 
-	m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
 	if (false == m_pBlackBoard->Is_PlayPhaseChangeCutScene())
 	{
+		//m_pGameInstance->Manager_StopAll();
 		auto pGameManger = CGameManager::GetInstance();
 		m_pBlackBoard->Set_PlayCutScene();
 		switch (iCurrentPhaseIndex)
@@ -46,20 +46,18 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 		case 0:
 			if (8 == m_pNaytiba->GetMonsterID())
 			{
-				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_PHASECHANGE.wav"), 3.f);
+				//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_PHASECHANGE.wav"), 3.f);
 				pGameManger->Play_Cinematic(142, [&]() { FinishedCutScene(); });
 
 			}
 			else if (1 == m_pNaytiba->GetMonsterID())
 			{
-				m_pGameInstance->Manager_PlayBGM(TEXT("BGM_DED_BOSS_GIGAS_FINISH.wav"), 3.f);
+				//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_DED_BOSS_GIGAS_FINISH.wav"), 3.f);
 				pGameManger->Play_Cinematic(125, [&]() { FinishedCutScene(); });
 			}
 			break;
 		case 1:
-			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-			m_pGameInstance->Manager_StopAll();
-			m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_FINISH.wav"), 3.f);
+			//m_pGameInstance->Manager_PlayBGM(TEXT("BGM_BOSS_SCARLET_FINISH.wav"), 3.f, 1.f);
 			if (8 == m_pNaytiba->GetMonsterID())
 				pGameManger->Play_Cinematic(143, [&]() { FinishedCutScene(); });
 			
@@ -99,7 +97,7 @@ void CTask_CutScene::FinishedCutScene()
 		m_pBlackBoard->SetCurState(CScarletBlackBoard::BOSS_STATE::IDLE);
 		m_pBlackBoard->SetEntarnceAttack(true);
 
-		CGameManager::GetInstance()->Play_BossBGM(m_pNaytiba->GetMonsterID(), iCurrentPhaseIndex + 1);
+		//CGameManager::GetInstance()->Play_BossBGM(m_pNaytiba->GetMonsterID(), iCurrentPhaseIndex + 1);
 		if (CBossBlackBoard::BOSS_STATE::GROGGY == ePreState)
 			m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_STEMINA);
 		m_pNaytiba->RecoveryPoint(RECOVERY_TYPE::RECOVERY_SHILED);

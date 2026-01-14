@@ -36,6 +36,7 @@ private:
 
 private :
 	void								Refresh_HitMotion();
+	void								Play_Sound(SKILL_TYPE eSkillType);
 	void								Damaged_Attack(const Character_Skill_Desc* pData, _vector vDir);
 
 	void								Hit_Reaction(_float fTimeDelta);

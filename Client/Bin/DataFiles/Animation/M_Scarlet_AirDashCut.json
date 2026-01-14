@@ -1402,6 +1402,46 @@
                 ]
             },
             {
+                "fNumData01": 5.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 77,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "vo_Scarlet_Atk_M_1_VO.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.5,
+                    2.5,
+                    2.5
+                ]
+            },
+            {
                 "fNumData01": 3.0,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
@@ -1497,6 +1537,46 @@
                 "iNumData08": 0,
                 "szNotifyArg01": "JUMP",
                 "szNotifyArg02": "",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.5,
+                    2.5,
+                    2.5
+                ]
+            },
+            {
+                "fNumData01": 5.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 167,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "vo_Scarlet_Atk_M_6_VO.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",
@@ -1697,6 +1777,46 @@
                 "iNumData08": 0,
                 "szNotifyArg01": "EFFECT",
                 "szNotifyArg02": "M_Scarlet_Alert.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    2.5,
+                    2.5,
+                    2.5
+                ]
+            },
+            {
+                "fNumData01": 7.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 290,
+                "iNumData01": 0,
+                "iNumData02": 0,
+                "iNumData03": 0,
+                "iNumData04": 0,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "EFFECT",
+                "szNotifyArg02": "vo_Scarlet_Atk_L_1_VO.wav",
                 "szNotifyArg03": "",
                 "szNotifyArg04": "",
                 "szNotifyArg05": "",

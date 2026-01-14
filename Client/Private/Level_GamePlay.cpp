@@ -106,6 +106,13 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	pGameManager->Change_ShaderSetting(LEVEL::GAMEPLAY, 0);
 
+	FOG_DESC* pFogDesc = static_cast<FOG_DESC*>(m_pGameInstance->Get_Fog_Desc());
+	
+	*pFogDesc->vFogColor = { 1.0f, 0.89f, 0.70f, 1.f };
+	*pFogDesc->fSkyboxFogPower = { 0.77f };
+	*pFogDesc->fFogPowerMin = { 0.5f };
+	*pFogDesc->fFogPowerMax = { 1.f }; 
+
 	g_bIsMouseLock = true;
 
 	return S_OK;

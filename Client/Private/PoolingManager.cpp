@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Nayitba.h"
+#include "Note.h"
 
 CPoolingManager::CPoolingManager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     m_pDevice(pDevice),
@@ -23,6 +24,9 @@ HRESULT CPoolingManager::Setting_PoolManager(_uint iLevelID)
     {
     case LEVEL::GAMEPLAY :
             return Ready_GamePlayPool();
+        break;
+    case LEVEL::BEATSABER_GAME:
+        return Ready_BeatSaberPool();
         break;
     }
 
@@ -62,7 +66,6 @@ CGameObject* CPoolingManager::SetActivePoolObject(_uint iLevelID, _uint iProtoTy
     {
         pPoolObject = iter->second.back();
         iter->second.pop_back();
-
         // 여기서 레이어에도 추가해주자
         m_pGameInstance->ADD_ToLayer(iProtoTypeLevel, pLayerName, pPoolObject);
     }
@@ -123,6 +126,29 @@ HRESULT CPoolingManager::Ready_GamePlayPool()
 #pragma endregion
 
    
+    return S_OK;
+}
+
+HRESULT CPoolingManager::Ready_BeatSaberPool()
+{
+#pragma region Setting Note Pool
+    vector<CGameObject*> PoolList = {};
+    PoolList.reserve(1000);
+
+    CNote::NOTE_DESC NoteDesc = {};
+
+    for (_uint i = 0; i < 100; ++i)
+    {
+        CBase* pBase = m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"), &NoteDesc);
+        if (nullptr == pBase)
+            return E_FAIL;
+        PoolList.push_back(static_cast<CGameObject*>(pBase));
+    }
+
+    m_PoolingList[ENUM_CLASS(LEVEL::BEATSABER_GAME)].emplace(TEXT("BeatSaber_Note"), move(PoolList));
+#pragma endregion
+
+
     return S_OK;
 }
 

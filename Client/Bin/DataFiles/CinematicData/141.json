@@ -2,6 +2,12 @@
     {
       "CinematicNodeTrackList": [
         {
+          "eState": 19,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 7,
           "fTrackPosition": 0.0,
           "iActiveIndex": 0,
@@ -62,6 +68,12 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter04"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 16.7,
+          "iActiveIndex": 2,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 16.8,
           "iActiveIndex": 30,
@@ -74,10 +86,28 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 21.3,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 21.4,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_02_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 25.4,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 29.1,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -92,10 +122,22 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter06"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 33.1,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 37.0,
           "iActiveIndex": 1317,
           "szObjectTag": "ActionCamera_ScarletBattleEnter07"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 37.47,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -104,10 +146,22 @@
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_04_VO.wav"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 42.47,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
           "eState": 3,
           "fTrackPosition": 44.0,
           "iActiveIndex": 1318,
           "szObjectTag": "ActionCamera_ScarletBattleEnter08"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 49.16,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -128,10 +182,28 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter10"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 57.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 59.32,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 59.33,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_06_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 65.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 3,
@@ -140,10 +212,34 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter11"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 66.69,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 66.7,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_06B_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 70.0,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 3,
+          "fTrackPosition": 71.8,
+          "iActiveIndex": 1322,
+          "szObjectTag": "ActionCamera_ScarletBattleEnter12"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 72.28,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -152,10 +248,16 @@
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_07_VO.wav"
         },
         {
-          "eState": 3,
-          "fTrackPosition": 71.8,
-          "iActiveIndex": 1322,
-          "szObjectTag": "ActionCamera_ScarletBattleEnter12"
+          "eState": 19,
+          "fTrackPosition": 75.28,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 76.06,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 8,
@@ -170,10 +272,28 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter13"
         },
         {
+          "eState": 19,
+          "fTrackPosition": 81.76,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 82.05,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 82.06,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_08B_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 87.05,
+          "iActiveIndex": 1,
+          "szObjectTag": ""
         },
         {
           "eState": 18,
@@ -182,10 +302,22 @@
           "szObjectTag": ""
         },
         {
+          "eState": 19,
+          "fTrackPosition": 96.94,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
+        },
+        {
           "eState": 8,
           "fTrackPosition": 96.95,
           "iActiveIndex": 30,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Entrance_09_VO.wav"
+        },
+        {
+          "eState": 19,
+          "fTrackPosition": 100.0,
+          "iActiveIndex": 12,
+          "szObjectTag": ""
         },
         {
           "eState": 2,

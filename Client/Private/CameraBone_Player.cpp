@@ -190,10 +190,12 @@ void CCameraBone_Player::Initilaize_CameraAnimationData(const CAMERA_ANIMATION_D
 	if (CameraAnimationData.iCameraAnimationID == 121)
 	{
 		m_pModelCom->Set_Animation(m_szAnimationTag, FALSE, 1.5f, 0.f, TRUE);
+		m_pModelCom->Play_Animation(0.016f);
 	}
 	else
 	{
 		m_pModelCom->Set_Animation(m_szAnimationTag, FALSE, 1.f, 0.f, TRUE);
+		m_pModelCom->Play_Animation(0.016f);
 	}
 	m_pTransformCom->Set_State(STATE::POSITION, XMVectorSetW(XMLoadFloat3(&CameraAnimationData.vBaseBonePosition), 1.f));
 	for (const auto& pPositionTrack : CameraAnimationData.BonePositionTrackList)
@@ -205,6 +207,7 @@ void CCameraBone_Player::Initilaize_CameraAnimationData(const CAMERA_ANIMATION_D
 	{
 		m_vRotationTracks.push_back(pRotationTrack);
 	}
+
 }
 
 _float CCameraBone_Player::Get_PositionTrackRatio()

@@ -52,9 +52,7 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
 
         if (!m_SpawnList.empty())
         {
-            float songTime = m_fSongTime;
-
-            if (songTime >= m_SpawnList.front().fSpawnRatio)
+            if (m_fSongTime >= m_SpawnList.front().fSpawnRatio)
             {
                 Trigger_SpawnEvent();
             }
@@ -67,7 +65,7 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
             if (!pDororong)
                 return;
 
-            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= m_iNoteCount)
+            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= (m_iNoteCount - 1))
                 pDororong->Set_FullCombo(true);
 
             m_bIsPlay = false;
@@ -83,30 +81,30 @@ void CBeatSaberSpawner::Late_Update(_float fTimeDelta)
 void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fSongTime, _uint iBPM, _float fDelay)
 {
     // 여기서 데이터를 로드해서 가져오기
-    NOTE_DATA_DESC Data = {};
+    
+    m_iTestCount = 0;
 
     vector<string> DataList;
     CStringHelper::CSVRead(szSpawnNoteFileData, DataList);
 
+    m_fTimeAcc = 0.f;
+    m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f /*+ (fNoteTimePerBPM * 4.f)*/;
+    m_fSongTime = -m_fNoteToValiTime;
+    m_fSongLength = fSongTime;
+    m_fDelay = fDelay;
+
     _uint iLastIndex = (_uint)DataList.size();
     for (_uint i = 3; i < iLastIndex;)
     {
+        NOTE_DATA_DESC Data = {};
         Data.NoteType = NOTE_TYPE(atoi(DataList[i++].c_str()));
         Data.eDirection = DIRECTION(atoi(DataList[i++].c_str()));
 
         _uint iIdx = atoi(DataList[i++].c_str());
         _float fNoteTimePerBPM = 60.f / (iBPM * 2.f);
-
-        m_fTimeAcc = 0.f;
-        m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f /*+ (fNoteTimePerBPM * 4.f)*/;
-        m_fSongTime = -m_fNoteToValiTime;
-        m_fSongLength = fSongTime;
-        m_fDelay = fDelay;
-
-        _float fBeatTime = m_fTimeAcc + (fNoteTimePerBPM * (iIdx));
+        _float fBeatTime = (fNoteTimePerBPM * (iIdx));
 
         Data.fSpawnRatio = fBeatTime + m_fSongTime;
-
         switch (Data.eDirection)
         {
         case DIRECTION::LEFT_FRONT: case DIRECTION::RIGHT_FRONT:
@@ -140,8 +138,9 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.bIsApplyTransform = true;
     NoteDesc.vScale = { 1.f, 1.f, 1.f };
     NoteDesc.vRotation = { 0.f, XMConvertToRadians(220.f), 0.f, 0.f };
+
     XMStoreFloat3(&NoteDesc.vPosition, m_pTransformCom->Get_State(STATE::POSITION));
-    XMStoreFloat3(& NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
+    XMStoreFloat3(&NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
     
     NoteDesc.fNoteSpeed = 30.f;
     NoteDesc.NoteType = NoteData.NoteType;
@@ -149,10 +148,11 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.fSpawnRatio = NoteData.fSpawnRatio;
     NoteDesc.vBoundAnimFrame = NoteData.vBoundAnimFrame;
 
-    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
-        ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc)))
-        return;
+    auto pObject = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), TEXT("BeatSaber_Note"));
+    if(pObject)
+        static_cast<CNote*>(pObject)->Initialize_Note(NoteDesc);
 
+    m_iTestCount++;
     m_SpawnList.pop();
 }
 

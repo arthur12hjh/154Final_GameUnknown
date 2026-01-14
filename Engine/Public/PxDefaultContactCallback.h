@@ -25,6 +25,10 @@ public:
         if ((SourGroup == PHYSX_CUSTOM_3 && DestGroup == PHYSX_TERRAIN) ||
             (SourGroup == PHYSX_TERRAIN && DestGroup == PHYSX_CUSTOM_3))
             onHitTerrain(dynamic_cast<PxRigidDynamic*>(Dest));
+
+        if ((SourGroup == PHYSX_CUSTOM_6 && DestGroup == PHYSX_CUSTOM_3) ||
+            (SourGroup == PHYSX_CUSTOM_3 && DestGroup == PHYSX_CUSTOM_6))
+            onHitTerrain(dynamic_cast<PxRigidDynamic*>(Dest));
     }
 
     virtual void onAdvance(const PxRigidBody* const* bodyBuffer, const PxTransform* poseBuffer, PxU32 count) override {}

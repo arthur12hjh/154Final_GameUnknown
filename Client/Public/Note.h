@@ -45,6 +45,8 @@ public:
 	void							OverlapTime(_float fDeltaTime);
 	_float							GetOverlapTime() { return m_OverlapTime; }
 
+	void							Initialize_Note(const NOTE_DESC& Desc);
+
 private :
 	CModel*							m_pModelCom = {nullptr};
 	CCollider*						m_pColliderCom = { nullptr };
@@ -63,7 +65,7 @@ private :
 	HRESULT							Ready_Components();
 	HRESULT							Bind_ShaderResources();
 
-	void							SettingNoteDirection(_uint iIndex);
+	void							SettingNoteDirection();
 
 public:
 	static		CNote*				Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

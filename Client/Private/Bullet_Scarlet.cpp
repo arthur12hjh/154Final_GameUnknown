@@ -74,6 +74,10 @@ HRESULT CBullet_Scarlet::Initialize(void* pArg)
 	EffectDesc.iFloor = 0;
 	EffectDesc.fSpeed = 0.8f;
 	EffectDesc.pDir = &m_vProjectileDir;
+
+	/*if(BULLET_TYPE::PROJECTILE == m_eBulletType)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Skill_BlinkShot_Projectile_loop.wav"), CHANNELID::EFFECT2, 0.7f, 1);*/
+
 	m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Shoot"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	return S_OK;
 }
@@ -231,6 +235,9 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 		EffectDesc.pDir = &m_vProjectileDir;
 		m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Scarlet_Disk_Boom"), ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	}
+
+	if (BULLET_TYPE::PROJECTILE == m_eBulletType)
+		m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Skill_BlinkShot_Projectile_Hit_1.wav"), CHANNELID::EFFECT2, 5.f, 1);
 
 	//m_pEffect->Set_Dead(true);
 }

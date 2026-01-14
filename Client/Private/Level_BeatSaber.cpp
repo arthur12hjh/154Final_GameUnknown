@@ -86,6 +86,7 @@ HRESULT CLevel_BeatSaber::Initialize()
         });
     m_pGameInstance->Bind_Observer(TEXT("Change_Level"), m_pLevelChangeEvent);
 
+    CGameManager::GetInstance()->Setting_PoolManager(ENUM_CLASS(LEVEL::BEATSABER_GAME));
     return S_OK;
 }
 
@@ -205,6 +206,12 @@ HRESULT CLevel_BeatSaber::Ready_Lights()
 
     if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
         return E_FAIL;
+
+    FOG_DESC* pFogDesc = static_cast<FOG_DESC*>(m_pGameInstance->Get_Fog_Desc());
+    *pFogDesc->vFogColor = { 0.9176f, 0.2705f, 0.9019f, 1.0000f };
+    *pFogDesc->fSkyboxFogPower = { 0.880f };
+    *pFogDesc->fFogPowerMin = { 2.f };
+    *pFogDesc->fFogPowerMax = { 2.f };
 
     return S_OK;
 }

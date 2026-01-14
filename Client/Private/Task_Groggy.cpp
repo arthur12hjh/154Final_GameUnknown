@@ -68,18 +68,81 @@ void CTask_Groggy::ChangeGroggyState(GROGGY_STATE eState)
     switch (m_eState)
     {
     case CTask_Groggy::GROGGY_STATE::START:
+        Play_Start_GorggySound();
         m_szAnimation = "Result_State_Groggy_S";
         m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::GROGGY);
         m_pOwner->Set_Animation(m_szAnimation.c_str(), false);
         break;
     case CTask_Groggy::GROGGY_STATE::LOOP:
+    {
+        Play_Loop_GorggySound();
         m_szAnimation = "Result_State_Groggy_L";
+        CBossBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();
+        switch (ePhase)
+        {
+        case CBossBlackBoard::BOSS_PAHSE::FIRST:
+            m_pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::LINK_ATTACK);
+            break;
+        case CBossBlackBoard::BOSS_PAHSE::SECOND:
+            m_pOwner->SetThesholdAction(NAYITBA_EXECUTION_TYPE::PHASE2_LINKATTACK);
+            break;
+        }
         m_pOwner->Set_Animation(m_szAnimation.c_str(), true);
+    }
         break;
     case CTask_Groggy::GROGGY_STATE::END:
         m_szAnimation = "Result_State_Groggy_E";
         m_pOwner->Set_Animation(m_szAnimation.c_str(), false);
         break;
+    }
+}
+
+void CTask_Groggy::Play_Start_GorggySound()
+{
+    _uint iMonsterID = m_pOwner->GetMonsterID();
+    _float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+    if (1 == iMonsterID)
+    {
+        if (33 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_growl_1.wav"), CHANNELID::EFFECT, 5.f);
+        else if (66 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_growl_2.wav"), CHANNELID::EFFECT, 5.f);
+        else
+            m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_growl_3.wav"), CHANNELID::EFFECT, 5.f);
+    }
+    else if (8 == iMonsterID)
+    {
+        if (20 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_S_1_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (40 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_S_2_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (60 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_S_3_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (80 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_S_4_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_S_5_VO.wav"), CHANNELID::EFFECT, 5.f);
+
+    }
+}
+
+void CTask_Groggy::Play_Loop_GorggySound()
+{
+    _uint iMonsterID = m_pOwner->GetMonsterID();
+    _float fRandomIndex = m_pGameInstance->Random(0.f, 100.f);
+   if (8 == iMonsterID)
+    {
+        if (20 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_1_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (40 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_2_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (60 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_3_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else if (80 >= fRandomIndex)
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_4_VO.wav"), CHANNELID::EFFECT, 5.f);
+        else
+            m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_5_VO.wav"), CHANNELID::EFFECT, 5.f);
+
     }
 }
 

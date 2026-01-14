@@ -242,8 +242,8 @@
                 ]
             },
             {
-                "fNumData01": 0.1,
-                "fNumData02": 0.1,
+                "fNumData01": 0.10000000149011612,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 10,
@@ -282,8 +282,8 @@
                 ]
             },
             {
-                "fNumData01": 0.1,
-                "fNumData02": 0.1,
+                "fNumData01": 0.10000000149011612,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 10,
