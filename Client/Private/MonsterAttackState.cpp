@@ -55,11 +55,14 @@ void CMonsterAttackState::Start(void* pArg, CState* pPreState)
 
 	if (bIsRandomAttack)
 	{
-		m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+		if(10 == m_StaticMonsterData->iMonsetID)
+			m_pSkillData = pEntity->GetSkillData(false);
+		else
+			m_pSkillData = pEntity->GetSkillData(false, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL));
 		if (m_fDistance < m_pSkillData->fRange * 0.5f)
 		{
 			while (633 == m_pSkillData->iSkillID)
-				m_pSkillData = pEntity->GetSkillData(ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL), false);
+				m_pSkillData = pEntity->GetSkillData(true, ENUM_CLASS(SKILL_TYPE::DEFAULT_SKILL));
 		}
 	}
 

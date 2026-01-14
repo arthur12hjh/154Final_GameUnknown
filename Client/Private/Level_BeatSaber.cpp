@@ -318,7 +318,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(180.f), 0.f, 0.f };
-    Desc.vPosition = { 60.f, 4.f, 60.f };
+    Desc.vPosition = { 50.f, 4.f, 50.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
     Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();
