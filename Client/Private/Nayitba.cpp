@@ -1335,6 +1335,8 @@ void CNaytiba::Play_MoveSound(_uint iType)
 		{
 			if (4 == m_iMonsterID || 5 == m_iMonsterID)
 				Play_StatueMoveSound(0, fRandomIndex);
+			else if (8 == m_iMonsterID)
+				Play_ScarletMoveSound(0);
 			else
 			{
 				if (20 >= fRandomIndex)
@@ -1351,14 +1353,19 @@ void CNaytiba::Play_MoveSound(_uint iType)
 		}
 		else
 		{
-			if (25 >= fRandomIndex)
-				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_6.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
-			else if (50 >= fRandomIndex)
-				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_5.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
-			else if (75 >= fRandomIndex)
-				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			if (8 == m_iMonsterID)
+				Play_ScarletMoveSound(1);
 			else
-				m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			{
+				if (25 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_6.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else if (50 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_5.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else if (75 >= fRandomIndex)
+					m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_3.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+				else
+					m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Sand_Run_2.wav"), CHANNELID::EFFECT, 0.1f, 1.f);
+			}
 		}
 		break;
 	}
@@ -1466,24 +1473,24 @@ void CNaytiba::Play_ScarletMoveSound(_uint iType)
 	if (0 == iType)
 	{
 		if (25 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_1.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_1.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else if (50 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_2.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else if (75 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_3.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_3.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_4.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Walk_4.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 	}
 	else if (1 == iType)
 	{
 		if (25 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_1.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_1.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else if (50 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_2.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_2.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else if (75 >= fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_3.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_3.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_4.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_Scarlet_Foot_Run_4.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 	}
 }
 

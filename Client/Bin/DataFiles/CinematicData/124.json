@@ -8,6 +8,12 @@
           "szObjectTag": ""
         },
         {
+          "eState": 17,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "BGM_DED_BOSS_Gigas_Intro.wav"
+        },
+        {
           "eState": 1,
           "fTrackPosition": 0.0,
           "iActiveIndex": 0,
@@ -88,6 +94,12 @@
           "eState": 14,
           "fTrackPosition": 12.600000381469727,
           "iActiveIndex": 0,
+          "szObjectTag": ""
+        },
+        {
+          "eState": 18,
+          "fTrackPosition": 12.6,
+          "iActiveIndex": 10,
           "szObjectTag": ""
         }
       ],

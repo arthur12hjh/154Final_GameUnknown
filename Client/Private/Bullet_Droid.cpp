@@ -47,6 +47,8 @@ HRESULT CBullet_Droid::Initialize(void* pArg)
 	m_pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Missile"),
 		ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
 
+	m_pGameInstance->Manager_PlaySound(TEXT("Impact_Rock_Large_03.wav"), CHANNELID::EFFECT2, 3.f, 1);
+
 	EffectDesc.pRootMatrix = nullptr;
 	EffectDesc.pWorldMatrix = nullptr;
 	_matrix CombinedMatrix = XMLoadFloat4x4(&m_CombinedWorldMatrix);
@@ -166,6 +168,8 @@ void CBullet_Droid::Shoot_Projectile(_vector vTargetPoint, _float fSpeed)
 	}
 	break;
 	}
+
+	m_pGameInstance->Manager_PlaySound(TEXT("M_DebrisProjectile_Explosion_1.wav"), CHANNELID::EFFECT2, 3.f, 1);
 }
 
 HRESULT CBullet_Droid::ADD_Components(BULLET_DESC& pDesc)

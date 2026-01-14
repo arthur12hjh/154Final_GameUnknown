@@ -185,7 +185,7 @@ HRESULT CDeco::Ready_Col(const _tchar* pComponentTag)
 
     RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
     RigidBodyDesc.tUserData = tUserData;
-    RigidBodyDesc.vMaterial = _float3(0.1f, 0.1f, 0.f);
+    RigidBodyDesc.vMaterial = _float3(1.f, 1.f, 0.f);
     RigidBodyDesc.vSize = m_pTransformCom->Get_Scale();
     RigidBodyDesc.fMass = { 0.3f };
     // TRIANGLE로 세팅하고 충돌용 메시 작업하는거니까, 충돌용 메시 넣어줘야돼요 

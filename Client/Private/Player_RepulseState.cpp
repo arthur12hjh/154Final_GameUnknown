@@ -30,6 +30,9 @@ void CPlayer_RepulseState::Start(void* pArg, _float fBlendRatio)
     m_pGameInstance->Set_DoFInfo(fDist, 2.f, 1.f);
     m_pGameInstance->SetGameSpeed(0.2f);
     m_pPlayer->SetSkillDataID(2001);
+
+    //sound play
+    m_pGameInstance->Manager_PlaySound(TEXT("sfx_battle_behindAlert.wav"), CHANNELID::EFFECT, 1.5f, 1.f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
@@ -63,6 +66,14 @@ PLAYER_TRANSITION_DESC CPlayer_RepulseState::Update(_float fTimeDelta)
         m_pGameInstance->Active_DoF(false, 0.2f);
         m_Desc->pPlayerController->Set_Gravity(true, 14.f);
         m_Desc->isUsingRepulse = false;
+
+        if (false == m_isSoundPlayed)
+        {
+            //sound play
+            m_isSoundPlayed = true;
+            //m_pGameInstance->Manager_PlaySound(TEXT("M_Weakpoint_Stun.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+            m_pGameInstance->Manager_PlaySound(TEXT("sfx_low_hit1_03_MONO.wav"), CHANNELID::EFFECT, 30.f, 1.f);
+        }
     }
     
     if(REPULSE_STATE::ATTACK_FLOAT == m_eAnimState && 0.4f >= fAnimationRatio && 

@@ -34,6 +34,8 @@ HRESULT CPlayer_ScarletPhase2tLinkAttackState::Initialize(void* pArg)
         CGameInstance::GetInstance()->Set_MoitonBlur_Active(true);
         }, 4);
 
+    m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+
     return S_OK;
 }
 
@@ -49,6 +51,8 @@ void CPlayer_ScarletPhase2tLinkAttackState::Start(void* pArg, _float fBlendRatio
     // 여기서 애니메이션 재생속도 조절가능해.
     m_pPlayer->Set_Animation("Hit_Scarlet_GroggyCounterTry", false, 3.f, 0.f, FALSE, -1.f, 0.f, TRUE);
     m_Desc->isUsingScarletLink2 = true;
+
+    m_pGameInstance->Manager_PlaySound(TEXT("sfx_low01_01.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTimeDelta)

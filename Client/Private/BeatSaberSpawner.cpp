@@ -81,31 +81,30 @@ void CBeatSaberSpawner::Late_Update(_float fTimeDelta)
 void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fSongTime, _uint iBPM, _float fDelay)
 {
     // 여기서 데이터를 로드해서 가져오기
-    NOTE_DATA_DESC Data = {};
+    
     m_iTestCount = 0;
 
     vector<string> DataList;
     CStringHelper::CSVRead(szSpawnNoteFileData, DataList);
 
+    m_fTimeAcc = 0.f;
+    m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f /*+ (fNoteTimePerBPM * 4.f)*/;
+    m_fSongTime = -m_fNoteToValiTime;
+    m_fSongLength = fSongTime;
+    m_fDelay = fDelay;
+
     _uint iLastIndex = (_uint)DataList.size();
     for (_uint i = 3; i < iLastIndex;)
     {
+        NOTE_DATA_DESC Data = {};
         Data.NoteType = NOTE_TYPE(atoi(DataList[i++].c_str()));
         Data.eDirection = DIRECTION(atoi(DataList[i++].c_str()));
 
         _uint iIdx = atoi(DataList[i++].c_str());
         _float fNoteTimePerBPM = 60.f / (iBPM * 2.f);
-
-        m_fTimeAcc = 0.f;
-        m_fNoteToValiTime = sqrtf(50.f * 50.f + 50.6f * 50.6f) / 30.f /*+ (fNoteTimePerBPM * 4.f)*/;
-        m_fSongTime = -m_fNoteToValiTime;
-        m_fSongLength = fSongTime;
-        m_fDelay = fDelay;
-
         _float fBeatTime = (fNoteTimePerBPM * (iIdx));
 
         Data.fSpawnRatio = fBeatTime + m_fSongTime;
-
         switch (Data.eDirection)
         {
         case DIRECTION::LEFT_FRONT: case DIRECTION::RIGHT_FRONT:

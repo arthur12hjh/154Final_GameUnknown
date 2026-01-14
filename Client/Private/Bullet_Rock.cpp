@@ -80,7 +80,6 @@ void CBullet_Rock::Late_Update(_float fTimeDelta)
 {
 	if (false == m_bIsEnableCollider)
 		return;
-
 	if (m_pGameInstance->isIn_DistanceFrustum(XMLoadFloat4x4(&m_CombinedWorldMatrix).r[3], 800.f))
 	{
 #ifdef _DEBUG
@@ -184,6 +183,7 @@ void CBullet_Rock::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGameO
 			ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc);
 	}
 
+	m_pGameInstance->Manager_PlaySound(TEXT("Impact_Rock_Large_03.wav"), CHANNELID::EFFECT2, 3.f, 1);
 	m_bIsEnableCollider = false;
 }
 
