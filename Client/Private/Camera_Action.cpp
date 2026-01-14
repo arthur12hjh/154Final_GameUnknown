@@ -53,58 +53,7 @@ void CCamera_Action::Priority_Update(_float fTimeDelta)
     if (false == m_pGameInstance->IsMainCamera(this))
         return;
 
-    _vector vFOVPosition;
-
-    // 우리가 채널형식으로 정의할건 m_vFOVTracks와 m_vPivotTracks이다
-    // 근데 말이죵, CAMERA_SOURCE_TYPE이 WORLD면 BonePosition이랑 BoneRotation을 들고와서 내꺼로 써먹는당
-    // 먼저 FOV부터
-    if (!m_vFOVTracks.empty())
-    {
-        _float3 vFOV = Update_CameraTrack(
-            m_vFOVTracks,
-            m_fCurrentAnimationTime,
-            _float3(m_pCameraAnimationData->fBaseFOV,
-                m_pCameraAnimationData->fBaseFOV,
-                m_pCameraAnimationData->fBaseFOV)
-        );
-
-        CAMERA_INFO CameraInfo{};
-        CameraInfo.fFov = XMConvertToRadians(vFOV.x);
-        SetCameraInfo(CameraInfo, 0001);
-    }
-
-    // 피벗이사가지없는련
-    _float3 vPivot = _float3(0.f, 0.f, 0.f);
-    if(m_pCameraAnimationData != nullptr)
-		vPivot = m_pCameraAnimationData->vBaseCameraPivot;
-
-    if (!m_vPivotTracks.empty())
-    {
-        vPivot = Update_CameraTrack(
-            m_vPivotTracks,
-            m_fCurrentAnimationTime,
-            m_pCameraAnimationData
-            ? m_pCameraAnimationData->vBaseCameraPivot
-            : _float3(0.f, 0.f, 0.f)
-        );
-    }
-
-    _matrix TransformMatrix = Calculate_CombinedMatrix();
-
-    m_pTransformCom->Set_State(STATE::POSITION, TransformMatrix.r[3]);
-
-    if(m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
-        m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&vPivot));
-    else if (m_CameraSource.eType == CAMERA_SOURCE_TYPE::LOOK_PIVOT)
-    {
-        m_pTransformCom->LookAt(XMVectorSetW(XMLoadFloat3(&vPivot), 1.f));
-    }
-    else
-    {
-        m_pTransformCom->Set_State(STATE::RIGHT, TransformMatrix.r[0]);
-        m_pTransformCom->Set_State(STATE::UP, TransformMatrix.r[1]);
-        m_pTransformCom->Set_State(STATE::LOOK, TransformMatrix.r[2]);
-    }
+    Update_Camera();
 
     __super::Bind_Matrices(fTimeDelta);
 
@@ -160,7 +109,6 @@ void CCamera_Action::Initialize_CameraAnimationData(_uint iCameraAnimationIndex)
 
     SetCameraInfo(CameraInfo, 0001);
 
-
     m_vCameraPivot = m_pCameraAnimationData->vBaseCameraPivot;
     for (const auto& pFOVTrack : m_pCameraAnimationData->FOVTrackList)
     {
@@ -197,9 +145,68 @@ void CCamera_Action::Initialize_CameraAnimationData(_uint iCameraAnimationIndex)
     else
     {
         m_pCameraBone->Initilaize_CameraAnimationData(*m_pCameraAnimationData);
+
         m_CameraSource.eType = CAMERA_SOURCE_TYPE::BONE;
     }
 
+    Update_Camera();
+
+}
+
+void CCamera_Action::Update_Camera()
+{
+    _vector vFOVPosition;
+
+    // 우리가 채널형식으로 정의할건 m_vFOVTracks와 m_vPivotTracks이다
+    // 근데 말이죵, CAMERA_SOURCE_TYPE이 WORLD면 BonePosition이랑 BoneRotation을 들고와서 내꺼로 써먹는당
+    // 먼저 FOV부터
+    if (!m_vFOVTracks.empty())
+    {
+        _float3 vFOV = Update_CameraTrack(
+            m_vFOVTracks,
+            m_fCurrentAnimationTime,
+            _float3(m_pCameraAnimationData->fBaseFOV,
+                m_pCameraAnimationData->fBaseFOV,
+                m_pCameraAnimationData->fBaseFOV)
+        );
+
+        CAMERA_INFO CameraInfo{};
+        CameraInfo.fFov = XMConvertToRadians(vFOV.x);
+        SetCameraInfo(CameraInfo, 0001);
+    }
+
+    // 피벗이사가지없는련
+    _float3 vPivot = _float3(0.f, 0.f, 0.f);
+    if (m_pCameraAnimationData != nullptr)
+        vPivot = m_pCameraAnimationData->vBaseCameraPivot;
+
+    if (!m_vPivotTracks.empty())
+    {
+        vPivot = Update_CameraTrack(
+            m_vPivotTracks,
+            m_fCurrentAnimationTime,
+            m_pCameraAnimationData
+            ? m_pCameraAnimationData->vBaseCameraPivot
+            : _float3(0.f, 0.f, 0.f)
+        );
+    }
+
+    _matrix TransformMatrix = Calculate_CombinedMatrix();
+
+    m_pTransformCom->Set_State(STATE::POSITION, TransformMatrix.r[3]);
+
+    if (m_CameraSource.eType == CAMERA_SOURCE_TYPE::BONE)
+        m_pTransformCom->LookAt(m_pPlayerTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&vPivot));
+    else if (m_CameraSource.eType == CAMERA_SOURCE_TYPE::LOOK_PIVOT)
+    {
+        m_pTransformCom->LookAt(XMVectorSetW(XMLoadFloat3(&vPivot), 1.f));
+    }
+    else
+    {
+        m_pTransformCom->Set_State(STATE::RIGHT, TransformMatrix.r[0]);
+        m_pTransformCom->Set_State(STATE::UP, TransformMatrix.r[1]);
+        m_pTransformCom->Set_State(STATE::LOOK, TransformMatrix.r[2]);
+    }
 }
 
 _float3 CCamera_Action::Update_CameraTrack(const vector<CAMERA_TRACK_DESC>& vTrackList, float fCurrentTime, const _float3& vBaseValue)

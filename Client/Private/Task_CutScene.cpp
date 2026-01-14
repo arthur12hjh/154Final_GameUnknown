@@ -30,7 +30,7 @@ CBehaviorNode::NODE_STATE CTask_CutScene::Update(_float fTimeDelta)
 	// 플레이어랑 재생한다.
 
 	// 나중에 컷씬 데이터로 수정 하고 컷씬의 종료 이벤트를 받아서
-	// 컷씬의 종료를 판단하겠습니다.
+	// 컷씬의 종료를 판단하겠습니다.	
 	// 
 	// 이거 그냥 그런가보다 하시면 됩니다.
 	CScarletBlackBoard::BOSS_PAHSE ePhase = m_pBlackBoard->Get_BossPhase();

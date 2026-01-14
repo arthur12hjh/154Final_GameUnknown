@@ -109,7 +109,7 @@ HRESULT CCinematicManager::Update(_float fTimeDelta)
     }
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_M))
     {
-        Script_Action(SCRIPT_ACTION::STOP);
+        
     }
     if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_K))
     {
@@ -158,6 +158,7 @@ HRESULT CCinematicManager::Play_Cinematic(_uint iCinematicID, function<void()> F
     m_pGameInstance->Add_Event(TEXT("Cinematic_Skip"), m_pUIActionEvent);
 
     Script_Action(SCRIPT_ACTION::BEGIN);
+    Script_Action(SCRIPT_ACTION::HIDE);
 
     Safe_Release(pHUD);
 
@@ -303,6 +304,11 @@ HRESULT CCinematicManager::Reset_Cinematic()
 
     m_pGameInstance->SetMainCamera(TEXT("PlayerCamera"));
 
+    for (auto& pCinematicObjectPair : m_CinematicObjectsMap)
+    {
+        pCinematicObjectPair.second->DeActiveCinematicObject();
+    }
+
     if (m_FinishedCinematic)
         m_FinishedCinematic();
 
@@ -358,6 +364,7 @@ void CCinematicManager::Script_Action(SCRIPT_ACTION eAction)
     case SCRIPT_ACTION::BEGIN:
     {
         pScript->Begin_Script(CGameManager::GetInstance()->Get_ScriptData(to_wstring(m_iCurrentCinematicID)));
+        pScript->Set_Show_Script(false);
         break;
     }
     case SCRIPT_ACTION::PLAY:
@@ -425,6 +432,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         }
         break;
     case CINEMATICNODE_STATE::ACTIVE_CAMERA:
+
         CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
         strObjectName = szText;
 
@@ -596,12 +604,56 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
         CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szSoundTag);
         fVolume = (_float)CinematicNodeDesc.iActiveIndex / 10.f;
-        m_pGameInstance->Manager_PlayBGM(szSoundTag, fVolume);
+        m_pGameInstance->Manager_PlayBGM(szSoundTag, fVolume, 1);
         break;
         // 18번
     case CINEMATICNODE_STATE::PLAY_BOSSBGM:
         //m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
         CGameManager::GetInstance()->Play_BossBGM(CinematicNodeDesc.iActiveIndex / 10, CinematicNodeDesc.iActiveIndex % 10);
+        break;
+        // 19번
+    case CINEMATICNODE_STATE::CONTROL_DIALOGUE:
+        /// 일의 자리수
+        ///  - 0 : 아무 것도 안함
+        ///  - 1 : Hide
+        ///  - 2 : Show
+        /// 
+        /// 십의 자리수
+        ///  - 0 : 아무 것도 앟마
+        ///  - 1 : 다음 대사 재생
+        ///  - 2 : 엔딩
+        /// 
+        /// Script_Action(SCRIPT_ACTION::BEGIN); // 스크립트 삽입 입니다 호출하면 알아서 들어갈겁니다 (현재 시네마틱 실행하면 알아서 들어가고 있어요)
+        /// Script_Action(SCRIPT_ACTION::PLAY); // 스크립트 다음 대사 재생
+        /// Script_Action(SCRIPT_ACTION::STOP); // 스크립트 멈추기(안보이기)
+        /// Script_Action(SCRIPT_ACTION::SHOW); // 스크립트 보이기(기본값)
+        /// Script_Action(SCRIPT_ACTION::HIDE); // 스크립트 숨기기
+        /// Script_Action(SCRIPT_ACTION::END); // 스크립트 해제 (현재 스킵 적용 되고 있습니다)
+        /// 
+
+        switch (CinematicNodeDesc.iActiveIndex / 10)
+        {
+        case 0 :
+            break;
+        case 1 :
+            Script_Action(SCRIPT_ACTION::PLAY);
+            break;
+        case 2 :
+            Script_Action(SCRIPT_ACTION::END);
+            break;
+        }
+
+        switch (CinematicNodeDesc.iActiveIndex % 10)
+        {
+        case 0:
+            break;
+        case 1:
+            Script_Action(SCRIPT_ACTION::HIDE);
+            break;
+        case 2:
+            Script_Action(SCRIPT_ACTION::SHOW);
+            break;
+        }
         break;
     }
 }

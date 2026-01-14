@@ -273,8 +273,14 @@ HRESULT CCinematicModel_Dororong::Play_Cinematic_Dororong_Meet(_float fTimeDelta
 				&& fCurrentTrackPosition <= 95.f)
 		{
 			_float fRatio = Clamp((fCurrentTrackPosition - 60.f) / 35.f, 0.f, 1.f);
-			_vector vPosition = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 357.712f, 1.f), XMVectorSet(685.190f, 30.696f, 389.852f, 1.f), fRatio);
-			_vector vLookAt = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 358.712f, 1.f), XMVectorSet(685.690f, 30.536f, 391.852f, 1.f), fRatio);
+
+			_float fMoveX = fabs(fRatio - 0.5f) * 2.f * 3.f;
+
+			_vector vPosition = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 357.712f, 1.f), XMVectorSet(688.190f, 30.696f, 389.852f, 1.f), fRatio);
+			_vector vLookAt = XMVectorLerp(XMVectorSet(679.254f, 34.503f, 358.712f, 1.f), XMVectorSet(688.690f, 30.536f, 391.852f, 1.f), fRatio);
+
+			vPosition -= XMVectorSet(fMoveX, 0.f, 0.f, 0.f);
+			vLookAt -= XMVectorSet(fMoveX, 0.f, 0.f, 0.f);
 
 			m_pTransformCom->Set_State(STATE::POSITION, vPosition);
 			m_pTransformCom->LookAt(vLookAt);

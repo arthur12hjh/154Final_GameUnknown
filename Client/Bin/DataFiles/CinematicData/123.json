@@ -7,6 +7,12 @@
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
+        {
+          "eState": 17,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "bgm_neverland_schedulecheck_sunset.wav"
+        },
             {
                 "eState": 1,
                 "fTrackPosition": 0.0,
