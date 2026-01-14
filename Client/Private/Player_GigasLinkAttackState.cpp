@@ -82,7 +82,8 @@ PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
         //여기서 기가스 데미지 주면 됨.
         DEFAULT_DAMAGE_DESC Desc;
         Desc.pSkillData = m_pGameManager->Find_SkillData(1011);
-        m_Desc->pLinkAttackTarget->Damaged(&Desc);
+        if(m_Desc->pLinkAttackTarget)
+            m_Desc->pLinkAttackTarget->Damaged(&Desc);
     }
 
     _matrix	SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);

@@ -164,6 +164,29 @@
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_03_VO.wav"
         },
         {
+          "eState": 2,
+          "fTrackPosition": 51.23,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player"
+        },
+        {
+          "eState": 9,
+          "fTrackPosition": 51.23,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Player",
+          "CinematicIndexDataList": [
+            {
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Player",
+              "vPosition": [ 251.874, 8.0, 254.907 ],
+              "vRotation": [ 252.874, 8.0, 253.907, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
+            }
+          ]
+        },
+        {
           "eState": 19,
           "fTrackPosition": 53.43,
           "iActiveIndex": 12,
@@ -180,29 +203,6 @@
           "fTrackPosition": 56.43,
           "iActiveIndex": 1,
           "szObjectTag": ""
-        },
-        {
-          "eState": 2,
-          "fTrackPosition": 57.0,
-          "iActiveIndex": 0,
-          "szObjectTag": "Layer_Player"
-        },
-        {
-          "eState": 9,
-          "fTrackPosition": 57.0,
-          "iActiveIndex": 0,
-          "szObjectTag": "Layer_Player",
-          "CinematicIndexDataList": [
-            {
-              "iActiveIndex": 0,
-              "szObjectTag": "Layer_Player",
-              "vPosition": [ 251.874, 8.0, 254.907 ],
-              "vRotation": [ 252.874, 8.0, 253.907, 1.0 ],
-              "vScale": [ 1.0, 1.0, 1.0 ],
-              "iInputInt": 0,
-              "fInputFloat": 0.0
-            }
-          ]
         },
         {
           "eState": 6,

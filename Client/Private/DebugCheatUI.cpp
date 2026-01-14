@@ -128,13 +128,14 @@ void CDebugCheatUI::DrawObjectDebug()
     ImGui::InputFloat3("Teleport Point", m_vTeleportPoint);
     if (ImGui::Button("Player Teleport Button"))
     {
-        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        Safe_Release(pPlayer);
+
         if (nullptr == pPlayer)
             return;
 
         pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSet(m_vTeleportPoint[0], m_vTeleportPoint[1], m_vTeleportPoint[2], 1.f));
         static_cast<CCharacterController*>(pPlayer->Find_Component(TEXT("Com_CCT")))->Set_Position(pPlayer->GetTransform()->Get_State(STATE::POSITION));
-        Safe_Release(pPlayer);
     }
 
     if (ImGui::Button("Anim Refresh"))
@@ -148,7 +149,7 @@ void CDebugCheatUI::DrawObjectDebug()
     if (ImGui::Button("Teleport Player To Elevator"))
     {
 
-        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
         if (nullptr == pPlayer)
             return;
 
@@ -160,7 +161,7 @@ void CDebugCheatUI::DrawObjectDebug()
     if (ImGui::Button("Teleport Player To Gigas"))
     {
 
-        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
         if (nullptr == pPlayer)
             return;
 
@@ -173,7 +174,7 @@ void CDebugCheatUI::DrawObjectDebug()
     //이건 나중에 치워도 될듯
     if (ImGui::Button("Spawn Monster Front"))
     {
-        auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
         if (nullptr == pPlayer)
             return;
 

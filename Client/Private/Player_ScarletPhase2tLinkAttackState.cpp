@@ -60,7 +60,8 @@ void CPlayer_ScarletPhase2tLinkAttackState::Start(void* pArg, _float fBlendRatio
 PLAYER_TRANSITION_DESC CPlayer_ScarletPhase2tLinkAttackState::Update(_float fTimeDelta)
 {
     _bool isAnimationFinished = m_pPlayer->Play_Animation(fTimeDelta);
-
+    _float fAnimationRatio = m_pPlayer->Get_AnimationRatio();
+    
     _matrix		SocketMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
     for (size_t i = 0; i < 3; i++)

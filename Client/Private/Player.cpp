@@ -949,7 +949,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		}
 		break;
 	default:
-		if (ATK_INTERACTION_TYPE::END == m_PlayerDesc.eReactionType)
+		if (ATK_INTERACTION_TYPE::END == m_PlayerDesc.eReactionType && !(SKILL_PROPERTY::ONLAY_EVADE & pSkillDesc->eProPerty))
 		{
 			if (true == m_PlayerDesc.isJustParryable && (SKILL_PROPERTY::PARRYABLE & pSkillDesc->eProPerty))
 			{

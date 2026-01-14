@@ -432,7 +432,7 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
         }
         break;
     case CINEMATICNODE_STATE::ACTIVE_CAMERA:
-
+        /*break;*/
         CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
         strObjectName = szText;
 

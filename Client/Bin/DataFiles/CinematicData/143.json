@@ -8,6 +8,12 @@
           "szObjectTag": ""
         },
         {
+          "eState": 17,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "BGM_BOSS_SCARLET_FINISH.wav"
+        },
+        {
           "eState": 19,
           "fTrackPosition": 0.0,
           "iActiveIndex": 1,
@@ -147,7 +153,7 @@
         },
         {
           "eState": 17,
-          "fTrackPosition": 22.0,
+          "fTrackPosition": 22.99,
           "iActiveIndex": 20,
           "szObjectTag": "BGM_CAMP_NIKKE_08_ON.wav"
         },
@@ -177,7 +183,7 @@
         },
         {
           "eState": 3,
-          "fTrackPosition": 29.0,
+          "fTrackPosition": 29.02,
           "iActiveIndex": 1515,
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
         },
