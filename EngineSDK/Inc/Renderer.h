@@ -108,7 +108,6 @@ private:
 	_bool								m_isFog = { true };
 	HDR_DESC							m_HDRDesc = {};
 	_float								m_fHDRExposure = { 1.52f };
-	_bool								m_isSSAO = { true }; 
 
 	ID3D11RasterizerState*				m_pRS_OcclusionQuery = { nullptr };
 

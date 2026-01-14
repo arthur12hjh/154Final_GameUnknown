@@ -58,6 +58,8 @@ void CPlayer_GigasLinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     // 플레이어의 애니메이션을 변경해준다.
     m_pPlayer->Set_Animation("P_Eve_Sword_Normal_LinkAttack1_GorillaB_S", false, 1.f, 0.f, FALSE, -1.f, 0.f, TRUE);
+
+    m_Desc->isLinkAttackAvailable = false;
 }
 
 PLAYER_TRANSITION_DESC CPlayer_GigasLinkAttackState::Update(_float fTimeDelta)
@@ -117,6 +119,8 @@ _float CPlayer_GigasLinkAttackState::End()
 
     m_Desc->pPlayerController->Set_Active(true);
     m_Desc->pPlayerController->Set_CCTCollision(true);
+
+    m_Desc->isLinkAttackAvailable = true;
 
     return m_fNextBlendRatio;
 }

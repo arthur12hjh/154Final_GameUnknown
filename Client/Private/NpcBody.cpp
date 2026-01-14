@@ -2,6 +2,7 @@
 #include "NpcBody.h"
 
 #include "GameInstance.h"
+#include "Npc.h"
 
 CNpcBody::CNpcBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext) :
     CPartObject(pDevice, pContext)
@@ -66,8 +67,16 @@ HRESULT CNpcBody::Render()
         if (FAILED(m_pModelCom->Bind_Material(i, m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, 0)))
             return E_FAIL;
 
-        if (FAILED(m_pShaderCom->Begin(0)))
-            return E_FAIL;
+        if (5 == static_cast<CNpc*>(m_pParent)->Get_NpcDesc()->iNpcID)
+        {
+            if (FAILED(m_pShaderCom->Begin(11)))
+                return E_FAIL;
+        }
+        else
+        {
+            if (FAILED(m_pShaderCom->Begin(0)))
+                return E_FAIL;
+        }
 
         if (FAILED(m_pModelCom->Render(i)))
             return E_FAIL;

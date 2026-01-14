@@ -324,7 +324,6 @@ namespace Client
 		float				fAttackRange;
 		float				fLerpRatio;
 		_float3				fColliderExtents;
-
 		//여기서 사용하는 스킬 정보
 		vector<_uint>		iAttackList;
 	}NAYTIBA_NETWORK_DESC;
