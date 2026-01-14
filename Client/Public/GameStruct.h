@@ -161,9 +161,9 @@ namespace Client
 		bool							isInteracting = { false };
 		// 혹시 몰라서 플레이어 데스크에 떄려박앗습니다
 		// 플레이어의 락온모드 전환 거리
-		float							fLockOnDistance = { 30.f };
+		float							fLockOnDistance = { 22.f };
 		// 플레이어의 배틀모드 전환 거리 
-		float							fBattleDistance = { 40.f };
+		float							fBattleDistance = { 25.f };
 		// 베타스킬 상태들
 		unsigned int					iBetaSkillId[4];			// 사용중인 스킬ID,
 		SKILL_STATE						eBetaSkillState[4];

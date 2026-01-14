@@ -199,7 +199,8 @@ HRESULT CPonyTail_Player::Render_MotionBlur()
 
 void CPonyTail_Player::Teleport_JointChains(_fmatrix WorldMatrix)
 {
-	m_pJointChain->Teleport_RigidBodies(XMLoadFloat4x4(m_pHairRootBone) * WorldMatrix);
+	m_pJointChain->Teleport_RigidBodies(XMLoadFloat4x4(m_pHairRootBone) *
+		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
 }
 
 HRESULT CPonyTail_Player::Ready_Components()

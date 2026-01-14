@@ -26,6 +26,8 @@ void CPlayer_BlinkState::Start(void* pArg, _float fBlendRatio)
 	m_pGameInstance->Active_RadialBlur(2.f, 16, 0.5f);
 	m_pGameInstance->Active_DoF(true, 0.3f);
 	m_pGameInstance->SetGameSpeed(0.2f);
+
+	m_pGameInstance->Manager_PlaySound(TEXT("sfx_battle_behindAlert.wav"), CHANNELID::EFFECT, 1.5f, 1.f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BlinkState::Update(_float fTimeDelta)
