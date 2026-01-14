@@ -43,7 +43,7 @@ private:
 	_float								m_fSongLength = 0.f;
 
 	_uint								m_iNoteCount = 0;
-
+	_uint								m_iTestCount = 0;
 private:
 	HRESULT								Ready_Components();
 	void								Trigger_SpawnEvent();

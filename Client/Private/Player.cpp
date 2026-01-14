@@ -1183,45 +1183,45 @@ void CPlayer::Play_WalkSound()
 	case GROUND_SOUND_TYPE::CONTAINER:
 	case GROUND_SOUND_TYPE::IRON :
 		if (25 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_01.wav"), CHANNELID::EFFECT, 2.f);
 		else if (50 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_02.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_02.wav"), CHANNELID::EFFECT, 2.f);
 		else if (75 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_03.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_03.wav"), CHANNELID::EFFECT, 2.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_05.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_Footstep_Metal_Container_05.wav"), CHANNELID::EFFECT, 2.f);
 		break;
 	case GROUND_SOUND_TYPE::BRIDGE:
 		if (25 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_1.wav"), CHANNELID::EFFECT, 5.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_1.wav"), CHANNELID::EFFECT, 2.f);
 		else if (50 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_2.wav"), CHANNELID::EFFECT, 5.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_2.wav"), CHANNELID::EFFECT, 2.f);
 		else if (75 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_4.wav"), CHANNELID::EFFECT, 5.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_4.wav"), CHANNELID::EFFECT, 2.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_7.wav"), CHANNELID::EFFECT, 5.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Wood_Walk_7.wav"), CHANNELID::EFFECT, 2.f);
 		break;
 	case GROUND_SOUND_TYPE::GRASS:
 		if (25 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_1.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_1.wav"), CHANNELID::EFFECT, 2.f);
 		else if (50 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_2.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_2.wav"), CHANNELID::EFFECT, 2.f);
 		else if (75 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_3.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_3.wav"), CHANNELID::EFFECT, 2.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_4.wav"), CHANNELID::EFFECT, 3.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("Pc_Footstep_Grass_Walk_4.wav"), CHANNELID::EFFECT, 2.f);
 		break;
 	default :
 		if (20 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 30.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 15.f);
 		else if (40 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 30.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 15.f);
 		else if(60 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 30.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 15.f);
 		else if (80 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 30.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 15.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 30.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 15.f);
 		break;
 	}
 

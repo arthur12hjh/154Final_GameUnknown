@@ -41,7 +41,7 @@ private:
 	vector<SOUND_CALLBACK_DESC*>	m_ChannelEndCallBacks[CHANNELID::END];
 
 	_float							m_pChannelVolume[CHANNELID::END];
-	_float							m_fBGMMinVolume = { 1.f };
+	_float							m_fBGMMinVolume = { 2.f };
 
 	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
 	FMOD::System*					m_pSystem;

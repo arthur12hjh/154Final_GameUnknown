@@ -45,6 +45,9 @@ void CPlayer_BlinkAttackState::Start(void* pArg, _float fBlendRatio)
 
     m_Desc->pPlayerTransform->LookAt(XMVectorSetY(vTargetPos, 
         XMVectorGetY(m_Desc->pPlayerTransform->Get_State(STATE::POSITION))));
+
+    //sound play
+    m_pGameInstance->Manager_PlaySound(TEXT("swish_spark_01.wav"), CHANNELID::EFFECT, 3.f, 1.f);
 }
 
 PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
@@ -60,6 +63,14 @@ PLAYER_TRANSITION_DESC CPlayer_BlinkAttackState::Update(_float fTimeDelta)
 
     m_pGameInstance->SetGameSpeed(m_fLerp);
 
+
+    if (0.2 < fAnimationRatio && false == m_isSoundPlayed)
+    {
+        //sound play
+        m_pGameInstance->Manager_PlaySound(TEXT("EVE_SE_sword_strong_01.wav"), CHANNELID::EFFECT, 4.f, 1.f);
+        //m_pGameInstance->Manager_PlaySound(TEXT("M_Weakpoint_Stun.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+        m_isSoundPlayed = true;
+    }
 
     if (0.8f < fAnimationRatio)
     {

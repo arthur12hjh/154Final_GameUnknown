@@ -162,8 +162,8 @@
                 ]
             },
             {
-                "fNumData01": 0.2,
-                "fNumData02": 0.2,
+                "fNumData01": 0.20000000298023224,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 14,
@@ -202,8 +202,8 @@
                 ]
             },
             {
-                "fNumData01": 0.2,
-                "fNumData02": 0.2,
+                "fNumData01": 0.20000000298023224,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 14,
@@ -282,8 +282,8 @@
                 ]
             },
             {
-                "fNumData01": 0.1,
-                "fNumData02": 0.1,
+                "fNumData01": 0.10000000149011612,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 30,
@@ -322,8 +322,8 @@
                 ]
             },
             {
-                "fNumData01": 0.1,
-                "fNumData02": 0.1,
+                "fNumData01": 0.10000000149011612,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 30,
@@ -402,7 +402,7 @@
                 ]
             },
             {
-                "fNumData01": 1.4,
+                "fNumData01": 1.399999976158142,
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
@@ -436,14 +436,14 @@
                     0.0
                 ],
                 "vNotifyScale": [
-                    0.6,
-                    0.6,
-                    0.6
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    0.6000000238418579
                 ]
             },
             {
-                "fNumData01": 0.05,
-                "fNumData02": 0.05,
+                "fNumData01": 0.05000000074505806,
+                "fNumData02": 0.05000000074505806,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 45,
@@ -482,8 +482,8 @@
                 ]
             },
             {
-                "fNumData01": 0.05,
-                "fNumData02": 0.05,
+                "fNumData01": 0.05000000074505806,
+                "fNumData02": 0.05000000074505806,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 45,

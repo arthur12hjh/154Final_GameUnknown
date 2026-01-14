@@ -207,6 +207,12 @@ HRESULT CLevel_BeatSaber::Ready_Lights()
     if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
         return E_FAIL;
 
+    FOG_DESC* pFogDesc = static_cast<FOG_DESC*>(m_pGameInstance->Get_Fog_Desc());
+    *pFogDesc->vFogColor = { 0.9176f, 0.2705f, 0.9019f, 1.0000f };
+    *pFogDesc->fSkyboxFogPower = { 0.880f };
+    *pFogDesc->fFogPowerMin = { 2.f };
+    *pFogDesc->fFogPowerMax = { 2.f };
+
     return S_OK;
 }
 
@@ -318,7 +324,7 @@ HRESULT CLevel_BeatSaber::Ready_Layer_BeatSpawner(const _wstring& strLayerTag)
     Desc.bIsApplyTransform = true;
     Desc.vScale = { 1.f, 1.f, 1.f };
     Desc.vRotation = { 0.f , XMConvertToRadians(180.f), 0.f, 0.f };
-    Desc.vPosition = { 60.f, 4.f, 60.f };
+    Desc.vPosition = { 50.f, 4.f, 50.f };
     Desc.fRotationPerSec = XMConvertToRadians(180.0f);
     Desc.fSpeedPerSec = 10.f;
     Desc.pPlayerTransform = pLayerList->front()->GetTransform()->Get_WorldMatrixPtr();

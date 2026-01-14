@@ -347,7 +347,7 @@ PS_OUT PS_XION_WALL(PS_IN In)
     
     
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord * 5.f, In.vNormal, In.vTangent, In.vBinormal);
+    Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord * 10.f, In.vNormal, In.vTangent, In.vBinormal);
     Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, g_IsMaskingDepthB == true ? 1.f : 0.f, 1.0f);
     Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord * 5.f);
     Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);

@@ -242,8 +242,8 @@
                 ]
             },
             {
-                "fNumData01": 0.2,
-                "fNumData02": 0.1,
+                "fNumData01": 0.20000000298023224,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 8,
@@ -282,8 +282,8 @@
                 ]
             },
             {
-                "fNumData01": 0.2,
-                "fNumData02": 0.1,
+                "fNumData01": 0.20000000298023224,
+                "fNumData02": 0.10000000149011612,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 8,
@@ -362,8 +362,8 @@
                 ]
             },
             {
-                "fNumData01": 0.4,
-                "fNumData02": 0.2,
+                "fNumData01": 0.4000000059604645,
+                "fNumData02": 0.20000000298023224,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 23,
@@ -403,7 +403,7 @@
             },
             {
                 "fNumData01": 0.5,
-                "fNumData02": 0.4,
+                "fNumData02": 0.4000000059604645,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
                 "iNotifyKeyFrame": 23,

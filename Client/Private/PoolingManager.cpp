@@ -67,8 +67,8 @@ CGameObject* CPoolingManager::SetActivePoolObject(_uint iLevelID, _uint iProtoTy
         pPoolObject = iter->second.back();
         if (pPoolObject->isDead())
             pPoolObject->Set_Dead(false);
-        iter->second.pop_back();
 
+        iter->second.pop_back();
         // 여기서 레이어에도 추가해주자
         m_pGameInstance->ADD_ToLayer(iProtoTypeLevel, pLayerName, pPoolObject);
     }
