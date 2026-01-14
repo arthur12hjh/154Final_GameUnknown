@@ -52,9 +52,7 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
 
         if (!m_SpawnList.empty())
         {
-            float songTime = m_fSongTime;
-
-            if (songTime >= m_SpawnList.front().fSpawnRatio)
+            if (m_fSongTime >= m_SpawnList.front().fSpawnRatio)
             {
                 Trigger_SpawnEvent();
             }
@@ -84,6 +82,7 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
 {
     // 여기서 데이터를 로드해서 가져오기
     NOTE_DATA_DESC Data = {};
+    m_iTestCount = 0;
 
     vector<string> DataList;
     CStringHelper::CSVRead(szSpawnNoteFileData, DataList);
@@ -103,7 +102,7 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
         m_fSongLength = fSongTime;
         m_fDelay = fDelay;
 
-        _float fBeatTime = m_fTimeAcc + (fNoteTimePerBPM * (iIdx));
+        _float fBeatTime = (fNoteTimePerBPM * (iIdx));
 
         Data.fSpawnRatio = fBeatTime + m_fSongTime;
 
@@ -154,6 +153,7 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     if(pObject)
         static_cast<CNote*>(pObject)->Initialize_Note(NoteDesc);
 
+    m_iTestCount++;
     m_SpawnList.pop();
 }
 
