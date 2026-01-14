@@ -43,7 +43,7 @@ CBehaviorNode::NODE_STATE CTask_ScarletHit::Update(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->bIsExcution())
 	{
-		if (m_pBlackBoard->UnconditionallyAttack() || m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
+		if (m_pBlackBoard->IsAttackEnable() || nullptr == m_pHit_Data)
 		{
 			m_pHit_Data = nullptr;
 			m_pSkill_Data = nullptr;
@@ -77,6 +77,9 @@ CBehaviorNode::NODE_STATE CTask_ScarletHit::Update(_float fTimeDelta)
 				m_pBlackBoard->EnterExcution(NAYITBA_EXECUTION_TYPE::END);
 			}
 		}
+
+		if (m_pBlackBoard->UnconditionallyAttack())
+			m_pBlackBoard->SetAttackDelay(0.f);
 
 		m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::IDLE);
 		return NODE_STATE::COMPLETE;
