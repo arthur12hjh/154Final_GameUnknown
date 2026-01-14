@@ -83,11 +83,13 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
-	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(),
+	/*auto iter = find_if(m_mapSound.begin(), m_mapSound.end(),
 		[&](auto& iter)->bool
 		{
 			return pSoundKey == iter.first.c_str() ? true : false;
-		});
+		});*/
+
+	auto iter = m_mapSound.find(pSoundKey);
 
 	if (iter == m_mapSound.end())
 		return;
@@ -121,10 +123,12 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
 	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
-	auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
+	/*auto iter = find_if(m_mapSound.begin(), m_mapSound.end(), [&](auto& iter)->bool
 		{
 			return pSoundKey == iter.first.c_str() ? true : false;
-		});
+		});*/
+
+	auto iter = m_mapSound.find(pSoundKey);
 
 	if (iter == m_mapSound.end())
 		return;

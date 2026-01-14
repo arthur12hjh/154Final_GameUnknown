@@ -40,10 +40,18 @@ HRESULT CUIHUD::Initialize()
 		return E_FAIL;
 
 	m_pGameInstance = CGameInstance::GetInstance();
-	m_pGameManager = CGameManager::GetInstance();
 	
+	if (!m_pGameInstance)
+		return E_FAIL;
+
 	Safe_AddRef(m_pGameInstance);
+	
+	m_pGameManager = CGameManager::GetInstance();
+	if (!m_pGameManager)
+		return E_FAIL;
+
 	Safe_AddRef(m_pGameManager);
+
 	m_pUIAnimMgr->Load_Anim_Files();
 
 	return S_OK;
@@ -172,13 +180,20 @@ void CUIHUD::Update(_float fTimeDelta)
 				}
 			}
 		}
-		else
+		else 
 		{
 			for (auto& pUI : *m_pLayers[TEXT("Layer_Combat")]->Get_UserInterfaces())
 				pUI.second->SetVisibility(VISIBILITY::VISIBLE);
 		}
+
+		if (m_pNaytibaDesc && m_pNaytibaDesc->iCurrentHealth <= 0.f)
+		{
+			for (auto& pUI : *m_pLayers[TEXT("Layer_Boss")]->Get_UserInterfaces())
+				pUI.second->SetVisibility(VISIBILITY::HIDDEN);
+		}
 	}
 
+	
 	Safe_Release(pPlayer);
 }
 

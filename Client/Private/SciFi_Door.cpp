@@ -385,6 +385,9 @@ void CSciFi_Door::Free()
 {
 	__super::Free();
 
+	m_pGameInstance->UnBind_Observer(TEXT("Get_Costume_Puzzle_Hint"), m_pDoorEvent);
+	m_pGameInstance->UnBind_Observer(TEXT("Get_Costume_Puzzle_Unlock"), m_pUnlockEvent);
+
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pDoorEvent);
 	Safe_Release(m_pUnlockEvent);

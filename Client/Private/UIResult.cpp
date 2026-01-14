@@ -48,33 +48,43 @@ void CUIResult::Update(_float fTimeDelta)
 		if (!(m_fTimeAcc >= 4.5f && m_isShowCombo && m_isShowScore && m_isShowRank))
 			m_fTimeAcc += fTimeDelta;
 
-		if (m_fTimeAcc >= 0.5f)
+		if (m_fTimeAcc >= 0.5f && m_fTimeAcc < 2.f)
 		{
 			m_isShowCombo = true;
 
 			_float comboT = (m_fTimeAcc - 0.5f) / 1.0f; // 1√ 
 			comboT = min(comboT, 1.0f);
 
+			if(m_iCurCombo == 0)
+				m_isPlayComboSound = true;
+
 			m_iCurCombo = static_cast<_uint>(m_iCombo * comboT);
 		}
-
-		if (m_fTimeAcc >= 2.f)
+		else if (m_fTimeAcc >= 2.f && m_fTimeAcc < 3.5f)
 		{
+			//m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
 			m_isShowScore = true;
+
 			float scoreT = (m_fTimeAcc - 2.f) / 1.0f; // 1√ 
 			scoreT = min(scoreT, 1.0f);
 
+			if(m_iCurScore == 0)
+				m_isPlayScoreSound = true;
+
 			m_iCurScore = static_cast<int>(m_iScore * scoreT);
 		}
-
-		if (m_fTimeAcc >= 3.5f)
+		else if (m_fTimeAcc >= 3.5f)
 		{
+			//m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
 			m_isShowRank = true;
 
 			float scaleT = (m_fTimeAcc - 3.5f) / 1.f; // 2√ 
 			scaleT = min(max(scaleT, 0.f), 1.f);
 
 			float ease = sinf(scaleT * XM_PIDIV2); // 0 °Ê 1
+
+			if(m_fGlowPower == 0.f)
+				m_isPlayRankSound = true;
 
 			m_fGlowPower = 15.f + (1.f - 15.f) * ease;
 		}
@@ -83,6 +93,25 @@ void CUIResult::Update(_float fTimeDelta)
 	}
 	else
 		return;
+
+	if (m_isPlayComboSound)
+	{
+		m_isPlayComboSound = false;
+		m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
+		m_pGameInstance->Manager_PlaySound(TEXT("UI_BossChallenge_result_NumberCount.wav"), CHANNELID::EFFECT2, 3.f, 1.f);
+	}
+	if (m_isPlayScoreSound)
+	{
+		m_isPlayScoreSound = false;
+		m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
+		m_pGameInstance->Manager_PlaySound(TEXT("UI_BossChallenge_result_NumberCount.wav"), CHANNELID::EFFECT2, 3.f, 1.f);
+	}
+	if (m_isPlayRankSound)
+	{
+		m_isPlayRankSound = false;
+		m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
+		m_pGameInstance->Manager_PlaySound(TEXT("UI_BossChallenge_result_whoosh3.wav"), CHANNELID::EFFECT2, 3.f, 1.f);
+	}
 
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_SPACE) && !m_bActiveSpace && m_eVisibility == VISIBILITY::VISIBLE)
 	{
@@ -230,6 +259,18 @@ void CUIResult::Close_Result()
 	m_isOpen = false;
 	m_fTimeAcc = 0.f;
 	m_fScale = 3.f;
+
+	m_iRank = 0;
+	m_iCurScore = 0;
+	m_iScore = 0;
+	m_iCurCombo = 0;
+	m_iCombo = 0;
+
+	m_isPlayComboSound = false;
+	m_isPlayScoreSound = false;
+	m_isPlayRankSound = false;
+
+	m_fGlowPower = 0.f;
 
 	Safe_Release(pHUD);
 }

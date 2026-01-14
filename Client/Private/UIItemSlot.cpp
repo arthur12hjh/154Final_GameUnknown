@@ -58,6 +58,23 @@ HRESULT CUIItemSlot::Initialize(void* pArg)
 void CUIItemSlot::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (static_cast<CUIShop*>(m_pParent)->Get_IsOpen() && !m_isInit)
+	{
+		m_isInit = true;
+
+		auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+		if (!pPlayer)
+			return;
+
+		Apply_Item(pPlayer);
+
+		Safe_Release(pPlayer);
+	}
+
+	if (!static_cast<CUIShop*>(m_pParent)->Get_IsOpen() && m_isInit)
+		m_isInit = false;
 }
 
 void CUIItemSlot::Update(_float fTimeDelta)

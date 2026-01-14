@@ -58,19 +58,25 @@ void CBeatSaberSpawner::Update(_float fTimeDelta)
             }
         }
 
-        if (m_fSongTime >= m_fSongLength || m_SpawnList.empty())
+        if (m_fSongTime >= m_fSongLength && m_SpawnList.empty())
         {
-            CBeatSaberCharacter* pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
-
-            if (!pDororong)
-                return;
-
-            if(pDororong->GetBeatSaberCharacterDesc().iComboCnt >= (m_iNoteCount - 1))
-                pDororong->Set_FullCombo(true);
-
             m_bIsPlay = false;
-            Safe_Release(pDororong);
+            m_bIsEnd = true;
         }
+    }
+
+    if (m_bIsEnd)
+    {
+        m_bIsEnd = false;
+        CBeatSaberCharacter* pDororong = dynamic_cast<CBeatSaberCharacter*>(CGameManager::GetInstance()->GetBeatSaberCharacter());
+
+        if (!pDororong)
+            return;
+
+        if (pDororong->GetBeatSaberCharacterDesc().iComboCnt >= (m_iNoteCount - 1))
+            pDororong->Set_FullCombo(true);
+
+        Safe_Release(pDororong);
     }
 }
 
@@ -121,7 +127,7 @@ void CBeatSaberSpawner::Load_BeatData(const char* szSpawnNoteFileData, _float fS
         m_SpawnList.push(Data);
     }
 
-    m_iNoteCount = iLastIndex;
+    m_iNoteCount = iLastIndex / 3;
     m_bIsPlay = true;
 }
 
