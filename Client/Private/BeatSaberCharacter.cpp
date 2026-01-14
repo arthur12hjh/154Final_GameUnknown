@@ -67,7 +67,7 @@ void CBeatSaberCharacter::Update(_float fTimeDelta)
 	m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 	__super::Update(fTimeDelta);
 
-	// ÇöÀç »óÅÂ¿Í Àü ÇÁ·¹ÀÓ »óÅÂ µ¿±âÈ­
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 	m_CharacterDesc.ePreDirection = m_CharacterDesc.eDirection;
 }
 
@@ -297,7 +297,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 
 				_float fLength = XMVectorGetX(XMVector3Length(vObjectPosition - vPosition));
 				_float fLengthRatio = fLength / m_BoxSizeZ;
-				// ¿©±â¼­ Å¸ÀÓ ÆÇº°ÇØ¼­ Ã¼Å©
+				// ï¿½ï¿½ï¿½â¼­ Å¸ï¿½ï¿½ ï¿½Çºï¿½ï¿½Ø¼ï¿½ Ã¼Å©
 				if (1.f > fLength)
 				{
 					m_CharacterDesc.iScore += 100;
@@ -402,7 +402,7 @@ void CBeatSaberCharacter::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, C
 		}
 
 		if (bIsSuccess)
-			pHitActor->Set_Dead(true);
+			m_pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("BeatSaber_Note"), pHitActor);
 	}
 
 }
@@ -421,13 +421,23 @@ void CBeatSaberCharacter::OverlapEnd(_float3 vHitPoint, _float3 vHitDir, CGameOb
 		m_pEffect[4]->Stop();
 		m_pEffect[5]->Stop();
 		
-		
-		if (0 >= m_CharacterDesc.iGameLife)
-		{
-			// °ÔÀÓ ½ÇÆÐ
-			// ¿©±â¼­ UIÃ³¸® ÈÄ UI ´Ü¿¡¼­ ¿ø·¡ ·¹º§·Î ÀüÈ¯
-		}
-		pHitActor->Set_Dead(true);
+		//m_CharacterDesc.iGameLife--;
+		//m_CharacterDesc.iComboCnt = 0;
+		//m_CharacterDesc.iAccuracy = 0;
+		//m_pEffect[0]->Play();
+		//m_pEffect[1]->Play();
+		//m_pEffect[2]->Stop();
+		//m_pEffect[3]->Stop();
+		//m_pEffect[4]->Stop();
+		//m_pEffect[5]->Stop();
+		//
+		//
+		//if (0 >= m_CharacterDesc.iGameLife)
+		//{
+		//	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		//	// ï¿½ï¿½ï¿½â¼­ UIÃ³ï¿½ï¿½ ï¿½ï¿½ UI ï¿½Ü¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+		//}
+		m_pGameManager->UnActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("BeatSaber_Note"), pHitActor);
 	}
 }
 

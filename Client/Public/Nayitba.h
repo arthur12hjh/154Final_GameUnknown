@@ -151,6 +151,7 @@ private :
 	void									Play_BanacleMoveSound(_uint iType);
 	void									Play_AntlionMoveSound(_uint iType);
 	void									Play_GorillaMoveSound(_uint iType, _uint SoundType);
+	void									Play_ScarletMoveSound(_uint iType);
 #pragma endregion
 
 #pragma region HIT SOUND

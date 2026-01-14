@@ -38,6 +38,7 @@ private :
 
 public :
 	HRESULT											Ready_GamePlayPool();
+	HRESULT											Ready_BeatSaberPool();
 	HRESULT											Clear_PoolManager(_uint iLevelID);
 	
 public :

@@ -44,6 +44,9 @@ void CNote::Priority_Update(_float fTimeDelta)
 
 void CNote::Update(_float fTimeDelta)
 {
+    if (m_isDead)
+        return;
+
     m_pColliderCom->UpdateColiision(XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()));
 
     _vector vDir = XMLoadFloat3(&m_vTargetDir);
@@ -55,6 +58,9 @@ void CNote::Update(_float fTimeDelta)
 
 void CNote::Late_Update(_float fTimeDelta)
 {
+    if (m_isDead)
+        return;
+
     if (m_bIsActive == TRUE)
     {
         m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
@@ -94,6 +100,19 @@ HRESULT CNote::Render()
 void CNote::OverlapTime(_float fDeltaTime)
 {
     m_OverlapTime += fDeltaTime;
+}
+
+void CNote::Initialize_Note(const NOTE_DESC& Desc)
+{
+    // 여기서 램덤으로 방향을 6방향중에서 
+    m_pTransformCom->Set_Scale(XMLoadFloat3(&Desc.vScale));
+    m_pTransformCom->Set_State(STATE::POSITION, XMLoadFloat3(&Desc.vPosition));
+    m_pTransformCom->Set_Rotation(XMLoadFloat4(&Desc.vRotation));
+
+    m_fNoteSpeed = Desc.fNoteSpeed;
+    SettingNoteDirection(ENUM_CLASS(Desc.eDirection));
+    _vector vDir = XMVector3Normalize(XMLoadFloat3(&Desc.vTargetPoint) - m_pTransformCom->Get_State(STATE::POSITION));
+    XMStoreFloat3(&m_vTargetDir, vDir);
 }
 
 HRESULT CNote::Ready_Components()

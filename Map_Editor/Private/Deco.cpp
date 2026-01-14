@@ -512,6 +512,9 @@ void CDeco::SetCullingCollider(_uint iObjectID)
     case 138: // Trash_17A
         pCullingCollider->SetCollision({ 0.f, 1.4f, 0.f }, {}, { 4.f, 2.f, 4.f });
         break;
+    case 139: // Camp_1I
+        pCullingCollider->SetCollision({ 0.f, 1.f, 0.f }, {}, { 1.f, 1.f, 1.f });
+        break;
     }
 }
 
@@ -654,6 +657,7 @@ _uint CDeco::Object_Number(const _tchar* pComponentTag)
         if (!wcscmp(pSuffix, TEXT("1R"))) return 96;
         if (!wcscmp(pSuffix, TEXT("1S"))) return 97;
         if (!wcscmp(pSuffix, TEXT("1T"))) return 98;
+        if (!wcscmp(pSuffix, TEXT("1I"))) return 139;
     }
 
     // 3. Container Ω√∏Æ¡Ó (99 ~ 111)

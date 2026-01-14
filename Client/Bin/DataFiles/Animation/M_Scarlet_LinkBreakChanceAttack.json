@@ -1,6 +1,46 @@
 [
     {
         "AnimationNotifies": [
+             {
+                "fNumData01": 8.0,
+                "fNumData02": 0.0,
+                "fNumData03": 0.0,
+                "fNumData04": 0.0,
+                "iNotifyKeyFrame": 5,
+                "iNumData01": 42,
+                "iNumData02": 1,
+                "iNumData03": 4,
+                "iNumData04": 1,
+                "iNumData05": 0,
+                "iNumData06": 0,
+                "iNumData07": 0,
+                "iNumData08": 0,
+                "szNotifyArg01": "VOICE",
+                "szNotifyArg02": "Seq_Subtitle_Nikke_Scarlet_Battle_01_VO.wav",
+                "szNotifyArg03": "",
+                "szNotifyArg04": "",
+                "szNotifyArg05": "",
+                "szNotifyArg06": "",
+                "szNotifyArg07": "",
+                "szNotifyArg08": "",
+                "szNotifyTag": "Play_Sound",
+                "szSocketTag": "",
+                "vNotifyPosition": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "vNotifyScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
             {
                 "fNumData01": 180.0,
                 "fNumData02": 0.0,
@@ -206,10 +246,10 @@
                 "fNumData02": 0.0,
                 "fNumData03": 0.0,
                 "fNumData04": 0.0,
-                "iNotifyKeyFrame": 45,
+                "iNotifyKeyFrame": 50,
                 "iNumData01": 1,
                 "iNumData02": 0,
-                "iNumData03": 1,
+                "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
@@ -289,7 +329,7 @@
                 "iNotifyKeyFrame": 115,
                 "iNumData01": 1,
                 "iNumData02": 0,
-                "iNumData03": 1,
+                "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
@@ -329,7 +369,7 @@
                 "iNotifyKeyFrame": 137,
                 "iNumData01": 0,
                 "iNumData02": 0,
-                "iNumData03": 1,
+                "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
@@ -369,7 +409,7 @@
                 "iNotifyKeyFrame": 168,
                 "iNumData01": 1,
                 "iNumData02": 0,
-                "iNumData03": 1,
+                "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
@@ -409,7 +449,7 @@
                 "iNotifyKeyFrame": 191,
                 "iNumData01": 0,
                 "iNumData02": 0,
-                "iNumData03": 1,
+                "iNumData03": 0,
                 "iNumData04": 0,
                 "iNumData05": 0,
                 "iNumData06": 0,
@@ -424,86 +464,6 @@
                 "szNotifyArg07": "",
                 "szNotifyArg08": "",
                 "szNotifyTag": "Change_Color",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 125,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Set_Visiblity",
-                "szSocketTag": "",
-                "vNotifyPosition": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "vNotifyScale": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            {
-                "fNumData01": 0.0,
-                "fNumData02": 0.0,
-                "fNumData03": 0.0,
-                "fNumData04": 0.0,
-                "iNotifyKeyFrame": 181,
-                "iNumData01": 0,
-                "iNumData02": 0,
-                "iNumData03": 0,
-                "iNumData04": 0,
-                "iNumData05": 0,
-                "iNumData06": 0,
-                "iNumData07": 0,
-                "iNumData08": 0,
-                "szNotifyArg01": "",
-                "szNotifyArg02": "",
-                "szNotifyArg03": "",
-                "szNotifyArg04": "",
-                "szNotifyArg05": "",
-                "szNotifyArg06": "",
-                "szNotifyArg07": "",
-                "szNotifyArg08": "",
-                "szNotifyTag": "Set_Visiblity",
                 "szSocketTag": "",
                 "vNotifyPosition": [
                     0.0,

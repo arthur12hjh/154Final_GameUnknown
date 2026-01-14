@@ -140,6 +140,7 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.bIsApplyTransform = true;
     NoteDesc.vScale = { 1.f, 1.f, 1.f };
     NoteDesc.vRotation = { 0.f, XMConvertToRadians(220.f), 0.f, 0.f };
+
     XMStoreFloat3(&NoteDesc.vPosition, m_pTransformCom->Get_State(STATE::POSITION));
     XMStoreFloat3(& NoteDesc.vTargetPoint, XMLoadFloat4x4(m_pPlayerTransform).r[3]);
     
@@ -149,9 +150,9 @@ void CBeatSaberSpawner::Trigger_SpawnEvent()
     NoteDesc.fSpawnRatio = NoteData.fSpawnRatio;
     NoteDesc.vBoundAnimFrame = NoteData.vBoundAnimFrame;
 
-    if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Prototype_GameObject_BeatNote"),
-        ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), &NoteDesc)))
-        return;
+    auto pObject = m_pGameManager->SetActivePoolObject(ENUM_CLASS(LEVEL::BEATSABER_GAME), ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Note"), TEXT("BeatSaber_Note"));
+    if(pObject)
+        static_cast<CNote*>(pObject)->Initialize_Note(NoteDesc);
 
     m_SpawnList.pop();
 }
