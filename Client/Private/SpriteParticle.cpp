@@ -168,6 +168,20 @@ HRESULT CSpriteParticle::Render()
 	return S_OK;
 }
 
+HRESULT CSpriteParticle::Render_MotionBlur()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount);
+	m_iRenderCount++;
+	m_pVIBufferCom->Bind_Resources();
+
+	m_pVIBufferCom->Render();
+
+	return S_OK;
+}
+
 void CSpriteParticle::Stop() {
 	if (!m_bisStop && m_tData.szCS.compare("Spectrum") != 0) {
 		m_CBData.fTimeDelta.w = m_CBData.fTimeDelta.y;

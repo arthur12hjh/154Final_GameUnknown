@@ -111,7 +111,9 @@ void CMusicTriggerBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGam
 		if (pCharacter)
 		{
 			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-			m_pGameInstance->Manager_PlayBGM(TEXT("Can_Can.mp3"), 2.f);
+			m_pGameInstance->Manager_PlayBGM(TEXT("Can_Can.mp3"), 0.01f);
+
+			m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 2.f);
 			m_bIsSound = true;
 		}
 	}
@@ -124,7 +126,8 @@ void CMusicTriggerBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGam
 	if (pCharacter)
 	{
 		m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-		m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 3.f);
+		m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.01f);
+		m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 3.f);
 		m_bIsSound = false;
 	}
 }

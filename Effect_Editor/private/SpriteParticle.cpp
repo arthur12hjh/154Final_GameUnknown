@@ -93,6 +93,21 @@ HRESULT CSpriteParticle::Render()
 	return S_OK;
 }
 
+HRESULT CSpriteParticle::Render_MotionBlur()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	m_pShaderCom->Begin(m_tData.iBegin + m_iRenderCount);
+	m_iRenderCount++;
+
+	m_pVIBufferCom->Bind_Resources();
+
+	m_pVIBufferCom->Render();
+
+	return S_OK;
+}
+
 void CSpriteParticle::Set_Components(SPRITE_PARTICLE_DATA tData)
 {
 	Safe_Release(m_pVIBufferCom);

@@ -172,6 +172,10 @@ void CDebugCheatUI::DrawObjectDebug()
 
     //12.10 서민석 - 테스트용 몬스터 소환로직
     //이건 나중에 치워도 될듯
+
+    _int iMonsterID = { 10 };
+    ImGui::InputInt("Monster ID", &iMonsterID);
+
     if (ImGui::Button("Spawn Monster Front"))
     {
         CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
@@ -185,7 +189,7 @@ void CDebugCheatUI::DrawObjectDebug()
         CNaytiba::NAYITBA_DESC Desc = {};
         Desc.bIsApplyTransform = true;
         Desc.vScale = { 1.f, 1.f, 1.f };
-        Desc.iMonsterID = 4;
+        Desc.iMonsterID = iMonsterID;
         Desc.bIsSuperMonster = false;
 
         Desc.vPosition = { XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos) };

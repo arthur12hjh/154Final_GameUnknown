@@ -1213,15 +1213,15 @@ void CPlayer::Play_WalkSound()
 		break;
 	default :
 		if (20 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default1.wav"), CHANNELID::EFFECT, 30.f);
 		else if (40 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default2.wav"), CHANNELID::EFFECT, 30.f);
 		else if(60 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default3.wav"), CHANNELID::EFFECT, 30.f);
 		else if (80 >= fRandom)
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default4.wav"), CHANNELID::EFFECT, 30.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 15.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("EVE_PC_FootStep_Default5.wav"), CHANNELID::EFFECT, 30.f);
 		break;
 	}
 

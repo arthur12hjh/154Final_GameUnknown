@@ -97,6 +97,7 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_MotionBlur() override;
 	void	Set_Components(SPRITE_PARTICLE_DATA tData);
 	void	Set_Replay(SPRITE_PARTICLE_DATA tData);
 	void	Update(SPRITE_PARTICLE_DATA tData);

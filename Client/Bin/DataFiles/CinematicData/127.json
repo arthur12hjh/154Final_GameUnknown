@@ -48,6 +48,12 @@
                 "iActiveIndex": 1601,
                 "szObjectTag": "ActionCamera_GigasMeetPlayer01"
             },
+        {
+          "eState": 8,
+          "fTrackPosition": 0.5,
+          "iActiveIndex": 30,
+          "szObjectTag": "EVE_Movement_Cloth_05.wav"
+        },
             {
                 "eState": 3,
                 "fTrackPosition": 2.0,
