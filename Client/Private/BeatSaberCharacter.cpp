@@ -77,7 +77,8 @@ void CBeatSaberCharacter::Late_Update(_float fTimeDelta)
 	if (m_bIsActive == TRUE)
 	{
 		m_pGameInstance->Add_RenderGroup(RENDER::NONBLEND, this);
-		m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
+		m_pGameInstance->Add_RenderGroup(RENDER::MOTIONBLUR, this);
+		//m_pGameInstance->Add_RenderGroup(RENDER::SHADOW, this);
 	}
 	m_pGameInstance->ADD_Collider(m_pColliderCom);
 	__super::Late_Update(fTimeDelta);

@@ -330,6 +330,31 @@ void GS_BAMBOO(triangle VS_OUT InTri[3], inout TriangleStream<PS_IN> OutStream)
 
 }
 
+PS_OUT PS_CINEMATIC_REED(PS_IN In)
+{
+    PS_OUT Out;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (vMtrlDiffuse.a < 0.4f)
+        discard;
+    
+    vector vNoramlTexture = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
+    float3x3 TangentSpaceMat = float3x3(In.vTangent, In.vBINormal * -1, In.vNormal);
+    float3 vNormal = mul(vNoramlTexture.xyz * 2.f - 1.f, TangentSpaceMat);
+    
+    Out.vDiffuse = float4(vMtrlDiffuse.xyz, 1.f);
+    //노말의 크기를 줄여서 세팅함. -> SSAO가 너무 강하게 들어가서
+    //Out.vNormal = Calc_Normal(g_NormalTexture, In.vTexcoord, In.vNormal, In.vTangent, In.vBINormal, 0.1f);
+    Out.vNormal = float4(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+    Out.vDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vORM = Calc_ORM(g_ORMTexture, In.vTexcoord);
+    Out.vEmissive = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    
+    return Out;
+
+}
 technique11 Tech
 {
     //잔디
@@ -373,4 +398,15 @@ technique11 Tech
         GeometryShader = compile gs_5_0 GS_BAMBOO();
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
+    pass Cinematic_Reed
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_None, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_REED();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_CINEMATIC_REED();
+    }
+
 }

@@ -115,6 +115,9 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	g_bIsMouseLock = true;
 
+	SSAO_DESC* pSSAODesc = static_cast<SSAO_DESC*>(m_pGameInstance->Get_SSAO_Desc());
+	*pSSAODesc->isActive = true;
+
 	return S_OK;
 }
 
