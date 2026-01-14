@@ -35,7 +35,7 @@ public:
 	void							ItemDrop(_uint iDropItemCount = 1);
 	void							DropRewardItem();
 
-	HRESULT							ADD_DropItem(const pair<_uint, _float>& ItemData, _float fAmount);
+	HRESULT							ADD_DropItem(const pair<_uint, _float>& ItemData, _float fMinAmount, _float fMaxAmount);
 
 private:
 	static	const WCHAR*			m_szProtoTypeName; 
@@ -48,7 +48,7 @@ private:
 	_uint							m_iNumItemCount = {};
 
 	// 아이템 및 아이템 확률
-	vector<_float>					m_AmountItemList = {};
+	vector<_float2>					m_AmountItemList = {};
 	vector<pair<_uint, _float>>		m_DoprItemList = {};
 
 	// 나중에 UI로 표현할거면 빼서 이거 구조체 받아서 처리하면 됩니다.
