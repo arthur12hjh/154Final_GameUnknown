@@ -56,7 +56,7 @@ HRESULT CLevel_BeatSaber::Initialize()
 
     m_pPlaySongEvent = CPlaySongEvent::Create([&](void* pArg) {
         UI_EVENT_ARG_DESC Desc = *static_cast<UI_EVENT_ARG_DESC*>(pArg);
-        Play_GameBGM(*static_cast<_wstring*>(Desc.pData), 1.7f);
+        Play_GameBGM(*static_cast<_wstring*>(Desc.pData), 1.f);
         });
     m_pGameInstance->Bind_Observer(TEXT("PlaySong_Event"), m_pPlaySongEvent);
 
