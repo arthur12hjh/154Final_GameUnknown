@@ -1502,9 +1502,9 @@ void CNaytiba::Play_HitSound()
 	else
 	{
 		if(50 > fRandomIndex)
-			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_00.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_00.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 		else
-			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_01.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("hit_common_blood_01.wav"), CHANNELID::EFFECT, 2.f, 1.f);
 	}
 }
 
