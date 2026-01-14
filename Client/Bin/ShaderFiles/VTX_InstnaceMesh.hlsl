@@ -4,7 +4,7 @@
 bool g_IsMaskingDepthB;
 bool g_IsMaskingDepthW;
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix, g_CamMatrix;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
@@ -210,13 +210,27 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+float hole[16] =
+{
+    0, 8, 2, 10,
+    12, 4, 14, 6,
+     3, 11, 1, 9,
+    15, 7, 13, 5
+};
+
 PS_OUT PS_REED(PS_IN In)
 {
     PS_OUT Out;
     
     float2 vMaskUV;
     const float fTexelSize = 512.f;
-
+    float fLength = pow(length(In.vWorldPos - g_CamMatrix._41_42_43_44) * 0.09, 10);
+    
+    int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
+    float threshold = hole[index] / 32.0;
+    if (0.01f >= fLength - threshold)
+        discard;
+    
     vMaskUV.x = In.vOriginalWorldPos.x / fTexelSize;
     vMaskUV.y = 1.f - In.vOriginalWorldPos.z / fTexelSize;
    

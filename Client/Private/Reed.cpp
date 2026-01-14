@@ -145,6 +145,9 @@ HRESULT CReed::Bind_ShaderResources()
 
 	if (FAILED(m_pMaskCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 		return E_FAIL;
+	_float4x4 f = *m_pGameInstance->GetMainCameraWorldMatrixPtr();
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_CamMatrix", m_pGameInstance->GetMainCameraWorldMatrixPtr())))
+		return E_FAIL;
 
 	_float fSpeed = 1.f;	   // 빠르기
 	_float fFrequency = 0.4f;  // 패턴 밀도
