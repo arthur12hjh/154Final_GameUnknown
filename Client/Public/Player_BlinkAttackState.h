@@ -19,7 +19,7 @@ public:
 
 private:
 	_float m_fLerp = { 0.1f };
-
+	_bool  m_isSoundPlayed = { false };
 public:
 	static	CPlayer_BlinkAttackState* Create(void* pArg);
 	virtual	void			   Free() override;

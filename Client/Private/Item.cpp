@@ -323,16 +323,16 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	{
 		// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
 		_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
+		m_pRigidBody->Add_Impulse(vDir, 9.f, 2.5f);
 	}
 	else if (true == m_isHemiSphere)
 	{
 		_vector vDir = XMVector3Normalize(XMVector3Rotate(XMVectorSetY(XMLoadFloat3(&m_vParentLook), 0.f), 
-			XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), m_pGameInstance->Random(-1.f * XM_PI / 2.f, XM_PI / 2.f))));
+			XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), m_pGameInstance->Random(-1.f * XM_PI / 3.f, XM_PI / 3.f))));
 
 		vDir += XMVectorSet(0.f, 5.f, 0.f, 0.f);
 
-		m_pRigidBody->Add_Impulse(vDir, 9.f, 6.f);
+		m_pRigidBody->Add_Impulse(vDir, 9.f, 3.f);
 	}
 
 

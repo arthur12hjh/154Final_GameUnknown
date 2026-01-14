@@ -338,7 +338,7 @@ PS_OUT PS_MAIN(PS_IN In)
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     
     float threshold = hole[index] / 32.0;
-    if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    if (0.01f >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     
     vector vNormalTexture = g_NormalTexture.Sample(MirrorSampler, In.vTexcoord);
@@ -375,7 +375,7 @@ PS_OUT PS_SPRITE(PS_IN In, bool bisFront : SV_IsFrontFace)
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     
     float threshold = hole[index] / 32.0;
-    if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    if (0.01f >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     Out.vDiffuse = vMtrlDiffuse;
     float3 normal = normalize(In.vNormal);
@@ -403,7 +403,7 @@ PS_OUT PS_WHITE(PS_IN In)
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     
     float threshold = hole[index] / 32.0;
-    if (0 >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    if (0.01f >= vMtrlDiffuse.a * saturate((In.vLifeTime.y - In.vLifeTime.x)) - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     
     float3 normal = normalize(In.vNormal);

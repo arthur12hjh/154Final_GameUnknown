@@ -7,6 +7,12 @@
                 "iActiveIndex": 0,
                 "szObjectTag": ""
             },
+        {
+          "eState": 17,
+          "fTrackPosition": 0.0,
+          "iActiveIndex": 30,
+          "szObjectTag": "BGM_DED_BOSS_GIGAS_FINISH.wav"
+        },
             {
                 "eState": 4,
                 "fTrackPosition": 0.0,

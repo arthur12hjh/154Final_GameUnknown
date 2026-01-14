@@ -23,6 +23,7 @@ public:
 private:
 	REPULSE_STATE m_eAnimState = { REPULSE_STATE::END };
 	_bool		  m_isGravityActivated = { false };
+	_bool		  m_isSoundPlayed = { false };
 	_float		  m_fLerp = { 0.2f };
 public:
 	static	CPlayer_RepulseState* Create(void* pArg);

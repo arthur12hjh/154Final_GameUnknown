@@ -1541,7 +1541,7 @@ PS_NORMAL_OUT PS_NORMAL(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFace)
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     
     float threshold = hole[index] / 32.0;
-    if (0 >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    if (0.01f >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
     float3 normal;
@@ -1604,7 +1604,7 @@ PS_NORMAL_OUT PS_NORMAL_DIFFUSE(PS_NORMAL_IN In, bool isFrontFace : SV_IsFrontFa
     int index = (int(In.vPosition.x) & 3) + (int(In.vPosition.y) & 3) * 4;
     
     float threshold = hole[index] / 32.0;
-    if (0 >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
+    if (0.01f >= Out.vDiffuse.a - threshold || 0 >= In.vLifeTime.y - In.vLifeTime.x)
         discard;
     float2 rg = g_NormalTexture.Sample(DefaultSampler, fTexcoord).xy * 2.f - 1.f;
     float3 normal;
@@ -1726,6 +1726,42 @@ PS_NONLIGHT_OUT PS_BLACK_BLEND(PS_WEIGHT_IN In)
     
     Out.vDiffuse = g_vColor;
     Out.vDiffuse.a *= min(g_MaskTexture.Sample(DefaultSampler, fTexcoord).r, g_MaskTexture.Sample(DefaultSampler, fTexcoord).a) * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    if (0 >= Out.vDiffuse.a)
+        discard;
+    float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
+    
+    float weight = saturate(exp(-linearDepth * 20));
+    Out.vDiffuse.rgb = Out.vDiffuse.rgb * Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    Out.vDiffuse.a = Out.vDiffuse.a * weight * g_fDissolveUVSize.x;
+    return Out;
+}
+
+/* «»ºø Ω¶¿Ã¥ı : «»ºø¿« √÷¡æ¿˚¿Œ ªˆ¿ª ∞·¡§«œ≥Æ. */
+PS_NONLIGHT_OUT PS_BLACK_BLEND_TEXTURE(PS_WEIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    if (In.vLifeTime.y < In.vLifeTime.x || 0 >= In.vLifeTime.x)
+        discard;
+    int iU;
+    int iV;
+    if (g_bisAnimation)
+    {
+        float fFPS = In.vLifeTime.y / (g_iUV.x * g_iUV.y);
+        iU = (In.vLifeTime.x / fFPS);
+        iV = In.vLifeTime.x / fFPS / g_iUV.x;
+    }
+    else
+    {
+        int i = In.vSeed % (g_iUV.x * g_iUV.y);
+        iU = i % g_iUV.x;
+        iV = i / g_iUV.x;
+    }
+    
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y);
+    float2 fTexcoord = float2(In.vTexcoord.x / g_iUV.x + 1.0 / g_iUV.x * iU, In.vTexcoord.y / g_iUV.y + 1.0 / g_iUV.y * iV);
+    
+    Out.vDiffuse = g_vColor * g_MaskTexture.Sample(DefaultSampler, fTexcoord);
+    Out.vDiffuse.a *= saturate(In.vLifeTime.y - In.vLifeTime.x);
     if (0 >= Out.vDiffuse.a)
         discard;
     float linearDepth = saturate((0.1 * g_fFar / (g_fFar - (In.vProjPos.z / In.vProjPos.w) * (g_fFar - 0.1))) / g_fFar);
@@ -3420,5 +3456,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_FIRECRACKER_BLOOM();
+    }
+    // idx 46
+    pass Black_Blend_Texture
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_BlendAlpha, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
+        PixelShader = compile ps_5_0 PS_BLACK_BLEND_TEXTURE();
     }
 }
