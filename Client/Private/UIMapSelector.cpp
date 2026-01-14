@@ -203,12 +203,14 @@ HRESULT CUIMapSelector::SetUp_Buttons()
 		if (MouseEnter(vUIPos, vUISize))
 		{
 			eBtnState = BTN_STATE::HOVER;
-
-			UI_EVENT_ARG_DESC Arg{};
-			Arg.szActionTag = TEXT("Set_Texture_Index");
-			Arg.Type = UI_EVENT_ARG_DESC::INT;
-			Arg.pData = &i;
-			__super::Trigger_Event(TEXT("Set_Texture_Index"), &Arg);
+			if (m_ButtonDescs[i].bIsEnableMove)
+			{
+				UI_EVENT_ARG_DESC Arg{};
+				Arg.szActionTag = TEXT("Set_Texture_Index");
+				Arg.Type = UI_EVENT_ARG_DESC::INT;
+				Arg.pData = &i;
+				__super::Trigger_Event(TEXT("Set_Texture_Index"), &Arg);
+			}
 
 			if (m_ButtonDescs[i].bIsEnableMove && m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, 0))
 			{
