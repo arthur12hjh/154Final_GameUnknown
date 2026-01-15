@@ -58,7 +58,7 @@
         {
           "eState": 8,
           "fTrackPosition": 0.0,
-          "iActiveIndex": 45,
+          "iActiveIndex": 35,
           "szObjectTag": "MV_Cinematic_143_SFX.wav"
         },
         {
@@ -189,7 +189,7 @@
         },
         {
           "eState": 3,
-          "fTrackPosition": 29.02,
+          "fTrackPosition": 29.32,
           "iActiveIndex": 1515,
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
         },
