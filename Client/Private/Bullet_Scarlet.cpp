@@ -198,6 +198,7 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 {
 	// 여기서 일단 데미지 처리한다
 	// 맞으면 맞는 모션 나오게
+	CHARACTER_SKILL_DESC DummySkill = {};
 	DEFAULT_DAMAGE_DESC pDamageDesc = {};
 	pDamageDesc.pAttacker = m_pParent;
 	pDamageDesc.vHitPoint = vHitPoint;
@@ -206,7 +207,6 @@ void CBullet_Scarlet::Begin_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGa
 
 	if (ReflectBullet(pHitActor))
 	{
-		CHARACTER_SKILL_DESC DummySkill = {};
 		DummySkill.eProPerty = SKILL_PROPERTY::PARRYABLE;
 		if(m_pSkillData)
 			DummySkill.eProPerty = m_pSkillData->eProPerty;

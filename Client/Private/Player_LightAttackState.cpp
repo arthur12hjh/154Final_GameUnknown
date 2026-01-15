@@ -23,6 +23,7 @@ void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;
 
+    m_pPlayer->Enable_WeaponColiider(false);
     m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
     m_pPlayer->SetSkillDataID(1000);
@@ -72,7 +73,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         m_tNextState.eMode = PLAYER_MODE::BATTLE;
     }
 
-    if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))  &&
+    if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)) &&
         fAnimationRatio >= m_fLimitProgress))
     {
         //같은 상태가 두번 생기는걸 방지
@@ -84,7 +85,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_02_Root", false, 1.95f);
             m_pPlayer->SetSkillDataID(1001);
             m_eCombo = COMBO::LIGHT_ATTACK2;
-            m_fLimitProgress = 0.13f;
+            m_fLimitProgress = 0.14f;
             break;
 
         case COMBO::LIGHT_ATTACK2:
@@ -92,7 +93,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_03_Root", false, 1.4f);
             m_pPlayer->SetSkillDataID(1002);
             m_eCombo = COMBO::LIGHT_ATTACK3;
-            m_fLimitProgress = 0.12f;
+            m_fLimitProgress = 0.14f;
             break;
 
         case COMBO::LIGHT_ATTACK3:
@@ -100,16 +101,16 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_04_Root", false, 1.4f);
             m_pPlayer->SetSkillDataID(1003);
             m_eCombo = COMBO::LIGHT_ATTACK4;
-            m_fLimitProgress = 0.25f;
+            m_fLimitProgress = 0.28f;
             break;
 
         case COMBO::LIGHT_ATTACK4:
             m_tNextState.eNextState = PLAYER_STATE::STATE_END;
             m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
-           
+
             m_pPlayer->SetSkillDataID(1000);
             m_eCombo = COMBO::LIGHT_ATTACK1;
-            m_fLimitProgress = 0.10f;
+            m_fLimitProgress = 0.15f;
             break;
 
         default:
@@ -122,7 +123,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
     {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
-    
+
 
     if (COMBO::LIGHT_ATTACK5 == m_eCombo && fAnimationRatio <= 0.2f)
     {
