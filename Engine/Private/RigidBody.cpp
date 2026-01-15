@@ -21,15 +21,18 @@ void CRigidBody::Set_Simulation(_bool bFlag)
 	// 리지드 바디의 시뮬레이션 비활성화
 	m_pPxRigidBody->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, bFlag);
 
-	_uint iNumShapes = m_pPxRigidBody->getNbShapes();
-	vector<PxShape*> AllShapes(iNumShapes);
-
-	m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
-
-	for (auto& Shape : AllShapes)
+	if (m_eShape != RIGIDBODY_SHAPE::NONE && m_eShape != RIGIDBODY_SHAPE::END)
 	{
-		Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
-		Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
+		_uint iNumShapes = m_pPxRigidBody->getNbShapes();
+		vector<PxShape*> AllShapes(iNumShapes);
+
+		m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
+
+		for (auto& Shape : AllShapes)
+		{
+			Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
+			Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
+		}
 	}
 }
 
