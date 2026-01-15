@@ -140,7 +140,7 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
                 CBeatSaberCharacter* pDororong = static_cast<CBeatSaberCharacter*>(m_pGameInstance->GetAllObejctToLayer(ENUM_CLASS(LEVEL::BEATSABER_GAME), TEXT("Layer_Player"))->front());
                 if (nullptr == pDororong)
                     return;
-                    //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
+                //풀콤보인지 아닌지 구분해서 TextureIndex 세팅
                 if (pDororong->GetBeatSaberCharacterDesc().isFullCombo)
                     pUIGameClear->Set_Texture_Index(1);
                 else

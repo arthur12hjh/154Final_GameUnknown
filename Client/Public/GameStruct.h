@@ -664,7 +664,7 @@ namespace Client
 		_int		iGameLife;
 		_int		iMaxGameLife;
 
-		_bool		isFullCombo{ false };
+		_bool		isFullCombo;
 
 		_uint		iComboCnt;
 		_float		fCharacterSpeed;
