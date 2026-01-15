@@ -330,10 +330,7 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 		CUIHUD* pHUD = dynamic_cast<CUIHUD*>(m_pGameInstance->GetCurrentLevelHUD());
 
 		if (!pHUD)
-		{
-			Safe_Release(pHUD);
 			return;
-		}
 
 		if (!m_bUnlocked && m_bCanlock) // 비밀번호 입력 가능 상태일 때
 		{
@@ -345,7 +342,10 @@ void CSciFi_Door::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 			CUIScript* pScript = dynamic_cast<CUIScript*>(pHUD->Get_UIObject(TEXT("Layer_Script"), TEXT("UI_Scripts")));
 
 			if (!pScript)
+			{
+				Safe_Release(pHUD);
 				return;
+			}
 
 			m_pGameInstance->Manager_PlaySound(TEXT("SE_Interaction_ATLDoorSwitch_Fail2.mp3"), CHANNELID::EFFECT, 5.f);
 			
