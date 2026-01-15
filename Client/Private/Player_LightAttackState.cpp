@@ -72,11 +72,11 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         m_tNextState.eMode = PLAYER_MODE::BATTLE;
     }
 
-    if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON))  &&
+    if ((m_pGameInstance->KeyDown(KEY_INPUT::MOUSE, ENUM_CLASS(MOUSEKEYSTATE::LBUTTON)) &&
         fAnimationRatio >= m_fLimitProgress))
     {
         //같은 상태가 두번 생기는걸 방지
-        
+
         switch (m_eCombo)
         {
         case COMBO::LIGHT_ATTACK1:
@@ -114,6 +114,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
 
         default:
             break;
+        }
     }
 
     //예외없이 애니메이션 끝났으면 idle로
@@ -121,7 +122,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
     {
         m_tNextState.eNextState = PLAYER_STATE::IDLE;
     }
-    
+
 
     if (COMBO::LIGHT_ATTACK5 == m_eCombo && fAnimationRatio <= 0.2f)
     {
