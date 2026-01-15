@@ -182,7 +182,12 @@ void CJointChain::Teleport_RigidBodies(_fmatrix WorldMatrix)
         _matrix Mpos = XMMatrixTranslation(vNewPosition.x, vNewPosition.y, vNewPosition.z);
         _matrix Mnew = Mrot * Mpos;
 
-        pBody->Update_PxTransform(Mnew, true);
+        pBody->Update_PxTransform(Mnew);
+
+        static_cast<PxRigidDynamic*>(pBody->Get_PxRigidBody())->setLinearVelocity(PxVec3(0));
+        static_cast<PxRigidDynamic*>(pBody->Get_PxRigidBody())->setAngularVelocity(PxVec3(0));
+        static_cast<PxRigidDynamic*>(pBody->Get_PxRigidBody())->clearForce(PxForceMode::eFORCE);
+        static_cast<PxRigidDynamic*>(pBody->Get_PxRigidBody())->clearTorque(PxForceMode::eFORCE);
     }
 }
 

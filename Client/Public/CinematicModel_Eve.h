@@ -36,6 +36,7 @@ public:
 	virtual HRESULT ActiveCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 	virtual HRESULT PlayCinematicObject(const CINEMATIC_NODE_DESC& CinematicNodeDesc);
 
+	//virtual void SetActive(_bool bFlag) override;
 private:
 	class CWeapon* m_pWeapon = { nullptr };
 

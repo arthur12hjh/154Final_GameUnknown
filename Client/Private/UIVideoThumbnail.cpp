@@ -194,17 +194,4 @@ void CUIVideoThumbnail::Free()
 	__super::Free();
 
 	Safe_Release(m_pVideoPlayerCom);
-
-	/*for (auto& Event : m_tUIDesc.m_Events)
-	{
-		for (auto& EventDesc : Event.second)
-		{
-			for (auto& SubEvent : EventDesc.szSubscribeEventTags)
-			{
-				m_pGameInstance->UnBind_Observer(SubEvent.c_str(), m_pEventHandle);
-			}
-		}
-	}*/
-
-	//Safe_Release(m_pEventHandle);
 }

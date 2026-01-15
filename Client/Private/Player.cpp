@@ -871,7 +871,7 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			EffectDesc.fSize = 9.f;
 			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
 				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 1.f, 1.f);
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
@@ -1138,6 +1138,7 @@ void CPlayer::Execution_Nayitba()
 	Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
 
 	m_PlayerDesc.pLinkAttackTarget->Damaged(&Desc);
+	m_PlayerDesc.pLinkAttackTarget = nullptr;
 }
 
 void CPlayer::LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType)

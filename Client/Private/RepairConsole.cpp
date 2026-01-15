@@ -45,7 +45,6 @@ void CRepairConsole::Update(_float fTimeDelta)
 {
 	if (m_eCurState != m_ePrevState)
 	{
-
 		switch (m_eCurState)
 		{
 		case OPEN:

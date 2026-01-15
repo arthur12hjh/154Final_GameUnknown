@@ -257,9 +257,16 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	/*CActor::ACTOR_DESC ProbDesc = {};
-	ProbDesc.bIsApplyTransform = true;
-	ProbDesc.vScale = { 1.f, 1.f, 1.f };*/
+	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.bIsApplyTransform = true;
+	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	InteractionDesc.iInteractionID = 3;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_VendingMachine_7A");
+	InteractionDesc.vPosition = { 50.f, 0.f, 50.f };
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+		return E_FAIL;
 
 	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
 	for (size_t i = 0; i < 5; i++)
@@ -424,7 +431,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 190.f, 55.f, 233.f};
+	Desc.vPosition = { 199.831f, 52.f, 236.f};
 	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;

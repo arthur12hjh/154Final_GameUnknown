@@ -2,10 +2,10 @@
 
 void CSound_Manager::Initialize()
 {
-	// »ç¿îµå¸¦ ´ã´çÇÏ´Â ´ëÇ¥°´Ã¼¸¦ »ý¼ºÇÏ´Â ÇÔ¼ö
+	// ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 	FMOD_RESULT result = FMOD::System_Create(&m_pSystem);
 
-	// 1. ½Ã½ºÅÛ Æ÷ÀÎÅÍ, 2. »ç¿ëÇÒ °¡»óÃ¤³Î ¼ö , ÃÊ±âÈ­ ¹æ½Ä) 
+	// 1. ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, 2. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¤ï¿½ï¿½ ï¿½ï¿½ , ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½) 
 	m_pSystem->init(32, FMOD_INIT_NORMAL, NULL);
 
 	LoadSoundFile();
@@ -42,9 +42,9 @@ void CSound_Manager::Free()
 	m_pSystem->release();
 }
 
-// ÇÔ¼ö È£Ãâ±Ô¾à STDCALL Çü½Ä È£ÃâÇÑ ³à¼®ÀÌ Ã¥ÀÓÁø´Ù´Â
-// ±Ô¾à‹š¹®¿¡ Å¬¶óÀÌ¾ðÆ®¿¡¼­ Àü¿ªÇÔ¼ö¸¦ ¼±¾ðÇÏ°í Æ÷ÀÎÅÍ¸¦ »ç¿ëÇÏ·Á°í ÇÏ¸é
-// °è¼Ó nullptrÀÌ ³ª¿À´Â°Å¿´À½ Á¶½ÉÇÏÀÚ
+// ï¿½Ô¼ï¿½ È£ï¿½ï¿½Ô¾ï¿½ STDCALL ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½à¼®ï¿½ï¿½ Ã¥ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½
+// ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ï¸ï¿½
+// ï¿½ï¿½ï¿½ nullptrï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â°Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)
 {
 	switch (controltype)
@@ -82,7 +82,6 @@ FMOD_RESULT F_CALL Finished_BGMSoundCallBack(FMOD_CHANNELCONTROL* channelcontrol
 
 void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
 	auto iter = m_mapSound.find(pSoundKey);
 	if (iter == m_mapSound.end())
 		return;
@@ -115,7 +114,6 @@ void CSound_Manager::Manager_PlaySound(const TCHAR* pSoundKey, CHANNELID eID, fl
 
 void CSound_Manager::Manager_PlayBGM(const TCHAR* pSoundKey, float fVolume, _uint iLoopCount, function<void(FMOD_CHANNELCONTROL* channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void* commanddata1, void* commanddata2)> pFinishedCallBack)
 {
-	// iter = find_if(m_mapSound.begin(), m_mapSound.end(), CTag_Finder(pSoundKey));
 	auto iter = m_mapSound.find(pSoundKey);
 	if (iter == m_mapSound.end())
 		return;
@@ -289,10 +287,10 @@ void CSound_Manager::Get_BGMMinVolume(_float fBGMMinVolume)
 
 void CSound_Manager::LoadSoundFile()
 {
-	// _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+	// _finddata_t : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 	_finddatai64_t  fd;
 
-	// _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
+	// _findfirst : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½
 	intptr_t handle = _findfirst64("../Bin/SoundResources/Sounds/*.*", &fd);
 
 	if (handle == -1)
@@ -300,7 +298,7 @@ void CSound_Manager::LoadSoundFile()
 
 	int iResult = 0;
 
-	char szCurPath[128] = "../Bin/SoundResources/Sounds/";	 // »ó´ë °æ·Î
+	char szCurPath[128] = "../Bin/SoundResources/Sounds/";	 // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	char szFullPath[128] = "";
 
 	while (iResult != -1)
@@ -321,13 +319,13 @@ void CSound_Manager::LoadSoundFile()
 			TCHAR* pSoundKey = new TCHAR[iLength];
 			ZeroMemory(pSoundKey, sizeof(TCHAR) * iLength);
 
-			// ¾Æ½ºÅ° ÄÚµå ¹®ÀÚ¿­À» À¯´ÏÄÚµå ¹®ÀÚ¿­·Î º¯È¯½ÃÄÑÁÖ´Â ÇÔ¼ö
+			// ï¿½Æ½ï¿½Å° ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
 			MultiByteToWideChar(CP_ACP, 0, fd.name, iLength, pSoundKey, iLength);
 
 			m_mapSound.emplace(pSoundKey, pSound);
 			delete[] pSoundKey;
 		}
-		//_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ´õÀÌ»ó ¾ø´Ù¸é -1À» ¸®ÅÏ
+		//_findnext : <io.h>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½Ô¼ï¿½, ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ -1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		iResult = _findnext64(handle, &fd);
 	}
 

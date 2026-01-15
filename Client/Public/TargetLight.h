@@ -36,7 +36,7 @@ public:
 public:
 	HRESULT Initialize(void* pArg);
 	void	Chase_Target();
-
+	void	Clear_Target();
 private:
 	//외부에서 조절해주려면 들고있긴 해야하니까..
 	class CGameInstance* m_pGameInstance = { nullptr };

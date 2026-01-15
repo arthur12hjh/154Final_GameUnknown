@@ -66,6 +66,8 @@ private:
 	_bool						m_bCanBuy{ true };
 	_bool						m_isPool{ false };
 
+	_bool						m_isInit{ false };
+
 private:
 	HRESULT SetUp_ItemSlot(_float fTimeDelta);
 	HRESULT SetUp_ItemIcon();
