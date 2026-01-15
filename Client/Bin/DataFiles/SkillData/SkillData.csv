@@ -9,7 +9,7 @@
 8,M_Gorilla_S02_ShortMoveRight,None,None,20,12,"4,3,4",0,0,0,5,9
 9,M_Gorilla_S03_StraightAttack,None,None,20,7,"4,3,7",1,0,0,0,9
 10,M_Gorilla_S06_BlowMoveBack,None,None,20,7,"4,3,7",1,0,4,3,10
-11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,20,7,"4,3,4",4,0,1,2,9
+11,M_Gorilla_S09_LeftSwingUpperCombo,None,None,20,7,"4,3,4",4,0,1,2,147
 12,M_Gorilla_S10_SawSpinAttack,None,None,20,2,"9,8,9",1,0,4,4,138
 13,M_Gorilla_S18_BloodExplosion,None,None,20,30,"2,2,2",0,0,5,3,9
 14,M_Gorilla_S21_SkillGetUp,None,None,0,0,"0,0,0",0,0,1,5,136
@@ -96,3 +96,4 @@
 1011,EndExcution,M_Finish_DeadLink,None,30,7,"8,6,8",0,0,4,0,16
 2000,P_Eve_Sword_Normal_MoveBackAttack1_E,None,None,30,3,"2,2,2",0,0,1,6,0
 2001,P_Eve_Sword_SlotNormal_PushBackAttackRangeReady1_1,Result_State_Groggy_S,None,30,3,"2,2,2",0,0,1,7,0
+1012,StartExcution,Hit_Sword_Normal_LinkAttack1,None,200,7,"8,6,8",0,0,4,0,16
