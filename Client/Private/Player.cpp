@@ -317,12 +317,12 @@ void CPlayer::Update(_float fTimeDelta)
 
 void CPlayer::Late_Update(_float fTimeDelta)
 {
+	m_pGameInstance->ADD_Collider(m_pColliderCom);
 	if (false == m_bIsActive)
 		return;
 
 	m_pCCT->Update_PxPosition(fTimeDelta, m_pTransformCom);
 
-	m_pGameInstance->ADD_Collider(m_pColliderCom);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponent(m_pColliderCom);
