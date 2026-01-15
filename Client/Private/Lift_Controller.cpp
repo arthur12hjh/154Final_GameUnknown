@@ -309,6 +309,17 @@ HRESULT CLift_Controller::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CLift_Controller::Begin_OverlapCallBack()
+{
+	if (FAILED(__super::Begin_OverlapCallBack()))
+		return E_FAIL;
+
+	if (m_pLiftPlatform->GetPlatformMove())
+		m_pInteractionCom->Set_InterState(INTERACTION_STATE::ACTIVE);
+
+	return S_OK;
+}
+
 void CLift_Controller::Excute_CallBack(_float fTimeDelta, CGameObject* pActionObject)
 {
 	if (!m_pInteractionCom->IsInteractionEnable())
