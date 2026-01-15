@@ -1138,6 +1138,7 @@ void CPlayer::Execution_Nayitba()
 	Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
 
 	m_PlayerDesc.pLinkAttackTarget->Damaged(&Desc);
+	m_PlayerDesc.pLinkAttackTarget = nullptr;
 }
 
 void CPlayer::LinkAttack_Nayitba(const NAYITBA_EXECUTION_TYPE& eLinkAttackType)

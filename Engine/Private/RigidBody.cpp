@@ -18,23 +18,19 @@ CRigidBody::CRigidBody(const CRigidBody& Prototype)
 
 void CRigidBody::Set_Simulation(_bool bFlag)
 {
-	//None 타입 터짐 방지
-	if (RIGIDBODY_SHAPE::NONE == m_eShape)
-		return;
-
 	// 리지드 바디의 시뮬레이션 비활성화
 	m_pPxRigidBody->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, bFlag);
 
-	_uint iNumShapes = m_pPxRigidBody->getNbShapes();
-	vector<PxShape*> AllShapes(iNumShapes);
+	//_uint iNumShapes = m_pPxRigidBody->getNbShapes();
+	//vector<PxShape*> AllShapes(iNumShapes);
 
-	m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
+	//m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
 
-	for (auto& Shape : AllShapes)
-	{
-		Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
-		Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
-	}
+	//for (auto& Shape : AllShapes)
+	//{
+	//	Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
+	//	Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
+	//}
 }
 
 void CRigidBody::Set_AngularDamping(_float fValue)

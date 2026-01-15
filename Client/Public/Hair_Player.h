@@ -35,7 +35,8 @@ public:
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
 
-	virtual void			Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+	virtual void	Active_SFX(const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override {};
+
 private:
 	CModel* m_pBodyModelCom = { nullptr };
 
