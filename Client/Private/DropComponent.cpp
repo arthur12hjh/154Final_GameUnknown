@@ -140,8 +140,19 @@ void CDropComponent::CreateObjectToLayer()
         XMStoreFloat3(&ItemDesc.fDropPoint, vDropPoint);
         memcpy(&ItemDesc.iItemID, &iter.iDropItemID, sizeof(_uint));
         memcpy(&ItemDesc.fAmount, &iter.iAmountVal, sizeof(_float));
+
         if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(iLevelID, m_szProtoTypeName, iLevelID, m_szLayerName, &ItemDesc)))
             return;
+
+        //여기서 아이템 드랍
+        _float fRandom = m_pGameInstance->Random(1.f, 4.f);
+
+        if(fRandom > 3.f)
+            m_pGameInstance->Manager_PlaySound(TEXT("Obj_Drop_Metal_S1_3.wav"), CHANNELID::EFFECT, 4.f, 1.f);
+        else if (fRandom > 2.f)
+            m_pGameInstance->Manager_PlaySound(TEXT("Obj_Drop_Metal_S2_1.wav"), CHANNELID::EFFECT, 4.f, 1.f);
+        else if (fRandom > 1.f)
+            m_pGameInstance->Manager_PlaySound(TEXT("Obj_Drop_Metal_S2_2.wav"), CHANNELID::EFFECT, 4.f, 1.f);
     }
     m_DropResultList.clear();
 }

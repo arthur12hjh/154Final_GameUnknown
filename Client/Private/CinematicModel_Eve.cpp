@@ -204,6 +204,12 @@ HRESULT CCinematicModel_Eve::PlayCinematicObject(const CINEMATIC_NODE_DESC& Cine
 {
 	m_bIsActive = TRUE;
 
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	if (m_iCinematicCode != CinematicNodeDesc.iActiveIndex)
 		m_iCinematicCode = CinematicNodeDesc.iActiveIndex;
 
@@ -366,6 +372,12 @@ HRESULT CCinematicModel_Eve::Ready_PartObjects()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
@@ -379,6 +391,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaMeet()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
@@ -392,6 +410,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_GorillaFinish()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Dororong_Meet()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
@@ -405,6 +429,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Dororong_Meet()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_FirstMeet()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
@@ -418,6 +448,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_FirstMeet()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_GoodBye()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = FALSE;
@@ -431,6 +467,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_GoodBye()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Enter()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
@@ -444,6 +486,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Enter()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_PhaseChange()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
@@ -457,6 +505,12 @@ HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_PhaseChange()
 HRESULT CCinematicModel_Eve::Initialize_Cinematic_Scarlet_Battle_Finish()
 {
 	m_bIsActive = TRUE;
+
+	for (auto& iter : m_PartObjects)
+	{
+		iter.second->SetActive(true);
+	}
+
 	m_iAnimationSequence = 0;
 	m_fMoveTime = 0.f;
 	m_PlayerDesc.isWeaponVisible = TRUE;
@@ -476,6 +530,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaMeet(_float fTimeDelta)
 	{
 		m_fMoveTime = 0.f;
 		m_bIsActive = FALSE;
+
+		for (auto& iter : m_PartObjects)
+		{
+			iter.second->SetActive(false);
+		}
+
 		m_iCinematicCode = -1;
 	}
 
@@ -508,6 +568,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_GorillaFinish(_float fTimeDelta)
 		m_fMoveTime = 0.f;
 		//isSkipped = FALSE;
 		m_bIsActive = FALSE;
+
+		for (auto& iter : m_PartObjects)
+		{
+			iter.second->SetActive(false);
+		}
+
 		m_iCinematicCode = -1;
 	}
 
@@ -525,6 +591,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Dororong_Meet(_float fTimeDelta)
 		if (m_iAnimationSequence == 2)
 		{
 			m_bIsActive = FALSE;
+
+			for (auto& iter : m_PartObjects)
+			{
+				iter.second->SetActive(false);
+			}
+
 			m_iCinematicCode = -1;
 		}
 		else if (m_iAnimationSequence == 1)
@@ -580,6 +652,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_FirstMeet(_float fTimeDelta)
 		if (m_iAnimationSequence == 2)
 		{
 			m_bIsActive = FALSE;
+			
+			for (auto& iter : m_PartObjects)
+			{
+				iter.second->SetActive(false);
+			}
+
 			m_iCinematicCode = -1;
 		}
 		else if (m_iAnimationSequence == 1)
@@ -603,6 +681,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_GoodBye(_float fTimeDelta)
 		if (m_iAnimationSequence == 4)
 		{
 			m_bIsActive = FALSE;
+			
+			for (auto& iter : m_PartObjects)
+			{
+				iter.second->SetActive(false);
+			}
+
 			m_iCinematicCode = -1;
 		}
 		else if (m_iAnimationSequence == 1)
@@ -630,6 +714,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Enter(_float fTimeDel
 		if (m_iAnimationSequence == 2)
 		{
 			m_bIsActive = FALSE;
+
+			for (auto& iter : m_PartObjects)
+			{
+				iter.second->SetActive(false);
+			}
+
 			m_iCinematicCode = -1;
 		}
 		else if (m_iAnimationSequence == 1)
@@ -657,6 +747,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_PhaseChange(_float fT
 			if (m_iAnimationSequence == 2)
 			{
 				m_bIsActive = FALSE;
+
+				for (auto& iter : m_PartObjects)
+				{
+					iter.second->SetActive(false);
+				}
+
 				m_iCinematicCode = -1;
 			}
 			else if (m_iAnimationSequence == 1)
@@ -701,6 +797,12 @@ HRESULT CCinematicModel_Eve::Play_Cinematic_Scarlet_Battle_Finish(_float fTimeDe
 		if (m_iAnimationSequence == 3)
 		{
 			m_bIsActive = FALSE;
+
+			for (auto& iter : m_PartObjects)
+			{
+				iter.second->SetActive(false);
+			}
+
 			m_iCinematicCode = -1;
 		}
 		else if (m_iAnimationSequence == 1)

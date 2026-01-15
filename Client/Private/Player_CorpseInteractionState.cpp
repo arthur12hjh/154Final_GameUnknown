@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "GameInstance.h"
 
+#include "PonyTail_Player.h"
+#include "Body_Player.h"
+
 CPlayer_CorpseInteractionState::CPlayer_CorpseInteractionState(void* pArg)
 	: CPlayerState{}
 {
@@ -27,6 +30,12 @@ void CPlayer_CorpseInteractionState::Start(void* pArg, _float fBlendRatio)
     //x z만 타겟 따라감
     // 타겟의 위치 + 타겟의 룩 * 3.5 방향으로 방향 세팅
     m_pPlayer->GetTransform()->Set_State(STATE::POSITION, XMVectorSetY(vTargetLook, 0.f) * -1.8f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
+
+    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+    pPonytail->Teleport_JointChains();
+
+    CBody_Player* pBody = static_cast<CBody_Player*>(static_cast<CPlayer*>(m_pPlayer)->Get_PartObject(TEXT("Part_Body")));
+    pBody->Teleport_JointChains();
 }
 
 PLAYER_TRANSITION_DESC CPlayer_CorpseInteractionState::Update(_float fTimeDelta)

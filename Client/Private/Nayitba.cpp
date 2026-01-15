@@ -412,6 +412,8 @@ void CNaytiba::Excution(_bool bIsPlayAnim)
 		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
 		m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
 	}
+	else
+		Set_Dead(true);
 }
 
 CGameObject* CNaytiba::GetTarget()

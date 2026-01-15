@@ -34,6 +34,13 @@ private:
 	_bool						m_bIsContainer = { false };
 	_bool						m_bIsSound = { false };
 
+	_float						m_fFadeOutTimer = { 0.f };
+	_float						m_fNextBGMVolume = { 0.f };			
+	_bool						m_bIsFadeOut = { false };
+	_tchar						m_szNextBGMKey[MAX_PATH] = TEXT("");
+
+
+
 private:
 	HRESULT						Ready_Components(const MUSIC_TRIGGER_BOX_DESC& pDesc);
 
