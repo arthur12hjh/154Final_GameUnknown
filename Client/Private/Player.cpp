@@ -1072,6 +1072,8 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)),
 			XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
 
+		m_pGameManager->Start_Lockon();
+
 		Calc_Damage(pDamageDesc, pSkillDesc);
 		Desc.isChangeMode = false;
 		Desc.eNextState = PLAYER_STATE::HIT;

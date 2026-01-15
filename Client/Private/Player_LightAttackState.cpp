@@ -23,6 +23,7 @@ void CPlayer_LightAttackState::Start(void* pArg, _float fBlendRatio)
 {
     m_eState = PLAYER_STATE::LIGHT_ATTACK;
 
+    m_pPlayer->Enable_WeaponColiider(false);
     m_pPlayer->Set_Animation("Proto_Sword_Lightattack_01_Root", false, 1.4f);
     m_eCombo = COMBO::LIGHT_ATTACK1;
     m_pPlayer->SetSkillDataID(1000);
