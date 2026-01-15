@@ -40,9 +40,31 @@ void CMusicTriggerBox::Priority_Update(_float fTimeDelta)
 
 void CMusicTriggerBox::Update(_float fTimeDelta)
 {
-	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
+	/*if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_B))
 	{
 		m_bIsRender = !m_bIsRender;
+	}*/
+
+	if (m_bIsFadeOut)
+	{
+		_float fCurrentVol = 0.f;
+		m_fFadeOutTimer += fTimeDelta;
+		
+		_float fFadeVolume = 3.f;
+		fFadeVolume = Lerp<_float>(fFadeVolume, 0.f, fTimeDelta * 0.5f);
+
+		m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 0.f, true);
+		if (m_fFadeOutTimer >= 2.5f || fFadeVolume <= 0.05f)
+		{
+			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
+
+			m_pGameInstance->Manager_PlayBGM(m_szNextBGMKey, 0.01f);
+			m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, m_fNextBGMVolume, true);
+
+			m_bIsFadeOut = false;
+			m_fFadeOutTimer = 0.f;
+			fFadeVolume = 3.f;
+		}
 	}
 }
 
@@ -60,11 +82,11 @@ void CMusicTriggerBox::Late_Update(_float fTimeDelta)
 
 HRESULT CMusicTriggerBox::Render()
 {
-	if (m_bIsRender == true)
+	/*if (m_bIsRender == true)
 	{
 		COBBCollider* pObbCollider = static_cast<COBBCollider*>(m_pColliderCom);
 		pObbCollider->Render_Face(_float4(1.f, 1.f, 0.f, 0.f));
-	}
+	}*/
 
 	return S_OK;
 }
@@ -110,10 +132,10 @@ void CMusicTriggerBox::OverlappingEvent(_float3 vHitPoint, _float3 vHitDir, CGam
 		auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
 		if (pCharacter)
 		{
-			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-			m_pGameInstance->Manager_PlayBGM(TEXT("Can_Can.mp3"), 0.01f);
+			m_bIsFadeOut = true;
+			lstrcpy(m_szNextBGMKey, TEXT("Can_Can.mp3"));
+			m_fNextBGMVolume = 3.f;
 
-			m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 2.f);
 			m_bIsSound = true;
 		}
 	}
@@ -125,9 +147,10 @@ void CMusicTriggerBox::End_OverlapEvent(_float3 vHitPoint, _float3 vHitDir, CGam
 	auto pCharacter = dynamic_cast<CCharacter*>(pHitActor);
 	if (pCharacter)
 	{
-		m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
-		m_pGameInstance->Manager_PlayBGM(TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"), 0.01f);
-		m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 3.f);
+		m_bIsFadeOut = true;
+		lstrcpy(m_szNextBGMKey, TEXT("BGM_WASTELAND_UNDISCOVER_LOOP_100_C.wav"));
+		m_fNextBGMVolume = 3.f;
+
 		m_bIsSound = false;
 	}
 }
