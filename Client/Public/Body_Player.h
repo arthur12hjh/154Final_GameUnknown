@@ -47,7 +47,9 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
+	virtual void	SetActive(_bool bFlag) override;
 
+	void Teleport_JointChains();
 private:
 	CCollider*					m_pColliderCom = { nullptr };
 	class CEffect* m_pBlood = { nullptr };

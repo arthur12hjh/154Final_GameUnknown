@@ -248,6 +248,11 @@ void CShaderManager::Change_ShaderSetting(LEVEL eLevelID, _uint iIdx)
         else if (3 == iIdx)
         {
             Load_Scarlet_BattleEnd_ShaderSettings();
+
+            for (auto iter : m_TargetLights)
+            {
+                iter.second->Clear_Target();
+            }
         }
         break;
     default:

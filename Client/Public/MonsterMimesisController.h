@@ -42,11 +42,14 @@ private:
 
 	_float2								m_vDelayTime = { 0.f, 1.f };
 
+	CGameObject*						m_pTarget = { nullptr };
+	_float								m_fTargetDistance = {};
+
 private:
 	HRESULT								Ready_FSM();
 
-	void								Battle_Action(_float fTimeDelta);
-	void								Default_Action(_float fTimeDelta);
+	void								Battle_Action(_float fTimeDelta, CNaytiba* pNayitba);
+	void								Default_Action(_float fTimeDelta, CNaytiba* pNayitba);
 
 	void								AttackCompleted(_float fDelayTime);
 	void								DelayAction(_float fDelayTime);

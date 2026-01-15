@@ -21,6 +21,7 @@
 #include "TeleportEvent.h"
 #include "SoundTriggerBox.h"
 #include "CameraTriggerBox.h"
+#include "MusicTriggerBox.h"
 
 #include "SpriteParticle.h"
 
@@ -66,8 +67,8 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	Load_Level_CinematicObjectData("../Bin/DataFiles/LevelCinematicObjectData/CinematicData_Desert.json");
 
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
-	//Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Desert2.bin");
+	Load_Map_Desert_Data("../../Map_Editor/Bin/DataFiles/MapData_Xion.bin");
 	Load_Monster_Desert_Data("../../Map_Editor/Bin/DataFiles/MonsterData_Desert.bin");
 	Load_Sound_Trigger_Box_Objects("../../Map_Editor/Bin/DataFiles/Desert_SoundTriggerBox.bin");
 	
@@ -256,9 +257,16 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _wstring& strLayerTag)
 {
-	/*CActor::ACTOR_DESC ProbDesc = {};
-	ProbDesc.bIsApplyTransform = true;
-	ProbDesc.vScale = { 1.f, 1.f, 1.f };*/
+	CProb_Interaction::PROB_INTERACTION_DESC InteractionDesc = {};
+	InteractionDesc.bIsApplyTransform = true;
+	InteractionDesc.vScale = { 1.f, 1.f, 1.f };
+	InteractionDesc.iInteractionID = 3;
+	InteractionDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_VendingMachine_7A");
+	InteractionDesc.vPosition = { 50.f, 0.f, 50.f };
+
+	if (FAILED(m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::LEVEL_PROB), TEXT("Prototype_GameObject_Interaction_NonAnim"),
+		ENUM_CLASS(LEVEL::GAMEPLAY), strLayerTag, &InteractionDesc)))
+		return E_FAIL;
 
 	/*ProbDesc.szVIBuffer_PrototypeName = TEXT("Prototype_Component_Model_Prob_Box1");
 	for (size_t i = 0; i < 5; i++)
@@ -423,7 +431,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _wstring& strLayerTag)
 	CGameObject::GAMEOBJECT_DESC Desc = {};
 	Desc.bIsApplyTransform = true;
 	Desc.vScale = { 1.f, 1.f, 1.f };
-	Desc.vPosition = { 190.f, 55.f, 233.f};
+	Desc.vPosition = { 199.831f, 52.f, 236.f};
 	//Desc.vPosition = { 800.f, 150.f, 1500.f};
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.f;
@@ -707,6 +715,7 @@ HRESULT CLevel_GamePlay::Load_Sound_Trigger_Box_Objects(const _char* szFilePath)
 
 	if (FAILED(Load_Sound_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_SoundTriggerBox"), TEXT("Layer_SoundTriggerBox")))) return E_FAIL;
 	if (FAILED(Load_Camera_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_CameraTriggerBox"), TEXT("Layer_CameraTriggerBox")))) return E_FAIL;
+	if (FAILED(Load_Music_Trigger_Box_By_Layer(ifs, TEXT("Prototype_GameObject_MusicTriggerBox"), TEXT("Layer_MusicTriggerBox")))) return E_FAIL;
 
 	ifs.close();
 
@@ -1024,6 +1033,36 @@ HRESULT CLevel_GamePlay::Load_Camera_Trigger_Box_By_Layer(ifstream& ifs, const _
 		Desc.bIsApplyTransform = true;
 		Desc.bIsQuaternion = true;
 		Desc.eCameraType = info.eType;
+
+		_vector vScale = {};
+		_vector vRotation = {};
+		_vector vPosition = {};
+		XMMatrixDecompose(&vScale, &vRotation, &vPosition, XMLoadFloat4x4(&info.worldMatrix));
+
+		XMStoreFloat3(&Desc.vScale, vScale);
+		XMStoreFloat4(&Desc.vRotation, vRotation);
+		XMStoreFloat3(&Desc.vPosition, vPosition);
+
+		HRESULT hr = m_pGameInstance->Add_GameObject_ToLayer(ENUM_CLASS(LEVEL::GAMEPLAY), protoTag,
+			ENUM_CLASS(LEVEL::GAMEPLAY), pLayerTag, &Desc);
+	}
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Music_Trigger_Box_By_Layer(ifstream& ifs, const _tchar* protoTag, const _tchar* pLayerTag)
+{
+	_uint iNumObjs = 0;
+	ifs.read(reinterpret_cast<char*>(&iNumObjs), sizeof(_uint));
+
+	for (_uint i = 0; i < iNumObjs; ++i)
+	{
+		SAVED_MUSIC_TRIGGER_BOX_INFO info;
+		ifs.read(reinterpret_cast<char*>(&info), sizeof(SAVED_MUSIC_TRIGGER_BOX_INFO));
+
+		CMusicTriggerBox::MUSIC_TRIGGER_BOX_DESC Desc = {};
+		Desc.bIsApplyTransform = true;
+		Desc.bIsQuaternion = true;
 
 		_vector vScale = {};
 		_vector vRotation = {};

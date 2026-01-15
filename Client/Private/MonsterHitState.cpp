@@ -200,9 +200,9 @@ void CMonsterHitState::Hit_TentacleSound(_float fRandomIndex)
 void CMonsterHitState::Hit_AntlionSound(_float fRandomIndex)
 {
     if (50 >= fRandomIndex)
-        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain02.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain02.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
     else
-        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain01.wav"), CHANNELID::EFFECT, 2.f, 1.f);
+        m_pGameInstance->Manager_PlaySound(TEXT("M_Antlion_Growl_Pain01.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
 }
 
 void CMonsterHitState::Hit_TurretSound(_float fRandomIndex)

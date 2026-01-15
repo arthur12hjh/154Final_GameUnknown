@@ -132,6 +132,8 @@ HRESULT CBullet_Split::ADD_Components(BULLET_DESC& pDesc)
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE(pDesc.iHitType));
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::SENCE);
 	m_pColliderCom->ADD_IgnoreObjectType(HIT_TYPE::INTERACTION);
+
+	return S_OK;
 }
 
 HRESULT CBullet_Split::Bind_ShaderResources()

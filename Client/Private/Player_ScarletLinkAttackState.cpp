@@ -7,6 +7,7 @@
 #include "GameInstance.h"
 #include "GameManager.h"
 #include "PonyTail_Player.h"
+#include "Body_Player.h"
 
 CPlayer_ScarletLinkAttackState::CPlayer_ScarletLinkAttackState()
 	: CPlayerState{}
@@ -73,7 +74,11 @@ PLAYER_TRANSITION_DESC CPlayer_ScarletLinkAttackState::Update(_float fTimeDelta)
     if (true == m_isStartFrame)
     {
         CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
-        pPonytail->Teleport_JointChains(CombinedMatrix);
+        pPonytail->Teleport_JointChains();
+        
+        CBody_Player* pBody = static_cast<CBody_Player*>(static_cast<CPlayer*>(m_pPlayer)->Get_PartObject(TEXT("Part_Body")));
+        pBody->Teleport_JointChains();
+
         m_isStartFrame = false;
     }
 

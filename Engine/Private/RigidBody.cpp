@@ -18,22 +18,22 @@ CRigidBody::CRigidBody(const CRigidBody& Prototype)
 
 void CRigidBody::Set_Simulation(_bool bFlag)
 {
-	//None Å¸ÀÔ ÅÍÁü ¹æÁö
-	if (RIGIDBODY_SHAPE::NONE == m_eShape)
-		return;
-
-	// ¸®Áöµå ¹ÙµðÀÇ ½Ã¹Ä·¹ÀÌ¼Ç ºñÈ°¼ºÈ­
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ùµï¿½ï¿½ï¿½ ï¿½Ã¹Ä·ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 	m_pPxRigidBody->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, bFlag);
 
-	_uint iNumShapes = m_pPxRigidBody->getNbShapes();
-	vector<PxShape*> AllShapes(iNumShapes);
-
-	m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
-
-	for (auto& Shape : AllShapes)
+	if (m_eShape != RIGIDBODY_SHAPE::NONE && m_eShape != RIGIDBODY_SHAPE::END)
 	{
-		Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
-		Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
+		_uint iNumShapes = m_pPxRigidBody->getNbShapes();
+		vector<PxShape*> AllShapes(iNumShapes);
+
+		m_pPxRigidBody->getShapes(AllShapes.data(), iNumShapes);
+
+		for (auto& Shape : AllShapes)
+		{
+			Shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bFlag);
+			Shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bFlag);
+		}
+
 	}
 }
 
@@ -70,7 +70,7 @@ void CRigidBody::Set_LocalPos(_float3 vLocalPos)
 	if (nullptr == pShape)
 		return;
 
-	// ±âÁ¸ ·ÎÄÃ È¸Àü À¯Áö
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	PxTransform localPose = pShape->getLocalPose();
 
 	localPose.p = PxVec3(vLocalPos.x, vLocalPos.y, vLocalPos.z);
@@ -122,7 +122,11 @@ void CRigidBody::Update_PxTransform(_fmatrix vWorldMatrix, _bool isKinematicTarg
 	}
 
 	if (RIGIDBODY_TYPE::KINEMATIC == m_eType && true == isKinematicTarget)
-		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+	{
+		auto pRigidDynamic = m_pPxRigidBody->is<PxRigidDynamic>();
+		if(pRigidDynamic)
+			pRigidDynamic->setKinematicTarget(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
+	}
 	else
 		m_pPxRigidBody->setGlobalPose(PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(vWorldMatrix)));
 }
@@ -136,32 +140,32 @@ void CRigidBody::Add_Impulse(_vector vImpulseDir, _float fPower, _float fPlayRat
 	if (!pDyn)
 		return;
 
-	// ¹æÇâ Á¤¸®(È¤½Ã ±æÀÌ 0 µé¾î¿À¸é ¹æÁö)
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(È¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	PxVec3 dir(XMVectorGetX(vImpulseDir), XMVectorGetY(vImpulseDir), XMVectorGetZ(vImpulseDir));
 	if (dir.magnitudeSquared() < 1e-8f)
 		return;
 
 	dir.normalize();
 
-	// 2¹è¼Ó ´À³¦: ÃÊ±â ¼Óµµ´Â k¹è (impulseµµ k¹è)
+	// 2ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½Ê±ï¿½ ï¿½Óµï¿½ï¿½ï¿½ kï¿½ï¿½ (impulseï¿½ï¿½ kï¿½ï¿½)
 	PxVec3 vImpulse = dir * (fPower * fPlayRate);
 	pDyn->addForce(vImpulse, PxForceMode::eIMPULSE, true);
 
-	// (¿ø·¡ ³× ¼¼ÆÃµé) -> »ç½Ç ÀÌ·± °Ç »ý¼º/ÃÊ±âÈ­ ¶§ 1È¸°¡ ÀÌ»óÀûÀÌÁö¸¸,
-	// Áö±ÝÀº ÃÖ¼Ò ¼öÁ¤ À¯Áö
+	// (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½) -> ï¿½ï¿½ï¿½ ï¿½Ì·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½Ê±ï¿½È­ ï¿½ï¿½ 1È¸ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	pDyn->setMaxLinearVelocity(100.f);
 	pDyn->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	pDyn->setSolverIterationCounts(8, 4);
 	pDyn->setSleepThreshold(0.3f);
 
-	// FastArc(°¡¼Ó Áß·Â) È°¼ºÈ­
+	// FastArc(ï¿½ï¿½ï¿½ï¿½ ï¿½ß·ï¿½) È°ï¿½ï¿½È­
 	m_isFastArcEnabled = (fPlayRate > 1.0f);
 	m_fPlayRate = fPlayRate;
 }
 
 HRESULT CRigidBody::Ready_PxMaterial(RIGIDBODY_DESC* pDesc)
 {
-	/* ¸ÓÅ×¸®¾ó »ý¼º */
+	/* ï¿½ï¿½ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	m_pMaterial = m_pPxPhysics->createMaterial(pDesc->vMaterial.x, pDesc->vMaterial.y, pDesc->vMaterial.z);
 
 	return S_OK;
@@ -186,33 +190,33 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 
 	switch (m_eShape)
 	{
-	/* ¹Ú½º´Â ±×³É x, y ,z °¡ °¢°¢ Áö¸§ ³ªÅ¸³¿.. */
+	/* ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ x, y ,z ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½.. */
 	case RIGIDBODY_SHAPE::BOX:
 		m_pShape = m_pPxPhysics->createShape(PxBoxGeometry(m_vSize.x / 2.f, m_vSize.y / 2.f, m_vSize.z / 2.f), *m_pMaterial, true, ShapeFlags);
 		m_pShape->setSimulationFilterData(Filter);
 		m_pShape->setQueryFilterData(Filter);
 		break;
-	/* Ä¸½¶Àº x ºÎºÐÀÌ ±¸ ºÎºÐ ¹ÝÁö¸§, y ºÎºÐÀÌ ³ôÀÌ Àý¹Ý. */
+	/* Ä¸ï¿½ï¿½ï¿½ï¿½ x ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, y ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
 	case RIGIDBODY_SHAPE::CAPSULE:
 		m_pShape = m_pPxPhysics->createShape(PxCapsuleGeometry(m_vSize.x, m_vSize.y), *m_pMaterial, true, ShapeFlags);
 		m_pShape->setSimulationFilterData(Filter);
 		m_pShape->setQueryFilterData(Filter);
 		break;
 
-	/* ±¸´Â xºÎºÐ¸¸ ¹ÝÁö¸§À¸·Î »ç¿ë. */
+	/* ï¿½ï¿½ï¿½ï¿½ xï¿½ÎºÐ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½. */
 	case RIGIDBODY_SHAPE::SPHERE:
 		m_pShape = m_pPxPhysics->createShape(PxSphereGeometry(m_vSize.x), *m_pMaterial, true, ShapeFlags);
 		m_pShape->setSimulationFilterData(Filter);
 		m_pShape->setQueryFilterData(Filter);
 		break;
 
-	/* ÇÃ·¹ÀÎÀº Å©±â°¡ ¾ø´Â ¹«ÇÑ´ë¸¸ »ý¼º. */
+	/* ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ë¸¸ ï¿½ï¿½ï¿½ï¿½. */
 	case RIGIDBODY_SHAPE::PLANE:
 		m_pShape = m_pPxPhysics->createShape(PxPlaneGeometry(), *m_pMaterial, true, ShapeFlags);
 		m_pShape->setSimulationFilterData(Filter);
 		m_pShape->setQueryFilterData(Filter);
 		break;
-	/* Ãæµ¹¿ë ¸Þ½Ã Àü¿ë ·ÎÁ÷ */
+	/* ï¿½æµ¹ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	case RIGIDBODY_SHAPE::TRIANGLE:
 	{
 		if (pDesc->pColModel == nullptr)
@@ -220,7 +224,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 
 		_uint iMeshNum = pDesc->pColModel->Get_NumMeshes();
 
-		// TriangleMesh´Â ¿©·¯ °³ÀÏ ¼ö ÀÖÀ¸¹Ç·Î Shape ¸®½ºÆ® À¯Áö
+		// TriangleMeshï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ Shape ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 		vector<PxShape*> TriangleShapes;
 		TriangleShapes.reserve(iMeshNum);
 
@@ -256,7 +260,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			for (_uint idx = 0; idx < iNumIndices; ++idx)
 				Indices.push_back(pIndices[idx]);
 
-			// TriangleMeshDesc »ý¼º
+			// TriangleMeshDesc ï¿½ï¿½ï¿½ï¿½
 			PxTriangleMeshDesc meshDesc;
 			meshDesc.points.count = iNumVertices;
 			meshDesc.points.stride = sizeof(PxVec3);
@@ -266,7 +270,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			meshDesc.triangles.stride = sizeof(PxU32) * 3;
 			meshDesc.triangles.data = Indices.data();
 
-			// Áï¼® Cooking API
+			// ï¿½ï¼® Cooking API
 			PxTriangleMesh* pTriangleMesh =
 				PxCreateTriangleMesh(PxCookingParams(PxTolerancesScale(1.0f)), meshDesc);
 
@@ -276,7 +280,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 			PxMeshScale vMeshScale(PxVec3(pDesc->vSize.x, pDesc->vSize.y, pDesc->vSize.z));
 			PxTriangleMeshGeometry MeshGeometry(pTriangleMesh, vMeshScale);
 
-			// Shape »ý¼º
+			// Shape ï¿½ï¿½ï¿½ï¿½
 
 			PxShape* pShape = m_pPxPhysics->createShape(MeshGeometry, *m_pMaterial, ShapeFlags);
 
@@ -303,7 +307,7 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 	m_tUserData.pWord0 = &pDesc->iCollisionGroup;
 	m_tUserData.pWord1 = &pDesc->iCollisionMask;
 
-	//Ä¸½¶ÀÏ‹ž È¸Àü½ÃÄÑÁÖÀÚ.
+	//Ä¸ï¿½ï¿½ï¿½Ï‹ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	if (RIGIDBODY_SHAPE::CAPSULE == m_eShape && nullptr != m_pShape)
 	{
 		PxTransform localPose(PxIdentity);
@@ -320,9 +324,9 @@ HRESULT CRigidBody::Ready_PxShape(RIGIDBODY_DESC* pDesc)
 
 HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 {
-	/* ¸®Áöµå ¹Ùµð »ý¼º */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ùµï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	m_eType = pDesc->eRigidBodyType;
-	/* Áú·® ¼¼ÆÃ */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	m_fMass = pDesc->fMass;
 
 	PxTransform Transform = PxTransform(m_pGameInstance->Convert_Matrix_ToPxTransform(XMLoadFloat4x4(&pDesc->StartWorldMatrix)));
@@ -336,20 +340,20 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 	case RIGIDBODY_TYPE::KINEMATIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidDynamic(Transform);
 		static_cast<PxRigidDynamic*>(m_pPxRigidBody)->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-		// KinematicÀº Áú·®, °ü¼º ¾÷µ¥ÀÌÆ® ÇÏÁö ¾ÊÀ½
+		// Kinematicï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		break;
 
 	case RIGIDBODY_TYPE::STATIC:
 		m_pPxRigidBody = m_pPxPhysics->createRigidStatic(Transform);
-		// StaticÀº Áú·®, °ü¼º ¾øÀ½
+		// Staticï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		break;
 	}
 
-	//Shape »ý¼ºÇÏÁö ¾ÊÀ¸¸é ¿©±â¼­ ¸ØÃß°í ³¡³½´Ù.
+	//Shape ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	if (RIGIDBODY_SHAPE::NONE == m_eShape)
 		return S_OK;
 
-	//Æ®¶óÀÌ¾Þ±ÛÀº ¿¹¿ÜÃ³¸® ÇØÁØ´Ù.
+	//Æ®ï¿½ï¿½ï¿½Ì¾Þ±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ø´ï¿½.
 	if (RIGIDBODY_SHAPE::TRIANGLE == m_eShape)
 	{
 		for (auto& pShape : m_TriangleShapes)
@@ -357,7 +361,7 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 			m_pPxRigidBody->attachShape(*pShape);
 		}
 	}
-	/* Shape ºÙÀÌ±â */
+	/* Shape ï¿½ï¿½ï¿½Ì±ï¿½ */
 	else
 	{
 		m_pPxRigidBody->attachShape(*m_pShape);
@@ -365,7 +369,7 @@ HRESULT CRigidBody::Ready_PxRigidBody(RIGIDBODY_DESC* pDesc)
 			physx::PxRigidBodyExt::updateMassAndInertia(*static_cast<PxRigidDynamic*>(m_pPxRigidBody), m_fMass);
 	}
 
-	/* À¯Àú µ¥ÀÌÅÍ ¼¼ÆÃ */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	m_tUserData.pHitActor = this;
 	m_pPxRigidBody->userData = &m_tUserData;
 

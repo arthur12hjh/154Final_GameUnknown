@@ -37,11 +37,11 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_Shadow() override;
 	virtual HRESULT Render_MotionBlur() override;
+	virtual void	SetActive(_bool bFlag) override;
 
 public:
 	//이런게 왜 있나요? << 피직스 특성상 순간이동에 예민해서 따로 처리해줘야함니다
-	void Teleport_JointChains(_fmatrix WorldMatrix);
-
+	void Teleport_JointChains();
 private:
 	class CGameManager* m_pGameManager = { nullptr };
 	CModel* m_pBodyModelCom = { nullptr };

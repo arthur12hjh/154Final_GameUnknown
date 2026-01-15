@@ -190,7 +190,7 @@ PS_OUT_DEFERRED PS_HURT(PS_IN_DEFERRED In)
     
     float2 dir = In.vTexcoord - float2(0.5, 0.5);
     //ÆÄ¿ö ÂÉ²û ÁÙÀÔ´Ï´Ù
-    float len = saturate(pow(length(dir), 1.5));
+    float len = saturate(pow(length(dir), 3.f));
     Out.vBackBuffer = g_SceneTexture.Sample(ClampSampler, In.vTexcoord);
     float fTime = min(g_fTime * 0.8, 0.4);
     float3 fGrayscale = (Out.vBackBuffer.r + Out.vBackBuffer.g + Out.vBackBuffer.b) / 3;

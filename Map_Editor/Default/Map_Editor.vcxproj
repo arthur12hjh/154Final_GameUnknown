@@ -199,6 +199,7 @@
     <ClInclude Include="..\public\Desert_Tree.h" />
     <ClInclude Include="..\public\DororongBox.h" />
     <ClInclude Include="..\public\Dororong_Saber.h" />
+    <ClInclude Include="..\public\MusicTriggerBox.h" />
     <ClInclude Include="..\public\Npc.h" />
     <ClInclude Include="..\public\Pad.h" />
     <ClInclude Include="..\public\Rail.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="..\private\Desert_Tree.cpp" />
     <ClCompile Include="..\private\DororongBox.cpp" />
     <ClCompile Include="..\private\Dororong_Saber.cpp" />
+    <ClCompile Include="..\private\MusicTriggerBox.cpp" />
     <ClCompile Include="..\private\Npc.cpp" />
     <ClCompile Include="..\private\Pad.cpp" />
     <ClCompile Include="..\private\Rail.cpp" />

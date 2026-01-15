@@ -58,6 +58,40 @@ HRESULT CUIItemSlot::Initialize(void* pArg)
 void CUIItemSlot::Priority_Update(_float fTimeDelta)
 {
 	__super::Priority_Update(fTimeDelta);
+
+	if (static_cast<CUIShop*>(m_pParent)->Get_IsOpen() && !m_isInit)
+	{
+		auto pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+
+		if (!pPlayer)
+			return;
+
+		if (m_ItemSlotDescs[0].iID == 0) // 포션 갯수
+		{
+			pPlayer->Get_Desc()->iCurrentPotions = pPlayer->Get_Desc()->iMaxPotions;
+			if (pPlayer->Get_Desc()->iMaxPotions >= 9)
+				m_ItemSlotDescs[0].bSoldOut = true;
+		}
+		if (m_ItemSlotDescs[1].iID == 1) // 최대 체력
+		{
+			pPlayer->Get_Desc()->iCurrentHealth = pPlayer->Get_Desc()->iMaxHealth;
+			if (pPlayer->Get_Desc()->iMaxHealth >= 350)
+				m_ItemSlotDescs[1].bSoldOut = true;
+		}
+		if (m_ItemSlotDescs[2].iID == 2) // 베타 포인트
+		{
+			pPlayer->Get_Desc()->iCurrentBetaEnergy = pPlayer->Get_Desc()->iMaxBetaEnergy;
+			if (pPlayer->Get_Desc()->iMaxBetaEnergy >= 40)
+				m_ItemSlotDescs[2].bSoldOut = true;
+		}
+
+		Safe_Release(pPlayer);
+
+		m_isInit = true;
+	}
+
+	if (!static_cast<CUIShop*>(m_pParent)->Get_IsOpen() && m_isInit)
+		m_isInit = false;
 }
 
 void CUIItemSlot::Update(_float fTimeDelta)

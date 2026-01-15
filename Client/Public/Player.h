@@ -20,7 +20,7 @@ private:
 	virtual ~CPlayer() = default;
 
 public:
-	// Desc ¹ÝÈ¯.
+	// Desc ï¿½ï¿½È¯.
 	virtual void Handle_Notify(void* pArg);
 	struct Player_Desc* Get_Desc() { return &m_PlayerDesc; }
 	_float Get_AnimationRatio();
@@ -59,9 +59,9 @@ public:
 	_int				GetSkillDataID();
 
 public:
-	// Å×½ºÆ®¿ë ·ÎÁ÷µéÀÌ¶ó ÇÑ±ºµ¥ ¸ð¾Æ‡J½À´Ï´Ù 
-	// ³ªÁß¿¡ ÇÑ¹ø¿¡ Á¤¸®ÇÒ°Ô¿ä.
-	// ÀÌÁ¨ ¾Æ´Ï¾ß....
+	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½Ñ±ï¿½ï¿½ï¿½ ï¿½ï¿½Æ‡Jï¿½ï¿½ï¿½Ï´ï¿½ 
+	// ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°Ô¿ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¾ï¿½....
 	void Update_PlayerStatus(_float fTimeDelta);
 	_float m_fBetASkillTimer = { 0.f };
 	_float m_fShieldTimer	 = { 0.f };
@@ -79,6 +79,8 @@ private:
 	//
 	_float					m_fTime = { 0.f };
 	_int					m_iSkillID = {};
+	_bool					m_isEffectOn = { false };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
@@ -93,12 +95,12 @@ private:
 	void Update_Interaction(_float fTimeDelta);
 	void Update_PotionUse(_float fTimeDelta);
 	void Update_LinkAttack(_float fTimeDelta);
-	//ºí¸µÅ©, ¸®ÆÞ½º, ÀúÈ¸ Å° ¼±ÀÔ·Â¿ë.
+	//ï¿½ï¿½ï¿½ï¿½Å©, ï¿½ï¿½ï¿½Þ½ï¿½, ï¿½ï¿½È¸ Å° ï¿½ï¿½ï¿½Ô·Â¿ï¿½.
 	void Update_ReactionSkills(_float fTimeDelta); 
 	void Update_ReactionSkillInput(_float fTimeDelta);
+	void Update_PlayerHPEffect(_float fTimeDelta);
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
-	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
-
+	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc, _bool bIsGuard = false);
 	void CreateHitBox(const AnimNotify* pNotify);
 
 private:

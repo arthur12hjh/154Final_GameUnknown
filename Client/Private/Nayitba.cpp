@@ -403,13 +403,17 @@ _uint CNaytiba::GetMonsterID()
 	return m_iMonsterID;
 }
 
-void CNaytiba::Excution()
+void CNaytiba::Excution(_bool bIsPlayAnim)
 {
 	m_MonsterInfo.iCurrentHealth = 0.f;
-	m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
-	m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
-	m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
-
+	if (bIsPlayAnim)
+	{
+		m_pBodyModelCom->Set_Animation("M_Finish_Dead_cine", FALSE, 1.f);
+		m_pTransformCom->Set_State(Engine::STATE::POSITION, XMVectorSet(738.66f, 2.022f, 608.569f, 1.f));
+		m_pTransformCom->LookAt(XMVectorSet(738.66f, 2.022f, 607.569f, 1.f));
+	}
+	else
+		Set_Dead(true);
 }
 
 CGameObject* CNaytiba::GetTarget()
@@ -714,7 +718,10 @@ HRESULT CNaytiba::ADD_Components()
 
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { 
+			if(NAYTIBA_STATE::DEFAULT == m_MonsterPreState)
+				BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); 
+			});
 	}
 	else
 	{
@@ -742,7 +749,10 @@ HRESULT CNaytiba::ADD_Components()
 
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { 
+			if (NAYTIBA_STATE::DEFAULT == m_MonsterPreState)
+				BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); 
+			});
 	}
 
 	/* Com_CCT */
