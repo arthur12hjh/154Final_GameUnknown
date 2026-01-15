@@ -1108,7 +1108,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 /* 실드 연산 로직 */
 void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc, _bool bIsGuard)
 {
-	_uint fOriginDamage = (_uint)pSkillDesc->iSkillDamage;
+	_int fOriginDamage = (_int)pSkillDesc->iSkillDamage;
 	_float fShieldDamage = { 0 };
 	_float fRemainDamage = { 0 };
 
@@ -1127,7 +1127,7 @@ void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKIL
 	}
 
 	//실제로 적용된 데미지만 뺴준다.
-	if (fOriginDamage < fShieldDamage + fRemainDamage)
+	if ((_float)fOriginDamage < fShieldDamage + fRemainDamage)
 		fHealthDamage = fOriginDamage;
 	else
 		fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
