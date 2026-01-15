@@ -148,7 +148,7 @@ void CTask_ScarletHit::Hit_Reaction(_float fTimeDelta)
 	_float fAnimRatio = m_pOwner->Get_AnimationRatio();
 	switch (m_pSkill_Data->iSkillID)
 	{
-	case 1010 :
+	case 1012 :
 		if(0.62f >= fAnimRatio)
 			m_fAnimSpeed = 3.f;
 		

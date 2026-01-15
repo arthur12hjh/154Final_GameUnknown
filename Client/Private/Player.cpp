@@ -661,14 +661,14 @@ HRESULT CPlayer::Ready_PartObjects()
 HRESULT CPlayer::Ready_PlayerDesc()
 {
 	
-	m_PlayerDesc.iMaxHealth = 250;
+	m_PlayerDesc.iMaxHealth = 350;
 	m_PlayerDesc.iMaxShield = 100;
 	
 	//베타 에너지
-	m_PlayerDesc.iMaxBetaEnergy = 20;
-	m_PlayerDesc.iCurrentBetaEnergy = 0;
+	m_PlayerDesc.iMaxBetaEnergy = 40;
+	m_PlayerDesc.iCurrentBetaEnergy = 40;
 
-	m_PlayerDesc.iCurrentHealth = 250;
+	m_PlayerDesc.iCurrentHealth = 350;
 	m_PlayerDesc.iCurrentShield = 100;
 	m_PlayerDesc.iCurrentShieldATK = 100;
 
@@ -678,8 +678,8 @@ HRESULT CPlayer::Ready_PlayerDesc()
 	m_PlayerDesc.fCurrentLinkApplyDamage = 100.f;
 	m_PlayerDesc.iCurrentAttackPoint = 100;
 
-	m_PlayerDesc.iCurrentPotions = 5;
-	m_PlayerDesc.iMaxPotions = 5;
+	m_PlayerDesc.iCurrentPotions = 9;
+	m_PlayerDesc.iMaxPotions = 9;
 
 	m_PlayerDesc.eRushState = SKILL_STATE::DEFAULT;
 	m_PlayerDesc.fMaxRushCoolTime = 5.f;

@@ -306,7 +306,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	RigidBodyDesc.StartWorldMatrix = *m_pTransformCom->Get_WorldMatrixPtr();
 	RigidBodyDesc.tUserData = tUserData;
 	RigidBodyDesc.vMaterial = _float3(0.f, 0.f, 0.f);
-	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.22f, Com_Size.y * 0.22f, Com_Size.z * 0.22f);
+	RigidBodyDesc.vSize = _float3(Com_Size.x * 0.25f, Com_Size.y * 0.25f, Com_Size.z * 0.25f);
 	RigidBodyDesc.fMass = { 0.1f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RigidBodyDesc.iCollisionMask  = PHYSX_TERRAIN | PHYSX_DEFAULT | PHYSX_CUSTOM_6;
@@ -322,7 +322,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	{
 		// 아이템 데이터도 찾을거임 나중에 일단 잘 나오는지 보고 데이터 세팅하겠음
 		_vector vDir = XMVector3Normalize(XMVectorSet(m_pGameInstance->Random_Normal() * 0.5f, m_pGameInstance->Random_Normal() + 0.8f, m_pGameInstance->Random_Normal() * 0.5f, 0.f));
-		m_pRigidBody->Add_Impulse(vDir, 9.f, 2.5f);
+		m_pRigidBody->Add_Impulse(vDir, 8.7f, 2.6f);
 	}
 	else if (true == m_isHemiSphere)
 	{
@@ -331,7 +331,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 
 		vDir += XMVectorSet(0.f, 5.f, 0.f, 0.f);
 
-		m_pRigidBody->Add_Impulse(vDir, 9.f, 3.f);
+		m_pRigidBody->Add_Impulse(vDir, 8.7f, 2.6f);
 	}
 
 
@@ -342,6 +342,7 @@ HRESULT CItem::ADD_Components(const ACTOR_DESC& Desc)
 	Traildesc.bisLong = false;
 
 	m_pTrail = static_cast<CTrailEffect*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::GAMEOBJECT, ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_TrailEffect_Item_Trail"), &Traildesc));
+	m_pRigidBody->Set_ContactOffset(0.5f);
 
 	return S_OK;
 }
