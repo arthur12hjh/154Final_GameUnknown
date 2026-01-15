@@ -90,7 +90,7 @@ public:
 
 	virtual void							Active_SFX(const _wstring& strPartTag, const _wstring& strObjectTag, const ANIM_NOTIFY& NotifyReference)override;
 	virtual void							Activate_PartObject_Collider(const _wstring& strPartTag, const _wstring& strColliderTag, const ANIM_NOTIFY& NotifyRef);
-
+	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
 private:
 	CAISenceComponent*						m_pAISenceCom = { nullptr };
 	CTargetComponent*						m_pTargetCom = { nullptr };
@@ -133,7 +133,7 @@ private :
 	HRESULT									ADD_Components();
 	HRESULT									ADD_PartObjects();
 	
-	void									BattleEvent(CGameObject* pTarget, NAYTIBA_STATE eState);
+	
 	void									VisibleStatusUI(_float fTimeDelta, _bool bIsForce = false);
 	
 #pragma region Notify Event

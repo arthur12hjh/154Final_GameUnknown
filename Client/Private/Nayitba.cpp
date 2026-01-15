@@ -718,7 +718,10 @@ HRESULT CNaytiba::ADD_Components()
 
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { 
+			if(NAYTIBA_STATE::DEFAULT == m_MonsterPreState)
+				BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); 
+			});
 	}
 	else
 	{
@@ -746,7 +749,10 @@ HRESULT CNaytiba::ADD_Components()
 
 		m_pAISenceCom->SetTraceHitType(HIT_TYPE::SENCE);
 		m_pAISenceCom->ADD_SenceOnlyTraceObject(HIT_TYPE::PLAYER);
-		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); });
+		m_pAISenceCom->Bind_TargetSearch([&](CGameObject* pTarget) { 
+			if (NAYTIBA_STATE::DEFAULT == m_MonsterPreState)
+				BattleEvent(pTarget, NAYTIBA_STATE::BATTLE); 
+			});
 	}
 
 	/* Com_CCT */

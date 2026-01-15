@@ -357,7 +357,7 @@ HRESULT CPlayer::Damaged(void* pArg)
 
 	// Interaction 아니라면 따로 뻈음.
 	// 안에서 플레이어 모션 제어 중
-	Calc_Damage(pDamageDesc, pSkillDesc);
+	
 	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
@@ -1010,6 +1010,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 				Desc.eNextState = PLAYER_STATE::PARRY_GUARD;
 				Desc.pArg = &HitDesc;
 
+				Calc_Damage(pDamageDesc, pSkillDesc, true);
 				m_pFSM->Handle_Transition(Desc);
 
 				auto pNayitba = static_cast<CNaytiba*>(pDamageDesc->pAttacker);
@@ -1040,6 +1041,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		m_pTransformCom->LookAt(XMVectorSetY((XMLoadFloat4(&HitDesc.vAttackerPos)),
 			XMVectorGetY(m_pTransformCom->Get_State(STATE::POSITION))));
 
+		Calc_Damage(pDamageDesc, pSkillDesc);
 		Desc.isChangeMode = false;
 		Desc.eNextState = PLAYER_STATE::HIT;
 		Desc.pArg = &HitDesc;
@@ -1056,7 +1058,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 }
 
 /* 실드 연산 로직 */
-void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc)
+void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc, _bool bIsGuard)
 {
 	_uint fOriginDamage = pSkillDesc->iSkillDamage;
 	_float fShieldDamage = { 0 };
@@ -1064,7 +1066,10 @@ void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKIL
 
 	_float fHealthDamage = { 0 };
 
-	fShieldDamage = ceil(fOriginDamage * 0.3f);
+	if (bIsGuard)
+		fShieldDamage = ceil(fOriginDamage * 0.8f);
+	else
+		fShieldDamage = ceil(fOriginDamage * 0.3f);
 
 	m_PlayerDesc.iCurrentShield -= fShieldDamage;
 	if (0 >= m_PlayerDesc.iCurrentShield)

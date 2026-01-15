@@ -83,14 +83,47 @@ void CMonsterMimesisController::Update(_float fTimeDelta)
 			}
 		}
 
+		// 이거 배틀상태가 아니라면 안되게 하자
+		auto pNayitba = static_cast<CNaytiba*>(m_pParent);
+		m_vAttackTime.x += fTimeDelta;
+
+		//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
+	
+		m_pTarget = pNayitba->GetTarget();
+		m_fTargetDistance = INFINITY;
 		if (NAYTIBA_STATE::BATTLE == m_pOwnerData->eNaytibaState)
-			Battle_Action(fTimeDelta);
+		{
+			Battle_Action(fTimeDelta, pNayitba);
+		}
 		else
 		{
 			m_vDelayTime.x += fTimeDelta;
-			if (m_vDelayTime.x >= m_vDelayTime.y)
+			if (m_bIsMimesis)
 			{
-				Default_Action(fTimeDelta);
+				m_pFSM->Change_State(TEXT("Mimesis"));
+				if (m_pTarget)
+				{
+					_vector vOwnerPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
+					_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
+					m_fTargetDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
+
+					if (m_fTargetDistance <= m_pOwnerData->fAttackRange * 1.5f)
+					{
+						CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
+						pNayitba->BattleEvent(nullptr, NAYTIBA_STATE::BATTLE);
+						AttackStateDesc.pTarget = m_pTarget;
+						AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
+						m_bIsMimesis = false;
+						m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+					}
+				}
+			}
+			else
+			{
+				if (m_vDelayTime.x >= m_vDelayTime.y)
+				{
+					Default_Action(fTimeDelta, pNayitba);
+				}
 			}
 		}
 	}
@@ -246,73 +279,51 @@ HRESULT CMonsterMimesisController::Ready_FSM()
 	return S_OK;
 }
 
-void CMonsterMimesisController::Battle_Action(_float fTimeDelta)
+void CMonsterMimesisController::Battle_Action(_float fTimeDelta, CNaytiba* pNayitba)
 {
 	// 이거 배틀상태가 아니라면 안되게 하자
-	auto pNayitba = static_cast<CNaytiba*>(m_pParent);
 	m_vAttackTime.x += fTimeDelta;
 
 	//이거 너무 확확 바뀌니까 기가스도 인식하는거같음
-	auto pTarget = pNayitba->GetTarget();
-	if (nullptr == pTarget)
+	if (nullptr == m_pTarget)
 		return;
 
 	_vector vOwnerPos = m_pParent->GetTransform()->Get_State(STATE::POSITION);
-	_vector vTargetPos = pTarget->GetTransform()->Get_State(STATE::POSITION);
+	_vector vTargetPos = m_pTarget->GetTransform()->Get_State(STATE::POSITION);
 	_float fDistance = XMVectorGetX(XMVector3Length(vTargetPos - vOwnerPos));
 
 	// 이거 전부 배틀상태일때 입력이 되는거임
 	// 공격을 하면 공격 입력
 	// 공격이 가능해서 공격을 소비하면 이거 리셋하자
 	// 상태가 바뀐다면 Bool Flag 리턴하자
-	if (m_bIsMimesis)
+	if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
 	{
-		if (fDistance <= m_pOwnerData->fAttackRange * 1.5f)
+		if (m_vAttackTime.y <= m_vAttackTime.x && fDistance <= m_pOwnerData->fAttackRange * 7.f)
 		{
 			CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-			AttackStateDesc.pTarget = pTarget;
+			AttackStateDesc.pTarget = m_pTarget;
 			AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
-			m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
-		}
-	}
-	else
-	{
-		if (NAYTIBA_STATE::BATTLE == pNayitba->GetMonsterPreState())
-		{
-			if (m_vAttackTime.y <= m_vAttackTime.x && fDistance <= m_pOwnerData->fAttackRange * 7.f)
-			{
-				CMonsterAttackState::MONSTER_ATTACK_DESC AttackStateDesc = {};
-				AttackStateDesc.pTarget = pTarget;
-				AttackStateDesc.AttackCompletedFunc = [&](_float fDelayTime) { this->AttackCompleted(fDelayTime); };
 
-				CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
-				if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
-				{
-					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
-				}
-				else
-					m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+			CMonsterFSM::MONSTER_STATE eMonState = m_pFSM->GetMonsterState();
+			if (CMonsterFSM::MONSTER_STATE::HIT == eMonState)
+			{
+				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc, true);
 			}
 			else
-			{
-				if(0 != m_pOwnerData->fMoveSpeed)
-					MoveAction(true);
-			}
+				m_pFSM->Change_State(TEXT("Attack"), &AttackStateDesc);
+		}
+		else
+		{
+			if (0 != m_pOwnerData->fMoveSpeed)
+				MoveAction(true);
 		}
 	}
 }
 
-void CMonsterMimesisController::Default_Action(_float fTimeDelta)
+void CMonsterMimesisController::Default_Action(_float fTimeDelta, CNaytiba* pNayitba)
 {
-	if (NAYTIBA_STATE::MIMESSIS == m_pOwnerData->eNaytibaState)
-	{
-		m_pFSM->Change_State(TEXT("Mimesis"));
-	}
-	else
-	{
-		if (0 != m_pOwnerData->fMoveSpeed)
-			MoveAction(true);
-	}
+	if (0 != m_pOwnerData->fMoveSpeed)
+		MoveAction(true);
 }
 
 void CMonsterMimesisController::AttackCompleted(_float fDelayTime)
