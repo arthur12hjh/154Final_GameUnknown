@@ -76,7 +76,7 @@ PLAYER_TRANSITION_DESC CPlayer_LightAttackState::Update(_float fTimeDelta)
         fAnimationRatio >= m_fLimitProgress))
     {
         //같은 상태가 두번 생기는걸 방지
-
+        m_pPlayer->Enable_WeaponColiider(false);
         switch (m_eCombo)
         {
         case COMBO::LIGHT_ATTACK1:

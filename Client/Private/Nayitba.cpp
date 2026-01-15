@@ -207,7 +207,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	// 1,2타 때 1프레임
 	// 3,4타 때 2프레임
 	// -> 그냥 줘도 될듯?
-	m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
+	//m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
 
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	if (nullptr == pDesc->pSkillData)
