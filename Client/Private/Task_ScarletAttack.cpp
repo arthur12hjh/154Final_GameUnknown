@@ -202,11 +202,11 @@ void CTask_ScarletAttack::SelectAttackData()
 _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 {
 	m_pBlackBoard->SetCurState(CBossBlackBoard::BOSS_STATE::ATTACK);
-	/*m_pSkillData.push(m_pGameManager->Find_SkillData(53));
-	SelectAttackData();*/
+	m_pSkillData.push(m_pGameManager->Find_SkillData(25));
+	SelectAttackData();
 
 	//EntranceAttack();
-	if (false == m_pBlackBoard->IsPhaseLastAttack())
+	/*if (false == m_pBlackBoard->IsPhaseLastAttack())
 	{
 		if (m_pBlackBoard->bIsEnableEntarnceAttack())
 		{
@@ -248,7 +248,7 @@ _bool CTask_ScarletAttack::SelectPattern(_bool bIsRandom)
 		m_FinishedDelayDesc.vKeyFrame = { 153, 153 };
 		m_FinishedDelayDesc.vStopFrame = { 0, 8 };
 		SelectAttackData();
-	}
+	}*/
 
 	return true;
 }

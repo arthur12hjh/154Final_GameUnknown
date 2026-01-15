@@ -58,6 +58,7 @@ public:
 	void				SetSkillDataID(_uint iSkillID);
 	_int				GetSkillDataID();
 
+	void				Enable_WeaponColiider(_bool bIsFlag);
 public:
 	// �׽�Ʈ�� �������̶� �ѱ��� ��ƇJ���ϴ� 
 	// ���߿� �ѹ��� �����ҰԿ�.

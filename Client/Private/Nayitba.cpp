@@ -207,7 +207,7 @@ HRESULT CNaytiba::Damaged(void* pArg)
 	// 1,2타 때 1프레임
 	// 3,4타 때 2프레임
 	// -> 그냥 줘도 될듯?
-	m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
+	//m_pGameInstance->GamePauseDurationTime(1, 0.f, 10000.f);
 
 	DEFAULT_DAMAGE_DESC* pDesc = static_cast<DEFAULT_DAMAGE_DESC*>(pArg);
 	if (nullptr == pDesc->pSkillData)
@@ -544,11 +544,22 @@ void CNaytiba::EnablePhysxController(_bool bEnable)
 	m_pCCT->Set_CCTCollision(bEnable);
 }
 
+_uint CNaytiba::GetAnimationFrameIndex()
+{
+	return m_pBodyModelCom->Get_AnimationKeyFrameIndex();
+}
+
 _bool CNaytiba::bIsParryHitReaction()
 {
 	if (nullptr == m_pAttack_Data || 0 == m_pAttack_Data->iMaxComboCount)
 		return false;
 
+	switch (m_pAttack_Data->iSkillID)
+	{
+	case 11 : case 2 :
+		return false;
+	break;
+	}
 	if (0 == m_pAttack_Data->iMaxComboCount - m_iComboCount)
 		return true;
 
@@ -963,6 +974,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	if (nullptr == pDamageDesc || nullptr == pDamageDesc->pSkillData)
 		return false;
 
+	ResetToBaseState();
 	const CHARACTER_SKILL_DESC* pSkillDesc = static_cast<const CHARACTER_SKILL_DESC*>(pDamageDesc->pSkillData);
 
 	m_vHitVisibleDuration.x = 0.f;
@@ -970,6 +982,7 @@ _bool CNaytiba::ActionDamageLogic(const DEFAULT_DAMAGE_DESC* pDamageDesc)
 	
 	if (SKILL_TYPE::BETA_SKILL == pSkillDesc->eSkillType)
 	{
+
 		if (!m_pBulletList.empty())
 			m_pBulletList.clear();
 	}
