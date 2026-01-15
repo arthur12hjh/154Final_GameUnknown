@@ -992,7 +992,7 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		{
 			if (true == m_PlayerDesc.isJustParryable && (SKILL_PROPERTY::PARRYABLE & pSkillDesc->eProPerty))
 			{
-				Desc.isChangeMode = false;
+ 				Desc.isChangeMode = false;
 				Desc.eNextState = PLAYER_STATE::PARRY_SUCCESS;
 				Desc.pArg = &HitDesc;
 
@@ -1120,7 +1120,11 @@ void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKIL
 	}
 
 	//실제로 적용된 데미지만 뺴준다.
-	fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
+	if (fOriginDamage < fShieldDamage + fRemainDamage)
+		fHealthDamage = fOriginDamage;
+	else
+		fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
+
 	m_PlayerDesc.iCurrentHealth -= fHealthDamage;
 
 	if (0 >= m_PlayerDesc.iCurrentHealth)

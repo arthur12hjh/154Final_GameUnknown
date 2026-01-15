@@ -512,23 +512,37 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             }
         }
 
-
         if (pObjectList != nullptr && _wstring(szText) == TEXT("Layer_Player"))
         {
-            m_pGameInstance->ADD_FrameFinalFunction([&]() {
-                CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
-                Safe_Release(pPlayer);
+            CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+            Safe_Release(pPlayer);
 
-                if (nullptr != pPlayer)
-                {
-                    CBody_Player* pBody = static_cast<CBody_Player*>(pPlayer->Get_PartObject(TEXT("Part_Body")));
-                    pBody->Teleport_JointChains();
+            if (nullptr != pPlayer)
+            {
+                CBody_Player* pBody = static_cast<CBody_Player*>(pPlayer->Get_PartObject(TEXT("Part_Body")));
+                pBody->Teleport_JointChains();
 
-                    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
-                    pPonytail->Teleport_JointChains();
-                }
-            }, 2);
+                CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+                pPonytail->Teleport_JointChains();
+            }
         }
+
+        //if (pObjectList != nullptr && _wstring(szText) == TEXT("Layer_Player"))
+        //{
+        //    m_pGameInstance->ADD_FrameFinalFunction([&]() {
+        //        CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+        //        Safe_Release(pPlayer);
+
+        //        if (nullptr != pPlayer)
+        //        {
+        //            CBody_Player* pBody = static_cast<CBody_Player*>(pPlayer->Get_PartObject(TEXT("Part_Body")));
+        //            pBody->Teleport_JointChains();
+
+        //            CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+        //            pPonytail->Teleport_JointChains();
+        //        }
+        //    }, 2);
+        //}
 
         break;
     case CINEMATICNODE_STATE::MOVE_NPC:
