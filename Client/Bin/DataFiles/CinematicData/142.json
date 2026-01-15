@@ -50,16 +50,46 @@
           "szObjectTag": "ActionCamera_ScarletBattleEnter01"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 0.03,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_flower_4.wav"
+        },
+        {
           "eState": 13,
           "fTrackPosition": 0.1,
           "iActiveIndex": 1,
           "szObjectTag": ""
         },
         {
+          "eState": 8,
+          "fTrackPosition": 0.17,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_parry.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 1.2,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_foley_1.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 5.0,
           "iActiveIndex": 1412,
           "szObjectTag": "ActionCamera_ScarletBattleEnter02"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 5.09,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_amb_2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 5.09,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_foley_2.wav"
         },
         {
           "eState": 19,
@@ -70,7 +100,7 @@
         {
           "eState": 8,
           "fTrackPosition": 6.5,
-          "iActiveIndex": 30,
+          "iActiveIndex": 50,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_01_VO.wav"
         },
         {
@@ -100,7 +130,7 @@
         {
           "eState": 8,
           "fTrackPosition": 16.36,
-          "iActiveIndex": 30,
+          "iActiveIndex": 50,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_02_VO.wav"
         },
         {
@@ -108,6 +138,12 @@
           "fTrackPosition": 18.0,
           "iActiveIndex": 1415,
           "szObjectTag": "ActionCamera_ScarletBattleEnter05"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 18.54,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_flower_1.wav"
         },
         {
           "eState": 19,
@@ -123,6 +159,12 @@
         },
         {
           "eState": 8,
+          "fTrackPosition": 30.49,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_foley_3.wav"
+        },
+        {
+          "eState": 8,
           "fTrackPosition": 32.17,
           "iActiveIndex": 30,
           "szObjectTag": "vo_Scarlet_laugh_S_5_VO.wav"
@@ -132,6 +174,12 @@
           "fTrackPosition": 35.7,
           "iActiveIndex": 1417,
           "szObjectTag": "ActionCamera_ScarletBattleEnter07"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 37.07,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_foley_4.wav"
         },
         {
           "eState": 3,
@@ -146,10 +194,22 @@
           "szObjectTag": "vo_Scarlet_Hum_3_VO.wav"
         },
         {
+          "eState": 8,
+          "fTrackPosition": 41.71,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_foley_5.wav"
+        },
+        {
           "eState": 3,
           "fTrackPosition": 47.9,
           "iActiveIndex": 1419,
           "szObjectTag": "ActionCamera_ScarletBattleEnter09"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 47.97,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_amb.wav"
         },
         {
           "eState": 19,
@@ -160,7 +220,7 @@
         {
           "eState": 8,
           "fTrackPosition": 51.23,
-          "iActiveIndex": 30,
+          "iActiveIndex": 50,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_03_VO.wav"
         },
         {
@@ -187,6 +247,35 @@
           ]
         },
         {
+          "eState": 9,
+          "fTrackPosition": 51.23,
+          "iActiveIndex": 0,
+          "szObjectTag": "Layer_Monster",
+          "CinematicIndexDataList": [
+            {
+              "iActiveIndex": 0,
+              "szObjectTag": "Layer_Monster",
+              "vPosition": [ 251.874, 8.0, 230.907 ],
+              "vRotation": [ 251.874, 8.0, 233.907, 1.0 ],
+              "vScale": [ 1.0, 1.0, 1.0 ],
+              "iInputInt": 0,
+              "fInputFloat": 0.0
+            }
+          ]
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 51.27,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_flower_2.wav"
+        },
+        {
+          "eState": 8,
+          "fTrackPosition": 53.03,
+          "iActiveIndex": 30,
+          "szObjectTag": "MV_Nikke_Scarlet_Phase2_flower_3.wav"
+        },
+        {
           "eState": 19,
           "fTrackPosition": 53.43,
           "iActiveIndex": 12,
@@ -195,7 +284,7 @@
         {
           "eState": 8,
           "fTrackPosition": 53.44,
-          "iActiveIndex": 30,
+          "iActiveIndex": 50,
           "szObjectTag": "Seq_Subtitle_Nikke_Scarlet_Phase2_04_VO.wav"
         },
         {
@@ -234,23 +323,6 @@
           "fTrackPosition": 57.400001525878906,
           "iActiveIndex": 0,
           "szObjectTag": "Layer_Monster"
-        },
-        {
-          "eState": 9,
-          "fTrackPosition": 57.4,
-          "iActiveIndex": 0,
-          "szObjectTag": "Layer_Monster",
-          "CinematicIndexDataList": [
-            {
-              "iActiveIndex": 0,
-              "szObjectTag": "Layer_Monster",
-              "vPosition": [ 251.874, 8.0, 230.907 ],
-              "vRotation": [ 251.874, 8.0, 233.907, 1.0 ],
-              "vScale": [ 1.0, 1.0, 1.0 ],
-              "iInputInt": 0,
-              "fInputFloat": 0.0
-            }
-          ]
         },
         {
           "eState": 18,
