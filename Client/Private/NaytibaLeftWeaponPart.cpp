@@ -431,7 +431,6 @@ void CNaytibaLeftWeaponPart::Free()
 
     m_pTrailEffects.clear();
 
-
     for (auto& pLineTrailEffect : m_pLineTrailEffects)
     {
         Safe_Release(pLineTrailEffect.first->pTrailEffect);

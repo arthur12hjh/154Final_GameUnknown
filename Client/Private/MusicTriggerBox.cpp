@@ -54,7 +54,7 @@ void CMusicTriggerBox::Update(_float fTimeDelta)
 		fFadeVolume = Lerp<_float>(fFadeVolume, 0.f, fTimeDelta * 0.5f);
 
 		m_pGameInstance->Manager_SetChannelVolume(CHANNELID::BGM, 0.f, true);
-		if (m_fFadeOutTimer >= 2.5f || fFadeVolume <= 0.05f)
+		if (m_fFadeOutTimer >= 1.5f || fFadeVolume <= 0.05f)
 		{
 			m_pGameInstance->Manager_StopSound(CHANNELID::BGM);
 
