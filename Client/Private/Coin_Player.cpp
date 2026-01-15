@@ -106,6 +106,8 @@ HRESULT CCoin_Player::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Shader_VtxMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CCoin_Player::Bind_ShaderResources()

@@ -96,7 +96,7 @@ private:
 	void Update_ReactionSkills(_float fTimeDelta); 
 	void Update_ReactionSkillInput(_float fTimeDelta);
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
-	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc, _bool bIsGuard = false);
 
 	void CreateHitBox(const AnimNotify* pNotify);
 

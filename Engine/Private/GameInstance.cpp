@@ -1478,12 +1478,12 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPrototype_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pInteract_Manager);
-	Safe_Release(m_pEventManager);
 	Safe_Release(m_pBinParser);
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pPhysx_Manager);
+	Safe_Release(m_pEventManager);
 	Safe_Release(m_pGraphic_Device);
 }
 
