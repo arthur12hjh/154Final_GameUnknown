@@ -324,7 +324,6 @@ HRESULT CMainApp::Ready_Mouse()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_SSSAO.dds"), 1))))
 		return E_FAIL;
 
-
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Eve_Head_SpecDetail"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/Character/PC/Eve/CH_P_HEAD_EVE/Tex_P_EVE_Head_S.dds"), 1))))
 		return E_FAIL;

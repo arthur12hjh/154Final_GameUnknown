@@ -78,6 +78,8 @@ private:
 	//
 	_float					m_fTime = { 0.f };
 	_int					m_iSkillID = {};
+	_bool					m_isEffectOn = { false };
+
 private:
 	HRESULT Ready_Components();
 	HRESULT Ready_PartObjects();
@@ -95,9 +97,10 @@ private:
 	//블링크, 리펄스, 저회 키 선입력용.
 	void Update_ReactionSkills(_float fTimeDelta); 
 	void Update_ReactionSkillInput(_float fTimeDelta);
+	void Update_PlayerHPEffect(_float fTimeDelta);
 	void Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
+	
 	void Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL_DESC* pSkillDesc);
-
 	void CreateHitBox(const AnimNotify* pNotify);
 
 private:

@@ -307,7 +307,8 @@ void CPlayer::Update(_float fTimeDelta)
 	Update_ReactionSkills(fTimeDelta);
 	//일단 테스트 입력 최우선 처리
 	Update_ReactionSkillInput(fTimeDelta);
-
+	Update_PlayerHPEffect(fTimeDelta);
+	
 	// [JU] Use_RushSkill 테스트(키보드 R키)
 	if (m_pGameInstance->KeyDown(KEY_INPUT::KEYBOARD, DIK_R))
 		Use_RushSkill();
@@ -484,6 +485,20 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 
 			m_pFSM->Handle_Transition(Desc);
 		}
+	}
+}
+
+void CPlayer::Update_PlayerHPEffect(_float fTimeDelta)
+{
+	if (m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth < 0.3f && false == m_isEffectOn)
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
+		m_isEffectOn = true;
+	}
+	else
+	{
+		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
+		m_isEffectOn = false;
 	}
 }
 
@@ -1262,7 +1277,6 @@ void CPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-
 	Safe_Release(m_pFSM);
 }
 
