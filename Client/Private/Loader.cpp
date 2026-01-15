@@ -1621,6 +1621,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Heal.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
+	/* For.Prototype_Component_Effect_Heal */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Healing");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Healing.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
 	/* For.Prototype_Component_Effect_Evasion */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Evasion");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Evasion.binx");
@@ -1834,6 +1839,11 @@ HRESULT CLoader::Loading_For_GamePlay_Effect(void* pArg)
 	/* For.Prototype_Component_Effect_Turret_Laser */
 	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Turret_Laser");
 	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Turret_Laser.binx");
+	Desc->pAddObejct.push_back(PrototypeDesc);
+
+	/* For.Prototype_Component_Effect_Laser_Hit */
+	PrototypeDesc.szPrototypeName = TEXT("Prototype_Component_Effect_Laser_Hit");
+	PrototypeDesc.pPrototype = CEffect::Create(m_pDevice, m_pContext, "../Bin/Resources/Effect/Laser_Hit.binx");
 	Desc->pAddObejct.push_back(PrototypeDesc);
 
 

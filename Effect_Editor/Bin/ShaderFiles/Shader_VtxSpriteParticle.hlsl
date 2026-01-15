@@ -2992,7 +2992,34 @@ PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_NONLIGHT_IN In)
     
     float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
     
-    Out.vDiffuse.xy = normalize(dir) * 0.005f * g_MaskTexture.Sample(MirrorSampler, In.vTexcoord).r * g_fDiffuseUVSize.x * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    Out.vDiffuse.xy = normalize(dir) * 0.008f * g_MaskTexture.Sample(MirrorSampler, In.vTexcoord).r * g_fDiffuseUVSize.x * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    Out.vDiffuse.zw = 0;
+    //if (0.f >= length(Out.vDiffuse.xy))
+    //    discard;
+    return Out;
+}
+
+PS_NONLIGHT_OUT PS_HEAL_MOTION_BLUR(PS_NONLIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    
+    
+    float2 dir = float2(0.5f, 0.5f) - In.vTexcoord;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * normalize(dir).x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y * normalize(dir).y);
+    float2 DissolveTexcoord = float2(In.vTexcoord.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 tex = MaskTexcoord + float2(In.vLifeTime.x * g_fDiffuseUVSpeed.x * normalize(dir).x, In.vLifeTime.x * g_fDiffuseUVSpeed.y * normalize(dir).y);
+    
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
+    float fPower = 1 - (In.vLifeTime.x * 2.f) / In.vLifeTime.y;
+    Out.vDiffuse.xy = normalize(dir) * fPower * 0.008f * g_MaskTexture.Sample(MirrorSampler, In.vTexcoord).r * g_fDiffuseUVSize.x * saturate(In.vLifeTime.y - In.vLifeTime.x);
     Out.vDiffuse.zw = 0;
     //if (0.f >= length(Out.vDiffuse.xy))
     //    discard;
@@ -3506,4 +3533,16 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
         PixelShader = compile ps_5_0 PS_MOTION_BLUR();
     }
+    // idx 48
+    pass HEAL_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_DepthNonWrite, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_HEAL_MOTION_BLUR();
+    }
+
+
 }

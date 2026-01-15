@@ -364,7 +364,6 @@ HRESULT CMainApp::Ready_ClientDeferred()
 
 	if (FAILED(m_pGameManager->Add_ReserveDeferred(TEXT("Hurt"), CColorChange::Create(m_pDevice, m_pContext, &eScreenDesc))))
 		return E_FAIL;
-
 	return S_OK;
 }
 

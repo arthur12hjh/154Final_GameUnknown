@@ -65,6 +65,7 @@ public:
 	void Update_PlayerStatus(_float fTimeDelta);
 	_float m_fBetASkillTimer = { 0.f };
 	_float m_fShieldTimer	 = { 0.f };
+	_float m_fHealTimer = { -10.f };
 
 private:
 	struct Player_Desc			m_PlayerDesc = {};
