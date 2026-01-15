@@ -490,12 +490,12 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 
 void CPlayer::Update_PlayerHPEffect(_float fTimeDelta)
 {
-	if (m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth < 0.3f && false == m_isEffectOn)
+	if ((_float)m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth < 0.3f && false == m_isEffectOn)
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
 		m_isEffectOn = true;
 	}
-	else
+	else if((_float)m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth >= 0.3f && true == m_isEffectOn)
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
 		m_isEffectOn = false;
