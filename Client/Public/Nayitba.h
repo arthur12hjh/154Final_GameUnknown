@@ -81,10 +81,10 @@ public:
 	_bool									bIsRepulseHitReaction();
 
 	NAYITBA_EXECUTION_TYPE					bIsThesholdAction();
-
+	const CHARACTER_SKILL_DESC*				Get_CurAttackData() { return m_pAttack_Data; }
 	// 몬스터의 이전상태를 반환한다.
 	NAYTIBA_STATE							GetMonsterPreState() { return m_MonsterPreState; }
-
+	
 	//레퍼런스 카운트 증가
 	CAIController*							GetController();
 

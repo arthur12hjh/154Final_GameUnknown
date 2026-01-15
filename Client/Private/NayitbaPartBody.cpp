@@ -747,7 +747,9 @@ void CNayitbaPartBody::Begin_Event(_float3 vHitPoint, _float3 vHitDir, CGameObje
     DamageDesc.pAttacker = m_pParent;
     DamageDesc.vHitDir = vHitDir;
     DamageDesc.vHitPoint = vHitPoint;
-    DamageDesc.pSkillData = static_cast<CNaytiba*>(m_pParent)->GetSkillData();
+    DamageDesc.pSkillData = static_cast<CNaytiba*>(m_pParent)->Get_CurAttackData();
+    if (nullptr == DamageDesc.pSkillData)
+        return;
 
     pCharacter->Damaged(&DamageDesc);
 }

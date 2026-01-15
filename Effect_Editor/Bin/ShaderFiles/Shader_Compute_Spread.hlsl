@@ -1776,7 +1776,7 @@ void Converge(uint3 Gid : SV_GroupID,
                 }
                 else
                 {
-                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y))) * vfTimeDelta.x * length(Input[DTid.x].WorldMat._11_12_13) * (length(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz) / length(Input[DTid.x].WorldMat._11_12_13)) * 5;
+                    g_Out[DTid.x].vTranslation = Input[DTid.x].vTranslation + (vDir * Input[DTid.x].vfSpeed.x * fGravity * length(Input[DTid.x].WorldMat._11_12_13) + (vRight * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * cos(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y) * length(Input[DTid.x].WorldMat._11_12_13)) + (vUp * fGravity * g_Out[DTid.x].vLifeTime.x * vfTurnPower.x * sin(g_Out[DTid.x].vLifeTime.x * vfTurnPower.y) * length(Input[DTid.x].WorldMat._11_12_13))) * vfTimeDelta.x * (length(g_WorldMatrix._41_42_43 - Input[DTid.x].vTranslation.xyz) / length(Input[DTid.x].WorldMat._11_12_13));
                 }
                 break;
             case 2:

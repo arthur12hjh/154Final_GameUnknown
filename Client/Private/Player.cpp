@@ -290,7 +290,25 @@ void CPlayer::Update(_float fTimeDelta)
 {
 	if (false == m_bIsActive)
 		return;
+	if (m_fHealTimer >= 0) {
+		m_fHealTimer += fTimeDelta; 
+		if (m_fHealTimer > 0.92f) {
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_HealPoint.wav"), CHANNELID::EFFECT, 0.7f, 1.f);
+			m_fHealTimer = -10.f;
 
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 3.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 1.2f;
+			EffectDesc.fSpeed = 1.f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Healing"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+		}
+	}
 	__super::Update(fTimeDelta);
 
 	m_pGameManager->Lockon(fTimeDelta);
@@ -357,7 +375,9 @@ HRESULT CPlayer::Damaged(void* pArg)
 
 	// Interaction 아니라면 따로 뻈음.
 	// 안에서 플레이어 모션 제어 중
-	
+	if (nullptr == pSkillDesc)
+		return S_OK;
+
 	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
@@ -490,12 +510,12 @@ void CPlayer::Update_ReactionSkillInput(_float fTimeDelta)
 
 void CPlayer::Update_PlayerHPEffect(_float fTimeDelta)
 {
-	if (m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth < 0.3f && false == m_isEffectOn)
+	if ((_float)m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth < 0.3f && false == m_isEffectOn)
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), true);
 		m_isEffectOn = true;
 	}
-	else
+	else if((_float)m_PlayerDesc.iCurrentHealth / (_float)m_PlayerDesc.iMaxHealth >= 0.3f && true == m_isEffectOn)
 	{
 		m_pGameManager->Set_Active_ReserveDeferred(TEXT("Hurt"), false);
 		m_isEffectOn = false;
@@ -881,12 +901,16 @@ void CPlayer::Update_PotionUse(_float fTimeDelta)
 			EffectDesc.fSpeedPerSec = 1.f;
 
 			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
-			EffectDesc.vPos = XMVectorSet(0, 1.5f, 0, 1);
+			EffectDesc.vPos = XMVectorSet(0, 3.5f, 0, 1);
 			EffectDesc.fRot = _float3(0, 0, 0);
-			EffectDesc.fSize = 9.f;
+			EffectDesc.fSize = 1.f;
+			EffectDesc.fSpeed = 1.f;
 			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Heal"),
 				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
-			m_pGameInstance->Manager_PlaySound(TEXT("USE_POTION.wav"), CHANNELID::EFFECT, 1.f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("M_BotSupporter_HealHP_1.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			m_pGameInstance->Manager_PlaySound(TEXT("SE_HealWhoosh.wav"), CHANNELID::EFFECT, 0.5f, 1.f);
+			
+			m_fHealTimer = 0.f;
 			if(m_PlayerDesc.iCurrentHealth >= m_PlayerDesc.iMaxHealth)
 				m_PlayerDesc.iCurrentHealth = m_PlayerDesc.iMaxHealth;
 		}
@@ -1000,6 +1024,8 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 				m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_Main_5_fx_1.wav"), CHANNELID::EFFECT, 2.f);
 				m_pGameInstance->Manager_PlaySound(TEXT("PC_just_parry_FX.wav"), CHANNELID::EFFECT, 2.f);
 
+
+				
 				//m_pGameInstance->GamePauseDurationTime(2.f, 0.7f, 2.5f);
 			}
 			// 가드만 성공
@@ -1046,6 +1072,21 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		Desc.eNextState = PLAYER_STATE::HIT;
 		Desc.pArg = &HitDesc;
 
+		if (754 == pSkillDesc->iSkillID) {
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 3.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 2.5f;
+			EffectDesc.fSpeed = 1.5f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Laser_Hit"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			m_pGameInstance->Manager_PlaySound(TEXT("swish_spark_01.wav"), CHANNELID::EFFECT, 6.f);
+		}
+
 		if (m_pWeapon)
 		{
 			m_iSkillID = -1;
@@ -1081,6 +1122,7 @@ void CPlayer::Calc_Damage(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKIL
 	//실제로 적용된 데미지만 뺴준다.
 	fHealthDamage = fOriginDamage - fShieldDamage + fRemainDamage;
 	m_PlayerDesc.iCurrentHealth -= fHealthDamage;
+
 	if (0 >= m_PlayerDesc.iCurrentHealth)
 		m_PlayerDesc.iCurrentHealth = 0.f;
 }
