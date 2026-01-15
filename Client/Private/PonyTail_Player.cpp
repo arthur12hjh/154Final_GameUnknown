@@ -197,7 +197,24 @@ HRESULT CPonyTail_Player::Render_MotionBlur()
 	return S_OK;
 }
 
-void CPonyTail_Player::Teleport_JointChains(_fmatrix WorldMatrix)
+void CPonyTail_Player::SetActive(_bool bFlag)
+{
+	m_bIsActive = bFlag;
+
+	m_pHairRoot->Set_Simulation(!bFlag);
+
+	for (auto& iter : m_HairRigidBodies)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+
+	for (auto& iter : m_HairLinks)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+}
+
+void CPonyTail_Player::Teleport_JointChains()
 {
 	m_pJointChain->Teleport_RigidBodies(XMLoadFloat4x4(m_pHairRootBone) *
 		XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) * XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
