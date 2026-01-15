@@ -509,17 +509,27 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 ++iObjectIndex;
 
                 static_cast<CCharacterController*>(pObject->Find_Component(TEXT("Com_CCT")))->Set_Active(true);
-
-                if (_wstring(szText) == TEXT("Layer_Player"))
-                {
-                    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_PonyTail")));
-                    pPonytail->Teleport_JointChains();
-
-                    CBody_Player* pBody = static_cast<CBody_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_Body")));
-                    pBody->Teleport_JointChains();
-                }
             }
         }
+
+
+        if (pObjectList != nullptr && _wstring(szText) == TEXT("Layer_Player"))
+        {
+            m_pGameInstance->ADD_FrameFinalFunction([&]() {
+                CPlayer* pPlayer = CGameManager::GetInstance()->GetGameCharacter();
+                Safe_Release(pPlayer);
+
+                if (nullptr != pPlayer)
+                {
+                    CBody_Player* pBody = static_cast<CBody_Player*>(pPlayer->Get_PartObject(TEXT("Part_Body")));
+                    pBody->Teleport_JointChains();
+
+                    CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
+                    pPonytail->Teleport_JointChains();
+                }
+            }, 2);
+        }
+
         break;
     case CINEMATICNODE_STATE::MOVE_NPC:
         CStringHelper::ConvertUTFToWide(CinematicNodeDesc.szObjectTag, szText);
