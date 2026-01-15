@@ -7,6 +7,7 @@
 #include "GameInstance.h"
 
 #include "PonyTail_Player.h"
+#include "Body_Player.h"
 
 CPlayer_VendingInteractionState::CPlayer_VendingInteractionState(void* pArg)
     : CPlayerState {}
@@ -34,7 +35,10 @@ void CPlayer_VendingInteractionState::Start(void* pArg, _float fBlendRatio)
     m_Desc->pPlayerController->Set_Position(XMVectorSetY(vTargetLook, 0.f) * 3.f + XMVectorSetY(vTargetPos, XMVectorGetY(vPlayerPos)));
 
     CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(m_pPlayer->Get_PartObject(TEXT("Part_PonyTail")));
-    pPonytail->Teleport_JointChains(XMLoadFloat4x4(m_Desc->pPlayerTransform->Get_WorldMatrixPtr()));
+    pPonytail->Teleport_JointChains();
+
+    CBody_Player* pBody = static_cast<CBody_Player*>(static_cast<CPlayer*>(m_pPlayer)->Get_PartObject(TEXT("Part_Body")));
+    pBody->Teleport_JointChains();
 }
 
 PLAYER_TRANSITION_DESC CPlayer_VendingInteractionState::Update(_float fTimeDelta)

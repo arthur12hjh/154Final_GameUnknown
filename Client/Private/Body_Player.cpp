@@ -281,6 +281,70 @@ HRESULT CBody_Player::Render_MotionBlur()
 	return S_OK;
 }
 
+void CBody_Player::SetActive(_bool bFlag)
+{
+	m_bIsActive = bFlag;
+
+	for (auto& iter : m_RootRigidBodies)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+
+	for (auto& iter : m_SkirtRigidBodies)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+
+	for (auto& iter : m_ThighRigidBodies)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+
+	for (auto& iter : m_UpperRigidBodies)
+	{
+		iter.second->Set_Simulation(!bFlag);
+	}
+}
+
+void CBody_Player::Teleport_JointChains()
+{
+	_matrix Matrix = {};
+	_uint iCount = { 0 };
+
+	/* ¾Æ½Ã¹ß */
+	for (auto& Body : m_ThighRigidBodies)
+	{
+		Body.second->Update_PxTransform(
+			XMLoadFloat4x4(Body.first) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())
+			* XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+		static_cast<PxRigidDynamic*>(Body.second->Get_PxRigidBody())->setLinearVelocity(PxVec3(0));
+		static_cast<PxRigidDynamic*>(Body.second->Get_PxRigidBody())->setAngularVelocity(PxVec3(0));
+		static_cast<PxRigidDynamic*>(Body.second->Get_PxRigidBody())->clearForce(PxForceMode::eFORCE);
+		static_cast<PxRigidDynamic*>(Body.second->Get_PxRigidBody())->clearTorque(PxForceMode::eFORCE);
+	}
+
+	for (auto& Pair : m_VerticalJointChains)
+	{
+		m_VerticalJointChains[iCount]->Teleport_RigidBodies(
+			XMLoadFloat4x4(m_RootRigidBodies[iCount].first) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())
+			* XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+		
+		iCount++;
+	
+		//XMLoadFloat4x4(m_RootRigidBodies[iCount].first)
+	//Pair.second->Update_PxTransform(
+	//	XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr()) 
+	//		* XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	//m_VerticalJointChains[iCount]->Teleport_RigidBodies(
+	//	XMLoadFloat4x4(Pair.first) * XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrixPtr())
+	//		* XMLoadFloat4x4(m_pParentTransformCom->Get_WorldMatrixPtr()));
+
+	//iCount++;
+	}
+}
+
 HRESULT CBody_Player::Ready_Components()
 {
 	/* Com_Model */
@@ -623,7 +687,7 @@ HRESULT CBody_Player::Ready_ThighRigidBodies()
 	RigidBodyDesc.eRigidBodyShape = CRigidBody::RIGIDBODY_SHAPE::CAPSULE;
 	RigidBodyDesc.eRigidBodyType = CRigidBody::RIGIDBODY_TYPE::KINEMATIC;
 	RigidBodyDesc.tUserData.szActorTag = TEXT("BodyCollider");
-	RigidBodyDesc.vSize = _float3(0.24f, 0.4f, 0.f);
+	RigidBodyDesc.vSize = _float3(0.27f, 0.4f, 0.f);
 	RigidBodyDesc.fMass = { 0.f };
 	RigidBodyDesc.iCollisionGroup = PHYSX_CUSTOM_3;
 	RigidBodyDesc.iCollisionMask = PHYSX_TERRAIN | PHYSX_DYNAMIC | PHYSX_DEFAULT | PHYSX_CUSTOM_4;
