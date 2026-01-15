@@ -375,7 +375,9 @@ HRESULT CPlayer::Damaged(void* pArg)
 
 	// Interaction 아니라면 따로 뻈음.
 	// 안에서 플레이어 모션 제어 중
-	
+	if (nullptr == pSkillDesc)
+		return S_OK;
+
 	Handle_Hit(pDamageDesc, pSkillDesc);
 
 	return S_OK;
@@ -1069,6 +1071,21 @@ void CPlayer::Handle_Hit(DEFAULT_DAMAGE_DESC* pDamageDesc, const CHARACTER_SKILL
 		Desc.isChangeMode = false;
 		Desc.eNextState = PLAYER_STATE::HIT;
 		Desc.pArg = &HitDesc;
+
+		if (754 == pSkillDesc->iSkillID) {
+			CEffect::EFFECT_TRANSFORM_DESC EffectDesc;
+			EffectDesc.fRotationPerSec = 1.f;
+			EffectDesc.fSpeedPerSec = 1.f;
+
+			EffectDesc.pRootMatrix = m_pTransformCom->Get_WorldMatrixPtr();
+			EffectDesc.vPos = XMVectorSet(0, 3.5f, 0, 1);
+			EffectDesc.fRot = _float3(0, 0, 0);
+			EffectDesc.fSize = 2.5f;
+			EffectDesc.fSpeed = 1.5f;
+			CEffect* pEffect = static_cast<CEffect*>(m_pGameInstance->Add_Get_GameObject(ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Prototype_Component_Effect_Laser_Hit"),
+				ENUM_CLASS(LEVEL::GAMEPLAY), TEXT("Layer_Effect"), &EffectDesc));
+			m_pGameInstance->Manager_PlaySound(TEXT("swish_spark_01.wav"), CHANNELID::EFFECT, 6.f);
+		}
 
 		if (m_pWeapon)
 		{
