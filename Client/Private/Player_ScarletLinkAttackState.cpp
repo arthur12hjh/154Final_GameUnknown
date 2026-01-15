@@ -49,7 +49,7 @@ void CPlayer_ScarletLinkAttackState::Start(void* pArg, _float fBlendRatio)
     m_eState = PLAYER_STATE::SCARLET_LINKATTACK;
 
     DEFAULT_DAMAGE_DESC Desc;
-    Desc.pSkillData = m_pGameManager->Find_SkillData(1010);
+    Desc.pSkillData = m_pGameManager->Find_SkillData(1012);
     m_Desc->pLinkAttackTarget->Damaged(&Desc);
 
     // 플레이어의 애니메이션을 변경해준다. 

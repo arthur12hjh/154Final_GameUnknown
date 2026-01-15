@@ -77,6 +77,7 @@ public:
 	void									EnablePhysxController(_bool bEnable);
 	void									ResetToBaseState();
 	
+	_uint									GetAnimationFrameIndex();
 	_bool									bIsParryHitReaction();
 	_bool									bIsRepulseHitReaction();
 

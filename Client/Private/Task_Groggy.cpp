@@ -42,6 +42,9 @@ CBehaviorNode::NODE_STATE CTask_Groggy::Update(_float fTimeDelta)
         ChangeGroggyState(GROGGY_STATE::START);
 
     _bool bIsFinished = m_pOwner->Play_Animation(fTimeDelta, m_pOwner->GetTransform(), 1.f);
+    if (CTask_Groggy::GROGGY_STATE::END == m_eState)
+        Play_EndSound();
+
     if (bIsFinished)
     {
         switch (m_eState)
@@ -91,9 +94,9 @@ void CTask_Groggy::ChangeGroggyState(GROGGY_STATE eState)
     }
         break;
     case CTask_Groggy::GROGGY_STATE::END:
-        //m_szAnimation = m_pOwner->GetStaticMonsterData()->szAnimationName;
-        //m_szAnimation += "_Result_State_Groggy_E";
-        m_szAnimation = "_Result_State_Groggy_E";
+        ZeroMemory(m_bIsGorillaSound, sizeof(m_bIsGorillaSound));
+
+        m_szAnimation = "Result_State_Groggy_E";
         m_pOwner->Set_Animation(m_szAnimation.c_str(), false);
         break;
     }
@@ -146,6 +149,40 @@ void CTask_Groggy::Play_Loop_GorggySound()
             m_pGameInstance->Manager_PlaySound(TEXT("vo_Scarlet_groggy_L_5_VO.wav"), CHANNELID::EFFECT, 5.f);
 
     }
+}
+
+void CTask_Groggy::Play_EndSound()
+{
+    switch (m_pOwner->GetMonsterID())
+    {
+    case 1 :
+        Gorilla_GrooggyEnd();
+        break;
+    case 8 :
+        Scarelt_GrooggyEnd();
+        break;
+    }
+}
+
+void CTask_Groggy::Gorilla_GrooggyEnd()
+{
+    _uint iIndexAnim = m_pOwner->GetAnimationFrameIndex();
+    if (31 <= iIndexAnim && !m_bIsGorillaSound[0])
+    {
+        m_pGameInstance->Manager_PlaySound(TEXT("mon_GorillaB_voice_roar_M_2.wav"), CHANNELID::EFFECT, 5.f, 1.f);
+        m_bIsGorillaSound[0] = true;
+    }
+
+    if (34 <= iIndexAnim && !m_bIsGorillaSound[1])
+    {
+        m_pGameInstance->Active_RadialBlur(1.f, 5, 0.5f);
+        m_pGameInstance->Shake_Camera(1.0f, 0.3f);
+        m_bIsGorillaSound[1] = true;
+    }
+}
+
+void CTask_Groggy::Scarelt_GrooggyEnd()
+{
 }
 
 CTask_Groggy* CTask_Groggy::Create(CBehaviorTree* pOwnerTree)
