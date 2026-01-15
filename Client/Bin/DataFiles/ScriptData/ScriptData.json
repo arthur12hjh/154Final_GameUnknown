@@ -5,13 +5,28 @@
             "bCanControl": true,
             "Scripts": [
                 {
-                    "szText": "그럴 리가 없고, 그럴 수도 없다"
+                    "szText": "그럴 리가 없고, 그럴 수도 없다."
                 },
                 {
                     "szText": "모든 팝업은 ESC로 닫을 수 있습니다."
                 },
                 {
-                    "szText": "이 문구들은 LCTRL로 넘길 수 있습니다."
+                    "szText": "W, A, S, D로 이동합니다."
+                },
+                {
+                    "szText": "이동+LSHIFT로 회피 및 저스트 회피를 할 수 있습니다."
+                },
+                {
+                    "szText": "S+LSHIFT로 리펄스 공격을 할 수 있습니다."
+                },
+                {
+                    "szText": "W+LSHIFT로 블링크 공격을 할 수 있습니다."
+                },
+                {
+                    "szText": "E로 패링 및 가드가 가능합니다."
+                },
+                {
+                    "szText": "Q로 포션을 사용할 수 있습니다."
                 }
             ]
         },
