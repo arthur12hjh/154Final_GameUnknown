@@ -99,6 +99,7 @@
 #include "DororongBox.h"
 #include "SoundTriggerBox.h"
 #include "CameraTriggerBox.h"
+#include "MusicTriggerBox.h"
 #pragma endregion
 
 
@@ -3505,6 +3506,13 @@ HRESULT CLoader::Loading_For_Desert_Stair(void* pArg)
 	/* For.Prototype_GameObject_CameraTriggerBox */
 	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_CameraTriggerBox");
 	pProtoDesc.pPrototype = CCameraTriggerBox::Create(m_pDevice, m_pContext);
+	if (nullptr == pProtoDesc.pPrototype)
+		return E_FAIL;
+	Desc->pAddObejct.push_back(pProtoDesc);
+
+	/* For.Prototype_GameObject_MusicTriggerBox */
+	pProtoDesc.szPrototypeName = TEXT("Prototype_GameObject_MusicTriggerBox");
+	pProtoDesc.pPrototype = CMusicTriggerBox::Create(m_pDevice, m_pContext);
 	if (nullptr == pProtoDesc.pPrototype)
 		return E_FAIL;
 	Desc->pAddObejct.push_back(pProtoDesc);

@@ -1043,9 +1043,9 @@ void CGameInstance::Manager_StopAll()
 	m_pSoundManager->Manager_StopAll();
 }
 
-void CGameInstance::Manager_SetChannelVolume(CHANNELID eID, float fVolume)
+void CGameInstance::Manager_SetChannelVolume(CHANNELID eID, float fVolume, _bool bIsLerp)
 {
-	m_pSoundManager->Manager_SetChannelVolume(eID, fVolume);
+	m_pSoundManager->Manager_SetChannelVolume(eID, fVolume, bIsLerp);
 }
 
 _uint CGameInstance::Get_BGMLength(const TCHAR* pSoundKey)
@@ -1483,8 +1483,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCinema_Manager);
 	Safe_Release(m_pFbxParser);
 	Safe_Release(m_pInput_Device);
-	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPhysx_Manager);
+	Safe_Release(m_pGraphic_Device);
 }
 
 void CGameInstance::Free()

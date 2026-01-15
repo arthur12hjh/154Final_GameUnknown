@@ -2970,6 +2970,35 @@ PS_NONLIGHT_OUT PS_FIRECRACKER_BLOOM(PS_NONLIGHT_IN In)
     return Out;
 }
 
+// * max((abs(1 - saturate(g_fTime * 3))) * 4, 0.8)
+/* ÇÈ¼¿ ½¦ÀÌ´õ : ÇÈ¼¿ÀÇ ÃÖÁ¾ÀûÀÎ »öÀ» °áÁ¤ÇÏ³®. */
+PS_NONLIGHT_OUT PS_MOTION_BLUR(PS_NONLIGHT_IN In)
+{
+    PS_NONLIGHT_OUT Out;
+    
+    
+    
+    float2 dir = float2(0.5f, 0.5f) - In.vTexcoord;
+    float2 MaskTexcoord = float2((In.vTexcoord.x + g_fMaskUV.x + In.vLifeTime.x * g_fMaskUVSpeed.x) * g_fMaskUVSize.x * normalize(dir).x, (In.vTexcoord.y + g_fMaskUV.y + In.vLifeTime.x * g_fMaskUVSpeed.y) * g_fMaskUVSize.y * normalize(dir).y);
+    float2 DissolveTexcoord = float2(In.vTexcoord.x, (In.vTexcoord.y + g_fDissolveUV.y + In.vLifeTime.x * g_fDissolveUVSpeed.y) * g_fDissolveUVSize.y);
+    
+    float2 tex = MaskTexcoord + float2(In.vLifeTime.x * g_fDiffuseUVSpeed.x * normalize(dir).x, In.vLifeTime.x * g_fDiffuseUVSpeed.y * normalize(dir).y);
+    
+    float3 noise = g_DiffuseTexture.Sample(MirrorSampler, tex).rgb;
+    
+    float2 distort = (noise.rb * 2.0 - 1.0);
+    
+    float2 uvDistorted = MaskTexcoord + distort;
+    
+    float mask = g_MaskTexture.Sample(MirrorSampler, uvDistorted).r;
+    
+    Out.vDiffuse.xy = normalize(dir) * 0.008f * g_MaskTexture.Sample(MirrorSampler, In.vTexcoord).r * g_fDiffuseUVSize.x * saturate(In.vLifeTime.y - In.vLifeTime.x);
+    Out.vDiffuse.zw = 0;
+    //if (0.f >= length(Out.vDiffuse.xy))
+    //    discard;
+    return Out;
+}
+
 BlendState BS_Dust
 {
     BlendEnable[0] = true;
@@ -3466,5 +3495,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_BILLBOARD_ROTATION();
         PixelShader = compile ps_5_0 PS_BLACK_BLEND_TEXTURE();
+    }
+    // idx 47
+    pass Billboard_Motion_Blur
+    {
+        SetRasterizerState(RS_Cull_None);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_NONLIGHT_BILLBOARD();
+        PixelShader = compile ps_5_0 PS_MOTION_BLUR();
     }
 }

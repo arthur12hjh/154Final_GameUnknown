@@ -43,7 +43,7 @@ HRESULT CTargetLight::Initialize(void* pArg)
 
 void CTargetLight::Chase_Target()
 {
-    if (false == m_isActive)
+    if (false == m_isActive || nullptr == m_pTarget)
         return;
 
     switch (m_isCinematic)
@@ -63,6 +63,12 @@ void CTargetLight::Chase_Target()
         return;
     }
 
+}
+
+void CTargetLight::Clear_Target()
+{
+    m_pTarget = nullptr;
+    m_isActive = false; 
 }
 
 HRESULT CTargetLight::Setting_Desc(TARGETLIGHT_DESC* pDesc)

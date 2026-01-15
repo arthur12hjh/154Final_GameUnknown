@@ -18,6 +18,7 @@
 
 #include "UIActionEvent.h"
 #include "PonyTail_Player.h"
+#include "Body_Player.h"
 #include "Player.h"
 
 CCinematicManager::CCinematicManager()
@@ -512,8 +513,10 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
                 if (_wstring(szText) == TEXT("Layer_Player"))
                 {
                     CPonyTail_Player* pPonytail = static_cast<CPonyTail_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_PonyTail")));
-                 
-                    pPonytail->Teleport_JointChains(XMLoadFloat4x4(pObject->GetTransform()->Get_WorldMatrixPtr()));
+                    pPonytail->Teleport_JointChains();
+
+                    CBody_Player* pBody = static_cast<CBody_Player*>(static_cast<CPlayer*>(pObject)->Get_PartObject(TEXT("Part_Body")));
+                    pBody->Teleport_JointChains();
                 }
             }
         }
@@ -594,9 +597,10 @@ void CCinematicManager::Play_Node(const CINEMATIC_NODE_DESC& CinematicNodeDesc)
             StaticShadowDesc.vAt = _float4(913.586f, 105.541f, 1456.260f, 1.f);
 
             if (FAILED(m_pGameInstance->Ready_StaticShadow_Light(StaticShadowDesc)))
-                return E_FAIL;
+                return;
 
             m_pGameInstance->Bake_StaticShadow();
+            return;
             });
         break;
         // 17번
@@ -710,11 +714,11 @@ void CCinematicManager::Free()
     }
     m_CinematicObjectsMap.clear();
 
-    for (auto& pActionCamera : m_ActionCameraMap)
-    {
-        Safe_Release(pActionCamera.second);
-    }
-    m_ActionCameraMap.clear();
+    //for (auto& pActionCamera : m_ActionCameraMap)
+    //{
+    //    Safe_Release(pActionCamera.second);
+    //}
+    //m_ActionCameraMap.clear();
 
     Safe_Release(m_pGameInstance);
 

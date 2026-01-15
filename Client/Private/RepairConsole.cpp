@@ -45,7 +45,6 @@ void CRepairConsole::Update(_float fTimeDelta)
 {
 	if (m_eCurState != m_ePrevState)
 	{
-
 		switch (m_eCurState)
 		{
 		case OPEN:
@@ -186,5 +185,4 @@ void CRepairConsole::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
 }

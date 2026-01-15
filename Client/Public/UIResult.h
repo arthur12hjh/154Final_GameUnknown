@@ -44,11 +44,11 @@ private:
 	CTexture* m_pNeonNumberTextureCom{ nullptr };
 	CTexture* m_pThumbnailTextureCom{ nullptr };
 
-	_uint m_iRank = 4;
+	_uint m_iRank = 0;
 	_uint m_iCurScore = 0;
-	_uint m_iScore = 99999;
+	_uint m_iScore = 0;
 	_uint m_iCurCombo = 0;
-	_uint m_iCombo = 999;
+	_uint m_iCombo = 0;
 
 	vector<VTX_INSTANCE_DESC>   m_ScoreInstances{};
 	vector<VTX_INSTANCE_DESC>   m_ComboInstances{};
@@ -59,10 +59,14 @@ private:
 	_bool m_isShowScore{ false };
 	_bool m_isShowRank{ false };
 
+	_bool m_isPlayComboSound{ false };
+	_bool m_isPlayScoreSound{ false };
+	_bool m_isPlayRankSound{ false };
+
 	_float2 m_vThumbnailOffset{1600.f, 0.f};
 
 	_float m_fTimeAcc{ 0.f };
-	_float m_fGlowPower{ 15.f };
+	_float m_fGlowPower{ 0.f };
 	_float m_fScale{ 5.f };
 
 	_bool m_bActiveSpace{ false };

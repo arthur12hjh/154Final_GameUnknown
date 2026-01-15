@@ -268,6 +268,9 @@
     <Filter Include="02.GameObjects\Maps\Desert\TriggerBox\Camera">
       <UniqueIdentifier>{6cef0537-369e-4562-8a15-7b13d00d355a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Maps\Desert\TriggerBox\Music">
+      <UniqueIdentifier>{0d658273-9b93-4b39-b088-16416652dcfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\MainApp.h">
@@ -623,6 +626,9 @@
     <ClInclude Include="..\public\CameraTriggerBox.h">
       <Filter>02.GameObjects\Maps\Desert\TriggerBox\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MusicTriggerBox.h">
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Music</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\MainApp.cpp">
@@ -961,6 +967,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CameraTriggerBox.cpp">
       <Filter>02.GameObjects\Maps\Desert\TriggerBox\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MusicTriggerBox.cpp">
+      <Filter>02.GameObjects\Maps\Desert\TriggerBox\Music</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

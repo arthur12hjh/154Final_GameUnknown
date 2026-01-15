@@ -35,6 +35,7 @@ private:
 	
 	const _float4x4*					m_pPlayerTransform = { nullptr };
 	_bool								m_bIsPlay = true;
+	_bool								m_bIsEnd = false;
 
 	_float								m_fTimeAcc = 0.f;
 	_float								m_fDelay = 3.f;

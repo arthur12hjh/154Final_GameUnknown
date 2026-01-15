@@ -146,6 +146,9 @@ void CLevel_BeatSaber::Update(_float fTimeDelta)
                 else
                     pUIGameClear->Set_Texture_Index(0);
                 
+                m_pGameInstance->Manager_StopSound(CHANNELID::EFFECT2);
+                m_pGameInstance->Manager_PlaySound(TEXT("PC_SE_Item_CanShowing_brass_1.wav"), CHANNELID::EFFECT2, 3.f, 1.f);
+
                 static_cast<CUIHUD*>(m_pHUD)->Anim_Play(TEXT("Layer_BeatSaber"), TEXT("UI_GameClear"), TEXT("GameClear_Show"));
                 m_bShowClear = true;
                 Finished_GameBGM(channelcontrol, controltype, callbacktype, commanddata1, commanddata2);

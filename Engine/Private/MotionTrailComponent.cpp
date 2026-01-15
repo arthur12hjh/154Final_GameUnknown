@@ -177,11 +177,17 @@ void CMotionTrailComponent::SetRimLight(_float fRimLightPower, _float fRimLightI
 HRESULT CMotionTrailComponent::Bind_ShaderResource()
 {
 	auto pMainCam = m_pGameInstance->GetMainCamera();
+	if (nullptr == pMainCam)
+		return E_FAIL;
+
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumBone", &m_iNumBones, sizeof(_int))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_fFar", &pMainCam->GetCameraInfo().fFar, sizeof(_float))))
-		return E_FAIL;
+	if (nullptr != pMainCam)
+	{
+		if (FAILED(m_pShader->Bind_RawValue("g_fFar", &pMainCam->GetCameraInfo().fFar, sizeof(_float))))
+			return E_FAIL;
+	}
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumTrail", &m_iActiveTrailCount, sizeof(_float))))
 		return E_FAIL;

@@ -1204,6 +1204,9 @@
     <Filter Include="02.GameObjects\TriggerBox\Camera">
       <UniqueIdentifier>{1e10ac0f-d776-4bf8-ba6b-5c672a3fa102}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\TriggerBox\Music">
+      <UniqueIdentifier>{b85cf533-a649-4be4-9731-b6eff33b7a65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2305,6 +2308,9 @@
     <ClInclude Include="..\public\CameraTriggerBox.h">
       <Filter>02.GameObjects\TriggerBox\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MusicTriggerBox.h">
+      <Filter>02.GameObjects\TriggerBox\Music</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -3369,6 +3375,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CameraTriggerBox.cpp">
       <Filter>02.GameObjects\TriggerBox\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MusicTriggerBox.cpp">
+      <Filter>02.GameObjects\TriggerBox\Music</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
