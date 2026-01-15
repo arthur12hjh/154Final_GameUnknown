@@ -408,11 +408,12 @@ void CWeapon::Activate_PartObject_Collider(const _wstring& strColliderTag, const
 	if (nullptr == pComponents)
 		return;
 
+	m_iTestIndex++;
 	m_bIsEnableCollider = NotifyRef.iNumData01;
 	if (false == m_bIsEnableCollider)
 	{
-	
 		static_cast<CCollider*>(pComponents)->ResetCollision();
+		m_iTestIndex = 0;
 	}
 	//else
 	//	m_pGameInstance->GamePauseDurationTime(1, 0.01f, 10.f);

@@ -68,6 +68,7 @@ private:
 	_bool						m_isTrailVisible = { false };
 private:
 	const _float4x4*			m_pSocketMatrix = { nullptr };
+	_uint						m_iTestIndex = {};
 	
 private:
 	HRESULT						Ready_Components();
