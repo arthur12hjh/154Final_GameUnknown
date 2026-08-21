@@ -19,3 +19,4 @@
 - [ ] 서민석 : 셰이더, 플레이어, Physx
 - [ ] 주선호 : UI
 
+YouTube : https://www.youtube.com/watch?v=4r-8Piq_cHg&feature=youtu.be
